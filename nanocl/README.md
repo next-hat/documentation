@@ -7,12 +7,16 @@
  </p>
 </blockquote>
 
+</br>
+</br>
+
 <strong id="nxtmdoc-meta-description">
 This section include the summary for nanocl documentation
 </strong>
 
 </br>
 </br>
+
 <table>
   <tr>
     <th align="left">

@@ -11,7 +11,9 @@
 This section include the summary for nanocl guides
 </strong>
 
-<table>
+</br>
+
+<table width="100%">
   <tr>
     <th align="left">
       <p>Title</p>

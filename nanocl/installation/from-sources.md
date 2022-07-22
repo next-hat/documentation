@@ -1,47 +1,54 @@
-# From sources
+<h1 id="nxtmdoc-meta-title">Install Nanocl from sources</h1>
+
+<blockquote class="tags">
+ <strong>Tags</strong>
+ </br>
+ <span id="nxtmdoc-meta-keywords">
+  documentation, installation, from sources
+ </span>
+</blockquote>
+
+<p id="nxtmdoc-meta-description">
+This section contains required procedures for installing Nanocl from sources.
+</p>
 
 ## Linux
 
-Install rustlang
+1.  Install rustlang
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+    ```sh
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    ```
 
-Clone the reposiory
+2.  Clone the reposiory
 
-```bash
-git clone https://github.com/leon3s/nanocl
-cd nanocl
-```
+    ```sh
+    git clone https://github.com/nxthat/nanocl
+    cd nanocl
+    ```
 
-Install ubuntu dependencies
+3.  Install ubuntu dependencies
 
-```bash
-sudo sh ./scripts/ubuntu.deps.sh
-cargo make release
-```
+    ```sh
+    sudo sh ./scripts/ubuntu.deps.sh
+    ```
 
-for other linux distro refer to the package name and install it with your the
-correct package manager / name and if you can make a pr to update the doc it
-would be greate you can see what package is needed by looking into the script
+    for other linux distro refer to the package name and install it with your the
+    correct package manager / name and if you can make a pr to update the doc it
+    would be greate you can see what package is needed by looking into the script
 
-```bash
-cat ./scripts/ubuntu.deps.sh
-```
 
-Then you need to install rust dependencies
+4.  Then you need to install rust dependencies
 
-```bash
-sh ./scripts/rust.deps.sh
-```
+    ```sh
+    sh ./scripts/rust.deps.sh
+    ```
 
-Finally you can build from sources
+5.  Finally you can build from sources
 
-```bash
-sh ./scripts/release_nanocl.sh
-sh ./scripts/release_nanocld.sh
-```
+    ```sh
+    sh ./scripts/release_nanocl.sh
+    ```
 
-You will find a .dep package inside `target/debian` folder or release binary in
-`target/release` folder.
+    You will find a .dep package inside `target/debian` folder or release binary in
+    `target/release` folder.

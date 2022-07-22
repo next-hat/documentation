@@ -1,6 +1,16 @@
-# Get started with nanocl
+<h1 id="nxtmdoc-meta-title">Get started with nanocl</h1>
 
-Welcome! We are excited that you want to learn nanocl.
+<blockquote class="tags">
+ <strong>Tags</strong>
+ </br>
+ <span id="nxtmdoc-meta-keywords">
+  documentation, guides, get started
+ </span>
+</blockquote>
+
+## Welcome! We are excited that you want to learn nanocl.
+
+<p id="nxtmdoc-meta-description">
 
 This page contains step-by-step instructions on how to get started with nanocl.
 In this tutorial, you’ll learn how to:
@@ -9,18 +19,22 @@ In this tutorial, you’ll learn how to:
 - Deploy inside a cluster
 - Deploy from a file
 
+</p>
+
 ## Download and install nanocl
 
 This tutorial assumes you have a current version of nanocl installed on your
 machine.</br> If you do not have nanocl installed, see
-[how to install](/guides/installation).
+[how to install](./../../installation).
 
 <table>
   <tr>
     <th align="left">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Title</p>
     </th>
     <th align="left">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Description</p>
     </th>
   </tr>

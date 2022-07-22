@@ -1,4 +1,16 @@
-# Install Nanocl on Ubuntu
+<h1 id="nxtmdoc-meta-title">Install Nanocl for ubuntu</h1>
+
+<blockquote class="tags">
+ <strong>Tags</strong>
+ </br>
+ <span id="nxtmdoc-meta-keywords">
+  documentation, ubuntu, installation
+ </span>
+</blockquote>
+
+<p id="nxtmdoc-meta-description">
+This section contains required procedures for installaling Nanocl on Ubuntu.
+</p>
 
 ## Prerequisites
 
@@ -27,10 +39,10 @@ You can install Nanocl in different ways, depending on your needs:
 1. Update the `apt` package index and install packages to allow `apt` to use a
    repository over HTTPS:
 
-   ```console
-   $ sudo apt-get update
+   ```sh
+   sudo apt-get update
 
-   $ sudo apt-get install \
+   sudo apt-get install \
        ca-certificates \
        curl \
        gnupg \
@@ -38,22 +50,22 @@ You can install Nanocl in different ways, depending on your needs:
    ```
 2. Add Next hat's official GPG key:
 
-   ```console
-   $ sudo mkdir -p /etc/apt/keyrings
-   $ curl -fsSL https://download.next-hat.com/repo/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/next-hat.gpg
+   ```sh
+   sudo mkdir -p /etc/apt/keyrings
+   curl -fsSL https://download.next-hat.com/repo/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/next-hat.gpg
    ```
 3. Use the following command to set up the repository:
 
-   ```console
-   $ echo \
+   ```sh
+   echo \
      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/next-hat.gpg] https://download.next-hat.com/repo/linux/ubuntu stable main" \
      | sudo tee /etc/apt/sources.list.d/next-hat.list > /dev/null
    ```
 4. Update the `apt` package index, and install the _latest version_ of Nanocl
 
-   ```console
-   $ sudo apt-get update
-   $ sudo apt-get install nanocl nanocld -y
+   ```sh
+   sudo apt-get update
+   sudo apt-get install nanocl nanocld -y
    ```
 
    > Receiving a GPG error when running `apt-get update`? Your default umask may

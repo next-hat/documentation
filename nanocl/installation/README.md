@@ -1,17 +1,25 @@
-# Nanocl installation instruction
+<h1 id="nxtmdoc-meta-title">Nanocl installation instruction</h1>
 
-<strong>
-This section includes the reference installation for nanocl
-</strong>
+<blockquote class="tags">
+ <strong>Tags</strong>
+ </br>
+ <span id="nxtmdoc-meta-keywords">
+  documentation, installation, summary
+ </span>
+</blockquote>
+
+<p id="nxtmdoc-meta-description">
+This section include the summary for different way to install nanocl
+</p>
 
 <table>
   <tr>
     <th align="left">
-      <img class="nxtmdoc-delete" width="400" height="0">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Title</p>
     </th>
     <th align="left">
-      <img class="nxtmdoc-delete" width="400" height="0">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Description</p>
     </th>
   </tr>

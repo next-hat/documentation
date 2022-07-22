@@ -2,29 +2,24 @@
 
 <blockquote class="tags">
  <strong>Tags</strong>
- <p id="nxtmdoc-meta-keywords">
+ </br>
+ <span id="nxtmdoc-meta-keywords">
   documentation, summary
- </p>
+ </span>
 </blockquote>
 
-</br>
-</br>
-
-<strong id="nxtmdoc-meta-description">
+<p id="nxtmdoc-meta-description">
 This section include the summary for nanocl documentation
-</strong>
-
-</br>
-</br>
+</p>
 
 <table>
   <tr>
     <th align="left">
-      <img width="506" height="1">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Title</p>
     </th>
     <th align="left">
-      <img width="506" height="1">
+      <img class="nxtmdoc-delete" width="506" height="1" />
       <p>Description</p>
     </th>
   </tr>

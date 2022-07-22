@@ -13,6 +13,7 @@ This section include the summary for nanocl guides
 
 </br>
 
+<div width="100%">
 <table width="100%">
   <tr>
     <th align="left">
@@ -39,3 +40,4 @@ This section include the summary for nanocl guides
     </td>
   </tr>
 </table>
+</div>

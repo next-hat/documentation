@@ -1,7 +1,14 @@
-# Nanocl guides
+<h1 id="nxtmdoc-meta-title">Nanocl guides</h1>
 
-<strong>
-This section includes the guides for nanocl
+<blockquote class="tags">
+ <strong>Tags</strong>
+ <p id="nxtmdoc-meta-keywords">
+  documentation, guides, summary
+ </p>
+</blockquote>
+
+<strong id="nxtmdoc-meta-description">
+This section include the summary for nanocl guides
 </strong>
 
 <table>
@@ -15,7 +22,7 @@ This section includes the guides for nanocl
   </tr>
   <tr>
     <td>
-      <a href="./installation/">Installation</a>
+      <a href="../installation/">Installation</a>
     </td>
     <td>
       Installation guide

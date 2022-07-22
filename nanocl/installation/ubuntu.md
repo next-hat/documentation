@@ -40,7 +40,7 @@ You can install Nanocl in different ways, depending on your needs:
 
    ```console
    $ sudo mkdir -p /etc/apt/keyrings
-   $ curl -fsSL https://download.next-hat.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/next-hat.gpg
+   $ curl -fsSL https://download.next-hat.com/repo/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/next-hat.gpg
    ```
 3. Use the following command to set up the repository:
 

@@ -1,7 +1,14 @@
-# Nanocl documentation
+<h1 id="nxtmdoc-meta-title">Nanocl documentation</h1>
 
-<strong>
-This section includes the reference documentation for nanocl
+<blockquote class="tags">
+ <strong>Tags</strong>
+ <p id="nxtmdoc-meta-keywords">
+  documentation, summary
+ </p>
+</blockquote>
+
+<strong id="nxtmdoc-meta-description">
+This section include the summary for nanocl documentation
 </strong>
 
 <table>

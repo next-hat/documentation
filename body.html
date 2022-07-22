@@ -1,0 +1,112 @@
+<style>
+
+.body-icon {
+  font-size: 60px;
+  color: orange;
+  font-family: "Font Awesome 6 Free" !important;
+}
+
+.body-card-holder {
+  display: flex;
+  flex: 1;
+  padding: 8px;
+  max-width: calc(((100% / 2) - (8px * 2)));
+  min-width: calc(((100% / 2) - (8px * 2)));
+}
+
+@media only screen and (max-width: 800px) {
+  .body-card-holder {
+    min-width: 100%;
+    padding: 8px 0px;
+  }
+}
+
+.body-card {
+  margin: 0px;
+  outline: none;
+  display: flex;
+  min-height: 152px;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px 36px;
+  background-color: white;
+  transition: transform 150ms ease-in-out;
+  transition-property: transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0s;
+  box-shadow: 0 3px 6px rgb(11 33 74 / 9%), 0 -2px 2px rgb(11 33 74 / 3%);
+}
+
+.body-card:hover {
+  opacity: 1;
+  transform: scale(1.01);
+}
+
+.body-card-title {
+  font-size: 22px;
+  margin: 8px 0px;
+}
+
+.body-card-description {
+  font-size: 14px;
+  margin: 0px;
+}
+
+.body-cards {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.body-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+</style>
+
+<div class="body-content">
+  <div class="body-cards">
+    <div class="body-card-holder">
+      <a href="/nanocl/guides/get-started" class="body-card">
+        <i class="fas fa-rocket body-icon"></i>
+        <h5 class="body-card-title">Get started</h5>
+        <p class="body-card-description">
+          Learn Nanocl basics and the benefits of hybrid cloud.
+        </p>
+      </a>
+    </div>
+    <div class="body-card-holder">
+      <a href="/nanocl/installation" class="body-card">
+        <i class="fas fa-cloud-arrow-down body-icon"></i>
+        <h5 class="body-card-title">Download and install</h5>
+        <p class="body-card-description">
+          Download and install Nanocl on your machine or server in a few easy steps.
+        </p>
+      </a>
+    </div>
+    <div class="body-card-holder">
+      <a href="/nanocl/guides" class="body-card">
+        <i class="fas fa-circle-info body-icon"></i>
+        <h5 class="body-card-title">Guides</h5>
+        <p class="body-card-description">
+          Learn how to set up your Nanocl environment and start containerizing
+          your applications.
+        </p>
+      </a>
+    </div>
+    <div class="body-card-holder">
+      <a href="/nanocl/references" class="body-card">
+        <i class="fas fa-terminal body-icon"></i>
+        <h5 class="body-card-title">References</h5>
+        <p class="body-card-description">
+          Browse through the CLI reference documentation.
+        </p>
+      </a>
+    </div>
+  </div>
+</div>

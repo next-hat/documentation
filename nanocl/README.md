@@ -14,11 +14,11 @@ This section include the summary for nanocl documentation
 <table>
   <tr>
     <th align="left">
-      <img width="441" height="1">
+      <img width="506" height="1">
       <p>Title</p>
     </th>
     <th align="left">
-      <img width="441" height="1">
+      <img width="506" height="1">
       <p>Description</p>
     </th>
   </tr>

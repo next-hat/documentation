@@ -40,7 +40,7 @@ machine.</br> If you do not have nanocl installed, see
   </tr>
   <tr>
     <td>
-      <a href="./1.orientation-and-setup.mc">Orientation and setup</a>
+      <a href="./1.orientation-and-setup.md">Orientation and setup</a>
     </td>
     <td>
       Your first step using <code class="plaintext">nanocl</code>

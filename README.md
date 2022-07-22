@@ -29,10 +29,18 @@ Official next hat documentation repository for [docs.next-hat.com](https://docs.
   </tr>
   <tr>
     <td>
-      <a href="./nanocl/">Nanocl</a>
+      <a href="./setups/">Guides</a>
     </td>
     <td>
-      How to use nanocl
+      How to install and setup Next Hat products and tools
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./guides/">Guides</a>
+    </td>
+    <td>
+      How to use Next Hat products and tools
     </td>
   </tr>
 </table>

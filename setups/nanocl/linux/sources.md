@@ -12,8 +12,6 @@
 This section contains required procedures for installing Nanocl from sources.
 </p>
 
-## Linux
-
 1.  Install rustlang
 
     ```sh

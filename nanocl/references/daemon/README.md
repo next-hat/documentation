@@ -1,1 +1,0 @@
-# Nanocl daemon (nanocld)

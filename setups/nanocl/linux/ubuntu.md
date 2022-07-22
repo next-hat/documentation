@@ -4,7 +4,7 @@
  <strong>Tags</strong>
  </br>
  <span id="nxtmdoc-meta-keywords">
-  documentation, ubuntu, installation
+  documentation, nanocl , setup, installation, ubuntu
  </span>
 </blockquote>
 

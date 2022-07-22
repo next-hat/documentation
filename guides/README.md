@@ -1,4 +1,4 @@
-<h1 id="nxtmdoc-meta-title">Nanocl guides</h1>
+<h1 id="nxtmdoc-meta-title">Next Hat guides</h1>
 
 <blockquote class="tags">
  <strong>Tags</strong>
@@ -9,7 +9,7 @@
 </blockquote>
 
 <p id="nxtmdoc-meta-description">
-This section include the summary for nanocl guides
+This section include the summary guides for Next Hat products and tools
 </p>
 
 <table width="100%">
@@ -25,18 +25,10 @@ This section include the summary for nanocl guides
   </tr>
   <tr>
     <td>
-      <a href="./../installation/">Installation</a>
+      <a href="./nanocl/get-started">Nanocl</a>
     </td>
     <td>
-      Installation guide
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./get-started/">Get started</a>
-    </td>
-    <td>
-      Get started with nanocl
+      Guide for Nanocl
     </td>
   </tr>
 </table>

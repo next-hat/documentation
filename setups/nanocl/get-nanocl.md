@@ -1,18 +1,18 @@
-<h1 id="nxtmdoc-meta-title">Nanocl installation instruction</h1>
+<h1 id="nxtmdoc-meta-title">Get nanocl</h1>
 
 <blockquote class="tags">
  <strong>Tags</strong>
  </br>
  <span id="nxtmdoc-meta-keywords">
-  documentation, installation, summary
+  nanocl, documentation, setup, install, summary
  </span>
 </blockquote>
 
 <p id="nxtmdoc-meta-description">
-This section include the summary for different way to install nanocl
+Summary setups guides for Nanocl CLI and DAEMON
 </p>
 
-<table>
+<table width="100%">
   <tr>
     <th align="left">
       <img class="nxtmdoc-delete" width="506" height="1" />
@@ -25,26 +25,27 @@ This section include the summary for different way to install nanocl
   </tr>
   <tr>
     <td>
-      <a href="./ubuntu.md">Ubuntu/Debian</a>
+      <a href="./../linux/ubuntu.md">Ubuntu/Debian</a>
     </td>
     <td>
-      Install for Ubuntu/Debian based distro
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./from-sources.md">From sources</a>
-    </td>
-    <td>
-      Install from sources
+      Install and setup nanocl on Ubuntu or Debian based system.
     </td>
   </tr>
     <tr>
     <td>
-      <a href="./post-installation.md">Post installation</a>
+      <a href="./../linux/sources.md">From Sources</a>
     </td>
     <td>
-      Requirement after installation.
+      Install and setup nanocl on Linux from sources
+    </td>
+  </tr>
+    </tr>
+    <tr>
+    <td>
+      <a href="./../post-installation.md">Post installation</a>
+    </td>
+    <td>
+      Post installation guides required to start to step in.
     </td>
   </tr>
 </table>

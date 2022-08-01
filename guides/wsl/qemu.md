@@ -31,7 +31,7 @@ Simpler guide for building a custom Linux kernel for WSL 2 optimized for running
     cd "$(find -type d -name "WSL2-Linux-Kernel-linux-msft-wsl-*")"
     ```
 
-<h2>Tweak the Microsoft kernel<h2>
+<h2>Tweak the Microsoft kernel</h2>
 
 1.  Copy the default Microsoft kernel configuration
     ```sh

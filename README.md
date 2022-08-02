@@ -19,11 +19,11 @@ Official next hat documentation repository for [docs.next-hat.com](https://docs.
 <table>
   <tr>
     <th align="left">
-      <img class="nxtmdoc-delete" width="506" height="1" />
+      <img class="nxtmdoc-delete" height="1" />
       <p>Title</p>
     </th>
     <th align="left">
-      <img class="nxtmdoc-delete" width="506" height="1" />
+      <img class="nxtmdoc-delete" height="1" />
       <p>Description</p>
     </th>
   </tr>

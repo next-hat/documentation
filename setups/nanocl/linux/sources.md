@@ -57,11 +57,6 @@ This section contains required procedures for installing Nanocl from the source 
     You will find a .deb package inside `target/debian` folder or release binary in
     `target/release` folder.
     
-6.  Install the .deb package 
- 
-    ```sh
-    sudo dpkg -i ./target/debian/nanocld_0.1.1_amd64.deb
-    ```
 <h2>cli installation</h2>
 
 1.  Clone the repository 
@@ -74,6 +69,7 @@ This section contains required procedures for installing Nanocl from the source 
     ```sh
     sh ./scripts/release_nanocl.sh
     ```
-
+    You will find a .deb package inside `target/debian` folder or release binary in
+    `target/release` folder.
 
 

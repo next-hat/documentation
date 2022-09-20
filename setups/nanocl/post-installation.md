@@ -22,7 +22,7 @@ sudo. The Nanocl daemon always runs as the root user.
 
     ```sh
     sudo groupadd nanocl
-    sudo usermod -aG nanocl YOUR_USERNAME
+    sudo usermod -aG nanocl $USER
     newgrp nanocl
     ```
 
@@ -51,7 +51,7 @@ sudo. The Nanocl daemon always runs as the root user.
     - postgresql as nanocld database
 
     ```sh
-    nanocld --install-services
+    nanocld --install-components
     ```
 
 5.  Then start the daemon

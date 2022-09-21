@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir ~/.ssh
           touch ~/.ssh/known_hosts
-          sudo chown -v $USER ~/.ssh/known_hosts
+          sudo chown -v runner ~/.ssh/known_hosts
           ssh-keyscan -H 164.132.172.153
           ssh-keygen -R 164.132.172.153
           sshpass -p $PASSWORD scp -r . $USER@164.132.172.153:/opt/next-hat-doc

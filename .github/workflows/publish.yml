@@ -1,0 +1,24 @@
+# Run Eslint and Clippy
+
+name: Eslint & Clippy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    strategy:
+      fail-fast: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+     
+      - name: Deploy
+        env:
+          USER: ${{ secrets.DEPLOY_USER }}
+          PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+        run: scp -r * $USER@next-hat.com:/opt/next-hat-doc/ -p $PASSWORD

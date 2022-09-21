@@ -1,4 +1,4 @@
-# Run Eslint and Clippy
+# Publish to docs.next-hat.com
 
 name: Publish
 
@@ -26,4 +26,4 @@ jobs:
         env:
           USER: ${{ secrets.DEPLOY_USER }}
           PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-        run: sshpass -p $PASSWORD scp -r $PWD $USER@next-hat.com:/opt/next-hat-doc
+        run: sshpass -p "$PASSWORD" scp -r $USER@next-hat.com:/opt/next-hat-doc $PWD

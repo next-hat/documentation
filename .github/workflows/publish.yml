@@ -27,7 +27,5 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
-          mkdir -p /home/runner/.ssh
-          touch /home/runner/.ssh/known_hosts
           ssh-keygen -R 164.132.172.153
-          sshpass -p $PASSWORD scp -r . $USER@164.132.172.153:/opt/next-hat-doc
+          sshpass -p "$PASSWORD" scp -r . $USER@164.132.172.153:/opt/next-hat-doc

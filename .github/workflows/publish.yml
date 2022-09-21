@@ -27,4 +27,4 @@ jobs:
           SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          sshpass -e ssh next-hat-doc@164.132.172.153 ls
+          sshpass -e ssh -o StrictHostKeyChecking=no $USER@next-hat.com ls

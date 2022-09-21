@@ -7,46 +7,24 @@
  <strong>Tags</strong>
  </br>
  <span id="nxtmdoc-meta-keywords">
-  documentation, summary
+  Next.js, Documentation, Generator
  </span>
 </blockquote>
 
-Official next hat documentation repository for [docs.next-hat.com](https://docs.next-hat.com)
-
 </br>
 </br>
 
-<table>
-  <tr>
-    <th align="left">
-      <img class="nxtmdoc-delete" height="1" />
-      <p>Title</p>
-    </th>
-    <th align="left">
-      <img class="nxtmdoc-delete" height="1" />
-      <p>Description</p>
-    </th>
-  </tr>
-  <tr>
-    <td>
-      <a href="/setups/">Setups</a>
-    </td>
-    <td>
-      How to install and setup Next Hat products and tools
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="/guides/">Guides</a>
-    </td>
-    <td>
-      How to use Next Hat products and tools
-    </td>
-  </tr>
-</table>
+<p id="nxtmdoc-meta-description">
+Official Next Hat Documentation repository for <a href="https://docs.next-hat.com">docs.next-hat.com</a>
+<p>
+
+-   [Setups](/setups/) </br>
+    How to install and setup Next Hat products and tools.
+
+-   [Guides](/guides/) </br>
+    How to use Next Hat products and favorite tools.
 
 </br>
-</br>
 
-# Contribution
-Any contribution is welcome it will be online as soon it merged to master.
+## Contribution
+Any contribution are welcome it will be online as soon as it merged to master.

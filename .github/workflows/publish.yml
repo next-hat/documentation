@@ -1,6 +1,6 @@
 # Run Eslint and Clippy
 
-name: Eslint & Clippy
+name: Publish
 
 on:
   push:
@@ -21,4 +21,4 @@ jobs:
         env:
           USER: ${{ secrets.DEPLOY_USER }}
           PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-        run: scp -r * $USER@next-hat.com:/opt/next-hat-doc/ -p $PASSWORD
+        run: scp -r ./* $USER@next-hat.com:/opt/next-hat-doc/ -p $PASSWORD

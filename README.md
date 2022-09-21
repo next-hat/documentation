@@ -29,7 +29,7 @@ Official next hat documentation repository for [docs.next-hat.com](https://docs.
   </tr>
   <tr>
     <td>
-      <a href="./setups/">Guides</a>
+      <a href="/setups/">Setups</a>
     </td>
     <td>
       How to install and setup Next Hat products and tools
@@ -37,7 +37,7 @@ Official next hat documentation repository for [docs.next-hat.com](https://docs.
   </tr>
   <tr>
     <td>
-      <a href="./guides/">Guides</a>
+      <a href="/guides/">Guides</a>
     </td>
     <td>
       How to use Next Hat products and tools

@@ -72,3 +72,6 @@ You can install Nanocl in different ways, depending on your needs:
    > not be set correctly, causing the public key file for the repo to not be
    > detected.</br> Run the following command and then try to update your repo
    > again:</br> `sudo chmod a+r /etc/apt/keyrings/next-hat.gpg`
+
+Congratz you are now able to you Nanocl !
+To continue see our [post installation guide](/setups/nanocl/post-installation.md)

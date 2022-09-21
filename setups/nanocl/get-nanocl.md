@@ -25,7 +25,7 @@ Summary setups guides for Nanocl CLI and DAEMON
   </tr>
   <tr>
     <td>
-      <a href="./../linux/ubuntu.md">Ubuntu/Debian</a>
+      <a href="/setups/nanocl/linux/ubuntu.md">Ubuntu/Debian</a>
     </td>
     <td>
       Install and setup nanocl on Ubuntu or Debian based system.
@@ -33,7 +33,7 @@ Summary setups guides for Nanocl CLI and DAEMON
   </tr>
     <tr>
     <td>
-      <a href="./../linux/sources.md">From Sources</a>
+      <a href="/setups/nanocl/linux/sources.md">From Sources</a>
     </td>
     <td>
       Install and setup nanocl on Linux from sources
@@ -42,7 +42,7 @@ Summary setups guides for Nanocl CLI and DAEMON
     </tr>
     <tr>
     <td>
-      <a href="./../post-installation.md">Post installation</a>
+      <a href="/setups/nanocl/post-installation.md">Post installation</a>
     </td>
     <td>
       Post installation guides required to start to step in.

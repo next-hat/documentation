@@ -25,7 +25,7 @@ Summary setups guides for Next Hat products and tools
   </tr>
   <tr>
     <td>
-      <a href="./nanocl/get-nanocl.md">Nanocl</a>
+      <a href="/setups/nanocl/get-nanocl.md">Nanocl</a>
     </td>
     <td>
       Install and setup `nanocl` on your machine or server.

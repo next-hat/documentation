@@ -25,7 +25,7 @@ This section include the summary of manual page for Next Hat based product
   </tr>
   <tr>
     <td>
-      <a href="./nanocl/cli">Nanocl CLI</a>
+      <a href="/references/nanocl/cli">Nanocl CLI</a>
     </td>
     <td>
       Nanocl CLI man pages

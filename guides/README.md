@@ -25,7 +25,7 @@ This section include the summary guides for Next Hat products and tools
   </tr>
   <tr>
     <td>
-      <a href="./nanocl/get-started/1.orientation-and-setup.md">Nanocl</a>
+      <a href="/guides/nanocl/get-started/1.orientation-and-setup.md">Nanocl</a>
     </td>
     <td>
       Guide for Nanocl

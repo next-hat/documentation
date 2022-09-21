@@ -11,11 +11,11 @@
 <p id="nxtmdoc-meta-description">
 This page contains step-by-step instructions on how to setup Next.js with Tauri from scratch.
 In this tutorial, you’ll see how to:
+</p>
 
 - Install Next.js
 - Install Tauri
 - Build both of them for production
-</p>
 
 <h2>
 Motivation

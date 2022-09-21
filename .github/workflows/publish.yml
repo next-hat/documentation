@@ -27,5 +27,4 @@ jobs:
           SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          sshpass -e ssh $USER@164.132.172.153 ls /opt/next-hat-doc
-          sshpass -e scp -r . $USER@164.132.172.153:/opt/next-hat-doc
+          sshpass -e ssh next-hat-doc@164.132.172.153 ls

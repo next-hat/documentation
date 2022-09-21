@@ -21,4 +21,4 @@ jobs:
         env:
           USER: ${{ secrets.DEPLOY_USER }}
           PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-        run: sshpass -p "$PASSWORD" scp -r next-hat-doc@next-hat.com:/opt/next-hat-doc $PWD
+        run: sshpass -p $PASSWORD scp -r $PWD $USER@next-hat.com:/opt/next-hat-doc

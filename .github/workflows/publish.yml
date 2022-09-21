@@ -27,4 +27,4 @@ jobs:
           SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          sshpass -e scp -o StrictHostKeyChecking=no -r $PWD $USER@next-hat.com:/opt/next-hat-doc
+          sshpass -e scp -o StrictHostKeyChecking=no -r $PWD/* $USER@next-hat.com:/opt/next-hat-doc/

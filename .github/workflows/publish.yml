@@ -28,6 +28,6 @@ jobs:
           PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
           mkdir -p /home/runner/.ssh
-          touch /home/runner/.sshknown_hosts
+          touch /home/runner/.ssh/known_hosts
           ssh-keygen -R next-hat.com
           sshpass -p $PASSWORD scp -r . $USER@next-hat.com:/opt/next-hat-doc

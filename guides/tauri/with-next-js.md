@@ -4,7 +4,7 @@
 	<strong>Tags</strong>
 	</br>
  <span id="nxtmdoc-meta-keywords">
-	  Guide, Tutorial, Tauri, Next, Next.js, Nextauri, Crossplatform, App, Windows, Linux, Mac
+	  guide, tutorial, tauri, next, next.js, nextauri, crossplatform, app, windows, linux, mac, starter, next tauri, next tauri starter
   </span>
 </blockquote>
 

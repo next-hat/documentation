@@ -18,13 +18,6 @@
 Official Next Hat Documentation repository for <a href="https://docs.next-hat.com">docs.next-hat.com</a>
 <p>
 
--   [Setups](/setups/) </br>
-    How to install and setup Next Hat products and tools.
-
--   [Guides](/guides/) </br>
-    How to use Next Hat products and favorite tools.
-
-</br>
-
 ## Contribution
-Any contribution are welcome it will be online as soon as it merged to master.
+
+Any contribution are welcome it will be online as soon as it merged.

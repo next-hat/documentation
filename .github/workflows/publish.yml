@@ -38,7 +38,7 @@ jobs:
           SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          sshpass -e ssh -o StrictHostKeyChecking=no -nNT -L /run/nanocl/nanocl.sock:/run/nanocl/nanocl.sock $USER@next-hat.com
+          sshpass -e ssh -f -o StrictHostKeyChecking=no -nNT -L /run/nanocl/nanocl.sock:/run/nanocl/nanocl.sock $USER@next-hat.com
       - name: Build image
         run: nanocl git-repository build docs-next-hat
       

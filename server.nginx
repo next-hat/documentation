@@ -7,6 +7,16 @@ server {
 
   error_page 404 /404.html;
 
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_min_length 256;
+  # gzip_proxied expired no-cache no-store private auth;
+  gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/javascript application/xml font/eot font/otf font/ttf;
+  
+  gzip_disable "MSIE [1-6]\.";
+
   ## All static files will be cached.
   location ~* ^.+\.(?:css|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
     access_log off;

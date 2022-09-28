@@ -11,6 +11,7 @@
   background-image: url('/img/cloud.webp');
   background-size: cover;
   display: flex;
+  background-color: transparent !important;
 }
 
 .heroTitle {

@@ -19,8 +19,6 @@ jobs:
 
       - name: Install nanocl CLI
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ca-certificates curl gnupg lsb-release openssl
           sudo mkdir -p /etc/apt/keyrings
           curl -fsSL https://download.next-hat.com/repo/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/next-hat.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/next-hat.gpg] https://download.next-hat.com/repo/linux/ubuntu stable main" | sudo tee /etc/apt/sources.list.d/next-hat.list > /dev/null

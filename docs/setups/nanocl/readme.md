@@ -2,7 +2,7 @@
 title: Get Nanocl
 description: Summary setups guides for Nanocl CLI and DAEMON.
 keywords: [nanocl, documentation, setup, install, summary]
-image: /img/cloud2.webp
+image: /img/logo.webp
 sidebar_label: Nanocl
 ---
 

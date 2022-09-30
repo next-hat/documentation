@@ -2,7 +2,7 @@
 title: Install Nanocl on Linux from Sources
 description: This section contains required procedures for installing Nanocl from the source code.
 keywords: [documentation, nanocl , setup, installation, from sources]
-image: /img/cloud2.webp
+image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: From Sources
 pagination_prev: setups/nanocl/readme

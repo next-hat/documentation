@@ -1,6 +1,6 @@
 ---
 keywords: [documentation, guides, summary]
-image: /img/cloud2.webp
+image: /img/logo.webp
 sidebar_label: Guides
 pagination_next: null
 pagination_prev: null

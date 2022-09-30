@@ -2,7 +2,7 @@
 title: Get started with Nanocl
 description: Welcome! We are excited that you want to learn Nanocl. This page contains instructions on how to get started with nanocl.
 keywords: [documentation, guides, summary]
-image: /img/cloud2.webp
+image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: Get started
 ---

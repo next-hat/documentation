@@ -2,7 +2,7 @@
 title: Install Nanocl on Ubuntu
 description: This section contains required procedures for installaling Nanocl on Ubuntu.
 keywords: [documentation, nanocl , setup, installation, ubuntu]
-image: /img/cloud2.webp
+image: /img/logo.webp
 sidebar_position: 1
 sidebar_label: Ubuntu / Debian
 pagination_next: setups/nanocl/linux/post-installation

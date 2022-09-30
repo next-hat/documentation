@@ -73,11 +73,24 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      metadata: [{name: 'keywords', content: 'Next Hat, next, hat, next-hat, next hat, next, hat, documentation, doc, next hat doc, next doc, hat doc, nanocl, docker, container, cluster, replication, hight avaibility, daemon, vpn, ipsec, ikev2, cloud, cloud-hybride, hybrid, devops, blazing fast, cicd, qemu, vm, virtual machine'}],
+      metadata: [
+        {
+          name: 'keywords',
+          content: 'Next Hat, next, hat, next-hat, next hat, next, hat, documentation, doc, next hat doc, next doc, hat doc, nanocl, docker, container, cluster, replication, hight avaibility, daemon, vpn, ipsec, ikev2, cloud, cloud-hybride, hybrid, devops, blazing fast, cicd, qemu, vm, virtual machine',
+        },
+        {
+          name: 'description',
+          content: 'Welcome on Next Hat documentation, you will find guides on how to use Next Hat products and tools.',
+        },
+        {
+          name: 'og:image',
+          content: '/src/logo.webp',
+        }
+      ],
       colorMode: {
         defaultMode: 'dark',
         disableSwitch: false,
-        respectPrefersColorScheme: true,
+        respectPrefersColorScheme: false,
       },
       navbar: {
         title: 'Next Hat Docs',

@@ -89,6 +89,14 @@ code {
   background-color: #ff9800;
 }
 
+.navbar-sidebar__brand button:hover {
+  background-color: #ff9800;
+}
+
+.navbar-sidebar__brand button {
+  color: white;
+}
+
 .gsc-selected-option-container {
   width: 100px;
 }

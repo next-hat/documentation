@@ -2,7 +2,7 @@
 title: Next Hat References
 description: This section include the summary of references and manual page for Next Hat based product and tools.
 keywords: [documentation, cli, references, manual, man, man page]
-image: /img/cloud2.webp
+image: /img/logo.webp
 ---
 
 # Next Hat References

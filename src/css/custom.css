@@ -81,11 +81,11 @@ code {
   color: #ff9800;
 }
 
-button[class='clean-btn toggleButton_node_modules-@docusaurus-theme-classic-lib-theme-ColorModeToggle-styles-module'] {
+.navbar__items--right button {
   color: white;
 }
 
-button[class='clean-btn toggleButton_node_modules-@docusaurus-theme-classic-lib-theme-ColorModeToggle-styles-module']:hover {
+.navbar__items--right button:hover {
   background-color: #ff9800;
 }
 
@@ -134,6 +134,7 @@ nav.menu {
   --ifm-footer-background-color: #1B1B1D;
   --ifm-toc-border-color: #444950;
   --ifm-blockquote-border-color: #1B1B1D;
+  --ifm-footer-color: white;
   /* Text */
   --ifm-color-emphasis-300: white;
   --ifm-color-primary: #ff9800;

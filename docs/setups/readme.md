@@ -1,6 +1,8 @@
 ---
 sidebar_label: Setups
 description: This section include the summary setups for Next Hat products and tools.
+keywords: [documentation, setups, summary]
+image: /img/cloud2.webp
 pagination_next: null
 pagination_prev: null
 ---

@@ -1,8 +1,10 @@
 ---
 title: Nanocl post installation
 description: This section contains required procedures for configuring Nanocl after installation.
-sidebar_label: Post Installation
+keywords: [documentation, nanocl , setup, installation, post installation]
+image: /img/cloud2.webp
 sidebar_position: 3
+sidebar_label: Post Installation
 pagination_prev: setups/nanocl/readme
 pagination_next: guides/nanocl/get-started/readme
 ---

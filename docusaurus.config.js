@@ -12,7 +12,7 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/logo.png',
+  favicon: 'img/logo.webp',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -83,7 +83,9 @@ const config = {
         title: 'Next Hat Docs',
         logo: {
           alt: 'Next Hat logo',
-          src: 'img/logo.png',
+          src: 'img/logo.webp',
+          width: '32',
+          height: '32',
         },
         items: [
           {
@@ -132,17 +134,13 @@ const config = {
             items: [
               {
                 label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                href: 'https://discord.gg/WV4Aac8uZg',
               },
             ],
           },
           {
             title: 'More',
             items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/nxthat',

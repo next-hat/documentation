@@ -1,8 +1,10 @@
 ---
 title: Get started with Nanocl
-sidebar_label: Get started
-sidebar_position: 2
 description: Welcome! We are excited that you want to learn Nanocl. This page contains instructions on how to get started with nanocl.
+keywords: [documentation, guides, summary]
+image: /img/cloud2.webp
+sidebar_position: 2
+sidebar_label: Get started
 ---
 
 # Get started with Nanocl

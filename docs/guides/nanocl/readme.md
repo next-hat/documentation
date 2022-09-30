@@ -1,8 +1,10 @@
 ---
 title: Nanocl
 description: This section include the summary guides for Nanocl.
-sidebar_label: Nanocl
+keywords: [documentation, guides, summary]
+image: /img/cloud2.webp
 sidebar_position: 2
+sidebar_label: Nanocl
 ---
 
 # Nanocl

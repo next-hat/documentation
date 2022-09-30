@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
+import Head from '@docusaurus/Head';
 import {useHistory} from '@docusaurus/router';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
@@ -51,8 +52,13 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      description={siteConfig.description}>
-
+      title={siteConfig.title}
+      description="Welcome on Next Hat documentation, you will find guide and tutorial regarding Next Hat product and tools."
+    >
+      <Head>
+        <meta property="og:image" content="/img/logo.webp" />
+        <meta property="twitter:image" content="/img/logo.webp" />
+      </Head>
       <HomepageHeader />
       <main>
         <HomepageFeatures />

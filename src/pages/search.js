@@ -16,8 +16,12 @@ export default function Search() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      description={siteConfig.description}>
+      title={siteConfig.title}
+      description="Next Hat documentation search page"
+    >
       <Head>
+        <meta property="og:image" content="/img/logo.webp" />
+        <meta property="twitter:image" content="/img/logo.webp" />
         <script async src="https://cse.google.com/cse.js?cx=5c4a0cc2eff9d52d2" />
       </Head>
       <main>

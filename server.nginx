@@ -2,9 +2,9 @@ server {
   listen       80;
   listen  [::]:80;
 
+  autoindex on;
   root /home/node/app;
-  index index.html;
-
+  try_files $uri/index.html $uri.html $uri/ $uri =404;
   error_page 404 /404.html;
 
   gzip on;

@@ -24,7 +24,3 @@ In this tutorial, you’ll learn how to:
 - Patch a cargo
 - Update cluster variables
 - Configure a proxy
-
-| Title      | Description |
-| ----------- | ----------- |
-| [Orientation and Setup](/docs/guides/nanocl/get-started/1.orientation-and-setup.md)   | Get Started with the orientation and setup |

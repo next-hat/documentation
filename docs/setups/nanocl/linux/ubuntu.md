@@ -26,6 +26,9 @@ To install Nanocl, you need the 64-bit version of one of these Ubuntu versions :
 - Ubuntu Focal 20.04 (LTS)
 - Ubuntu Bionic 18.04 (LTS)
 
+And be sure to have a docker installation with the right to communication with `/run/docker.sock`. <br />
+You can see how to install docker on ubuntu [there](https://docs.docker.com/engine/install/ubuntu)
+
 ## Installation methods
 
 You can install Nanocl in different ways, depending on your needs:
@@ -36,6 +39,8 @@ You can install Nanocl in different ways, depending on your needs:
 - Some users download the DEB package and install it manually and manage
   upgrades completely manually. This is useful in situations such as installing
   Nanocl on air-gapped systems with no access to the internet.
+
+- You can also install it from [crates.io](https://crates.io/crates/nanocl)
 
 ### Install using the repository
 
@@ -70,7 +75,7 @@ You can install Nanocl in different ways, depending on your needs:
 
    ```sh
    sudo apt-get update
-   sudo apt-get install nanocl nanocld -y
+   sudo apt-get install -y nanocl
    ```
 
    > **Warning** <br />
@@ -80,6 +85,16 @@ You can install Nanocl in different ways, depending on your needs:
    > ```sh
    > sudo chmod a+r /etc/apt/keyrings/next-hat.gpg
    > ```
+
+### Install from crates.io
+
+If you already have `Rust` and `Cargo` installed you can download nanocl using this command:
+
+```sh
+cargo install nanocl
+```
+
+Be sure to have `libpq` and `openssl` installed
 
 You are almost done !
 To continue see our [post installation guide](/docs/setups/nanocl/linux/post-installation)

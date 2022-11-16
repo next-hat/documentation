@@ -8,20 +8,41 @@ sidebar_label: Overview
 
 # Nanocl overview
 
-Nanocl is an open platform for developing, testing, shipping, and running applications. <br />
-Nanocl enables you to separate your applications from your infrastructure so you can deliver software quickly. <br />
-With Nanocl, you can manage your infrastructure in the same ways you manage your applications. <br />
-By taking advantage of Nanocl’s methodologies for shipping, testing, and deploying code quickly, you can significantly reduce the delay between writing code and running it in production.
+Nanocl is an open-source platform for orchestrating containers and virtual machines across multiple hosts.
+It’s a shortcut for Nano Cloud!
+And it's a lie because it can create big ones.
+Your Hybrid Cloud has never been easier to set up!
+I like to call it an HCO for Hybrid Cloud Orchestrator.
+On dedicated servers or in your home lab, Nanocl can manage your hosts, network, and the applications running inside.
+It enables you to separate your applications using namespaces, clusters, and networks to ensure the best isolation.
+With Nanocl, you can manage your infrastructure and scale it depending on your need.
+By taking advantage of Nanocl and containers methodologies for shipping, testing, and deploying code, you can significantly reduce the delay between writing code and shipping it in production.
+With logs, auto fail-over automatic backups, and zero downtime.
+You can sleep while Nanocl takes care of your infrastructure.
+Your own AWS at home?
+With Nanocl, it’s now possible and for free!
+
 
 ## The Nanocl platform
 
-Nanocl provides the ability to package and run an application in a loosely isolated environment called a cargo.<br />
-The isolation and security allows you to run many containers simultaneously on a given host. <br />
-Cargo are lightweight and contain everything needed to run the application, so you do not need to rely on what is currently installed on the host.<br />
-You can easily share containers while you work, and be sure that everyone you share with gets the same container that works in the same way.
+Nanocl provides the ability to run containers and virtual machines inside clusters and networks, ensuring a perfect isolated environment.
+This isolation ensures security and allows you to run many cargoes across multiple clusters simultaneously on a given host.
+Your clusters can contain variables that will allow you to change the rules of cargo that will join them.
+Cargoes are lightweight configurations based on a container image, containing everything needed to deploy and scale your application or share it while working to be sure that everyone gets it works the same way.
 
-Nanocl provides tooling and a platform to manage the lifecycle of your containers :
 
-- Develop your application and its supporting components using containers.
-- The container becomes the unit for distributing and testing your application.
-- When you’re ready, deploy your application into your production cluster, as a cargo. This works the same whether your production environment is a local data center, a cloud provider, or a hybrid of the two.
+### Manage your clusters
+
+Clusters are like environment configurations that allow you to:
+
+- Manage variables to feed cargoes that will join and dynamically change their rules.
+- Manage networks. Cargoes have to join a cluster and a network to run.
+- Manage proxy templates to configure cargo connections between your networks.
+
+### Manage the lifecycle of your application
+
+- Develop your application and its supporting components using container image.
+- Container image becomes the unit for distributing and testing your application.
+- When ready, create a cargo based on the container image and make it join a cluster.
+- Nanocl will ensure it will always be running and available inside this cluster.
+- You can later update your cargo to deploy an update.

@@ -1,5 +1,5 @@
 ---
-title: Crossplatform app with Next.js and Tauri
+title: Crossplatform app with Next and Tauri
 description: This page contains step-by-step instructions on how to setup Next.js with Tauri from scratch to create crossplatform application backed by Rust and React.
 keywords: [guide, tutorial, tauri, next, next.js, nextauri, crossplatform, app, windows, linux, mac, starter, next tauri, next tauri starter, next tauri, next tauri template, tauri template, next template, next.js template, nextjs template]
 image: /img/logo.webp
@@ -8,7 +8,7 @@ pagination_next: null
 pagination_prev: null
 ---
 
-# Crossplatform app with Next.js and Tauri
+# Crossplatform app with Next and Tauri
 
 > **Tags** <br />
 > guide, tutorial, tauri, next, next.js, nextauri, crossplatform, app, windows, linux, mac, starter, next tauri, next tauri starter

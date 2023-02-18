@@ -6,7 +6,7 @@ import styles from './style.module.css';
 const FeatureList = [
   {
     title: 'Guides',
-    url: '/docs/guides',
+    url: '/guides',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
@@ -16,7 +16,7 @@ const FeatureList = [
   },
   {
     title: 'Download and Install',
-    url: '/docs/setups',
+    url: '/setups',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
@@ -26,7 +26,7 @@ const FeatureList = [
   },
   {
     title: 'References',
-    url: '/docs/references',
+    url: '/references',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
@@ -36,7 +36,7 @@ const FeatureList = [
   },
   {
     title: 'Get started with Nanocl',
-    url: '/docs/guides/nanocl/get-started',
+    url: '/guides/nanocl/get-started',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>

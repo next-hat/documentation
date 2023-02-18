@@ -32,11 +32,13 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        blog: false,
         docs: {
+          path: 'docs',
+          routeBasePath: '/',
+          breadcrumbs: true,
           sidebarPath: require.resolve('./sidebars.js'),
           showLastUpdateTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/nxthat/documentation/tree/master/',
           async sidebarItemsGenerator({
@@ -51,13 +53,6 @@ const config = {
                   item.id !== 'guides/readme' && item.id !== 'setups/readme' && item.id !== 'references/readme'
               )
           },
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/nxthat/documentation/tree/master/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -85,7 +80,7 @@ const config = {
       ],
       colorMode: {
         defaultMode: 'dark',
-        disableSwitch: false,
+        disableSwitch: true,
         respectPrefersColorScheme: false,
       },
       navbar: {
@@ -160,7 +155,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Next Hat and Contributors.`,
       },
       prism: {
-        additionalLanguages: ['nginx', 'yaml', 'rust'],
+        additionalLanguages: ['nginx', 'yaml', 'rust', 'json'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },

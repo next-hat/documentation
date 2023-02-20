@@ -27,7 +27,7 @@ This section contains required procedures for installing Nanocl from the source 
 2.  Clone the repository
 
     ```sh
-    git clone https://github.com/nxthat/nanocld 
+    git clone https://github.com/nxthat/nanocl
     cd nanocld
     ```
 

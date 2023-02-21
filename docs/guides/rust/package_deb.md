@@ -1,19 +1,14 @@
 ---
-title: Your own apt server !
-description: This page contains step-by-step instructions on how to setup your own apt server !
-keywords: [guide, tutorial, apt, server, selfhosted, self-hosted, self, hosted, ubuntu]
+title: Your deb package! !
+description: This page contains step-by-step instructions on how to create your own deb package in rust
+keywords: [guide, tutorial, ubuntu, rust, deb, package, debian, ubutun, pkg]
 image: /img/logo.webp
-sidebar_label: My apt server
+sidebar_label: Package as .deb
 pagination_next: null
 pagination_prev: null
 ---
 
-As an Ubuntu user, I find myself typing apt install ... frequently as a way to install software on my system. But what if I wanted to distribute my code to others via an apt repository? In this guide i'll showcase how to:
-
-* 1) create a deb package in rust
-* 2) create an apt repo
-* 3) signing that apt repo with a PGP key
-* 4) putting it all together to deploy with Docker.
+As an Ubuntu user, I find myself typing apt install ... frequently as a way to install software on my system. But what if I wanted to distribute my code to others via an apt repository? In this guide i'll showcase how to create a deb package in rust.
 
 ## Prerequisites
 
@@ -45,6 +40,8 @@ fn main() {
     println!("Im running version: {}", env!("CARGO_PKG_VERSION"));
 }
 ```
+
+## Using cargo deb
 
 We can package our rust code into `.deb` using `cargo-deb`
 

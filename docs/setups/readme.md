@@ -15,4 +15,4 @@ This section include the summary setups for Next Hat products and tools
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl](/docs/setups/nanocl)   | Install and setup Nanocl on your machine or server     |
+| [Nanocl](/docs/setups/nanocl/readme.md)   | Install and setup Nanocl on your machine or server     |

@@ -14,5 +14,5 @@ This section include the summary of references and manual page for Next Hat base
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl CLI](/docs/references/nanocl/cli)   | Nanocl CLI man pages    |
+| [Nanocl CLI](/docs/references/nanocl/cli.md)   | Nanocl CLI man pages    |
 | [Nanocl DAEMON](/docs/references/nanocl/daemon.md) | Nanocl DAEMON man pages |

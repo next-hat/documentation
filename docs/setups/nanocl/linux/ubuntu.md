@@ -97,4 +97,4 @@ cargo install nanocl
 Be sure to have `libpq` and `openssl` installed
 
 You are almost done !
-To continue see our [post installation guide](/docs/setups/nanocl/linux/post-installation)
+To continue see our [post installation guide](/docs/setups/nanocl/linux/post-installation.md)

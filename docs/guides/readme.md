@@ -16,6 +16,6 @@ But also some guide about Rust, Docker, and other dev and devops tools that Next
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl](/docs/guides/nanocl)   | Guides for Nanocl        |
+| [Nanocl](/docs/guides/nanocl/readme.md)   | Guides for Nanocl        |
 | [Rust](/docs/guides/rust/package_deb.md) | Guide for Rust
 | [Tauri](/docs/guides/tauri/nextjs.md)   | Guides for Tauri        |

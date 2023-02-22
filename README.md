@@ -18,6 +18,21 @@
 Official Next Hat Documentation repository for <a href="https://docs.next-hat.com">docs.next-hat.com</a>
 <p>
 
+## Developing
+
+Start by install dependencies:
+
+```sh
+npm install
+```
+
+Then you can start using:
+
+```sh
+npm start
+```
+
+
 ## Contribution
 
 Any contribution are welcome it will be online as soon as it merged.

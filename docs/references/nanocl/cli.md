@@ -18,31 +18,25 @@ To list available commands, either run `nanocl` with no parameters or execute `n
 
 ```console
 $ nanocl
-nanocl 0.1.2
-Self-Sufficient Hybrid-Cloud Orchestrator
+The Self-Sufficient Hybrid-Cloud Orchestrator CLI
 
-USAGE:
-    nanocl [OPTIONS] <SUBCOMMAND>
+Usage: nanocl [OPTIONS] <COMMAND>
 
-OPTIONS:
-    -H, --host <HOST>    Nanocld host [default: unix://run/nanocl/nanocl.sock]
-    -h, --help           Print help information
-    -V, --version        Print version information
+Commands:
+  namespace  Manage namespaces
+  cargo      Manage cargoes
+  resource   Manage resources
+  events     Watch daemon events
+  state      Apply or Reverse a state from a configuration file
+  info       Show nanocl host information
+  version    Show nanocl version information
+  setup      Setup nanocl daemon
+  help       Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    namespace          Manage namespaces
-    cluster            Manage clusters
-    cargo              Manage cargoes
-    apply              Apply a configuration file
-    revert             Revert a configuration file
-    git-repository     Manage git repositories
-    nginx-template     Manage nginx templates
-    container-image    Manage container images
-    lsc                List container by namespace cluster or cargo
-    run                Run a cargo in given environement
-    exec               Execute command inside a container
-    version            Show the Nanocl version information
-    help               Print this message or the help of the given subcommand(s)
+Options:
+  -H, --host <HOST>  Nanocld host [default: unix://run/nanocl/nanocl.sock]
+  -h, --help         Print help
+  -V, --version      Print version
 ```
 
 ## Description
@@ -82,20 +76,29 @@ For more information about installing Nanocl or `sudo` configuration, refer to t
 To list the help on any command just execute the command, followed by the `--help` option.
 
 ```console
-$ nanocl run --help
-nanocl-run
-Run a cargo in given environement
+$ nanocl cargo --help
+Manage cargoes
 
-USAGE:
-    nanocl run [OPTIONS] --cluster <CLUSTER> --network <NETWORK> --image <IMAGE> <NAME>
+Usage: nanocl cargo [OPTIONS] <COMMAND>
 
-ARGS:
-    <NAME>
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start a cargo by its name
+  stop     Stop a cargo by its name
+  remove   Remove cargo by its name
+  inspect  Inspect a cargo by its name
+  patch    Update a cargo by its name
+  image    Manage cargo image
+  exec     Execute a command inside a cargo
+  history  List cargo history
+  reset    Reset cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  help     Print this message or the help of the given subcommand(s)
 
-OPTIONS:
-        --namespace <NAMESPACE>
-        --cluster <CLUSTER>
-        --network <NETWORK>
-        --image <IMAGE>
-    -h, --help                     Print help information
+Options:
+  -n, --namespace <NAMESPACE>  namespace to target by default global is used
+  -h, --help                   Print help
+  -V, --version                Print version
 ```

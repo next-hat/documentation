@@ -33,14 +33,14 @@ jobs:
 #           sudo apt-get update
 #           sudo apt-get install -y sshpass openssh-client
 
-      - name: Bind Unix Socket
-        env:
-          SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
-          USER: ${{ secrets.DEPLOY_USER }}
-        run: |
-          sshpass -e ssh -f -o StrictHostKeyChecking=no -nNT -L /run/nanocl/nanocl.sock:/run/nanocl/nanocl.sock $USER@next-hat.com
-      - name: Build image
-        run: nanocl git-repository build docs-next-hat
+      # - name: Bind Unix Socket
+      #   env:
+      #     SSHPASS: ${{ secrets.DEPLOY_PASSWORD }}
+      #     USER: ${{ secrets.DEPLOY_USER }}
+      #   run: |
+      #     sshpass -e ssh -f -o StrictHostKeyChecking=no -nNT -L /run/nanocl/nanocl.sock:/run/nanocl/nanocl.sock $USER@next-hat.com
+      # - name: Build image
+      #   run: nanocl git-repository build docs-next-hat
       
-      - name: Patch cargo with new image
-        run: nanocl cargo patch docs-next-hat set --image docs-next-hat:master
+      # - name: Patch cargo with new image
+      #   run: nanocl cargo patch docs-next-hat set --image docs-next-hat:master

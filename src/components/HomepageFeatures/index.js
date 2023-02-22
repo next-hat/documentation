@@ -10,7 +10,8 @@ const FeatureList = [
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Learn how to use our products and tools such as Nanocl.
+        Browse our guides to learn how to use Next Hat tools.
+        But also some guide about Rust, Docker, and other dev and devops tools that Next hat use!
       </>
     ),
   },
@@ -20,7 +21,7 @@ const FeatureList = [
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-         Download and install Next Hat tools like Nanocl in a few easy steps.
+         Download and install Next Hat tools in a few easy steps.
       </>
     ),
   },

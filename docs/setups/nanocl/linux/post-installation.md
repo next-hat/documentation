@@ -33,7 +33,8 @@ By default that Unix socket is owned by the user `root` and other users can only
     This will download and run a bench images such as:
     
     * cockroachdb as store
-    * nanocl-daemon as daemon to manage and orchestrate <br /><br />
+    * nanocld as the nanocl daemon to manage and orchestrate
+    * metersd to collect metrics from your hosts <br /><br />
 
     ```sh
     nanocl setup

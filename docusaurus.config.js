@@ -155,7 +155,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Next Hat and Contributors.`,
       },
       prism: {
-        additionalLanguages: ['nginx', 'yaml', 'rust', 'json'],
+        additionalLanguages: ['nginx', 'yaml', 'rust', 'json', 'toml'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },

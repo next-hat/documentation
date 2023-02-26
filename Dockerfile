@@ -1,5 +1,7 @@
 FROM node:16.17.1-alpine AS builder
 
+RUN apk add git
+
 USER node
 
 # Create app directory (with user `node`)
@@ -17,6 +19,7 @@ RUN npm install
 
 # Bundle app source code
 COPY --chown=node . .
+COPY --chown=node ./.git ./.git
 RUN npm run build
 
 FROM nginx:1.23.2-alpine

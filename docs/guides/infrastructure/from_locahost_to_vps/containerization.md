@@ -1,5 +1,8 @@
 ---
 title: Containerization
+description: Containerization is a popular technique used in software development and deployment that involves packaging an application and its dependencies into a single, lightweight container. This page provides a tutorial on containerization using Docker and NGINX, including setting up a simple frontend and backend for a project.
+keywords: [containerization, Docker, Kubernetes, Nanocl, NGINX, software development, deployment, frontend, backend, create-react-app, Next.js, Vite, server-side rendering, static site generation]
+image: /img/logo.webp
 ---
 
 Containerization is a popular technique used in software development and deployment that involves packaging an application and its dependencies into a single, lightweight container. This container can then be deployed on any machine that supports the containerization technology, such as [Docker](https://www.docker.com), [Kubernetes](https://kubernetes.io/) or [Nanocl](https://docs.next-hat.com/guides/nanocl), without the need to install the application or its dependencies separately.

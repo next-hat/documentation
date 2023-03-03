@@ -153,8 +153,8 @@ server {
     listen 443 ssl;
     server_name api.my-domain.com;
 
-    ssl_certificate      /etc/letsencrypt/live/my-domain.com/fullchain.pem;
-    ssl_certificate_key  /etc/letsencrypt/live/my-domain.com/privkey.pem;
+    ssl_certificate      /etc/letsencrypt/live/api.my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/api.my-domain.com/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
 
     if ($scheme != https) {

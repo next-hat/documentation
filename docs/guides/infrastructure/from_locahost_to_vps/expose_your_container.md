@@ -45,12 +45,12 @@ docker run -d --network my-domain --name my-api my-api:0.0.1
 ```
 
 You can notices few flags being used, there is some information on them:
-    - `run`: Create and run a new container from an image.
-    - `-d`: Detached mode run the container in the background and print the new container ID.
-    - `--network`: Set the Network mode for the container.
-    - `--name`: Set the name of your container.
-    - `my-frontend|my-api`: Name of your container.
-    - `my-frontend:0.0.1|my-api:0.0.1`: Image to use to create the container.
+- `run`: Create and run a new container from an image.
+- `-d`: Detached mode run the container in the background and print the new container ID.
+- `--network`: Set the Network mode for the container.
+- `--name`: Set the name of your container.
+- `my-frontend|my-api`: Name of your container.
+- `my-frontend:0.0.1|my-api:0.0.1`: Image to use to create the container.
 
 ## Setting up Nginx
 

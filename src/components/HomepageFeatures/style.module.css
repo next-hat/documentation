@@ -1,6 +1,7 @@
 .body_card_holder {
   display: flex;
   flex: 1;
+  margin: 50px 0px;
   padding: 8px;
   max-width: calc(((100% / 2) - (8px * 2)));
   min-width: calc(((100% / 2) - (8px * 2)));

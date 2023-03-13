@@ -4,20 +4,68 @@
  */
 
 .heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  background-image: url('/img/cloud2.webp');
-  background-size: cover;
+  z-index: 0;
+  height: calc(100vh - 60px);
+  width: 100%;
   display: flex;
-  background-color: transparent !important;
+  position: relative;
+  top: 0;
+  left: 0;
+  aspect-ratio: 4 / 3;
+}
+
+.heroBanner:before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  transition: background-position 350ms ease, transform 350ms ease;
+  background: url('/img/cloud.webp');
+}
+
+.heroBanner:active:before {
+  background-position: 50% 100%;
+}
+
+.heroBanner:hover:before {
+  background-position: 50% 100%;
+}
+
+.heroBanner:hover > .heroBannerContent {
+  background-position: 50% 100%;
+}
+
+.headerBanner:active > .heroBannerContent {
+  background-position: 50% 100%;
 }
 
 .heroTitle {
-  font-size: 28px;
-  line-height: 38px;
+  margin-top: -200px;
+  font-size: 42px;
   font-weight: 600;
+  text-align: center;
+}
+
+.heroBannerContent {
+  position: absolute;
+  background: radial-gradient(
+    rgba(255, 255, 255, 0.2) 4%,
+    transparent 8%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  background-position: 0% 0%;
+  background-size: 5vmin 5vmin;
+  transition: background-position 350ms ease, transform 350ms ease;
+  height: 100%;
+  width: 100%;
 }
 
 @media screen and (max-width: 996px) {
@@ -34,8 +82,8 @@
 
 .form_search {
   display: flex;
-  flex: 1;
   justify-content: center;
+  padding: 0px 14px;
   min-width: 100%;
 }
 
@@ -48,6 +96,7 @@
   margin: 0;
   width: max-content;
   max-width: 500px;
+  min-width: auto;
   border: 0;
   background-color: white;
   color: black;

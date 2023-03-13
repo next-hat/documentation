@@ -17,7 +17,7 @@ pagination_next: guides/nanocl/get-started/readme
 This section contains the required procedures for configuring Nanocl after installation.
 
 The Nanocl daemon binds to a Unix socket instead of a TCP port. <br />
-By default that Unix socket is owned by the user `root` and other users can only access it using sudo. <br />
+By default that Unix socket is owned by the user `root` and group `nanocl` and other users can only access it using sudo or by being in `nanocl` group. <br />
 
 1.  If you don't want to preface the nanocl command with sudo, create a Unix group
     called nanocl and add users to it. When the Nanocl daemon starts, it creates a
@@ -38,6 +38,12 @@ By default that Unix socket is owned by the user `root` and other users can only
 
     ```sh
     nanocl setup
+    ```
+
+    You can choose the group assiociated to the unix socket by passing the `--group` argument to the setup command as follow
+
+    ```sh
+    nanocl setup --group my-custom-group
     ```
 
 3.  Test if everything is good by running:

@@ -14,12 +14,15 @@ WORKDIR /home/node/app
 # where available (npm@5+)
 COPY --chown=node package*.json ./
 
+ENV NODE_ENV=production
+
 # Install dependencies
 RUN npm install
 
 # Bundle app source code
 COPY --chown=node . .
 COPY --chown=node ./.git ./.git
+
 RUN npm run build
 
 FROM nginx:1.23.2-alpine

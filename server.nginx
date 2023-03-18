@@ -2,25 +2,23 @@ server {
   listen       80;
   listen  [::]:80;
 
-  autoindex on;
-  root /home/node/app;
-  try_files $uri/index.html $uri.html $uri/ $uri =404;
-  error_page 404 /404.html;
-
   gzip on;
   gzip_vary on;
   gzip_proxied any;
-  gzip_comp_level 6;
-  # gzip_proxied expired no-cache no-store private auth;
-  gzip_types image/webp image/png text/html text/plain text/css text/xml text/javascript application/x-javascript application/javascript application/xml font/eot font/otf font/ttf;
-  
+  gzip_comp_level 8;
+  gunzip on;
+  gzip_types application/javascript image/* text/css;
   gzip_disable "MSIE [1-6]\.";
+
+  root /home/node/app;
+  error_page 404 /404.html;
+  try_files $uri.html $uri/index.html =404;
 
   ## All static files will be cached.
   location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
     access_log off;
-    expires 30d;
-    add_header Cache-Control public;
+    expires 1y;
+    add_header Cache-Control max-age=31536000;
 
     ## No need to bleed constant updates. Send the all shebang in one
     ## fell swoop.

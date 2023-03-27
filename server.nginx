@@ -1,6 +1,8 @@
 server {
   listen       80;
   listen  [::]:80;
+  
+  rewrite ^/(.*)/$ /$1 permanent;
 
   gzip on;
   gzip_vary on;

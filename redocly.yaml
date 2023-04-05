@@ -4,12 +4,22 @@
 extends:
   - recommended
 
+
 rules:
   no-unused-components: error
 
 theme:
   # See https://redocly.com/docs/api-reference-docs/configuration/functionality/
   openapi:
+    nativeScrollbars: true
+    scrollYOffset: 60
+    expandDefaultServerVariables: true
+    schemaExpansionLevel: 1
+    sortPropsAlphabetically: true
+    sortTagsAlphabetically: true
+    sideNavStyle: id-only
+    mockServer:
+      url: /
     disableSearch: false
     # See https://redocly.com/docs/api-reference-docs/configuration/theming/
     theme:

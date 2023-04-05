@@ -90,13 +90,6 @@ const config = {
       {
         debug: Boolean(process.env.DEBUG || process.env.CI),
         config: path.join(__dirname, 'redocly.yaml'),
-        specs: [
-          {
-            id: 'nanocld-openapi-spec',
-            spec: 'specs/nanocld/swagger.yaml',
-            route: '/references/nanocl/daemon/v0.4',
-          },
-        ],
         theme: {
           /**
            * Highlight color for docs

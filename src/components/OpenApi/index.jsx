@@ -1,15 +1,15 @@
 import React from 'react';
 import ApiDoc from '@theme/ApiDoc';
 
-function OpenApi() {
+function OpenApi(props) {
   return (
     <ApiDoc
       layoutProps={{
-        title: `Client only page using url`,
-        description: 'Example showcasing client only loading of yaml',
+        title: props.title,
+        description: props.description,
       }}
       specProps={{
-        url: '/specs/nanocld/swagger.yaml',
+        url: props.specPath,
       }}
     />
   );

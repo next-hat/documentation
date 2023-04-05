@@ -53,22 +53,6 @@ For more information about installing Nanocl or `sudo` configuration, refer to t
 | **-h**, **\--help** | | Print help information
 | **-V**, **\--version** | | Print version information
 
-<!-- ## Subcommands
-
-| Name      | Description 
-| -------------------- | ----------- 
-| [namespace](/docs/references/nanocl/daemon.md) | Manage namespaces 
-| [cluster](/docs/references/nanocl/daemon.md) | Manage clusters 
-| [cargo](/docs/references/nanocl/daemon.md) | Manage cargoes 
-| [apply](/docs/references/nanocl/daemon.md) | Apply a configuration
-| [revert](/docs/references/nanocl/daemon.md) | Revert a configuration
-| [git-repository](/docs/references/nanocl/daemon.md) | Manage git repositories
-| [nginx-template](/docs/references/nanocl/daemon.md) | Manage nginx templates
-| [container-image](/docs/references/nanocl/daemon.md) | Manage container images
-| [lsc](/docs/references/nanocl/daemon.md) | List container by namespace cluster or cargo
-| [run](/docs/references/nanocl/daemon.md) | Run a cargo for given environement
-| [exec](/docs/references/nanocl/daemon.md) | Execute command inside a container -->
-
 ## Examples
 
 ### Display help text

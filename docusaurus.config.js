@@ -50,9 +50,10 @@ const config = {
               let sidebarItems = await defaultSidebarItemsGenerator(args)
 
               sidebarItems = sidebarItems.map((item) => {
+                // @ts-ignore
                 item.items = item?.items?.map((subItem) => {
-                  console.log(subItem);
                   if (subItem.type === 'category' && subItem.label === 'Daemon') {
+                    /// Add v0.4 reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
                       label: 'v0.4 reference (latest)',

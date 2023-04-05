@@ -1,6 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+const path = require('path');
+
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/oceanicNext');
 
@@ -45,7 +47,23 @@ const config = {
               defaultSidebarItemsGenerator,
               ...args
             }) {
-              const sidebarItems = await defaultSidebarItemsGenerator(args)
+              let sidebarItems = await defaultSidebarItemsGenerator(args)
+
+              sidebarItems = sidebarItems.map((item) => {
+                item.items = item?.items?.map((subItem) => {
+                  console.log(subItem);
+                  if (subItem.type === 'category' && subItem.label === 'Daemon') {
+                    subItem.items.push({
+                      type: 'link',
+                      label: 'v0.4 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.4',
+                    })
+                  }
+                  return subItem;
+                }) || [];
+                return item;
+              });
+
               return sidebarItems.filter(
                 (item) =>
                   // @ts-ignore
@@ -66,6 +84,26 @@ const config = {
           anonymizeIP: false,
         },
       }),
+    ],
+    [
+      'redocusaurus',
+      {
+        debug: Boolean(process.env.DEBUG || process.env.CI),
+        config: path.join(__dirname, 'redocly.yaml'),
+        specs: [
+          {
+            id: 'nanocld-openapi-spec',
+            spec: 'specs/nanocld/swagger.yaml',
+            route: '/references/nanocl/daemon/v0.4',
+          },
+        ],
+        theme: {
+          /**
+           * Highlight color for docs
+           */
+          primaryColor: '#1890ff',
+        },
+      },
     ],
   ],
 
@@ -120,19 +158,6 @@ const config = {
       },
       footer: {
         links: [
-          {
-            title: 'Repositories',
-            items: [
-              {
-                label: 'Nanocl',
-                href: 'https://github.com/nxthat/nanocl',
-              },
-              {
-                label: 'Nanocld',
-                href: 'https://github.com/nxthat/nanocld',
-              },
-            ],
-          },
           {
             title: 'Community',
             items: [

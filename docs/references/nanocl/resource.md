@@ -3,7 +3,7 @@ title: Nanocl Resource References
 keywords: [documentation, references, nanocl, nanocld, resource, specification]
 image: /img/logo.webp
 sidebar_label: Resource
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Resource
@@ -15,7 +15,7 @@ By configuring `ProxyRules`, you can fine-tune the accessibility of your `cargoe
 
 ## Proxy Rule
 
-There is the openapi specification for a `ProxyRule`
+There is the openapi specification to create a proxy `ProxyRule`:
 
 import ApiSchema from '@theme/ApiSchema'
 

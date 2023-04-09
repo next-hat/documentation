@@ -91,6 +91,10 @@ const config = {
       {
         debug: Boolean(process.env.DEBUG || process.env.CI),
         config: path.join(__dirname, 'redocly.yaml'),
+        specs: [{
+          id: 'nanocld-latest',
+          spec: 'static/specs/nanocld/0.4.yaml',
+        }],
         theme: {
           /**
            * Highlight color for docs

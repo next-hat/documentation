@@ -6,7 +6,7 @@ export default function OpenApiPage() {
         <OpenApi
             title="Nanocl Daemon OpenApi Spec"
             description="The OpenApi specification for the Nanocl Daemon."
-            specPath="/specs/nanocld/swagger.yaml"
+            specPath="/specs/nanocld/0.4.yaml"
         />
     );
 }

@@ -4,6 +4,7 @@ description: To list available commands, either run nanocl with no parameters or
 keywords: [documentation, references, nanocl, nanocl CLI, CLI]
 image: /img/logo.webp
 sidebar_label: CLI
+sidebar_position: 1
 ---
 
 # Use the Nanocl command line

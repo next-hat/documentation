@@ -1,6 +1,6 @@
 {
   "name": "docs-next-hat-com",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

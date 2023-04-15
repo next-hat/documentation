@@ -93,7 +93,7 @@ const config = {
         config: path.join(__dirname, 'redocly.yaml'),
         specs: [{
           id: 'nanocld-latest',
-          spec: 'static/specs/nanocld/0.4.yaml',
+          spec: 'static/specs/nanocld/0.5.yaml',
         }],
         theme: {
           /**

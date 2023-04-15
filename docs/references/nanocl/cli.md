@@ -26,18 +26,21 @@ Usage: nanocl [OPTIONS] <COMMAND>
 Commands:
   namespace  Manage namespaces
   cargo      Manage cargoes
+  vm         Manage virtual machines
   resource   Manage resources
   events     Watch daemon events
   state      Apply or Reverse a state from a configuration file
   info       Show nanocl host information
   version    Show nanocl version information
   setup      Setup nanocl daemon
+  ps         Show all processes managed by nanocl
   help       Print this message or the help of the given subcommand(s)
 
 Options:
   -H, --host <HOST>  Nanocld host [default: unix://run/nanocl/nanocl.sock]
   -h, --help         Print help
   -V, --version      Print version
+
 ```
 
 ## Description

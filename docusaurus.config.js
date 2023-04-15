@@ -56,8 +56,8 @@ const config = {
                     /// Add v0.4 reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.4 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.4',
+                      label: 'v0.5 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.5',
                     })
                   }
                   return subItem;

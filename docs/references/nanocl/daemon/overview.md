@@ -16,20 +16,34 @@ nanocld [OPTIONS]
 To list available options, run `nanocld --help` :
 
 ```console
+$ nanocld --help
 Nanocl daemon Self Sufficient Hybrid Cloud Orchestrator
 
 Usage: nanocld [OPTIONS]
 
 Options:
-      --init                       Ensure state is inited
-  -H, --hosts <HOSTS>              Hosts to listen to use tcp:// and unix:// [default: unix:///run/nanocl.sock]
-      --docker-host <DOCKER_HOST>  Docker daemon socket to connect [default: unix:///run/docker.sock]
-      --state-dir <STATE_DIR>      State directory [default: /var/lib/nanocl]
-      --conf-dir <CONF_DIR>        Config directory [default: /etc/nanocl]
-      --gateway <GATEWAY>          Gateway automatically detected to host default source ip gateway if not set
-      --hostname <HOSTNAME>        Hostname to use for the node automatically detected if not set
-  -h, --help                       Print help
-  -V, --version                    Print version
+      --init
+          Ensure state is inited
+  -H, --hosts <HOSTS>
+          Hosts to listen to use tcp:// and unix:// [default: unix:///run/nanocl.sock]
+      --docker-host <DOCKER_HOST>
+          Docker daemon socket to connect [default: unix:///run/docker.sock]
+      --state-dir <STATE_DIR>
+          State directory [default: /var/lib/nanocl]
+      --conf-dir <CONF_DIR>
+          Config directory [default: /etc/nanocl]
+      --gateway <GATEWAY>
+          Gateway automatically detected to host default source ip gateway if not set
+      --hostname <HOSTNAME>
+          Hostname to use for the node automatically detected if not set
+      --node <NODES>
+          Join current node to a cluster
+      --advertise-addr <ADVERTISE_ADDR>
+          Address to advertise to other nodes
+  -h, --help
+          Print help
+  -V, --version
+          Print version
 
 ```
 

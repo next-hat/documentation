@@ -32,7 +32,9 @@ Commands:
   state      Apply or Reverse a state from a configuration file
   info       Show nanocl host information
   version    Show nanocl version information
-  setup      Setup nanocl daemon
+  install    Install nanocl components
+  uninstall  Uninstall nanocl components
+  upgrade    Upgrade nanocl components
   ps         Show all processes managed by nanocl
   help       Print this message or the help of the given subcommand(s)
 

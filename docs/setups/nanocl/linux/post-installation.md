@@ -29,7 +29,7 @@ By default that Unix socket is owned by the user `root` and group `nanocl` and o
     newgrp nanocl
     ```
 
-2.  Then we need to setup nanocl.
+2.  Then we need to install nanocl.
     This will download and run a bench images such as:
     
     * cockroachdb as store
@@ -37,13 +37,13 @@ By default that Unix socket is owned by the user `root` and group `nanocl` and o
     * metersd to collect metrics from your hosts <br /><br />
 
     ```sh
-    nanocl setup
+    nanocl install
     ```
 
-    You can choose the group assiociated to the unix socket by passing the `--group` argument to the setup command as follow
+    You can choose the group assiociated to the unix socket by passing the `--group` argument to the install command as follow
 
     ```sh
-    nanocl setup --group my-custom-group
+    nanocl install --group my-custom-group
     ```
 
 3.  Test if everything is good by running:

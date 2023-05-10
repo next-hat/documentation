@@ -77,11 +77,11 @@ const config = {
           customCss: require.resolve('./src/css/custom.css'),
         },
         gtag: {
-          trackingID: 'G-KRJ1J2E52X',
+          trackingID: 'G-L5PJ2B6W8P',
           anonymizeIP: false,
         },
         googleAnalytics: {
-          trackingID: 'G-KRJ1J2E52X',
+          trackingID: 'G-L5PJ2B6W8P',
           anonymizeIP: false,
         },
       }),

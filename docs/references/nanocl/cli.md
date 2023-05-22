@@ -49,7 +49,7 @@ Options:
 
 Depending on your Nanocl system configuration, you may be required to preface each `nanocl` command with `sudo`. <br />
 To avoid having to use `sudo` with the `nanocl` command, your system administrator can create a Unix group called `nanocl` and add users to it.
-For more information about installing Nanocl or `sudo` configuration, refer to the [installation](/docs/setups/nanocl/readme.md) instructions for your operating system.
+For more information about installing Nanocl or `sudo` configuration, refer to the [installation](/docs/setups/nanocl/linux/ubuntu.md) instructions for your operating system.
 
 ## Options
 

@@ -2,6 +2,8 @@
 title: From localhost to VPS
 description: This comprehensive guide walks you through the step-by-step process of deploying your frontend app and API on a VPS or Dedicated/Baremetal server using Docker containers and Nginx. You'll learn how to create and configure your containers, set up a basic Docker network, and use Nginx to redirect traffic from your domain to your containers. Plus, you'll see how to secure your setup with free SSL certificates using Certbot.
 image: /img/logo.webp
+sidebar_label: Introduction
+sidebar_position: 1
 keywords: [deploying, VPS, Baremetal, Dedicated server, Nginx, guide, frontend app, API, Docker containers, configure, create, basic Docker network, redirect traffic, domain, secure, free SSL certificates, Certbot, architecture, services, frontend, backend, performance, scalability, reliability, separation of concerns, development, maintenance, responsiveness]
 ---
 

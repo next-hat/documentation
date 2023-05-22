@@ -48,7 +48,6 @@ const config = {
               ...args
             }) {
               let sidebarItems = await defaultSidebarItemsGenerator(args)
-
               sidebarItems = sidebarItems.map((item) => {
                 // @ts-ignore
                 item.items = item?.items?.map((subItem) => {
@@ -56,8 +55,8 @@ const config = {
                     /// Add v0.4 reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.6 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.6',
+                      label: 'v0.7 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.7',
                     })
                   }
                   return subItem;
@@ -69,7 +68,7 @@ const config = {
                 (item) =>
                   // @ts-ignore
                   // This makes sure that the landing pages are not duplicated in the sidebars
-                  item.id !== 'guides/readme' && item.id !== 'setups/readme' && item.id !== 'references/readme'
+                  item.id !== 'guides/summary' && item.id !== 'setups/summary' && item.id !== 'references/summary'
               )
           },
         },
@@ -93,7 +92,7 @@ const config = {
         config: path.join(__dirname, 'redocly.yaml'),
         specs: [{
           id: 'nanocld-latest',
-          spec: 'static/specs/nanocld/0.6.yaml',
+          spec: 'static/specs/nanocld/0.7.yaml',
         }],
         theme: {
           /**
@@ -131,19 +130,19 @@ const config = {
           {
             type: 'doc',
             position: 'left',
-            docId: 'guides/readme',
+            docId: 'guides/summary',
             label: 'Guides',
           },
           {
             type: 'doc',
             position: 'left',
-            docId: 'setups/readme',
+            docId: 'setups/summary',
             label: 'Setups',
           },
           {
             type: 'doc',
             position: 'left',
-            docId: 'references/readme',
+            docId: 'references/summary',
             label: 'References',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},

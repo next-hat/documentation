@@ -24,8 +24,8 @@ A `proxy rule` allow you to redirect a specific ip address / port or domain name
 Create a file called `proxy.get-started.yml` and copy the following content:
 
 ```yml
-Type: Resource
-ApiVersion: v0.6
+Kind: Resource
+ApiVersion: v0.7
 
 Resources:
 - Name: get-started.com
@@ -58,19 +58,7 @@ You can see existing resources with:
 nanocl resource ls
 ```
 
-Now we should add get-started.com to the hosts, to do so we need to get our default gateway
-
-We can see it by running:
-
-```sh
-nanocl info
-```
-
-You should see a line with your gateway:
-
-```yml
-HostGateway: 192.x.x.x
-```
+Now we should add get-started.com to the hosts
 
 ```sh
 sudo vim /etc/hosts
@@ -78,7 +66,7 @@ sudo vim /etc/hosts
 
 and add the following line:
 ```console
-192.x.x.x get-started.com
+127.0.0.1 get-started.com
 ```
 
 Now we can test that our proxy rule was working

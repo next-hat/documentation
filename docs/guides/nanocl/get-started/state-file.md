@@ -1,25 +1,25 @@
 ---
-title: State configuration | Nanocl
-description: State configuration to expose your cargo
-keywords: [documentation, nanocl, guides, get started, proxy, configuration, state, file, config, yaml, yml]
+title: StateFile | Nanocl
+description: Use StateFile to manage your state
+keywords: [documentation, nanocl, guides, get started, proxy, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp
 sidebar_position: 4
-sidebar_label: 4. Use state configuration
+sidebar_label: 4. Use StateFile
 pagination_next: null
 ---
 
-# State configuration
+# StateFile
 
 > **Tags** <br />
-> documentation, nanocl, guides, get started, state, configuration
+> documentation, nanocl, guides, get started, statefile
 
-State configuration file are a way to describe the state you want for a specific namespace.
+StateFile are a way to describe the state you want for a specific namespace.
 
 It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
-Type: Deployment
-ApiVersion: v0.6
+Kind: Deployment
+ApiVersion: v0.7
 
 Namespace: global
 
@@ -49,22 +49,16 @@ Resources:
           CargoPort: 9000
 ```
 
-Save this file under `my-cargo.deployment` and apply it using:
+Save this file under `my-cargo.yml` and apply it using:
 
 ```sh
-nanocl state apply -f ./my-cargo.deployment
-```
-
-Recheck what is your host ip in case you forgot:
-
-```sh
-nanocl info
+nanocl state apply -f ./my-cargo.yml
 ```
 
 And test with a simple curl:
 
 ```sh
-curl --header "Host deploy-example.com" my-host-ip
+curl --header "Host: deploy-example.com" 127.0.0.1
 ```
 
 And voila.

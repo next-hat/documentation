@@ -5,8 +5,7 @@ keywords: [documentation, nanocl , setup, installation, post installation]
 image: /img/logo.webp
 sidebar_position: 3
 sidebar_label: Post Installation
-pagination_prev: setups/nanocl/readme
-pagination_next: guides/nanocl/get-started/readme
+pagination_next: guides/nanocl/get-started/orientation-and-setup
 ---
 
 # Nanocl post installation instruction
@@ -53,4 +52,3 @@ By default that Unix socket is owned by the user `root` and group `nanocl` and o
     ```
 
 Congratz you are now able to you use Nanocl ! <br />
-To continue see our [Get Started](/docs/guides/nanocl/get-started/1.orientation-and-setup.md) to get familiar with Nanocl.

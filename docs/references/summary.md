@@ -5,7 +5,7 @@ keywords: [documentation, cli, references, manual, man, man page]
 image: /img/logo.webp
 ---
 
-# Next Hat References
+# References Summary
 
 > **Tags** <br />
 > documentation, cli, references, manual, man, man page

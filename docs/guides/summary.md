@@ -1,7 +1,6 @@
 ---
 keywords: [documentation, guides, summary, nanocl, docker, rust, Tauri, Next.js, next tauri, nextjs tauri, nextjs, next.js]
 image: /img/logo.webp
-sidebar_label: Guides
 pagination_next: null
 pagination_prev: null
 ---
@@ -16,6 +15,5 @@ But also some guide about Rust, Docker, and other dev and devops tools that Next
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl](/docs/guides/nanocl/readme.md)   | Guides for Nanocl        |
-| [Rust](/docs/guides/rust/package_deb.md) | Guide for Rust
-| [Tauri](/docs/guides/tauri/nextjs.md)   | Guides for Tauri        |
+| [Nanocl](/docs/guides/nanocl/overview.md)   | Guides for Nanocl        |
+| [From locahost to vps](/docs/guides/infrastructure/from_locahost_to_vps/introduction.md) | From Local Host to VPS |

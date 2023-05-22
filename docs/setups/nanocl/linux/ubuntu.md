@@ -78,6 +78,12 @@ You can install Nanocl in different ways, depending on your needs:
    sudo apt-get install -y nanocl
    ```
 
+   Alternativatly you can install [c2ncl](/docs/references/c2ncl/cli.md) to convert existing `docker-compose` to Nanocl `StateFile`
+
+   ```sh
+   sudo apt install -y c2ncl
+   ```
+
    > **Warning** <br />
    > Receiving a GPG error when running `apt-get update`? <br />
    > Your default umask may not be set correctly, causing the public key file for the repo to not be detected. <br />

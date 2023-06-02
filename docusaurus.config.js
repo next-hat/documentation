@@ -52,11 +52,11 @@ const config = {
                 // @ts-ignore
                 item.items = item?.items?.map((subItem) => {
                   if (subItem.type === 'category' && subItem.label === 'Daemon') {
-                    /// Add v0.4 reference to the sidebar for the daemon
+                    /// Add version reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.7 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.7',
+                      label: 'v0.8 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.8',
                     })
                   }
                   return subItem;

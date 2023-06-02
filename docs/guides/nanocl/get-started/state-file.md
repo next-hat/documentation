@@ -19,7 +19,7 @@ It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 Namespace: global
 
@@ -35,24 +35,24 @@ Cargoes:
 Resources:
 - Name: deploy-example.com
   Kind: ProxyRule
-  Version: v0.1
+  Version: v0.5
   Config:
     Watch:
-    - my-cargo.global
+    - my-cargo.global.c
     Rules:
     - Domain: deploy-example.com
       Network: Public
       Locations:
       - Path: /
         Target:
-          CargoKey: my-cargo.global
+          CargoKey: my-cargo.global.c
           CargoPort: 9000
 ```
 
 Save this file under `my-cargo.yml` and apply it using:
 
 ```sh
-nanocl state apply -f ./my-cargo.yml
+nanocl state apply -s ./my-cargo.yml
 ```
 
 And test with a simple curl:

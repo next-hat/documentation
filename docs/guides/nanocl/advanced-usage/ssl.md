@@ -18,7 +18,7 @@ For now the only way is to connect to the server where the nanocl instance is ru
 From there you can add an Ssl entry in the state file:
 
 ```yaml
-ApiVersion: v0.7
+ApiVersion: v0.8
 Kind: Deployment
 
 Namespace: nexthat
@@ -66,7 +66,7 @@ After the command finished Ssl will be enabled already but you need to update yo
 For example:
 
 ```yaml
-ApiVersion: v0.7
+ApiVersion: v0.8
 Kind: Deployment
 
 Namespace: nexthat

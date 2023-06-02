@@ -15,7 +15,7 @@ Let considere this example, create a new file called `my-deployment.yml` and add
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 # Definition of your arguments
 Args:
@@ -41,21 +41,21 @@ Resources:
     Version: v0.4
     Config:
       Watch:
-        - ${{ Args.name }}.global
+        - ${{ Args.name }}.global.c
       Rules:
         - Domain: ${{ Args.domain }}
           Network: Public
           Locations:
             - Path: /
               Target:
-                CargoKey: ${{ Args.name }}.global
+                CargoKey: ${{ Args.name }}.global.c
                 CargoPort: ${{ Args.port }}
 ```
 
 Now if you apply it with:
 
 ```sh
-nanocl state apply -f my-deployment.yml
+nanocl state apply -s my-deployment.yml
 ```
 
 You will notice the following error message:
@@ -77,7 +77,7 @@ The `StateFile` now require arguments that will be used for rendering
 The correct command is now:
 
 ```sh
-state apply -f my-deployment.yml -- --name deploy-example \
+state apply -s my-deployment.yml -- --name deploy-example \
   --domain deploy-example.com \
   --image nexthat/nanocl-get-started:latest \
   --port 9000

@@ -25,7 +25,7 @@ Create a file called `proxy.get-started.yml` and copy the following content:
 
 ```yml
 Kind: Resource
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 Resources:
 - Name: get-started.com
@@ -33,15 +33,15 @@ Resources:
   Config:
     Watch:
     # Cargo to watch change, formated as follow `cargo-name.namespace_name`
-    - my-cargo.global
+    - my-cargo.global.c
     Rules:
     - Domain: get-started.com
       Network: Public
       Locations:
       - Path: /
         Target:
-          # Cargo to target formated as follow `cargo-name.namespace_name`
-          CargoKey: my-cargo.global
+          # Cargo to target formated as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
+          CargoKey: my-cargo.global.c
           # Cargo port to target
           CargoPort: 9001
 ```
@@ -49,7 +49,7 @@ Resources:
 Now let's create the proxy rule by running:
 
 ```sh
-nanocl state apply -f proxy.get-started.yml
+nanocl state apply -s proxy.get-started.yml
 ```
 
 You can see existing resources with:

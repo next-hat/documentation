@@ -14,7 +14,7 @@ Nanocl aim to make your life easier so we have a prebuilt VPN StateFile.<br />
 Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) from [@Lin Song](https://github.com/hwdsl2) you can use it from our [Official Nanocl Repository](https://nhnr.io)
 
 ```sh
-nanocl state apply -f nhnr.io/sys/vpn.yml
+nanocl state apply -s nhnr.io/sys/vpn.yml
 ```
 
 If you want to tweak it more than what is already possible from the `StateFile Args`, you can download it and customize it to fit your needs:
@@ -27,7 +27,7 @@ Here is the content of the VPN `StateFile`:
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 Args:
   - Name: namespace
@@ -72,40 +72,12 @@ Cargoes:
           net.ipv4.conf.default.rp_filter: "0"
           net.ipv4.conf.eth0.send_redirects: "0"
           net.ipv4.conf.eth0.rp_filter: "0"
-
-Resources:
-  - Name: vpn-dns
-    Kind: DnsRule
-    Version: v0.1
-    Config:
-      Network: ${{ Args.namespace }}.nsp
-      Entries: []
-
-  - Name: vpn-proxy
-    Kind: ProxyRule
-    Version: v0.4
-    Config:
-      Watch:
-        - vpn.${{ Args.namespace }}
-      Rules:
-        - Network: Public
-          Protocol: Udp
-          Port: 500
-          Target:
-            CargoKey: vpn.${{ Args.namespace }}
-            CargoPort: 500
-        - Network: Public
-          Protocol: Udp
-          Port: 4500
-          Target:
-            CargoKey: vpn.${{ Args.namespace }}
-            CargoPort: 4500
 ```
 
 You can use it in the following way:
 
 ```console
-nanocl state apply -f nhnr.io/sys/vpn.yml -- --namespace private --public-ip server-public-ip
+nanocl state apply -s nhnr.io/sys/vpn.yml -- --namespace private --public-ip server-public-ip
 ```
 
 From the file above, you can notice that we create a custom DNS for our VPN.<br/>
@@ -139,7 +111,7 @@ Now we can create cargoes on any namespace we want and make them accessible from
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 Namespace: global
 
@@ -160,14 +132,14 @@ Resources:
     Version: v0.4
     Config:
       Watch:
-        - deploy-example.global
+        - deploy-example.global.c
       Rules:
         - Domain: my-domain.internal
           Network: private.nsp
           Locations:
             - Path: /
               Target:
-                CargoKey: deploy-example.global
+                CargoKey: deploy-example.global.c
                 CargoPort: 9000
 
 # See all options:

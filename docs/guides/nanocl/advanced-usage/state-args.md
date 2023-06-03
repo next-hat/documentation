@@ -20,13 +20,13 @@ ApiVersion: v0.8
 # Definition of your arguments
 Args:
   - Name: name
-    Type: String # Only available value is String for now
+    Kind: String # Only available value is String for now
   - Name: domain
-    Type: String
+    Kind: String
   - Name: image
-    Type: String
+    Kind: String
   - Name: port
-    Type: String
+    Kind: String
 
 Namespace: global
 
@@ -38,7 +38,7 @@ Cargoes:
 Resources:
   - Name: ${{ Args.domain }}
     Kind: ProxyRule
-    Version: v0.4
+    Version: v0.5
     Config:
       Watch:
         - ${{ Args.name }}.global.c
@@ -48,8 +48,8 @@ Resources:
           Locations:
             - Path: /
               Target:
-                CargoKey: ${{ Args.name }}.global.c
-                CargoPort: ${{ Args.port }}
+                Key: ${{ Args.name }}.global.c
+                Port: ${{ Args.port }}
 ```
 
 Now if you apply it with:

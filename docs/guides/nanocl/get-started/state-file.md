@@ -45,8 +45,8 @@ Resources:
       Locations:
       - Path: /
         Target:
-          CargoKey: my-cargo.global.c
-          CargoPort: 9000
+          Key: my-cargo.global.c
+          Port: 9000
 ```
 
 Save this file under `my-cargo.yml` and apply it using:

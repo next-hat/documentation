@@ -31,9 +31,9 @@ ApiVersion: v0.8
 
 Args:
   - Name: namespace
-    Type: String
+    Kind: String
   - Name: public-ip
-    Type: String
+    Kind: String
 
 Namespaces: ${{ Args.namespace }}
 
@@ -120,7 +120,7 @@ Namespace: global
 Resources:
   - Name: vpn-dns
     Kind: DnsRule
-    Version: v0.1
+    Version: v0.2
     Config:
       Network: private.nsp
       Entries:
@@ -129,7 +129,7 @@ Resources:
 
   - Name: my-domain.internal
     Kind: ProxyRule
-    Version: v0.4
+    Version: v0.5
     Config:
       Watch:
         - deploy-example.global.c
@@ -139,8 +139,8 @@ Resources:
           Locations:
             - Path: /
               Target:
-                CargoKey: deploy-example.global.c
-                CargoPort: 9000
+                Key: deploy-example.global.c
+                Port: 9000
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo

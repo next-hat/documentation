@@ -41,9 +41,9 @@ Resources:
       - Path: /
         Target:
           # Cargo to target formated as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
-          CargoKey: my-cargo.global.c
+          Key: my-cargo.global.c
           # Cargo port to target
-          CargoPort: 9001
+          Port: 9001
 ```
 
 Now let's create the proxy rule by running:

@@ -35,10 +35,10 @@ Cargoes:
 Resources:
   - Name: docs.next-hat.com
     Kind: ProxyRule
-    Version: v0.1
+    Version: v0.5
     Config:
       Watch:
-        - doc.nexthat
+        - doc.nexthat.c
       Rules:
         - Domain: docs.next-hat.com
           Network: Public
@@ -48,8 +48,8 @@ Resources:
           Locations:
             - Path: /
               Target:
-                CargoKey: doc.nexthat
-                CargoPort: 80
+                Key: doc.nexthat.c
+                Port: 80
 ```
 
 ## SSL Certificate with Let's Encrypt
@@ -83,10 +83,10 @@ Cargoes:
 Resources:
   - Name: docs.next-hat.com
     Kind: ProxyRule
-    Version: v0.1
+    Version: v0.5
     Config:
       Watch:
-        - doc.nexthat
+        - doc.nexthat.c
       Rules:
         - Domain: docs.next-hat.com
           Network: Public
@@ -99,6 +99,6 @@ Resources:
           Locations:
             - Path: /
               Target:
-                CargoKey: doc.nexthat
-                CargoPort: 80
+                Key: doc.nexthat.c
+                Port: 80
 ```

@@ -15,18 +15,18 @@ Let considere this example, create a new file called `my-deployment.yml` and add
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.7
+ApiVersion: v0.8
 
 # Definition of your arguments
 Args:
   - Name: name
-    Type: String # Only available value is String for now
+    Kind: String # Only available value is String for now
   - Name: domain
-    Type: String
+    Kind: String
   - Name: image
-    Type: String
+    Kind: String
   - Name: port
-    Type: String
+    Kind: String
 
 Namespace: global
 
@@ -38,24 +38,24 @@ Cargoes:
 Resources:
   - Name: ${{ Args.domain }}
     Kind: ProxyRule
-    Version: v0.4
+    Version: v0.5
     Config:
       Watch:
-        - ${{ Args.name }}.global
+        - ${{ Args.name }}.global.c
       Rules:
         - Domain: ${{ Args.domain }}
           Network: Public
           Locations:
             - Path: /
               Target:
-                CargoKey: ${{ Args.name }}.global
-                CargoPort: ${{ Args.port }}
+                Key: ${{ Args.name }}.global.c
+                Port: ${{ Args.port }}
 ```
 
 Now if you apply it with:
 
 ```sh
-nanocl state apply -f my-deployment.yml
+nanocl state apply -s my-deployment.yml
 ```
 
 You will notice the following error message:
@@ -77,7 +77,7 @@ The `StateFile` now require arguments that will be used for rendering
 The correct command is now:
 
 ```sh
-state apply -f my-deployment.yml -- --name deploy-example \
+state apply -s my-deployment.yml -- --name deploy-example \
   --domain deploy-example.com \
   --image nexthat/nanocl-get-started:latest \
   --port 9000

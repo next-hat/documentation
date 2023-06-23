@@ -7,7 +7,7 @@
  <strong>Tags</strong>
  </br>
  <span id="nxtmdoc-meta-keywords">
-  Next.js, Documentation, Generator
+  Docusaurus, Documentation
  </span>
 </blockquote>
 

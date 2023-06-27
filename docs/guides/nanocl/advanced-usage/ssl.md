@@ -1,10 +1,10 @@
 ---
-title: Ssl / Tls | Nanocl
-description: Use Ssl to protect your services.
+title: SSL / TLS | Nanocl
+description: Use SSL to protect your services.
 keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, ssl, tls, certificate]
 image: /img/logo.webp
 sidebar_position: 1
-sidebar_label: Ssl / Tls
+sidebar_label: SSL / TLS
 pagination_next: null
 ---
 

@@ -78,7 +78,7 @@ You can install Nanocl in different ways, depending on your needs:
    sudo apt-get install -y nanocl
    ```
 
-   Alternativatly you can install [c2ncl](/docs/references/c2ncl/cli.md) to convert existing `docker-compose` to Nanocl `StateFile`
+   Alternativatly you can install [c2ncl](/docs/references/c2ncl/cli.md) to convert existing `docker-compose` to Nanocl `Statefile`
 
    ```sh
    sudo apt install -y c2ncl

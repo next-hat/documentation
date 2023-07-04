@@ -1,6 +1,6 @@
 ---
 title: Nanocl Cargo References
-keywords: [documentation, references, nanocl, nanocld, resource, specification]
+keywords: [documentation, references, nanocl, nanocld, cargo, specification, spec]
 image: /img/logo.webp
 sidebar_label: Cargo
 sidebar_position: 3

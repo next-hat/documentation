@@ -1,21 +1,21 @@
 ---
-title: StateFile Args | Nanocl
-description: Use StateFile Args to customize your Nanocl configuration.
+title: Statefile Args | Nanocl
+description: Use Statefile Args to customize your Nanocl configuration.
 keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp
 sidebar_position: 2
-sidebar_label: StateFile Args
+sidebar_label: Statefile Args
 pagination_next: null
 ---
 
-# StateFile Arguments
+# Statefile Arguments
 
-StateFile Arguments are a way to reuse your `StateFile` by taking advantage of `Liquid` templating.<br />
+Statefile Arguments are a way to reuse your `Statefile` by taking advantage of `Liquid` templating.<br />
 Let considere this example, create a new file called `my-deployment.yml` and add the following content :
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 # Definition of your arguments
 Args:
@@ -72,7 +72,7 @@ Usage: nanocl state args -- --name <name> --domain <domain> --image <image> --po
 For more information, try '--help'.
 ```
 
-The `StateFile` now require arguments that will be used for rendering
+The `Statefile` now require arguments that will be used for rendering
 
 The correct command is now:
 
@@ -84,4 +84,4 @@ state apply -s my-deployment.yml -- --name deploy-example \
 ```
 
 That why you can quickly deploy any Http service really easily.<br />
-Now you have the basics to create a awsome `StateFile` !
+Now you have the basics to create a awsome `Statefile` !

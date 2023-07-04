@@ -25,7 +25,7 @@ Create a file called `proxy.get-started.yml` and copy the following content:
 
 ```yml
 Kind: Resource
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 Resources:
 - Name: get-started.com

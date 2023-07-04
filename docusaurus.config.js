@@ -55,8 +55,8 @@ const config = {
                     /// Add version reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.8 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.8',
+                      label: 'v0.9 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.9',
                     })
                   }
                   return subItem;
@@ -92,7 +92,7 @@ const config = {
         config: path.join(__dirname, 'redocly.yaml'),
         specs: [{
           id: 'nanocld-latest',
-          spec: 'static/specs/nanocld/0.8.yaml',
+          spec: 'static/specs/nanocld/0.9.yaml',
         }],
         theme: {
           /**

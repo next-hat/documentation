@@ -7,7 +7,7 @@ sidebar_label: CLI
 sidebar_position: 1
 ---
 
-# Docker Compose To Nanocl StateFile
+# Docker Compose To Nanocl Statefile
 
 ## C2ncl
 
@@ -19,7 +19,7 @@ To list available commands, either run `c2ncl` with no parameters or execute `c2
 
 ```console
 $ c2ncl --help
-Converts docker-compose.yml to nanocl StateFile.yml
+Converts docker-compose.yml to nanocl Statefile.yml
 
 Usage: c2ncl --in-file <IN_FILE> --out-file <OUT_FILE>
 
@@ -32,11 +32,11 @@ Options:
 
 ## Description
 
-C2ncl is an utility that convert `docker-compose.yml` into Nanocl `StateFile` that way you can quickly start using Nanocl !
+C2ncl is an utility that convert `docker-compose.yml` into Nanocl `Statefile` that way you can quickly start using Nanocl !
 
 
 ## Example
 
 ```sh
-c2ncl -i docker-compose.yml -o StateFile.yml
+c2ncl -i docker-compose.yml -o Statefile.yml
 ```

@@ -15,7 +15,7 @@ Let considere this example, create a new file called `my-deployment.yml` and add
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 # Definition of your arguments
 Args:

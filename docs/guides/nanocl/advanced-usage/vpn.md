@@ -27,7 +27,7 @@ Here is the content of the VPN `Statefile`:
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 Args:
   - Name: namespace
@@ -111,7 +111,7 @@ Now we can create cargoes on any namespace we want and make them accessible from
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 Namespace: global
 

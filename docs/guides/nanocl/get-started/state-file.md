@@ -19,7 +19,7 @@ It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.8
+ApiVersion: v0.9
 
 Namespace: global
 

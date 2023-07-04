@@ -1,19 +1,19 @@
 ---
-title: StateFile | Nanocl
-description: Use StateFile to manage your state
+title: Statefile | Nanocl
+description: Use Statefile to manage your state
 keywords: [documentation, nanocl, guides, get started, proxy, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp
 sidebar_position: 4
-sidebar_label: 4. Use StateFile
+sidebar_label: 4. Use Statefile
 pagination_next: null
 ---
 
-# StateFile
+# Statefile
 
 > **Tags** <br />
 > documentation, nanocl, guides, get started, statefile
 
-StateFile are a way to describe the state you want for a specific namespace.
+Statefile are a way to describe the state you want for a specific namespace.
 
 It use yaml form we can sumerize the deployment of our cargo as follow :
 

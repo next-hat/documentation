@@ -10,20 +10,20 @@ pagination_next: null
 
 # Your own VPN
 
-Nanocl aim to make your life easier so we have a prebuilt VPN StateFile.<br />
+Nanocl aim to make your life easier so we have a prebuilt VPN Statefile.<br />
 Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) from [@Lin Song](https://github.com/hwdsl2) you can use it from our [Official Nanocl Repository](https://nhnr.io)
 
 ```sh
 nanocl state apply -s nhnr.io/sys/vpn.yml
 ```
 
-If you want to tweak it more than what is already possible from the `StateFile Args`, you can download it and customize it to fit your needs:
+If you want to tweak it more than what is already possible from the `Statefile Args`, you can download it and customize it to fit your needs:
 
 ```sh
 wget https://nhnr.io/sys/vpn.yml
 ```
 
-Here is the content of the VPN `StateFile`:
+Here is the content of the VPN `Statefile`:
 
 ```yaml
 Kind: Deployment

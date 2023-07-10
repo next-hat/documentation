@@ -8,14 +8,14 @@ sidebar_label: SSL / TLS
 pagination_next: null
 ---
 
-# SSL / Tls
+# SSL / TLS
 
 ## SSL Certificate
 
 For now the only way is to connect to the server where the nanocl instance is running and copy the certificate to:<br/>
 `/var/lib/nanocl/proxy/certs`
 
-From there you can add an Ssl entry in the state file:
+From there you can add an SSL entry in the state file:
 
 ```yaml
 ApiVersion: v0.9

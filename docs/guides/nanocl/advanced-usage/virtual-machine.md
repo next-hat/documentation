@@ -1,63 +1,78 @@
 ---
 title: Virtual Machine | Nanocl
 description: Create virtual machine with Nanocl
-keywords: [documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine]
+keywords: [documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine, statefile, state, file]
 image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: Virtual Machine
 pagination_next: null
 ---
 
-# Create Virtual Machine
+# Create a VM
 
-With nanocl you can spin up virtual machine that are compatible with [cloud-init][cloud-init].
+With Nanocl, you can quickly spin up virtual machines that are compatible with [cloud-init][cloud-init].<br/>
+Most Linux cloud images have it as a baseline, which allows us to set up network, users, and SSH keys inside the virtual machine.
 
+## Install the default VM runtime
 
-## Add image to the system
+To facilitate networking, Nanocl starts a virtual machine inside a container using the default runtime image [nanocl-qemu][nanocl-qemu].<br/>
+It is not installed by default, so you need to install it. You can easily do this by running the following command:
 
-Let's start by downloading an ubuntu image from official repository:
+```sh
+nanocl cargo image pull ghcr.io/nxthat/nanocl-qemu:8.0.2.0
+```
+
+## Create a VM base image
+
+Let's start by downloading an Ubuntu image from the official repository:
 
 ```sh
 wget https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img
 ```
 
-Then we add the virtual machine image to the nanocl system using this command:
+Then, we add the virtual machine image to the Nanocl system using the following command:
 
 ```sh
 nanocl vm image create ubuntu-22 ubuntu-22.04-minimal-cloudimg-amd64.img
 ```
 
-Once the image have been added you should be able to list them using:
+You can notice few options being used:
+
+* `ubuntu-22` - the name of the image.
+* `ubuntu-22.04-minimal-cloudimg-amd64.img` - the path of the image.
+
+Once the image has been added, you should be able to list them using the following command:
 
 ```sh
 nanocl vm image ls
 ```
 
-## Run a virtual machine
+## Run a VM
 
-To run a virtual machine you can do it with a simple command:
+To run a virtual machine, you can use a simple command:
 
 ```sh
 nanocl vm run myvm ubuntu-22
 ```
 
-The virtual machine you boot afterwards by default if no options are provided, the virtual machine will boot with:
+The virtual machine will boot with the following default settings if no options are provided:
 
-* 1cpu
-* 500mo of ram
+* 1 CPU
+* 500 MB of RAM
 
-It will take arround 90sec the first time to boot your virtual machine with default settings.
-This can be improoved if you enable kvm and give a bit more power to your virtual machine.
+The initial boot time with default settings is approximately 90 seconds. This can be improved by enabling KVM and allocating more resources to your virtual machine.
 
-You can follow the status by attaching to the virtual machine using the following command:
+Note: The virtual machine won't use the base image directly. Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
+
+You can monitor the status by attaching to the virtual machine using the following command:
 
 ```sh
 nanocl vm attach myvm
 ```
 
-This command allow you to attach to the running virtual machine, you can execute command etc from there.
+This command allows you to attach to the running virtual machine, where you can execute commands and perform other actions.
 
-You should see an output like this:
+You should see an output similar to this:
 
 ```console
 [  OK  ] Finished Permit User Sessions.
@@ -83,36 +98,40 @@ Ubuntu 22.04.2 LTS 91daefd21c1b ttyS0
 91daefd21c1b login: 
 ```
 
-By default the user and password is: cloud:cloud
-This can be set when you first start your virtual machine.
-You can also set ssh keys for better security.
-If need to wait for [cloud-init][cloud-init] to finish to be able to login.
+By default, the username and password are set `cloud:cloud`.
+You can set these credentials when you first start your virtual machine.
+For enhanced security, you can also set up SSH keys.
+Please note that you have to wait for [cloud-init][cloud-init] to finish before being able to log in.
 
-## Patch a virtual machine
+## Patch a VM
 
-You can path a virtual machine to increase his performance, eg: memory, cpu.
+You can adjust the performance of a virtual machine by modifying its resources, such as memory and CPU.
 
-To do so you can use the following command:
+To do so, you can use the following command:
 
 ```sh
 nanocl vm patch myvm --kvm --cpu 4 --mem 2048
 ```
 
-Remove the `--kvm` options if your system doesn't have it enabled.
-You can reattach to the virtual machine afterwards.
+In the above command, you can observe several options being utilized:
 
-Note: Patching a virtual machine will stop and restart it.
+* `--kvm` - enables KVM acceleration
+* `--cpu` - sets the number of CPUs to use
+* `--mem` - sets the amount of memory to allocate
+
+If your system does not have KVM enabled, you can remove the --kvm option. After patching, you can reattach to the virtual machine.
+
+Note: Patching a virtual machine will cause it to stop and restart.
 
 ## SSH connection
 
-If you aren't using docker desktop, you can connect to the virtual machine from his ip address.
-To grap the virtual machine ip address you can use the following command:
+If you are not using Docker Desktop, you can connect to the virtual machine using its IP address. To obtain the IP address of the virtual machine, you can use the following command:
 
 ```sh
 nanocl vm inspect myvm
 ```
 
-Should output something like:
+The command should output something like:
 
 ```yml
 Key: myvm.global
@@ -174,8 +193,8 @@ Instances:
     Propagation: rprivate
 ```
 
-You can grap the `IPAddress` in my case it's `10.2.0.2`
-Then connect with ssh using default credentials:
+You can grab the `IPAddress`, which in this case is `10.2.0.2`.
+Afterwards, you can connect using SSH with the default credentials:
 
 ```sh
 ssh cloud@10.2.0.2
@@ -183,8 +202,7 @@ ssh cloud@10.2.0.2
 
 ## Statefile
 
-You can define virtual machine using `Statefile`.
-There is an example:
+You can define a virtual machine using a ``Statefile``. Here is an example:
 
 ```yml
 Kind: VirtualMachine
@@ -203,11 +221,10 @@ VirtualMachines:
       Memory: 2048
 ```
 
-## Expose your virtual machine
+## Expose your VM
 
-You can use a `ProxyRule` to expose specific port of your Virtual Machine
-
-There is a full example to expose the virtual machine port 22 for ssh to a public port 5555
+You can use a `ProxyRule` to expose a specific port of your virtual machine.
+Here is a complete example of exposing the virtual machine's port 22 for SSH to a public port 5555:
 
 ```yml
 Kind: Deployment
@@ -216,7 +233,7 @@ ApiVersion: v0.9
 Namespace: global
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/virtual-machine
+# https://docs.next-hat.com/references/nanocl/resource
 Resources:
   - Name: myvm
     Kind: ProxyRule
@@ -233,6 +250,8 @@ Resources:
             Key: myvm.global.v
             Port: 22
 
+# See all options:
+# https://docs.next-hat.com/references/nanocl/virtual-machine
 VirtualMachines:
   - Name: myvm
     Disk:
@@ -243,3 +262,4 @@ VirtualMachines:
 ```
 
 [cloud-init]: https://cloud-init.io
+[nanocl-qemu]: https://github.com/nxthat/nanocl-qemu

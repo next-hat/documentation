@@ -10,7 +10,7 @@ pagination_next: null
 
 # Create a VM
 
-With Nanocl, you can quickly spin up virtual machines that are compatible with [cloud-init][cloud-init].<br/>
+With `Nanocl`, you can quickly spin up virtual machines that are compatible with [cloud-init][cloud-init].<br/>
 Most Linux cloud images have it as a baseline, which allows us to set up network, users, and SSH keys inside the virtual machine.
 
 ## Install the default VM runtime
@@ -36,7 +36,7 @@ Then, we add the virtual machine image to the Nanocl system using the following 
 nanocl vm image create ubuntu-22 ubuntu-22.04-minimal-cloudimg-amd64.img
 ```
 
-You can notice few options being used:
+Here is some information about the options being utilized:
 
 * `ubuntu-22` - the name of the image.
 * `ubuntu-22.04-minimal-cloudimg-amd64.img` - the path of the image.
@@ -54,6 +54,11 @@ To run a virtual machine, you can use a simple command:
 ```sh
 nanocl vm run myvm ubuntu-22
 ```
+
+You can observe a few options being used:
+
+* `myvm` - the name of the virtual machine.
+* `ubuntu-22` - the name of the image to use.
 
 The virtual machine will boot with the following default settings if no options are provided:
 
@@ -115,9 +120,10 @@ nanocl vm patch myvm --kvm --cpu 4 --mem 2048
 
 In the above command, you can observe several options being utilized:
 
-* `--kvm` - enables KVM acceleration
-* `--cpu` - sets the number of CPUs to use
-* `--mem` - sets the amount of memory to allocate
+* `myvm` - the name of the virtual machine to patch.
+* `--kvm` - enables KVM acceleration.
+* `--cpu` - sets the number of CPUs to use.
+* `--mem` - sets the amount of memory to allocate.
 
 If your system does not have KVM enabled, you can remove the --kvm option. After patching, you can reattach to the virtual machine.
 

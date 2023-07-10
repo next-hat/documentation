@@ -18,8 +18,8 @@ For now the only way is to connect to the server where the nanocl instance is ru
 From there you can add an SSL entry in the state file:
 
 ```yaml
-ApiVersion: v0.9
 Kind: Deployment
+ApiVersion: v0.9
 
 Namespace: nexthat
 

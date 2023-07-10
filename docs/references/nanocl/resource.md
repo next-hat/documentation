@@ -1,6 +1,6 @@
 ---
 title: Nanocl Resource References
-keywords: [documentation, references, nanocl, nanocld, resource, specification]
+keywords: "documentation, references, nanocl, nanocld, resource, specification"
 image: /img/logo.webp
 sidebar_label: Resource
 sidebar_position: 4

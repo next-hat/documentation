@@ -1,7 +1,7 @@
 ---
 title: Virtual Machine | Nanocl
 description: Create virtual machine with Nanocl
-keywords: [documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine, statefile, state, file]
+keywords: "documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine, statefile, state, file"
 image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: Virtual Machine
@@ -67,7 +67,10 @@ The virtual machine will boot with the following default settings if no options 
 
 The initial boot time with default settings is approximately 90 seconds. This can be improved by enabling KVM and allocating more resources to your virtual machine.
 
-Note: The virtual machine won't use the base image directly. Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
+> **Note**
+>
+> The virtual machine won't use the base image directly.<br/>
+> Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
 
 You can monitor the status by attaching to the virtual machine using the following command:
 
@@ -127,7 +130,8 @@ In the above command, you can observe several options being utilized:
 
 If your system does not have KVM enabled, you can remove the --kvm option. After patching, you can reattach to the virtual machine.
 
-Note: Patching a virtual machine will cause it to stop and restart.
+> **Note**
+> Patching a virtual machine will cause it to stop and restart.
 
 ## SSH connection
 

@@ -1,6 +1,6 @@
 ---
 description: Nanocl DAEMON References, to list available options, run nanocld --help
-keywords: [documentation, references, nanocl, nanocld, nanocl DAEMON, DAEMON]
+keywords: "documentation, references, nanocl, nanocld, nanocl DAEMON, DAEMON"
 image: /img/logo.webp
 sidebar_label: Overview
 ---
@@ -17,7 +17,7 @@ To list available options, run `nanocld --help` :
 
 ```console
 $ nanocld --help
-Nanocl daemon Self Sufficient Hybrid Cloud Orchestrator
+Nanocl Daemon - Self Sufficient Hybrid Cloud Orchestrator
 
 Usage: nanocld [OPTIONS]
 
@@ -27,7 +27,7 @@ Options:
   -H, --hosts <HOSTS>
           Hosts to listen to use tcp:// and unix:// [default: unix:///run/nanocl.sock]
       --docker-host <DOCKER_HOST>
-          Docker daemon socket to connect [default: unix:///run/docker.sock]
+          Docker daemon socket to connect [default: unix:///var/run/docker.sock]
       --state-dir <STATE_DIR>
           State directory [default: /var/lib/nanocl]
       --conf-dir <CONF_DIR>
@@ -40,6 +40,8 @@ Options:
           Join current node to a cluster
       --advertise-addr <ADVERTISE_ADDR>
           Address to advertise to other nodes
+      --gid <GID>
+          Group id [default: 0]
   -h, --help
           Print help
   -V, --version
@@ -57,19 +59,3 @@ Options:
 | **\--config-dir**=*CONFIG\_DIR* | /etc/nanocl | Config directory
 | **-h**, **\--help** | | Print help information
 | **-V**, **\--version** | | Print version information
-
-
-## Config Directory
-
-Nanocld use a config file inside a config directory by default located at `/etc/nanocl`. <br />
-It will look for a file called `nanocl.conf` and have a `yml` format.
-
-For example :
-
-```yaml
-docker_host: unix:///run/docker.sock
-github_user: my_user
-github_token: my_token
-hosts: unix:///run/nanocl.sock
-state_dir: /var/lib/nanocl
-```

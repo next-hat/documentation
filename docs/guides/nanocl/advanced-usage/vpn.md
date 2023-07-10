@@ -1,7 +1,7 @@
 ---
 title: Vpn | Nanocl
 description: Use a vpn inside nanocl
-keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, vpn, private network]
+keywords: "documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, vpn, private network"
 image: /img/logo.webp
 sidebar_position: 3
 sidebar_label: Your own VPN

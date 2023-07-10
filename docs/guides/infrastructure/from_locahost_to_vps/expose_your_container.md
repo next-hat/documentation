@@ -1,7 +1,7 @@
 ---
 title: Expose your container
 description: Learn how to make your containerized frontend and backend applications accessible to the public on different domains using Docker and Nginx.
-keywords: [expose containerized applications, deploy container images, Docker, Nginx, create Docker network, configure Nginx, access container on different domains, frontend, backend]
+keywords: "expose containerized applications, deploy container images, Docker, Nginx, create Docker network, configure Nginx, access container on different domains, frontend, backend"
 ---
 
 To make `my-frontend:0.0.1` accessible at `my-domain.com` and `my-api:0.0.1` at `api.my-domain.com`, make sure you have a VPS or Dedicated/Baremetal server, and that `my-domain.com` and `api.my-domain.com` are pointing to It.<br/>

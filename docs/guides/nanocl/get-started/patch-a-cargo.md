@@ -1,7 +1,7 @@
 ---
 title: Patch a cargo | Nanocl
 description: Patch a cargo to update his image or his environnements variables and redeploy them instantly.
-keywords: [documentation, guides. nanocl, get started, cargo, patch, update]
+keywords: "documentation, guides. nanocl, get started, cargo, patch, update"
 image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: 2. Patch a cargo

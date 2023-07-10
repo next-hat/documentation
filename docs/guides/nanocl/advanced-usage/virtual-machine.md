@@ -1,7 +1,7 @@
 ---
 title: Virtual Machine | Nanocl
 description: Create virtual machine with Nanocl
-keywords: "documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine, statefile, state, file"
+keywords: [documentation, nanocl, guides, get started, configuration, virtual machines, vm, virtual, machine, statefile, state, file]
 image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: Virtual Machine

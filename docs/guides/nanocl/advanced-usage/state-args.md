@@ -1,7 +1,7 @@
 ---
 title: Statefile Args | Nanocl
 description: Use Statefile Args to customize your Nanocl configuration.
-keywords: "documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile"
+keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp
 sidebar_position: 2
 sidebar_label: Statefile Args

@@ -1,7 +1,7 @@
 ---
 title: Configure your proxy | Nanocl
 description: Configure your proxy to expose your cargo
-keywords: "documentation, nanocl, guides, get started, proxy, configuration"
+keywords: [documentation, nanocl, guides, get started, proxy, configuration]
 image: /img/logo.webp
 sidebar_position: 3
 sidebar_label: 3. Configure your proxy

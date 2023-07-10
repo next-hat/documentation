@@ -1,7 +1,7 @@
 ---
 title: Orientation and Setup | Nanocl
 description: This page contains step-by-step instructions on how to get started with Nanocl.
-keywords: "documentation, guides, nanocl, get started, orientation and setup"
+keywords: [documentation, guides, nanocl, get started, orientation and setup]
 image: /img/logo.webp
 sidebar_position: 1
 sidebar_label: 1. Orientation and Setup

@@ -1,6 +1,6 @@
 ---
 description: Nanocl DAEMON References, to list available options, run nanocld --help
-keywords: "documentation, references, nanocl, nanocld, nanocl DAEMON, DAEMON"
+keywords: [documentation, references, nanocl, nanocld, nanocl DAEMON, DAEMON]
 image: /img/logo.webp
 sidebar_label: Overview
 ---

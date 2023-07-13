@@ -19,7 +19,7 @@ First, let's download the official Nanocl get started image.
 We will do it using this command:
 
 ```sh
-nanocl cargo image create nexthat/nanocl-get-started:latest
+nanocl cargo image pull nexthat/nanocl-get-started:latest
 ```
 
 ## Update cargo image

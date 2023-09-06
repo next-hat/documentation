@@ -24,7 +24,7 @@ info:
     email: team@next-hat.com
   license:
     name: MIT OR Apache-2.0
-  version: v0.9.0
+  version: v0.9.2
 servers:
 - url: /{Version}
   variables:
@@ -1788,11 +1788,11 @@ components:
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
         Instances:
           type: array
           items:
@@ -1858,11 +1858,11 @@ components:
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
     ClusterInfo:
       type: object
       description: ClusterInfo represents information about the swarm as is returned by the \"/info\" endpoint. Join-tokens are not included.
@@ -1900,7 +1900,7 @@ components:
           format: int32
           description: DataPathPort specifies the data path port number for data traffic. Acceptable port range is 1024 to 49151. If no port is set or is set to 0, the default port (4789) is used.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         DefaultAddrPool:
           type: array
           items:
@@ -1912,7 +1912,7 @@ components:
           format: int32
           description: SubnetSize specifies the subnet size of the networks created from the default subnet pool.
           nullable: true
-          minimum: 0.0
+          minimum: 0
     Commit:
       type: object
       description: Commit holds the Git-commit (SHA1) that a binary was built from, as reported in the version-string of external tools, such as `containerd`, or `runC`.
@@ -2383,7 +2383,7 @@ components:
           type: integer
           format: int32
           description: Group id
-          minimum: 0.0
+          minimum: 0
     DeviceMapping:
       type: object
       description: A device mapping between the host and container
@@ -2552,7 +2552,7 @@ components:
         Count:
           type: integer
           description: Number of deleted items
-          minimum: 0.0
+          minimum: 0
     GenericResources:
       type: object
       properties:
@@ -2651,7 +2651,7 @@ components:
           format: int32
           description: Block IO weight (relative weight).
           nullable: true
-          minimum: 0.0
+          minimum: 0
         BlkioWeightDevice:
           type: array
           items:
@@ -3738,7 +3738,7 @@ components:
           type: integer
           format: int64
           nullable: true
-          minimum: 0.0
+          minimum: 0
     PeerNode:
       type: object
       description: Represents a peer-node in the swarm
@@ -3791,13 +3791,15 @@ components:
           nullable: true
         PrivatePort:
           type: integer
-          format: int64
+          format: int32
           description: Port on the container
+          minimum: 0
         PublicPort:
           type: integer
-          format: int64
+          format: int32
           description: Port exposed on the host
           nullable: true
+          minimum: 0
         Type:
           allOf:
           - $ref: '#/components/schemas/PortTypeEnum'
@@ -3911,7 +3913,7 @@ components:
           type: integer
           format: int32
           description: The port to open on nodes
-          minimum: 0.0
+          minimum: 0
         Ssl:
           allOf:
           - $ref: '#/components/schemas/ProxySslConfig'
@@ -4104,7 +4106,7 @@ components:
       properties:
         Number:
           type: integer
-          minimum: 0.0
+          minimum: 0
     Resource:
       type: object
       description: |-
@@ -4248,7 +4250,7 @@ components:
         Weight:
           type: integer
           nullable: true
-          minimum: 0.0
+          minimum: 0
     ResourcesUlimits:
       type: object
       properties:
@@ -4301,6 +4303,101 @@ components:
             type: string
           description: List of command-line arguments to pass to the runtime when invoked.
           nullable: true
+    StateCargo:
+      type: object
+      description: |
+        ## StateCargo
+
+        Statefile that represent the `Cargo` kind
+      required:
+      - Cargoes
+      properties:
+        Namespace:
+          type: string
+          description: Namespace where the cargoes are deployed
+          nullable: true
+        Cargoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoConfigPartial'
+          description: List of cargoes to create and run
+    StateDeployment:
+      type: object
+      description: |
+        ## StateDeployment
+
+        Statefile that represent the `Deployment` kind
+      properties:
+        Namespace:
+          type: string
+          description: Namespace where the cargoes and virtual machines are deployed
+          nullable: true
+        Resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourcePartial'
+          description: List of resources to create
+          nullable: true
+        Cargoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoConfigPartial'
+          description: List of cargoes to create and run
+          nullable: true
+        VirtualMachines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmConfigPartial'
+          description: List of virtual machines to create and run
+          nullable: true
+    StateMeta:
+      type: object
+      description: |
+        ## StateMeta
+
+        Statefile metadata information that are always present
+      required:
+      - ApiVersion
+      - Kind
+      properties:
+        ApiVersion:
+          type: string
+          description: Api version to use or remote url
+        Kind:
+          type: string
+          description: Kind of Statefile (Deployment, Cargo, VirtualMachine, Resource)
+    StateResource:
+      type: object
+      description: |
+        ## StateResource
+
+        Statefile that represent the `Resource` kind
+      required:
+      - Resources
+      properties:
+        Resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourcePartial'
+          description: List of resources to create
+    StateVirtualMachine:
+      type: object
+      description: |
+        ## StateVirtualMachine
+
+        Statefile that represent the `VirtualMachine` kind
+      required:
+      - VirtualMachines
+      properties:
+        Namespace:
+          type: string
+          description: Namespace where the virtual machines are deployed
+          nullable: true
+        VirtualMachines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmConfigPartial'
+          description: List of virtual machines to create and run
     StreamTarget:
       oneOf:
       - $ref: '#/components/schemas/UpstreamTarget'
@@ -4414,7 +4511,7 @@ components:
           format: int64
           description: An integer whose purpose is to force swarm to generate a new signing CA certificate and key, if none have been specified in `SigningCACert` and `SigningCAKey`
           nullable: true
-          minimum: 0.0
+          minimum: 0
     SwarmSpecCaConfigExternalCas:
       type: object
       properties:
@@ -4476,19 +4573,19 @@ components:
           format: int64
           description: The number of log entries between snapshots.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         KeepOldSnapshots:
           type: integer
           format: int64
           description: The number of snapshots to keep beyond the current snapshot.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         LogEntriesForSlowFollowers:
           type: integer
           format: int64
           description: The number of log entries to keep around to sync up slow followers after a snapshot is created.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         ElectionTick:
           type: integer
           format: int64
@@ -4877,7 +4974,7 @@ components:
           type: integer
           format: int32
           description: The port of the cargo or the vm to target
-          minimum: 0.0
+          minimum: 0
         Path:
           type: string
           description: The http path to target when using http
@@ -5006,7 +5103,7 @@ components:
           $ref: '#/components/schemas/VmHostConfig'
     VmConfigPartial:
       type: object
-      description: A vm config partial is used to create a Vm
+      description: A vm config partial is used to create a vm
       required:
       - Name
       - Disk
@@ -5016,25 +5113,25 @@ components:
           description: Name of the vm
         Hostname:
           type: string
-          description: Hostname of the vm
+          description: 'Hostname of the vm (default: generated from name)'
           nullable: true
         User:
           type: string
-          description: Default user of the vm (cloud)
+          description: 'Default user of the vm (default: cloud)'
           nullable: true
         Password:
           type: string
-          description: Default password of the vm (cloud)
+          description: 'Default password of the vm (default: cloud)'
           nullable: true
         SshKey:
           type: string
-          description: Default ssh key for the user
+          description: Default ssh pub key for the user (recommended)
           nullable: true
         Disk:
           $ref: '#/components/schemas/VmDiskConfig'
         MacAddress:
           type: string
-          description: Mac address of the vm
+          description: 'Mac address of the vm (default: generated)'
           nullable: true
         Labels:
           type: object
@@ -5095,9 +5192,9 @@ components:
         Size:
           type: integer
           format: int64
-          description: Virtual size allowed for the disk
+          description: 'Virtual size allowed for the disk in GB (default: 20)'
           nullable: true
-          minimum: 0.0
+          minimum: 0
     VmHostConfig:
       type: object
       description: A vm's resources (cpu, memory, network)
@@ -5108,33 +5205,41 @@ components:
         Cpu:
           type: integer
           format: int64
-          description: Number of cpu of the vm
-          minimum: 0.0
+          description: 'Number of cpu of the vm (default: 1)'
+          minimum: 0
         Memory:
           type: integer
           format: int64
-          description: Memory of the vm
-          minimum: 0.0
+          description: 'Memory of the vm in MB (default: 512)'
+          minimum: 0
         NetIface:
           type: string
-          description: default network interface of the vm
+          description: 'Network interface of the vm to setup (default: ens3)'
+          nullable: true
+        LinkNetIface:
+          type: string
+          description: 'Network interface to link the vm (default: eth0)'
           nullable: true
         Kvm:
           type: boolean
-          description: Enable KVM
+          description: 'Enable KVM acceleration (default: false)'
           nullable: true
         Dns:
           type: array
           items:
             type: string
-          description: A list of DNS servers for the vm to use.
+          description: A list of DNS servers for the vm to use
           nullable: true
         Runtime:
           type: string
-          description: 'Container image name to use for vm default: nexthat/nanocl-qemu'
+          description: 'Container image name to use for vm (default: nanocl-qemu)'
           nullable: true
         RuntimeNetwork:
           type: string
+          nullable: true
+        HostTun:
+          type: boolean
+          description: Use host tun device
           nullable: true
     VmImage:
       type: object
@@ -5181,7 +5286,7 @@ components:
           type: integer
           format: int64
           description: The new size of the image in bytes
-          minimum: 0.0
+          minimum: 0
         Shrink:
           type: boolean
           description: Whether to shrink the image or not
@@ -5220,11 +5325,11 @@ components:
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
         Instances:
           type: array
           items:
@@ -5272,11 +5377,11 @@ components:
         Instances:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         RunningInstances:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
 tags:
 - name: CargoImages
   description: Cargo images management endpoints.

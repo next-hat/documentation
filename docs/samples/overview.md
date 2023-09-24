@@ -1,4 +1,13 @@
-# Samples overview
+---
+title: Samples | Nanocl
+sidebar_label: Samples
+image: /img/logo.webp
+description: Learn how to deploy different types of services by walking through Official Nanocl samples.
+keywords: [documentation, samples, examples, nanocl, nanocl CLI, CLI]
+pagination_next: null
+pagination_prev: null
+---
+# Nanocl Samples
 
 Learn how to deploy different types of services by walking through Official `Nanocl` samples.
 
@@ -8,4 +17,4 @@ Learn how to deploy different types of services by walking through Official `Nan
 
 ## Webapps
 
-[Adminer](./webapps/adminer) | [Mongo Express][./webapps/mongo-express] | [Gitlab](./webapps/gitlab)
+[Adminer](./webapps/adminer) | [Mongo Express](./webapps/mongo-express) | [Gitlab](./webapps/gitlab)

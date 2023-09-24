@@ -40,8 +40,8 @@ const sidebars = {
   ],
   samples: [
     {
-      type: 'category',
-      label: 'Setups',
+      type: "category",
+      label: 'Samples',
       link: { type: 'doc', id: 'samples/overview' },
       items: [
         {

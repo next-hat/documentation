@@ -68,7 +68,7 @@ const config = {
                 (item) =>
                   // @ts-ignore
                   // This makes sure that the landing pages are not duplicated in the sidebars
-                  item.id !== 'guides/summary' && item.id !== 'setups/summary' && item.id !== 'references/summary'
+                  item.id !== 'guides/summary' && item.id !== 'setups/summary' && item.id !== 'references/summary' && item.id !== 'samples/overview'
               )
           },
         },
@@ -115,8 +115,8 @@ const config = {
       ],
       colorMode: {
         defaultMode: 'dark',
-        disableSwitch: true,
-        respectPrefersColorScheme: false,
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
       },
       navbar: {
         title: 'Next Hat Docs',
@@ -144,6 +144,12 @@ const config = {
             position: 'left',
             docId: 'references/summary',
             label: 'References',
+          },
+          {
+            type: 'doc',
+            position: 'left',
+            docId: 'samples/overview',
+            label: 'Samples',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {

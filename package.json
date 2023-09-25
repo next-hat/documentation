@@ -21,7 +21,7 @@
     "redocusaurus": "^1.6.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^2.4.1"
+    "@docusaurus/module-type-aliases": "^2.4.3"
   },
   "browserslist": {
     "production": [

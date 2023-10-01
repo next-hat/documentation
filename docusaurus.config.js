@@ -94,11 +94,12 @@ const config = {
           id: 'nanocld-latest',
           spec: 'static/specs/nanocld/0.9.yaml',
         }],
+        // See https://redocly.com/docs/api-reference-docs/configuration/theming/
         theme: {
           /**
            * Highlight color for docs
            */
-          // primaryColor: '#1890ff',
+          primaryColor: '#ff9800',
         },
       },
     ],
@@ -150,12 +151,6 @@ const config = {
             position: 'left',
             docId: 'samples/overview',
             label: 'Samples',
-          },
-          // {to: '/blog', label: 'Blog', position: 'left'},
-          {
-            href: 'https://github.com/nxthat',
-            label: 'GitHub',
-            position: 'right',
           },
         ],
       },

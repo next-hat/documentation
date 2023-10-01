@@ -20,8 +20,3 @@ theme:
     mockServer:
       url: /
     disableSearch: false
-    # See https://redocly.com/docs/api-reference-docs/configuration/theming/
-    theme:
-      colors:
-        primary:
-          # main: '#ff9800'

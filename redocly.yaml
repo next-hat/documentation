@@ -4,7 +4,6 @@
 extends:
   - recommended
 
-
 rules:
   no-unused-components: error
 
@@ -25,4 +24,4 @@ theme:
     theme:
       colors:
         primary:
-          main: '#ff9800'
+          # main: '#ff9800'

@@ -39,7 +39,7 @@ function SearchBar() {
 
 function HomepageHeader() {
   return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
+    <header className={clsx('hero hero', styles.heroBanner)}>
       <div className={clsx(styles.heroBannerContent)}>
         <h1 className={clsx("hero__title", styles.heroTitle)}>What can we help you find ?</h1>
         <SearchBar />

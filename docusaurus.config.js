@@ -3,8 +3,8 @@
 
 const path = require('path');
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/oceanicNext');
+const lightCodeTheme = require('prism-react-renderer').themes.github;
+const darkCodeTheme = require('prism-react-renderer').themes.oceanicNext;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -98,7 +98,7 @@ const config = {
           /**
            * Highlight color for docs
            */
-          primaryColor: '#1890ff',
+          // primaryColor: '#1890ff',
         },
       },
     ],
@@ -114,7 +114,7 @@ const config = {
         },
       ],
       colorMode: {
-        defaultMode: 'dark',
+        defaultMode: 'light',
         disableSwitch: false,
         respectPrefersColorScheme: true,
       },

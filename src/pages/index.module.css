@@ -49,4 +49,5 @@
 .heroTitle {
   padding-bottom: 20px;
   text-align: center;
+  color: var(--ifm-navbar-link-color);
 }

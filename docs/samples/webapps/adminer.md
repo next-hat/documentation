@@ -15,38 +15,40 @@ You can easily deploy [adminer][adminer] using their official [docker image][doc
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: domain
-    Kind: String
-    Default: adminer.internal
-  - Name: network
-    Kind: String
-    Default: Public
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-  - Name: adminer
-    Kind: ProxyRule
-    Version: v0.6
-    Config:
-      Watch:
-        - adminer.global.c
-      Rules:
-        - Network: ${{ Args.network }}
-          Domain: ${{ Args.domain }}
-          Locations:
-            - Path: /
-              Target:
-                Key: adminer.global.c
-                Port: 8080
+- Name: domain
+  Kind: String
+  Default: adminer.internal
+- Name: network
+  Kind: String
+  Default: Public
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: adminer
-    Container:
-      Image: adminer:4.8.1
+- Name: adminer
+  Container:
+    Image: adminer:4.8.1
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: adminer
+  Kind: ProxyRule
+  Version: v0.7
+  Data:
+    Rules:
+    - Network: ${{ Args.network }}
+      Domain: ${{ Args.domain }}
+      Locations:
+        - Path: /
+          Target:
+            Key: adminer.global.c
+            Port: 8080
 ```
 
 Copy past the previous content and save it under a file called `adminer.yml`.<br />

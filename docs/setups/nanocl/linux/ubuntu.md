@@ -84,13 +84,14 @@ You can install Nanocl in different ways, depending on your needs:
    sudo apt install -y c2ncl
    ```
 
-   > **Warning** <br />
-   > Receiving a GPG error when running `apt-get update`? <br />
-   > Your default umask may not be set correctly, causing the public key file for the repo to not be detected. <br />
-   > Run the following command and then try to update your repo again : <br />
-   > ```sh
-   > sudo chmod a+r /etc/apt/keyrings/next-hat.gpg
-   > ```
+:::warning
+Receiving a GPG error when running `apt-get update`? <br />
+Your default umask may not be set correctly, causing the public key file for the repo to not be detected. <br />
+Run the following command and then try to update your repo again : <br />
+```sh
+sudo chmod a+r /etc/apt/keyrings/next-hat.gpg
+```
+:::
 
 ### Install from crates.io
 

@@ -15,44 +15,46 @@ You can easily deploy [mongo express][mongo express] using their official [docke
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: domain
-    Kind: String
-    Default: mongo-express.internal
-  - Name: network
-    Kind: String
-    Default: Public
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-  - Name: mongo-express
-    Kind: ProxyRule
-    Version: v0.6
-    Config:
-      Watch:
-        - mongo-express.global.c
-      Rules:
-        - Network: ${{ Args.network }}
-          Domain: ${{ Args.domain }}
-          Locations:
-            - Path: /
-              Target:
-                Key: mongo-express.global.c
-                Port: 8081
+- Name: domain
+  Kind: String
+  Default: mongo-express.internal
+- Name: network
+  Kind: String
+  Default: Public
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: mongo-express
-    Container:
-      Image: mongo-express:0.54
-      Env:
-        - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-        - ME_CONFIG_MONGODB_ADMINPASSWORD=root
-        - ME_CONFIG_MONGODB_SERVER=mongodb.global.c
-        - ME_CONFIG_MONGODB_PORT=27017
-        - ME_CONFIG_MONGODB_URL=mongodb://root:root@mongodb.global.c:27017/
+- Name: mongo-express
+  Container:
+    Image: mongo-express:0.54
+    Env:
+    - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+    - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+    - ME_CONFIG_MONGODB_SERVER=mongodb.global.c
+    - ME_CONFIG_MONGODB_PORT=27017
+    - ME_CONFIG_MONGODB_URL=mongodb://root:root@mongodb.global.c:27017/
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: mongo-express
+  Kind: ProxyRule
+  Version: v0.7
+  Data:
+    Rules:
+    - Network: ${{ Args.network }}
+      Domain: ${{ Args.domain }}
+      Locations:
+      - Path: /
+        Target:
+          Key: mongo-express.global.c
+          Port: 8081
 ```
 
 Copy past the previous content and save it under a file called `mongo-express.yml`.<br />

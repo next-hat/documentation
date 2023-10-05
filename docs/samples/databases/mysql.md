@@ -14,25 +14,28 @@ Below you can find a basic example to deploy a [mysql][mysql] server using their
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: password
-    Kind: String
-  - Name: volume
-    Kind: String
+- Name: password
+  Kind: String
+- Name: volume
+  Kind: String
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: mysql
-    Container:
-      Image: mysql:8.1.0
-      Env:
-        # More info on env variable can be found there https://hub.docker.com/_/mysql
-        - MYSQL_ROOT_PASSWORD=${{ Args.password }}
-      HostConfig:
-        Binds:
-          - ${{ Args.volume }}:/var/lib/mysql
+- Name: mysql
+  Container:
+    Image: mysql:8.1.0
+    Env:
+      # More info on env variable can be found there https://hub.docker.com/_/mysql
+      - MYSQL_ROOT_PASSWORD=${{ Args.password }}
+    HostConfig:
+      Binds:
+        - ${{ Args.volume }}:/var/lib/mysql
 ```
 
 Copy past the previous content and save it under a file called `mysql.yml`.<br />

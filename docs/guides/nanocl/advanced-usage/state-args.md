@@ -15,12 +15,16 @@ Let considere this example, create a new file called `my-deployment.yml` and add
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 # Definition of your arguments
 Args:
   - Name: name
-    Kind: String # Only available value is String for now
+    # The type of argument, can be:
+    # - String
+    # - Number
+    # - Boolean
+    Kind: String
   - Name: domain
     Kind: String
   - Name: image
@@ -31,25 +35,23 @@ Args:
 Namespace: global
 
 Cargoes:
-  - Name: ${{ Args.name }}
-    Container:
-      Image: ${{ Args.image }}
+- Name: ${{ Args.name }}
+  Container:
+    Image: ${{ Args.image }}
 
 Resources:
-  - Name: ${{ Args.domain }}
-    Kind: ProxyRule
-    Version: v0.5
-    Config:
-      Watch:
-        - ${{ Args.name }}.global.c
-      Rules:
-        - Domain: ${{ Args.domain }}
-          Network: Public
-          Locations:
-            - Path: /
-              Target:
-                Key: ${{ Args.name }}.global.c
-                Port: ${{ Args.port }}
+- Name: ${{ Args.domain }}
+  Kind: ProxyRule
+  Version: v0.10
+  Data:
+    Rules:
+    - Domain: ${{ Args.domain }}
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Key: ${{ Args.name }}.global.c
+          Port: ${{ Args.port }}
 ```
 
 Now if you apply it with:

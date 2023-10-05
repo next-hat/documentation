@@ -54,60 +54,67 @@ nanocl cargo inspect my-cargo
 You should see a list of instances:
 
 ```yml
-Key: global-my-cargo
+Key: my-cargo.global
 Name: my-cargo
-ConfigKey: 38de5258-230f-4dc4-bec4-80b3e757705b
+ConfigKey: f418e5f3-aa1a-4370-bfe4-b554dc7225f0
 NamespaceName: global
 Config:
-  Key: 38de5258-230f-4dc4-bec4-80b3e757705b
+  Key: f418e5f3-aa1a-4370-bfe4-b554dc7225f0
+  CargoKey: my-cargo.global
+  Version: v0.10.0
+  CreatedAt: 2023-10-05T14:33:47.478845
   Name: my-cargo
-  CargoKey: global-my-cargo
-  DnsEntry: null
-  Replication: null
   Container:
     Cmd: []
     Image: nginx:1.23
     HostConfig:
       AutoRemove: false
-RunningInstances: 1
-Containers:
-- Id: f476462a05b882362ca03caf7e19099f3358fa58d7a02c6f60972f449e9d8167
-  Names:
-  - /global-my-cargo
-  Image: nginx:1.23
-  ImageID: sha256:88736fe827391462a4db99252117f136b2b25d1d31719006326a437bb40cb12d
-  Command: /docker-entrypoint.sh nginx -g 'daemon off;'
-  Created: 1676903377
-  Ports:
-  - PrivatePort: 80
-    Type: tcp
-  Labels:
-    io.nanocl.namespace: global
-    maintainer: NGINX Docker Maintainers <docker-maint@nginx.com>
-    io.nanocl.cargo: global-my-cargo
-  State: running
-  Status: Up 16 seconds
-  HostConfig:
-    NetworkMode: global
-  NetworkSettings:
-    Networks:
-      global:
-        NetworkID: 1d5971cdbc130ff161b88092b449c108946efd2bf8ebf91aeeb143259c24dad0
-        EndpointID: 80039a4336ba31e06177202cc49d71f7651a657b2bb813eac929f6e42c409a5c
-        Gateway: 172.26.0.1
-        IPAddress: 172.26.0.2
-        IPPrefixLen: 16
-        IPv6Gateway: ''
-        GlobalIPv6Address: ''
-        GlobalIPv6PrefixLen: 0
-        MacAddress: 02:42:ac:1a:00:02
-  Mounts: []
+InstanceTotal: 1
+InstanceRunning: 1
+Instances:
+- Node: behuman
+  IpAddress: 192.168.8.102
+  Container:
+    Id: ae7756e429bbeb838f11b204e97bbf5fbdbbc37cce6375966ba59d3be0aee5f1
+    Names:
+    - /my-cargo.global.c
+    Image: nginx:1.23
+    ImageID: sha256:a7be6198544f09a75b26e6376459b47c5b9972e7aa742af9f356b540fe852cd4
+    Command: /docker-entrypoint.sh nginx -g 'daemon off;'
+    Created: 1696516427
+    Ports:
+    - PrivatePort: 80
+      Type: tcp
+    Labels:
+      io.nanocl.cnsp: global
+      io.nanocl: enabled
+      io.nanocl.n: global
+      maintainer: NGINX Docker Maintainers <docker-maint@nginx.com>
+      com.docker.compose.project: nanocl_global
+      io.nanocl.c: my-cargo.global
+    State: running
+    Status: Up 8 seconds
+    HostConfig:
+      NetworkMode: global
+    NetworkSettings:
+      Networks:
+        global:
+          NetworkID: bc812c90f4ac077d193a333ac45d9ceb9d151174ca33b966e99a32d8e4b58611
+          EndpointID: b75b22214e13454c110c95015d0a2567002b73286a674c7991c2e3520b7a89b2
+          Gateway: 10.2.0.1
+          IPAddress: 10.2.0.2
+          IPPrefixLen: 16
+          IPv6Gateway: ''
+          GlobalIPv6Address: ''
+          GlobalIPv6PrefixLen: 0
+          MacAddress: 02:42:0a:02:00:02
+    Mounts: []
 ```
 
-So for me, the ipv4 address assigned is `172.26.0.2`; let's curl it to see what is going on!
+So for me, the ipv4 address assigned is `10.2.0.2`; let's curl it to see what is going on!
 
 ```
-curl 172.26.0.2
+curl 10.2.0.2
 ```
 
 This outputs:
@@ -138,7 +145,7 @@ Commercial support is available at
 </html>
 ```
 
-As you can notice we now have a Nginx `cargo instance` running on ipv4 address `192.168.144.2`
+As you can notice we now have a Nginx `cargo instance` running on ipv4 address `10.2.0.2`
 
 ## What is a Cargo ?
 
@@ -147,9 +154,10 @@ Cargoes are lightweight configurations based on a container image, containing ev
 Running a cargo in Nanocl will create one or multiple `cargo instances` or `container`.
 Based on the number of Nanocl nodes and the number of replicas you need. They can also autoscale based on ressources available on your hosts.
 
-> **Info** <br />
-> If you’re familiar with `Kubernetes` then think of a
-> cargo as a version of a `pod`. <br />
+:::info
+If you’re familiar with `Kubernetes` then think of a
+cargo as a version of a `pod`. <br />
+:::
 
 To list your Cargoes you can do it by running:
 
@@ -160,8 +168,8 @@ nanocl cargo ls
 It should output something like this:
 
 ```console
-NAMESPACE     NAME            IMAGE           INSTANCES    
-global        my-cargo        nginx:1.23      1/1
+NAME        NAMESPACE    IMAGE         INSTANCES    VERSION    CREATED AT             UPDATED AT              
+my-cargo    global       nginx:1.23    1/1          v0.10.0    2023-10-05 16:33:47    2023-10-05 16:33:47    
 ```
 
 In a more general way to manage our `cargoes` we will use:
@@ -188,15 +196,17 @@ Commands:
   create   Create a new cargo
   start    Start a cargo by its name
   stop     Stop a cargo by its name
+  restart  Restart a cargo by its name
   remove   Remove cargo by its name
   inspect  Inspect a cargo by its name
   patch    Update a cargo by its name
   image    Manage cargo image
   exec     Execute a command inside a cargo
   history  List cargo history
-  reset    Reset cargo to a specific history
+  revert   Revert cargo to a specific history
   logs     Show logs
   run      Run a cargo
+  stats    Show stats of cargo
   help     Print this message or the help of the given subcommand(s)
 
 Options:
@@ -234,14 +244,15 @@ The image also contains other configurations for the container, such as environm
 
 We won't get to dive deeper into containers and images, and covering all topics will take a long time, so you should take a look into the [Docker documentation](https://www.docker.com/resources/what-container/)
 
-> **Info** <br />
-> If you’re familiar with `chroot` think of a
-> container as an extended version of `chroot`. <br />
-> The filesystem is simply coming from the image.
-> But, a container adds additional isolation not available when simply using chroot.
+:::info
+If you’re familiar with `chroot` think of a
+container as an extended version of `chroot`. <br />
+The filesystem is simply coming from the image.<br />
+But, a container adds additional isolation not available when simply using chroot.
+:::
 
 ## What is a namespace ?
 
-A `namespace` in Nanocl encapsulates cargoes along networks.
+A `namespace` in Nanocl encapsulates cargoes along networks.<br />
 For example, if you have different domain names like *facebook.com*, *instagram.com*,
 you may separate them using different namespaces.

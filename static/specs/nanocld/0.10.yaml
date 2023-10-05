@@ -677,6 +677,50 @@ paths:
           description: Cargo started
         '404':
           description: Cargo does not exist
+  /cargoes/{Name}/stats:
+    get:
+      tags:
+      - Cargoes
+      summary: Get stats of a cargo instance
+      description: Get stats of a cargo instance
+      operationId: stats_cargo
+      parameters:
+      - name: Name
+        in: path
+        description: Name of the cargo instance usually `name` or `name-number`
+        required: true
+        schema:
+          type: string
+      - name: Namespace
+        in: query
+        description: Namespace of the cargo
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: Stream
+        in: query
+        description: Only logs returned since timestamp
+        required: false
+        schema:
+          type: boolean
+          nullable: true
+      - name: OneShot
+        in: query
+        description: Only logs returned until timestamp
+        required: false
+        schema:
+          type: boolean
+          nullable: true
+      responses:
+        '200':
+          description: Cargo stats
+          content:
+            application/vdn.nanocl.raw-stream:
+              schema:
+                $ref: '#/components/schemas/Stats'
+        '404':
+          description: Cargo does not exist
   /cargoes/{Name}/stop:
     post:
       tags:
@@ -1234,6 +1278,142 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /secrets:
+    get:
+      tags:
+      - Secrets
+      summary: List secrets
+      description: List secrets
+      operationId: list_secret
+      responses:
+        '200':
+          description: List of secret
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Secret'
+    post:
+      tags:
+      - Secrets
+      summary: Create a secret
+      description: Create a secret
+      operationId: create_secret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretPartial'
+        required: true
+      responses:
+        '200':
+          description: List of secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret'
+        '409':
+          description: Namespace already exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /secrets/{Key}:
+    delete:
+      tags:
+      - Secrets
+      summary: Delete a secret
+      description: Delete a secret
+      operationId: delete_secret
+      parameters:
+      - name: Name
+        in: path
+        description: The secret name to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Delete response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericDelete'
+        '404':
+          description: Namespace is not existing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    patch:
+      tags:
+      - Secrets
+      summary: Scale or Downscale number of instances
+      description: Scale or Downscale number of instances
+      operationId: patch_secret
+      parameters:
+      - name: Name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: Namespace
+        in: query
+        description: Namespace of the cargo
+        required: false
+        schema:
+          type: string
+          nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretUpdate'
+        required: true
+      responses:
+        '200':
+          description: Secret scaled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret'
+        '404':
+          description: Secret does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /secrets/{Key}/inspect:
+    get:
+      tags:
+      - Secrets
+      summary: Get detailed information about a secret
+      description: Get detailed information about a secret
+      operationId: inspect_secret
+      parameters:
+      - name: Name
+        in: path
+        description: The secret name to inspect
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Detailed information about a secret
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Secret'
+        '404':
+          description: Namespace is not existing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /version:
     get:
       tags:
@@ -1670,12 +1850,126 @@ components:
       properties:
         msg:
           type: string
+    BlkioStats:
+      type: object
+      description: I/O statistics for the container.
+      properties:
+        io_service_bytes_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_serviced_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_queue_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_service_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_wait_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_merged_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        sectors_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+    BlkioStatsEntry:
+      type: object
+      required:
+      - major
+      - minor
+      - op
+      - value
+      properties:
+        major:
+          type: integer
+          format: int64
+          minimum: 0
+        minor:
+          type: integer
+          format: int64
+          minimum: 0
+        op:
+          type: string
+        value:
+          type: integer
+          format: int64
+          minimum: 0
     BollardDate:
       type: string
       title: BollardDate
       description: BollardDate
       example: 2021-01-01T00:00:00.000000000Z
       nullable: true
+    CPUStats:
+      type: object
+      description: General CPU statistics for the container.
+      required:
+      - cpu_usage
+      - throttling_data
+      properties:
+        cpu_usage:
+          $ref: '#/components/schemas/CPUUsage'
+        system_cpu_usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        online_cpus:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        throttling_data:
+          $ref: '#/components/schemas/ThrottlingData'
+    CPUUsage:
+      type: object
+      description: CPU usage statistics for the container.
+      required:
+      - usage_in_usermode
+      - total_usage
+      - usage_in_kernelmode
+      properties:
+        percpu_usage:
+          type: array
+          items:
+            type: integer
+            format: int64
+            minimum: 0
+          nullable: true
+        usage_in_usermode:
+          type: integer
+          format: int64
+          minimum: 0
+        total_usage:
+          type: integer
+          format: int64
+          minimum: 0
+        usage_in_kernelmode:
+          type: integer
+          format: int64
+          minimum: 0
     Cargo:
       type: object
       description: |-
@@ -1717,16 +2011,22 @@ components:
         It keep tracking of an history when you patch an existing cargo
       required:
       - Key
+      - CargoKey
+      - Version
       - CreatedAt
       - Name
-      - Version
-      - CargoKey
       - Container
       properties:
         Key:
           type: string
           format: uuid
           description: Unique identifier of the cargo config
+        CargoKey:
+          type: string
+          description: The key of the cargo
+        Version:
+          type: string
+          description: Version of the config
         CreatedAt:
           type: string
           format: date-time
@@ -1734,18 +2034,21 @@ components:
         Name:
           type: string
           description: Name of the cargo
-        Version:
-          type: string
-          description: Version of the config
-        CargoKey:
-          type: string
-          description: The key of the cargo
+        Metadata:
+          description: Metadata of the cargo (user defined)
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
+          nullable: true
+        Container:
+          $ref: '#/components/schemas/Config'
         Replication:
           allOf:
           - $ref: '#/components/schemas/ReplicationMode'
           nullable: true
-        Container:
-          $ref: '#/components/schemas/Config'
     CargoConfigPartial:
       type: object
       description: A cargo config partial is used to create a Cargo
@@ -1756,12 +2059,21 @@ components:
         Name:
           type: string
           description: Name of the cargo
+        Metadata:
+          description: Metadata of the cargo (user defined)
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
+          nullable: true
+        Container:
+          $ref: '#/components/schemas/Config'
         Replication:
           allOf:
           - $ref: '#/components/schemas/ReplicationMode'
           nullable: true
-        Container:
-          $ref: '#/components/schemas/Config'
     CargoConfigUpdate:
       type: object
       description: |-
@@ -1772,6 +2084,15 @@ components:
         Name:
           type: string
           description: New name of the cargo
+          nullable: true
+        Metadata:
+          description: New metadata of the cargo (user defined)
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
           nullable: true
         Container:
           allOf:
@@ -3445,6 +3766,405 @@ components:
       - $ref: '#/components/schemas/UpstreamTarget'
       - $ref: '#/components/schemas/HttpTarget'
       - $ref: '#/components/schemas/UnixTarget'
+    MemoryStats:
+      type: object
+      description: General memory statistics for the container.
+      properties:
+        stats:
+          allOf:
+          - $ref: '#/components/schemas/MemoryStatsStats'
+          nullable: true
+        max_usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        failcnt:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commit_peak:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commitbytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commitpeakbytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        privateworkingset:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+    MemoryStatsStats:
+      oneOf:
+      - $ref: '#/components/schemas/MemoryStatsStatsV1'
+      - $ref: '#/components/schemas/MemoryStatsStatsV2'
+      description: Granular memory statistics for the container.
+    MemoryStatsStatsV1:
+      type: object
+      description: |-
+        Granular memory statistics for the container, v1 cgroups.
+
+        Exposed in the docker library [here](https://github.com/moby/moby/blob/40d9e2aff130b42ba0f83d5238b9b53184c8ab3b/daemon/daemon_unix.go#L1436).
+      required:
+      - cache
+      - dirty
+      - mapped_file
+      - total_inactive_file
+      - pgpgout
+      - rss
+      - total_mapped_file
+      - writeback
+      - unevictable
+      - pgpgin
+      - total_unevictable
+      - pgmajfault
+      - total_rss
+      - total_rss_huge
+      - total_writeback
+      - total_inactive_anon
+      - rss_huge
+      - hierarchical_memory_limit
+      - total_pgfault
+      - total_active_file
+      - active_anon
+      - total_active_anon
+      - total_pgpgout
+      - total_cache
+      - total_dirty
+      - inactive_anon
+      - active_file
+      - pgfault
+      - inactive_file
+      - total_pgmajfault
+      - total_pgpgin
+      properties:
+        cache:
+          type: integer
+          format: int64
+          minimum: 0
+        dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        mapped_file:
+          type: integer
+          format: int64
+          minimum: 0
+        total_inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        pgpgout:
+          type: integer
+          format: int64
+          minimum: 0
+        rss:
+          type: integer
+          format: int64
+          minimum: 0
+        total_mapped_file:
+          type: integer
+          format: int64
+          minimum: 0
+        writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgpgin:
+          type: integer
+          format: int64
+          minimum: 0
+        total_unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_rss:
+          type: integer
+          format: int64
+          minimum: 0
+        total_rss_huge:
+          type: integer
+          format: int64
+          minimum: 0
+        total_writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        total_inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        rss_huge:
+          type: integer
+          format: int64
+          minimum: 0
+        hierarchical_memory_limit:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        total_active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgpgout:
+          type: integer
+          format: int64
+          minimum: 0
+        total_cache:
+          type: integer
+          format: int64
+          minimum: 0
+        total_dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgpgin:
+          type: integer
+          format: int64
+          minimum: 0
+        hierarchical_memsw_limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        shmem:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        total_shmem:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+    MemoryStatsStatsV2:
+      type: object
+      description: |-
+        Granular memory statistics for the container, v2 cgroups.
+
+        Exposed in the docker library [here](https://github.com/moby/moby/blob/40d9e2aff130b42ba0f83d5238b9b53184c8ab3b/daemon/daemon_unix.go#L1542).
+      required:
+      - anon
+      - file
+      - kernel_stack
+      - slab
+      - sock
+      - shmem
+      - file_mapped
+      - file_dirty
+      - file_writeback
+      - anon_thp
+      - inactive_anon
+      - active_anon
+      - inactive_file
+      - active_file
+      - unevictable
+      - slab_reclaimable
+      - slab_unreclaimable
+      - pgfault
+      - pgmajfault
+      - workingset_refault
+      - workingset_activate
+      - workingset_nodereclaim
+      - pgrefill
+      - pgscan
+      - pgsteal
+      - pgactivate
+      - pgdeactivate
+      - pglazyfree
+      - pglazyfreed
+      - thp_fault_alloc
+      - thp_collapse_alloc
+      properties:
+        anon:
+          type: integer
+          format: int64
+          minimum: 0
+        file:
+          type: integer
+          format: int64
+          minimum: 0
+        kernel_stack:
+          type: integer
+          format: int64
+          minimum: 0
+        slab:
+          type: integer
+          format: int64
+          minimum: 0
+        sock:
+          type: integer
+          format: int64
+          minimum: 0
+        shmem:
+          type: integer
+          format: int64
+          minimum: 0
+        file_mapped:
+          type: integer
+          format: int64
+          minimum: 0
+        file_dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        file_writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        anon_thp:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        slab_reclaimable:
+          type: integer
+          format: int64
+          minimum: 0
+        slab_unreclaimable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_refault:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_activate:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_nodereclaim:
+          type: integer
+          format: int64
+          minimum: 0
+        pgrefill:
+          type: integer
+          format: int64
+          minimum: 0
+        pgscan:
+          type: integer
+          format: int64
+          minimum: 0
+        pgsteal:
+          type: integer
+          format: int64
+          minimum: 0
+        pgactivate:
+          type: integer
+          format: int64
+          minimum: 0
+        pgdeactivate:
+          type: integer
+          format: int64
+          minimum: 0
+        pglazyfree:
+          type: integer
+          format: int64
+          minimum: 0
+        pglazyfreed:
+          type: integer
+          format: int64
+          minimum: 0
+        thp_fault_alloc:
+          type: integer
+          format: int64
+          minimum: 0
+        thp_collapse_alloc:
+          type: integer
+          format: int64
+          minimum: 0
     Metric:
       type: object
       description: Metric entry
@@ -3774,6 +4494,51 @@ components:
         IPv6Address:
           type: string
           nullable: true
+    NetworkStats:
+      type: object
+      description: Network statistics for the container.
+      required:
+      - rx_dropped
+      - rx_bytes
+      - rx_errors
+      - tx_packets
+      - tx_dropped
+      - rx_packets
+      - tx_errors
+      - tx_bytes
+      properties:
+        rx_dropped:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_bytes:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_errors:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_packets:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_dropped:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_packets:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_errors:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_bytes:
+          type: integer
+          format: int64
+          minimum: 0
     NetworkingConfig:
       type: object
       description: NetworkingConfig represents the container's networking configuration for each of its interfaces. It is used for the networking configs specified in the `docker create` and `docker network connect` commands.
@@ -3828,6 +4593,20 @@ components:
           type: string
           description: IP address and ports at which this node can be reached.
           nullable: true
+    PidsStats:
+      type: object
+      description: Process ID statistics for the container.
+      properties:
+        current:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
     PluginsInfo:
       type: object
       description: 'Available plugins per type.  <p><br /></p>  > **Note**: Only unmanaged (V1) plugins are included in this list. > V1 plugins are \"lazily\" loaded, and are not returned in this list > if there is no resource using the plugin.'
@@ -3984,7 +4763,7 @@ components:
           description: The locations to handle multiple paths
         Ssl:
           allOf:
-          - $ref: '#/components/schemas/ProxySslConfig'
+          - $ref: '#/components/schemas/ProxySsl'
           nullable: true
         Includes:
           type: array
@@ -4013,10 +4792,14 @@ components:
           minimum: 0
         Ssl:
           allOf:
-          - $ref: '#/components/schemas/ProxySslConfig'
+          - $ref: '#/components/schemas/ProxySsl'
           nullable: true
         Target:
           $ref: '#/components/schemas/StreamTarget'
+    ProxySsl:
+      oneOf:
+      - $ref: '#/components/schemas/ProxySslConfig'
+      - type: string
     ProxySslConfig:
       type: object
       required:
@@ -4216,7 +4999,7 @@ components:
       - Version
       - Kind
       - ConfigKey
-      - Config
+      - Data
       properties:
         Name:
           type: string
@@ -4239,9 +5022,14 @@ components:
           type: string
           format: uuid
           description: The config of the resource
-        Config:
+        Data:
           type: object
           description: The config of the resource as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
           additionalProperties:
             $ref: '#/components/schemas/Any'
     ResourceConfig:
@@ -4251,7 +5039,7 @@ components:
       - Version
       - CreatedAt
       - ResourceKey
-      - Config
+      - Data
       properties:
         Key:
           type: string
@@ -4259,17 +5047,22 @@ components:
           description: Key of the resource
         Version:
           type: string
-          description: Version of the config
+          description: Version of the resource
         CreatedAt:
           type: string
           format: date-time
           description: The creation date of the resource
         ResourceKey:
           type: string
-          description: Resource key associated with the config
-        Config:
+          description: Resource key associated with the data
+        Data:
           type: object
-          description: The config of the resource as a json object
+          description: The data of the resource as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
           additionalProperties:
             $ref: '#/components/schemas/Any'
     ResourceDnsRule:
@@ -4291,7 +5084,7 @@ components:
       - Name
       - Kind
       - Version
-      - Config
+      - Data
       properties:
         Name:
           type: string
@@ -4301,39 +5094,43 @@ components:
           description: The kind of the resource
         Version:
           type: string
-          description: Version of the config
-        Config:
+          description: Version of the data
+        Data:
           type: object
-          description: The config of the resource (json object)
+          description: The data of the resource (json object)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
           additionalProperties:
             $ref: '#/components/schemas/Any'
     ResourceProxyRule:
       type: object
       description: Define proxy rules to apply
       required:
-      - Watch
       - Rules
       properties:
-        Watch:
-          type: array
-          items:
-            type: string
-          description: Cargo to watch for changes
         Rules:
           type: array
           items:
             $ref: '#/components/schemas/ProxyRule'
-          description: The rule
+          description: The rules to apply
     ResourceUpdate:
       type: object
       required:
       - Version
-      - Config
+      - Data
       properties:
         Version:
           type: string
           description: Version of the config
-        Config:
+        Data:
+          type: object
+          description: The config of the resource as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
           type: object
           description: The config of the resource as a json object
           additionalProperties:
@@ -4400,6 +5197,91 @@ components:
             type: string
           description: List of command-line arguments to pass to the runtime when invoked.
           nullable: true
+    Secret:
+      type: object
+      description: |
+        ## SecretDbModel
+
+        This structure represent the secret in the database.
+        A secret is a key/value pair that can be used by the user to store
+        sensitive data. It is stored as a json object in the database.
+      required:
+      - Key
+      - CreatedAt
+      - UpdatedAt
+      - Kind
+      - Immutable
+      - Data
+      properties:
+        Key:
+          type: string
+          description: The key of the secret
+        CreatedAt:
+          type: string
+          format: date-time
+          description: The creation date
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: The last update date
+        Kind:
+          type: string
+          description: The kind of secret
+        Immutable:
+          type: boolean
+          description: The secret cannot be updated
+        Data:
+          description: The secret data
+        Metadata:
+          nullable: true
+    SecretPartial:
+      type: object
+      description: |
+        ## SecretPartial
+
+        A partial secret object. This is used to create a secret.
+        A secret is a key/value pair that can be used by the user to store
+        sensitive data. It is stored as a json object in the database.
+      required:
+      - Key
+      - Kind
+      - Data
+      properties:
+        Key:
+          type: string
+          description: The key of the secret
+        Kind:
+          type: string
+          description: The kind of secret
+        Immutable:
+          type: boolean
+          description: The secret cannot be updated
+          nullable: true
+        Data:
+          type: object
+          description: The secret data
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+    SecretUpdate:
+      type: object
+      required:
+      - Data
+      properties:
+        Data:
+          type: object
+          description: The data of the secret as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the secret (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
     StartExecOptions:
       type: object
       description: Exec configuration used in the [Create Exec API](Docker::create_exec())
@@ -4452,6 +5334,12 @@ components:
           items:
             $ref: '#/components/schemas/ResourcePartial'
           description: List of resources to create
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretPartial'
+          description: List of secrets to create
           nullable: true
         Cargoes:
           type: array
@@ -4513,6 +5401,79 @@ components:
           items:
             $ref: '#/components/schemas/VmConfigPartial'
           description: List of virtual machines to create and run
+    Stats:
+      type: object
+      description: Statistics for the container.
+      required:
+      - read
+      - preread
+      - num_procs
+      - pids_stats
+      - memory_stats
+      - blkio_stats
+      - cpu_stats
+      - precpu_stats
+      - storage_stats
+      - name
+      - id
+      properties:
+        read:
+          type: string
+        preread:
+          type: string
+        num_procs:
+          type: integer
+          format: int32
+          minimum: 0
+        pids_stats:
+          $ref: '#/components/schemas/PidsStats'
+        network:
+          allOf:
+          - $ref: '#/components/schemas/NetworkStats'
+          nullable: true
+        networks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NetworkStats'
+          nullable: true
+        memory_stats:
+          $ref: '#/components/schemas/MemoryStats'
+        blkio_stats:
+          $ref: '#/components/schemas/BlkioStats'
+        cpu_stats:
+          $ref: '#/components/schemas/CPUStats'
+        precpu_stats:
+          $ref: '#/components/schemas/CPUStats'
+        storage_stats:
+          $ref: '#/components/schemas/StorageStats'
+        name:
+          type: string
+        id:
+          type: string
+    StorageStats:
+      type: object
+      description: File I/O statistics for the container.
+      properties:
+        read_count_normalized:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        read_size_bytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        write_count_normalized:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        write_size_bytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
     StreamTarget:
       oneOf:
       - $ref: '#/components/schemas/UpstreamTarget'
@@ -5052,6 +6013,26 @@ components:
           format: int64
           description: Rate
           nullable: true
+    ThrottlingData:
+      type: object
+      description: CPU throttling statistics.
+      required:
+      - periods
+      - throttled_periods
+      - throttled_time
+      properties:
+        periods:
+          type: integer
+          format: int64
+          minimum: 0
+        throttled_periods:
+          type: integer
+          format: int64
+          minimum: 0
+        throttled_time:
+          type: integer
+          format: int64
+          minimum: 0
     TlsInfo:
       type: object
       description: Information about the issuer of leaf TLS certificates and the trusted root CA certificate.
@@ -5186,6 +6167,9 @@ components:
         VmKey:
           type: string
           description: The key of the vm
+        Metadata:
+          description: The metadata (user defined)
+          nullable: true
         Hostname:
           type: string
           description: Hostname of the vm
@@ -5226,6 +6210,9 @@ components:
         Name:
           type: string
           description: Name of the vm
+        Metadata:
+          description: The metadata (user defined)
+          nullable: true
         Hostname:
           type: string
           description: 'Hostname of the vm (default: generated from name)'
@@ -5268,6 +6255,9 @@ components:
         Name:
           type: string
           description: Name of the vm
+          nullable: true
+        Metadata:
+          description: The metadata (user defined)
           nullable: true
         Hostname:
           type: string

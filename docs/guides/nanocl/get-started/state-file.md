@@ -19,7 +19,7 @@ It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Namespace: global
 
@@ -35,13 +35,11 @@ Cargoes:
 Resources:
 - Name: deploy-example.com
   Kind: ProxyRule
-  Version: v0.5
-  Config:
-    Watch:
-    - my-cargo.global.c
+  Version: v0.7
+  Data:
     Rules:
     - Domain: deploy-example.com
-      Network: Public
+      Network: Internal
       Locations:
       - Path: /
         Target:

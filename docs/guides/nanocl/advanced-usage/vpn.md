@@ -27,15 +27,18 @@ Here is the content of the VPN `Statefile`:
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Args:
   - Name: namespace
     Kind: String
   - Name: public-ip
     Kind: String
+  - Name: dns
+    Kind: String
+    Default: "1.1.1.1"
 
-Namespaces: ${{ Args.namespace }}
+Namespace: ${{ Args.namespace }}
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
@@ -46,13 +49,18 @@ Cargoes:
       Env:
         - VPN_PUBLIC_IP=${{ Args.public-ip }}
         - VPN_DNS_SRV1=${{ Namespaces[ Args.namespace ].Gateway }}
-        - VPN_DNS_SRV2=1.1.1.1
+        - VPN_DNS_SRV2=${{ Args.dns }}
         - VPN_L2TP_NET=192.168.42.0/16
         - VPN_L2TP_LOCAL=192.168.42.1
         - VPN_L2TP_POOL=192.168.42.10-192.168.42.254
         - VPN_XAUTH_NET=192.168.43.0/16
         - VPN_XAUTH_POOL=192.168.43.10-192.168.83.254
       HostConfig:
+        PortBindings:
+          500/udp:
+            - HostPort: "500"
+          4500/udp:
+            - HostPort: "4500"
         Binds:
           - /opt/vpn:/etc/ipsec.d
           - /lib/modules:/lib/modules
@@ -77,7 +85,7 @@ Cargoes:
 You can use it in the following way:
 
 ```console
-nanocl state apply -s nhnr.io/sys/vpn.yml -- --namespace private --public-ip server-public-ip
+nanocl state apply -s nhnr.io/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)
 ```
 
 From the file above, you can notice that we create a custom DNS for our VPN.<br/>
@@ -111,45 +119,43 @@ Now we can create cargoes on any namespace we want and make them accessible from
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Namespace: global
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-  - Name: vpn-dns
-    Kind: DnsRule
-    Version: v0.2
-    Config:
-      Network: private.nsp
-      Entries:
-        - Name: my-domain.internal
-          IpAddress: private.nsp
-
-  - Name: my-domain.internal
-    Kind: ProxyRule
-    Version: v0.5
-    Config:
-      Watch:
-        - deploy-example.global.c
-      Rules:
-        - Domain: my-domain.internal
-          Network: private.nsp
-          Locations:
-            - Path: /
-              Target:
-                Key: deploy-example.global.c
-                Port: 9000
-
-# See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: deploy-example
-    Container:
-      Image: nexthat/nanocl-get-started:latest
-      Env:
-        - APP=GET_STARTED1
+- Name: deploy-example
+  Container:
+    Image: nexthat/nanocl-get-started:latest
+    Env:
+    - APP=GET_STARTED1
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: vpn-dns
+  Kind: DnsRule
+  Version: v0.3
+  Data:
+    Network: private.nsp
+    Entries:
+    - Name: my-domain.internal
+      IpAddress: private.nsp
+
+- Name: my-domain.internal
+  Kind: ProxyRule
+  Version: v0.7
+  Data:
+    Rules:
+    - Domain: my-domain.internal
+      Network: private.nsp
+      Locations:
+      - Path: /
+        Target:
+          Key: deploy-example.global.c
+          Port: 9000
 ```
 
 Notice that we use alot of `private.nsp` that reference to the gateway of our namespace `private` you may have to change it if you used a different namespace.

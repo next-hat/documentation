@@ -15,46 +15,48 @@ You can easily deploy [gitlab][gitlab] using their official [docker image][docke
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: domain
-    Kind: String
-    Default: gitlab.internal
-  - Name: network
-    Kind: String
-    Default: Public
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-  - Name: gitlab
-    Kind: ProxyRule
-    Version: v0.6
-    Config:
-      Watch:
-        - gitlab.global.c
-      Rules:
-        - Network: ${{ Args.network }}
-          Domain: ${{ Args.domain }}
-          Locations:
-            - Path: /
-              Target:
-                Key: gitlab.global.c
-                Port: 80
+- Name: domain
+  Kind: String
+  Default: gitlab.internal
+- Name: network
+  Kind: String
+  Default: Public
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: gitlab
-    Container:
-      Image: gitlab/gitlab-ee:16.4.0-ee.0
-      Env:
-        - GITLAB_ROOT_PASSWORD=root
-      HostConfig:
-        ShmSize: 268435456
-        Binds:
-          - /opt/gitlab/config:/etc/gitlab
-          - /opt/gitlab/logs:/var/log/gitlab
-          - /opt/gitlab/data:/var/opt/gitlab
+- Name: gitlab
+  Container:
+    Image: gitlab/gitlab-ee:16.4.0-ee.0
+    Env:
+      - GITLAB_ROOT_PASSWORD=root
+    HostConfig:
+      ShmSize: 268435456
+      Binds:
+      - /opt/gitlab/config:/etc/gitlab
+      - /opt/gitlab/logs:/var/log/gitlab
+      - /opt/gitlab/data:/var/opt/gitlab
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: gitlab
+  Kind: ProxyRule
+  Version: v0.7
+  Data:
+    Rules:
+    - Network: ${{ Args.network }}
+      Domain: ${{ Args.domain }}
+      Locations:
+      - Path: /
+        Target:
+          Key: gitlab.global.c
+          Port: 80
 ```
 
 Copy past the previous content and save it under a file called `gitlab.yml`.<br />

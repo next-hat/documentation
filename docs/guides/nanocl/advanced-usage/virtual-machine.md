@@ -67,10 +67,10 @@ The virtual machine will boot with the following default settings if no options 
 
 The initial boot time with default settings is approximately 90 seconds. This can be improved by enabling KVM and allocating more resources to your virtual machine.
 
-> **Note**
->
-> The virtual machine won't use the base image directly.<br/>
-> Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
+:::info
+The virtual machine won't use the base image directly.<br/>
+Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
+:::
 
 You can monitor the status by attaching to the virtual machine using the following command:
 
@@ -130,8 +130,9 @@ In the above command, you can observe several options being utilized:
 
 If your system does not have KVM enabled, you can remove the --kvm option. After patching, you can reattach to the virtual machine.
 
-> **Note**
-> Patching a virtual machine will cause it to stop and restart.
+:::warning
+Patching a virtual machine will cause it to stop and restart.
+:::
 
 ## SSH connection
 
@@ -216,7 +217,7 @@ You can define a virtual machine using a ``Statefile``. Here is an example:
 
 ```yml
 Kind: VirtualMachine
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Namespace: global
 
@@ -238,7 +239,7 @@ Here is a complete example of exposing the virtual machine's port 22 for SSH to 
 
 ```yml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Namespace: global
 
@@ -247,7 +248,7 @@ Namespace: global
 Resources:
   - Name: myvm
     Kind: ProxyRule
-    Version: v0.6
+    Version: v0.7
     Config:
       Watch:
         - myvm.global.v

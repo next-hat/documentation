@@ -28,21 +28,24 @@ Commands:
   cargo      Manage cargoes
   vm         Manage virtual machines
   resource   Manage resources
+  node       Manage nodes (experimental)
   events     Watch daemon events
-  state      Apply or Reverse a state from a configuration file
+  state      Define, Run, or Remove Cargo or Virtual Machines
+  context    Manage contexts
   info       Show nanocl host information
   version    Show nanocl version information
   install    Install nanocl components
   uninstall  Uninstall nanocl components
   upgrade    Upgrade nanocl components
   ps         Show all processes managed by nanocl
+  system     Manage system
+  secret     Manage secrets
   help       Print this message or the help of the given subcommand(s)
 
 Options:
-  -H, --host <HOST>  Nanocld host [default: unix://run/nanocl/nanocl.sock]
+  -H, --host <HOST>  Nanocld host default: unix://run/nanocl/nanocl.sock
   -h, --help         Print help
   -V, --version      Print version
-
 ```
 
 ## Description
@@ -76,15 +79,17 @@ Commands:
   create   Create a new cargo
   start    Start a cargo by its name
   stop     Stop a cargo by its name
+  restart  Restart a cargo by its name
   remove   Remove cargo by its name
   inspect  Inspect a cargo by its name
   patch    Update a cargo by its name
   image    Manage cargo image
   exec     Execute a command inside a cargo
   history  List cargo history
-  reset    Reset cargo to a specific history
+  revert   Revert cargo to a specific history
   logs     Show logs
   run      Run a cargo
+  stats    Show stats of cargo
   help     Print this message or the help of the given subcommand(s)
 
 Options:

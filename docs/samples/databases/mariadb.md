@@ -15,25 +15,28 @@ Below you can find a basic example to deploy a [mariadb][mariadb] server using t
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: password
-    Kind: String
-  - Name: volume
-    Kind: String
+- Name: password
+  Kind: String
+- Name: volume
+  Kind: String
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: mariadb
-    Container:
-      Image: mariadb:11.1.2
-      Env:
-        # More info on env variables can be found there https://hub.docker.com/_/mariadb
-        - MARIADB_ROOT_PASSWORD=${{ Args.password }}
-      HostConfig:
-        Binds:
-          - ${{ Args.volume }}:/var/lib/mysql
+- Name: mariadb
+  Container:
+    Image: mariadb:11.1.2
+    Env:
+      # More info on env variables can be found there https://hub.docker.com/_/mariadb
+      - MARIADB_ROOT_PASSWORD=${{ Args.password }}
+    HostConfig:
+      Binds:
+        - ${{ Args.volume }}:/var/lib/mysql
 ```
 
 Copy past the previous content and save it under a file called `mariadb.yml`.<br />

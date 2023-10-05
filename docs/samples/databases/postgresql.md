@@ -14,25 +14,28 @@ Below you can find a basic example to deploy a [postgresql][postgresql] server u
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: password
-    Kind: String
-  - Name: volume
-    Kind: String
+- Name: password
+  Kind: String
+- Name: volume
+  Kind: String
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: postgresql
-    Container:
-      Image: postgres:16.0
-      Env:
-        # More info on env variable can be found there https://hub.docker.com/_/postgres
-        - POSTGRES_PASSWORD=${{ Args.password }}
-      HostConfig:
-        Binds:
-          - ${{ Args.volume }}:/var/lib/postgresql/data
+- Name: postgresql
+  Container:
+    Image: postgres:16.0
+    Env:
+      # More info on env variable can be found there https://hub.docker.com/_/postgres
+      - POSTGRES_PASSWORD=${{ Args.password }}
+    HostConfig:
+      Binds:
+        - ${{ Args.volume }}:/var/lib/postgresql/data
 ```
 
 Copy past the previous content and save it under a file called `postgresql.yml`.<br />

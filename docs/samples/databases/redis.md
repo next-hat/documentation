@@ -14,22 +14,25 @@ Below you can find a basic example to deploy a [redis][redis] server using their
 
 ```yaml
 Kind: Deployment
-ApiVersion: v0.9
+ApiVersion: v0.10
+
 Namespace: global
+
 Args:
-  - Name: volume
-    Kind: String
+- Name: volume
+  Kind: String
+
 # See all options:
 # https://docs.next-hat.com/references/nanocl/cargo
 Cargoes:
-  - Name: redis
-    Container:
-      Image: redis:7.2.1
-      Env:
-        # More info on env variable can be found there https://hub.docker.com/_/redis
-      HostConfig:
-        Binds:
-          - ${{ Args.volume }}:/data
+- Name: redis
+  Container:
+    Image: redis:7.2.1
+    Env:
+      # More info on env variable can be found there https://hub.docker.com/_/redis
+    HostConfig:
+      Binds:
+        - ${{ Args.volume }}:/data
 ```
 
 Copy past the previous content and save it under a file called `redis.yml`.<br />

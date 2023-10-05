@@ -18,25 +18,28 @@ A `proxy rule` allow you to redirect a specific ip address / port or domain name
 
 ## Add proxy rules
 
-> **Info** <br />
-> To follow up the tutorial you must have a cargo called my-cargo running with port **9001** open as HTTP
+:::info
+To follow up the tutorial you must have a cargo called my-cargo running with port **9001** open as HTTP
+:::
 
-Create a file called `proxy.get-started.yml` and copy the following content:
+Create a file called `proxy.deploy-example.yml` and copy the following content:
 
 ```yml
 Kind: Resource
-ApiVersion: v0.9
+ApiVersion: v0.10
 
 Resources:
-- Name: get-started.com
+- Name: deploy-example.com
   Kind: ProxyRule
-  Config:
-    Watch:
-    # Cargo to watch change, formated as follow `cargo-name.namespace_name`
-    - my-cargo.global.c
+  Version: v0.7
+  Data:
     Rules:
-    - Domain: get-started.com
-      Network: Public
+    - Domain: deploy-example.com
+      # Internal mean only accessible from 127.0.0.1 other possibility are :
+      # - All to bind on all network interface
+      # - Public to bind only on public ip address
+      # - `namespace_name`.nsp to bind only on a namespace network
+      Network: Internal
       Locations:
       - Path: /
         Target:
@@ -49,7 +52,7 @@ Resources:
 Now let's create the proxy rule by running:
 
 ```sh
-nanocl state apply -s proxy.get-started.yml
+nanocl state apply -s proxy.deploy-example.yml
 ```
 
 You can see existing resources with:
@@ -58,7 +61,7 @@ You can see existing resources with:
 nanocl resource ls
 ```
 
-Now we should add get-started.com to the hosts
+Now we should add deploy-example.com to the hosts
 
 ```sh
 sudo vim /etc/hosts
@@ -66,38 +69,43 @@ sudo vim /etc/hosts
 
 and add the following line:
 ```console
-127.0.0.1 get-started.com
+127.0.0.1 deploy-example.com
 ```
 
 Now we can test that our proxy rule was working
 
 ```sh
-curl get-started.com
+curl deploy-example.com
 ```
 
 Should output:
 
 ```json
 {
-  "now": 1659412739561,
+  "now": 1696517487975,
   "headers": {
-    "connection": "upgrade",
-    "x-forwarded-for": "172.28.237.150",
-    "host": "get-started.com",
-    "user-agent": "curl/7.68.0",
+    "host": "deploy-example.com",
+    "x-forwarded-scheme": "http",
+    "x-forwarded-proto": "http",
+    "x-forwarded-for": "127.0.0.1",
+    "x-real-ip": "127.0.0.1",
+    "connection": "close",
+    "user-agent": "curl/7.88.1",
     "accept": "*/*"
   },
   "env": {
-    "NODE_VERSION": "16.16.0",
-    "HOSTNAME": "8c5d492b2b04",
+    "NODE_VERSION": "16.18.1",
+    "HOSTNAME": "my-cargo-global-c",
     "YARN_VERSION": "1.22.19",
-    "PORT": "9000",
+    "PORT": "9001",
     "HOME": "/home/node",
+    "NANOCL_CARGO_NAMESPACE": "global",
     "TERM": "xterm",
-    "CLUSTER": "DEV",
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "NANOCL_CARGO_KEY": "my-cargo.global",
     "HOST": "0.0.0.0",
-    "PWD": "/home/node/app"
+    "PWD": "/home/node/app",
+    "NANOCL_CARGO_INSTANCE": "0"
   }
 }
 ```

@@ -16,7 +16,7 @@ To add an SSL Certificate you must create a secret.<br/>
 
 :::tip
 You can create secrets directly from a deployment `Statefile`!<br/>
-But i recommand you to use `Secret` kind of Statefile and manage them separatly.
+But we recommend you to use `Secret` kind of Statefile and manage them separatly.
 :::
 
 There is an `Statefile` example on how to do it:

@@ -26,4 +26,4 @@ The `Metadata` of the `Statefile` is always present usually at the top of the fi
 
 <ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/StateDeployment" />
 
-If the kind is only set on `Cargo`, `Virtual Machine` or `Resource` only an array with the specific `Kind` will be allowed.
+If the kind is only set on `Cargo`, `Virtual Machine`, `Resource` or `Secret` only an array with the specific `Kind` will be allowed.

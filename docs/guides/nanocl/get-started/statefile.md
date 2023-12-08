@@ -18,8 +18,7 @@ Statefile are a way to describe the state you want for a specific namespace.
 It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -35,7 +34,7 @@ Cargoes:
 Resources:
 - Name: deploy-example.com
   Kind: ProxyRule
-  Version: v0.7
+  Version: v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

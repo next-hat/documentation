@@ -26,8 +26,7 @@ wget https://nhnr.io/sys/vpn.yml
 Here is the content of the VPN `Statefile`:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Args:
   - Name: namespace
@@ -118,8 +117,7 @@ You can have a deeper understanding of the container image in the [official docu
 Now we can create cargoes on any namespace we want and make them accessible from our vpn for example:
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -137,7 +135,7 @@ Cargoes:
 Resources:
 - Name: vpn-dns
   Kind: DnsRule
-  Version: v0.3
+  Version: v0.4
   Data:
     Network: private.nsp
     Entries:
@@ -146,7 +144,7 @@ Resources:
 
 - Name: my-domain.internal
   Kind: ProxyRule
-  Version: v0.7
+  Version: v0.9
   Data:
     Rules:
     - Domain: my-domain.internal

@@ -14,8 +14,7 @@ It's made by the original developers of MySQL and guaranteed to stay open source
 Below you can find a basic example to deploy a [mariadb][mariadb] server using their official [docker image][docker image]:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 

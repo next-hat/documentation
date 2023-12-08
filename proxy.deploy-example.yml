@@ -1,0 +1,21 @@
+ApiVersion: v0.12
+
+Resources:
+- Name: deploy-example.com
+  Kind: ProxyRule
+  Version: v0.9
+  Data:
+    Rules:
+    - Domain: deploy-example.com
+      # Internal mean only accessible from 127.0.0.1 other possibility are :
+      # - All to bind on all network interface
+      # - Public to bind only on public ip address
+      # - `namespace_name`.nsp to bind only on a namespace network
+      Network: Internal
+      Locations:
+      - Path: /
+        Target:
+          # Cargo to target formated as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
+          Key: my-cargo.global.c
+          # Cargo port to target
+          Port: 9001

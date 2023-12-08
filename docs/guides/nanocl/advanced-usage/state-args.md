@@ -14,8 +14,7 @@ Statefile Arguments are a way to reuse your `Statefile` by taking advantage of `
 Let considere this example, create a new file called `my-deployment.yml` and add the following content :
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 # Definition of your arguments
 Args:

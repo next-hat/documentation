@@ -13,8 +13,7 @@ pagination_prev: null
 Below you can find a basic example to deploy a [redis][redis] server using their official [docker image][docker image]:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 

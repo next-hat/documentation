@@ -22,8 +22,7 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 There is an `Statefile` example on how to do it:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -93,7 +92,7 @@ Cargoes:
 Resources:
 - Name: deploy-example.com
   Kind: ProxyRule
-  Version: v0.7
+  Version: v0.9
   Data:
     Rules:
     - Domain: deploy-example.com
@@ -121,8 +120,7 @@ After the command finished Ssl will be enabled already but you need to update yo
 To use the `secret` for your next deployment:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -138,7 +136,7 @@ Cargoes:
 Resources:
 - Name: deploy-example.com
   Kind: ProxyRule
-  Version: v0.7
+  Version: v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

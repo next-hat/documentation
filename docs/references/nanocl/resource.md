@@ -30,8 +30,7 @@ Advanced user may want to define a custom `Kind` of `Resource`, this can allow t
 This can be done using a `Statefile` by applying a new `Kind` of `Resource`
 
 ```yaml
-Kind: Resource
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Resources:
 - Name: MyKind
@@ -45,8 +44,7 @@ Applying this `Statefile` will create a new `Kind` of `Resource` `MyKind` with v
 Now we can create new resource with `Kind` `MyKind`.<br/>
 
 ```yaml
-Kind: Resource
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Resources:
 - Name: my-custom-resource
@@ -65,8 +63,7 @@ If you don't need to call a custom url but want a schema validation.<br />
 You can use the `Schema` property.
 
 ```yaml
-Kind: Resource
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Resources:
 - Name: MyKind

@@ -216,8 +216,7 @@ ssh cloud@10.2.0.2
 You can define a virtual machine using a ``Statefile``. Here is an example:
 
 ```yml
-Kind: VirtualMachine
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -238,8 +237,7 @@ You can use a `ProxyRule` to expose a specific port of your virtual machine.
 Here is a complete example of exposing the virtual machine's port 22 for SSH to a public port 5555:
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -248,7 +246,7 @@ Namespace: global
 Resources:
   - Name: myvm
     Kind: ProxyRule
-    Version: v0.7
+    Version: v0.9
     Config:
       Watch:
         - myvm.global.v

@@ -47,7 +47,7 @@ nanocl state apply -s mongodb.yml -- --password my_root_password --volume /opt/m
 
 :::tip
 Other cargo created in the same namespace **global** will be able to connect to the mongodb using is key **mongodb.global.c**
-The key can be predicted and caculated, it's formated this way: **{cargo_name}.{namespace_name}.{c|v}** **c** stand for container and **v** for virtual machine.
+The key can be predicted and caculated, it's formated this way: **cargo_name.namespace_name.c|v** **c** stand for container and **v** for virtual machine.
 This allow us to have the same name for virtual machine and containers.
 :::
 

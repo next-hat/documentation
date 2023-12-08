@@ -41,7 +41,7 @@ Cargoes:
   Secrets:
   - env.my-secret
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/nxthat/nanocl-get-started:latest
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource

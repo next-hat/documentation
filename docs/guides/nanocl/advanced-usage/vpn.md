@@ -126,7 +126,7 @@ Namespace: global
 Cargoes:
 - Name: deploy-example
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/nxthat/nanocl-get-started:latest
     Env:
     - APP=GET_STARTED1
 

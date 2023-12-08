@@ -66,11 +66,11 @@ You can create then using the following `Statefile`:
 ApiVersion: v0.12
 
 Secrets:
-  - Key: env.super-secret
-    Kind: Env
-    Data:
-      - MY_ENV=MY_VALUE
-      - MY_ENV1=MY_VALUE1
+- Key: env.super-secret
+  Kind: Env
+  Data:
+  - MY_ENV=MY_VALUE
+  - MY_ENV1=MY_VALUE1
 ```
 
 ### Tls
@@ -82,15 +82,15 @@ You can create then using the following `Statefile`:
 ApiVersion: v0.12
 
 Secrets:
-  - Key: cert.my-certificate
-    Kind: Tls
-    Data:
-      Certificate: |
-        -----BEGIN CERTIFICATE-----
-        MIIDETCCAfkCFFOJVQs8PxWlcJQDn...
-      CertificateKey: |
-        -----BEGIN PRIVATE KEY-----
-        MIIEvQIBADANBgkqhkiG9w0B...
+- Key: cert.my-certificate
+  Kind: Tls
+  Data:
+    Certificate: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfkCFFOJVQs8PxWlcJQDn...
+    CertificateKey: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0B...
 ```
 
 Below you can find the full spec of the `Tls` `Kind`:

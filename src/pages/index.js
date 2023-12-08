@@ -52,7 +52,6 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={siteConfig.title}
       description="Welcome on Next Hat documentation, you will find guide and tutorial regarding Next Hat product and tools."
     >
       <Head>

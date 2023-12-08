@@ -46,7 +46,7 @@ nanocl state apply -s mysql.yml -- --password my_root_password --volume /opt/mys
 
 :::tip
 Other cargo created in the same namespace **global** will be able to connect to the mysql using is key **mysql.global.c**
-The key can be predicted and caculated, it's formated this way: **{cargo_name}.{namespace_name}.{c|v}** **c** for container or **v** for virtual machine.
+The key can be predicted and caculated, it's formated this way: **cargo_name.namespace_name.c|v** **c** for container or **v** for virtual machine.
 This allow us to have the same name for virtual machine and containers.
 :::
 

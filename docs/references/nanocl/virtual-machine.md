@@ -10,8 +10,8 @@ sidebar_position: 3
 
 In Nanocl, a `Virtual Machine` refers to a virtual machine configuration.<br />
 Once created the system will ensure your Virtual Machine is always running.<br />
-There is the openapi specification for a `VmConfigPartial` used to create a `Virtual Machine`:
+There is the openapi specification for a `VmSpecPartial` used to create a `Virtual Machine`:
 
 import ApiSchema from '@theme/ApiSchema'
 
-<ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/VmConfigPartial" />
+<ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/VmSpecPartial" />

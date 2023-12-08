@@ -18,18 +18,18 @@ ApiVersion: v0.12
 
 # Definition of your arguments
 Args:
-  - Name: name
-    # The type of argument, can be:
-    # - String
-    # - Number
-    # - Boolean
-    Kind: String
-  - Name: domain
-    Kind: String
-  - Name: image
-    Kind: String
-  - Name: port
-    Kind: String
+- Name: name
+  # The type of argument, can be:
+  # - String
+  # - Number
+  # - Boolean
+  Kind: String
+- Name: domain
+  Kind: String
+- Name: image
+  Kind: String
+- Name: port
+  Kind: String
 
 Namespace: global
 

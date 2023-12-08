@@ -223,12 +223,12 @@ Namespace: global
 # See all options:
 # https://docs.next-hat.com/references/nanocl/virtual-machine
 VirtualMachines:
-  - Name: myvm
-    Disk:
-      Image: ubuntu-22
-    HostConfig:
-      Cpu: 2
-      Memory: 2048
+- Name: myvm
+  Disk:
+    Image: ubuntu-22
+  HostConfig:
+    Cpu: 2
+    Memory: 2048
 ```
 
 ## Expose your VM
@@ -244,30 +244,29 @@ Namespace: global
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
-  - Name: myvm
-    Kind: ProxyRule
-    Version: v0.9
-    Config:
-      Watch:
-        - myvm.global.v
-      Rules:
-        - Domain: deploy-example.com
-          Network: Public
-          Protocol: Tcp
-          Port: 5555
-          Target:
-            Key: myvm.global.v
-            Port: 22
+- Name: myvm
+  Kind: ProxyRule
+  Version: v0.9
+  Config:
+    - myvm.global.v
+    Rules:
+    - Domain: deploy-example.com
+      Network: Public
+      Protocol: Tcp
+      Port: 5555
+      Target:
+        Key: myvm.global.v
+        Port: 22
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/virtual-machine
 VirtualMachines:
-  - Name: myvm
-    Disk:
-      Image: ubuntu-22
-    HostConfig:
-      Cpu: 2
-      Memory: 2048
+- Name: myvm
+  Disk:
+    Image: ubuntu-22
+  HostConfig:
+    Cpu: 2
+    Memory: 2048
 ```
 
 [cloud-init]: https://cloud-init.io

@@ -19,7 +19,7 @@ To facilitate networking, Nanocl starts a virtual machine inside a container usi
 It is not installed by default, so you need to install it. You can easily do this by running the following command:
 
 ```sh
-nanocl cargo image pull ghcr.io/nxthat/nanocl-qemu:8.0.2.0
+nanocl cargo image pull ghcr.io/next-hat/nanocl-qemu:8.0.2.0
 ```
 
 ## Create a VM base image
@@ -168,7 +168,7 @@ Instances:
 - Id: b082dcba19dfa7d177d12871e8702923dc2a95a80842001408a08c23766d012a
   Names:
   - /myvm.global.v
-  Image: ghcr.io/nxthat/nanocl-qemu:8.0.2.0
+  Image: ghcr.io/next-hat/nanocl-qemu:8.0.2.0
   ImageID: sha256:119c0cf552aa9651fafc2fe6d7c4e13fa8cfdcd69e222506d935f4aa7a73d896
   Command: /bin/sh entrypoint.sh -hda /home/leone/.nanocl/state/vms/images/ubuntu-22.myvm.global.img --nographic -accel kvm -smp 4 -m 2048M
   Created: 1688480226
@@ -177,7 +177,7 @@ Instances:
     io.nanocl.vnsp: global
     io.nanocl: enabled
     io.nanocl.v: myvm.global
-    org.opencontainers.image.source: https://github.com/nxthat/nanocl-qemu
+    org.opencontainers.image.source: https://github.com/next-hat/nanocl-qemu
     org.opencontainers.image.description: Nanocl Qemu Runtime
   State: running
   Status: Up 28 seconds
@@ -270,4 +270,4 @@ VirtualMachines:
 ```
 
 [cloud-init]: https://cloud-init.io
-[nanocl-qemu]: https://github.com/nxthat/nanocl-qemu
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

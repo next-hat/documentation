@@ -18,7 +18,7 @@ const config = {
   trailingSlash: false,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'nxthat', // Usually your GitHub org/user name.
+  organizationName: 'next-hat', // Usually your GitHub org/user name.
   projectName: 'documentation', // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
@@ -42,7 +42,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           showLastUpdateTime: true,
           editUrl:
-            'https://github.com/nxthat/documentation/tree/master/',
+            'https://github.com/next-hat/documentation/tree/master/',
           async sidebarItemsGenerator({
               defaultSidebarItemsGenerator,
               ...args
@@ -170,7 +170,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/nxthat',
+                href: 'https://github.com/next-hat',
               },
             ],
           },

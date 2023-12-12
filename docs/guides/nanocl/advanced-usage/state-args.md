@@ -80,7 +80,7 @@ The correct command is now:
 ```sh
 state apply -s my-deployment.yml -- --name deploy-example \
   --domain deploy-example.com \
-  --image ghcr.io/nxthat/nanocl-get-started:latest \
+  --image ghcr.io/next-hat/nanocl-get-started:latest \
   --port 9000
 ```
 

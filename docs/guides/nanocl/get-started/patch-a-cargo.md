@@ -19,7 +19,7 @@ First, let's download the official Nanocl get started image.
 We will do it using this command:
 
 ```sh
-nanocl cargo image pull ghcr.io/nxthat/nanocl-get-started:latest
+nanocl cargo image pull ghcr.io/next-hat/nanocl-get-started:latest
 ```
 
 ## Update cargo image
@@ -27,14 +27,14 @@ nanocl cargo image pull ghcr.io/nxthat/nanocl-get-started:latest
 So now let’s change our `Cargo` *my-cargo* with the image we previously downloaded:
 
 ```sh
-nanocl cargo patch my-cargo --image ghcr.io/nxthat/nanocl-get-started:latest
+nanocl cargo patch my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
 ```
 
 You'll notice a few options being used. Here's some more info on them:
 
 - `my-cargo` is the name of the cargo you want to update
 - `--image` is the value we want to change and it's the cargo image
-- `ghcr.io/nxthat/nanocl-get-started:latest` is the new image name
+- `ghcr.io/next-hat/nanocl-get-started:latest` is the new image name
 
 We can verify if our changes are made by inspecting our `cargo`:
 
@@ -58,7 +58,7 @@ Spec:
   Container:
     Env: []
     Cmd: []
-    Image: ghcr.io/nxthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
     HostConfig:
       Binds: []
       AutoRemove: false
@@ -189,14 +189,14 @@ Instances:
       - NANOCL_CARGO_NAMESPACE=global
       - NANOCL_CARGO_INSTANCE=0
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      Image: ghcr.io/nxthat/nanocl-get-started:latest
+      Image: ghcr.io/next-hat/nanocl-get-started:latest
       WorkingDir: /
       Entrypoint:
       - /bin/nanocl-get-started
       Labels:
         io.nanocl.kind: cargo
         io.nanocl.n: global
-        org.opencontainers.image.source: https://github.com/nxthat/nanocl-get-started
+        org.opencontainers.image.source: https://github.com/next-hat/nanocl-get-started
         com.docker.compose.project: nanocl_global
         org.opencontainers.image.description: Nanocl get started image
         io.nanocl.c: my-cargo.global
@@ -305,7 +305,7 @@ Spec:
     Env:
     - PORT=9001
     Cmd: []
-    Image: ghcr.io/nxthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
     HostConfig:
       Binds: []
       AutoRemove: false
@@ -437,7 +437,7 @@ Instances:
       - NANOCL_CARGO_NAMESPACE=global
       - NANOCL_CARGO_INSTANCE=0
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      Image: ghcr.io/nxthat/nanocl-get-started:latest
+      Image: ghcr.io/next-hat/nanocl-get-started:latest
       WorkingDir: /
       Entrypoint:
       - /bin/nanocl-get-started
@@ -447,7 +447,7 @@ Instances:
         io.nanocl.kind: cargo
         io.nanocl.n: global
         org.opencontainers.image.description: Nanocl get started image
-        org.opencontainers.image.source: https://github.com/nxthat/nanocl-get-started
+        org.opencontainers.image.source: https://github.com/next-hat/nanocl-get-started
         io.nanocl: enabled
     NetworkSettings:
       Bridge: ''

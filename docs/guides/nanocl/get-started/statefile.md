@@ -18,8 +18,7 @@ Statefile are a way to describe the state you want for a specific namespace.
 It use yaml form we can sumerize the deployment of our cargo as follow :
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -28,14 +27,14 @@ Namespace: global
 Cargoes:
 - Name: my-cargo
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule
+  Version: v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

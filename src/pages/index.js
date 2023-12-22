@@ -4,7 +4,7 @@ import Layout from '@theme/Layout';
 import Head from '@docusaurus/Head';
 import {useHistory} from '@docusaurus/router';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import HomepageFeatures from '@site/src/components/home_page_features';
 
 import styles from './index.module.css';
 
@@ -52,7 +52,6 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={siteConfig.title}
       description="Welcome on Next Hat documentation, you will find guide and tutorial regarding Next Hat product and tools."
     >
       <Head>

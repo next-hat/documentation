@@ -20,16 +20,15 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 There is an `Statefile` example on how to do it:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/secret
 Secrets:
-- Key: env.my-secret
-  Kind: Env
+- Name: env.my-secret
+  Kind: nanocl.io/env
   Data:
   - MY_ENV=MY_VALUE
   - MY_ENV1=MY_VALUE1
@@ -42,14 +41,13 @@ Cargoes:
   Secrets:
   - env.my-secret
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

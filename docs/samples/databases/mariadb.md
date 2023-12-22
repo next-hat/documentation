@@ -14,8 +14,7 @@ It's made by the original developers of MySQL and guaranteed to stay open source
 Below you can find a basic example to deploy a [mariadb][mariadb] server using their official [docker image][docker image]:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -48,7 +47,7 @@ nanocl state apply -s mariadb.yml -- --password my_root_password --volume /opt/m
 
 :::tip
 Other cargo created in the same namespace **global** will be able to connect to the mariadb using is key **mariadb.global.c**
-The key can be predicted and caculated, it's formated this way: **{cargo_name}.{namespace_name}.{c|v}** **c** for container and **v** for virtual machine.
+The key can be predicted and caculated, it's formated this way: **cargo_name.namespace_name.c|v** **c** for container and **v** for virtual machine.
 This allow us to have the same name for virtual machine and containers.
 :::
 

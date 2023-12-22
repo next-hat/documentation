@@ -25,6 +25,7 @@ Usage: nanocl [OPTIONS] <COMMAND>
 
 Commands:
   namespace  Manage namespaces
+  job        Manage jobs
   cargo      Manage cargoes
   vm         Manage virtual machines
   resource   Manage resources
@@ -36,9 +37,8 @@ Commands:
   version    Show nanocl version information
   install    Install nanocl components
   uninstall  Uninstall nanocl components
-  upgrade    Upgrade nanocl components
+  upgrade    Upgrade nanocl
   ps         Show all processes managed by nanocl
-  system     Manage system
   secret     Manage secrets
   help       Print this message or the help of the given subcommand(s)
 
@@ -95,5 +95,4 @@ Commands:
 Options:
   -n, --namespace <NAMESPACE>  namespace to target by default global is used
   -h, --help                   Print help
-  -V, --version                Print version
 ```

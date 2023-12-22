@@ -12,7 +12,7 @@ info:
     ## OpenAPI Specification
     This API is documented in **OpenAPI format** using [Utoipa](https://github.com/juhaku/utoipa)<br />
     The specification is generated automatically when running in development only.<br />
-    When releasing a version, the generated file is transfered to our [Documentation](https://github.com/next-hat/documentation).
+    When releasing a version, the generated file is transfered to our [Documentation](https://github.com/nxthat/documentation).
 
 
     ## Cross-Origin Resource Sharing
@@ -24,19 +24,24 @@ info:
     email: team@next-hat.com
   license:
     name: MIT OR Apache-2.0
-  version: v0.5.0
+  version: v0.12.0
 servers:
-- url: /{version}
+- url: /{Version}
   variables:
-    version:
-      default: v0.4
+    Version:
+      default: v0.11
       description: API version
-      enum:
-      - v0.4
-      - v0.3
-      - v0.2
-      - v0.1
 paths:
+  /_ping:
+    head:
+      tags:
+      - System
+      summary: Get version information
+      description: Get version information
+      operationId: get_ping
+      responses:
+        '202':
+          description: Server is up
   /cargoes:
     get:
       tags:
@@ -45,9 +50,17 @@ paths:
       description: List cargoes
       operationId: list_cargo
       parameters:
-      - name: Namespace
+      - name: filter
         in: query
-        description: Namespace of the cargo
+        description: Generic filter
+        required: false
+        schema:
+          type: string
+          nullable: true
+        example: '{ "where": { "name": { "eq": "test" } } }'
+      - name: namespace
+        in: query
+        description: Namespace where the cargoes are
         required: false
         schema:
           type: string
@@ -68,9 +81,9 @@ paths:
       description: Create a new cargo
       operationId: create_cargo
       parameters:
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
@@ -79,7 +92,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CargoConfigPartial'
+              $ref: '#/components/schemas/CargoSpecPartial'
         required: true
       responses:
         '201':
@@ -87,7 +100,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CargoInspect'
+                $ref: '#/components/schemas/Cargo'
   /cargoes/images:
     get:
       tags:
@@ -147,7 +160,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /cargoes/images/{IdOrName}:
+  /cargoes/images/{id_or_name}:
     get:
       tags:
       - CargoImages
@@ -155,7 +168,7 @@ paths:
       description: Get detailed information about a container image
       operationId: inspect_cargo_image
       parameters:
-      - name: IdOrName
+      - name: id_or_name
         in: path
         description: Image ID or name
         required: true
@@ -181,128 +194,26 @@ paths:
       description: Delete a container image
       operationId: delete_cargo_image
       parameters:
-      - name: IdOrName
+      - name: id_or_name
         in: path
         description: Image ID or name
         required: true
         schema:
           type: string
       responses:
-        '200':
-          description: Delete response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericDelete'
+        '202':
+          description: Image have been deleted
         '404':
           description: Image not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /cargoes/{Name}:
-    put:
-      tags:
-      - Cargoes
-      summary: Create a new cargo config from scratch and add history entry
-      description: Create a new cargo config from scratch and add history entry
-      operationId: put_cargo
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CargoConfigUpdate'
-        required: true
-      responses:
-        '200':
-          description: Cargo updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cargo'
-        '404':
-          description: Cargo does not exist
-    delete:
-      tags:
-      - Cargoes
-      summary: Delete a cargo
-      description: Delete a cargo
-      operationId: delete_cargo
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '202':
-          description: Cargo deleted
-        '404':
-          description: Cargo does not exist
-    patch:
-      tags:
-      - Cargoes
-      summary: Patch a cargo config meaning merging current config with the new one and add history entry
-      description: Patch a cargo config meaning merging current config with the new one and add history entry
-      operationId: patch_cargo
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CargoConfigUpdate'
-        required: true
-      responses:
-        '200':
-          description: Cargo updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cargo'
-        '404':
-          description: Cargo does not exist
-  /cargoes/{Name}/exec:
+  /cargoes/{cargo_name}/exec:
     post:
       tags:
       - Cargoes
-      summary: Execute a command in a cargo
-      description: Execute a command in a cargo
-      operationId: exec_command
+      operationId: create_exec_command
       parameters:
       - name: Name
         in: path
@@ -328,7 +239,109 @@ paths:
           description: Event Stream of the command output
         '404':
           description: Cargo does not exist
-  /cargoes/{Name}/histories:
+  /cargoes/{name}:
+    put:
+      tags:
+      - Cargoes
+      summary: Create a new cargo spec and add history entry
+      description: Create a new cargo spec and add history entry
+      operationId: put_cargo
+      parameters:
+      - name: name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        description: Namespace where the cargo belongs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoSpecPartial'
+        required: true
+      responses:
+        '200':
+          description: Cargo updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+        '404':
+          description: Cargo does not exist
+    delete:
+      tags:
+      - Cargoes
+      summary: Delete a cargo
+      description: Delete a cargo
+      operationId: delete_cargo
+      parameters:
+      - name: name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        description: Namespace where the cargo belongs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: force
+        in: query
+        description: If true forces the delete operation
+        required: true
+        schema:
+          type: boolean
+      responses:
+        '202':
+          description: Cargo deleted
+        '404':
+          description: Cargo does not exist
+    patch:
+      tags:
+      - Cargoes
+      summary: Patch a cargo spec meaning merging current spec with the new one and add history entry
+      description: Patch a cargo spec meaning merging current spec with the new one and add history entry
+      operationId: patch_cargo
+      parameters:
+      - name: name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        description: Namespace where the cargo belongs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoSpecUpdate'
+        required: true
+      responses:
+        '200':
+          description: Cargo updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+        '404':
+          description: Cargo does not exist
+  /cargoes/{name}/histories:
     get:
       tags:
       - Cargoes
@@ -336,15 +349,15 @@ paths:
       description: List cargo histories
       operationId: list_cargo_history
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the cargo
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
@@ -357,39 +370,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CargoConfig'
+                  $ref: '#/components/schemas/CargoSpec'
         '404':
           description: Cargo does not exist
-  /cargoes/{Name}/histories/{Id}/reset:
+  /cargoes/{name}/histories/{id}/revert:
     patch:
       tags:
       - Cargoes
-      summary: Reset a cargo to a specific history
-      description: Reset a cargo to a specific history
-      operationId: reset_cargo
+      summary: Revert a cargo to a specific history
+      description: Revert a cargo to a specific history
+      operationId: revert_cargo
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the cargo
         required: true
         schema:
           type: string
-      - name: Id
+      - name: id
         in: path
         description: Id of the cargo history
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
           nullable: true
       responses:
         '200':
-          description: Cargo reset
+          description: Cargo revert
           content:
             application/json:
               schema:
@@ -400,23 +413,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /cargoes/{Name}/inspect:
+  /cargoes/{name}/inspect:
     get:
       tags:
       - Cargoes
-      summary: Inspect a cargo
-      description: Inspect a cargo
+      summary: Get detailed information about a cargo
+      description: Get detailed information about a cargo
       operationId: inspect_cargo
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the cargo
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
@@ -428,37 +441,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CargoInspect'
-  /cargoes/{Name}/instances:
-    get:
-      tags:
-      - Cargoes
-      summary: List cargo instances
-      description: List cargo instances
-      operationId: list_cargo_instance
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '200':
-          description: List of cargo instances
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ContainerSummary'
-  /cargoes/{Name}/kill:
+  /cargoes/{name}/kill:
     post:
       tags:
       - Cargoes
@@ -466,15 +449,15 @@ paths:
       description: Send a signal to a cargo this will kill the cargo if the signal is SIGKILL
       operationId: kill_cargo
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the cargo
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
@@ -490,82 +473,114 @@ paths:
           description: Cargo killed
         '404':
           description: Cargo does not exist
-  /cargoes/{Name}/logs:
+  /cargoes/{name}/restart:
+    post:
+      tags:
+      - Cargoes
+      summary: Restart a cargo
+      description: Restart a cargo
+      operationId: restart_cargo
+      parameters:
+      - name: name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        description: Namespace where the cargo belongs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        '202':
+          description: Cargo restarted
+        '404':
+          description: Cargo does not exist
+  /cargoes/{name}/scale:
+    patch:
+      tags:
+      - Cargoes
+      summary: Scale or Downscale number of instances
+      description: Scale or Downscale number of instances
+      operationId: scale_cargo
+      parameters:
+      - name: name
+        in: path
+        description: Name of the cargo
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        description: Namespace where the cargo belongs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoScale'
+        required: true
+      responses:
+        '200':
+          description: Cargo scaled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+        '404':
+          description: Cargo does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /cargoes/{name}/stats:
     get:
       tags:
       - Cargoes
-      summary: Get logs of a cargo instance from a EventStream (SSE)
-      description: Get logs of a cargo instance from a EventStream (SSE)
-      operationId: logs_cargo
+      summary: Get stats of a cargo instance
+      description: Get stats of a cargo instance
+      operationId: stats_cargo
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the cargo instance usually `name` or `name-number`
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
-        description: Namespace of the cargo
+        description: Namespace where the cargo belongs
         required: false
         schema:
           type: string
+          nullable: true
+      - name: stream
+        in: query
+        description: Return a stream of stats
+        required: false
+        schema:
+          type: boolean
+          nullable: true
+      - name: one_shot
+        in: query
+        description: Return stats only once
+        required: false
+        schema:
+          type: boolean
           nullable: true
       responses:
         '200':
-          description: Cargo logs
-        '404':
-          description: Cargo does not exist
-  /cargoes/{Name}/start:
-    post:
-      tags:
-      - Cargoes
-      summary: Start a cargo
-      description: Start a cargo
-      operationId: start_cargo
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '202':
-          description: Cargo started
-        '404':
-          description: Cargo does not exist
-  /cargoes/{Name}/stop:
-    post:
-      tags:
-      - Cargoes
-      summary: Stop a cargo
-      description: Stop a cargo
-      operationId: stop_cargo
-      parameters:
-      - name: Name
-        in: path
-        description: Name of the cargo
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: Namespace of the cargo
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '202':
-          description: Cargo stopped
+          description: Cargo stats
+          content:
+            application/vdn.nanocl.raw-stream:
+              schema:
+                $ref: '#/components/schemas/Stats'
         '404':
           description: Cargo does not exist
   /events:
@@ -582,6 +597,52 @@ paths:
             text/plain:
               schema:
                 type: string
+  /exec/{id}/cargo/inspect:
+    post:
+      tags:
+      - Exec
+      summary: Inspect a command executed in a cargo
+      description: Inspect a command executed in a cargo
+      operationId: inspect_exec_command
+      parameters:
+      - name: id
+        in: path
+        description: Exec id to inspect
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Inspect exec infos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecInspectResponse'
+        '404':
+          description: Exec instance does not exist
+  /exec/{id}/cargo/start:
+    post:
+      tags:
+      - Exec
+      operationId: start_exec_command
+      parameters:
+      - name: id
+        in: path
+        description: Exec command id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartExecOptions'
+        required: true
+      responses:
+        '200':
+          description: Event Stream of the command output
+        '404':
+          description: Cargo does not exist
   /info:
     get:
       tags:
@@ -596,6 +657,142 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HostInfo'
+  /jobs:
+    get:
+      tags:
+      - Jobs
+      summary: List jobs
+      description: List jobs
+      operationId: list_job
+      responses:
+        '200':
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobSummary'
+    post:
+      tags:
+      - Jobs
+      summary: Create a job
+      description: Create a job
+      operationId: create_job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPartial'
+        required: true
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+  /jobs/{name}:
+    delete:
+      tags:
+      - Jobs
+      summary: Delete a job
+      description: Delete a job
+      operationId: delete_job
+      parameters:
+      - name: name
+        in: path
+        description: Name of the job
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: Job deleted
+        '404':
+          description: Job does not exist
+  /jobs/{name}/inspect:
+    get:
+      tags:
+      - Jobs
+      summary: Inspect a job
+      description: Inspect a job
+      operationId: inspect_job
+      parameters:
+      - name: name
+        in: path
+        description: Name of the job
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInspect'
+  /jobs/{name}/wait:
+    get:
+      tags:
+      - Jobs
+      summary: Wait for a job to finish
+      description: Wait for a job to finish
+      operationId: wait_job
+      parameters:
+      - name: name
+        in: path
+        description: Name of the job instance usually `name` or `name-number`
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job wait
+        '404':
+          description: Job does not exist
+  /metrics:
+    get:
+      tags:
+      - Metrics
+      summary: Get metrics of all peer nodes
+      description: Get metrics of all peer nodes
+      operationId: list_metric
+      parameters:
+      - name: filter
+        in: query
+        description: Generic filter
+        required: false
+        schema:
+          type: string
+          nullable: true
+        example: '{ "where": { "kind": { "eq": "CPU" } } }'
+      responses:
+        '200':
+          description: List of metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+    post:
+      tags:
+      - Metrics
+      operationId: create_metric
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricPartial'
+        required: true
+      responses:
+        '201':
+          description: Metric created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metric'
   /namespaces:
     get:
       tags:
@@ -603,6 +800,15 @@ paths:
       summary: List namespaces
       description: List namespaces
       operationId: list_namespace
+      parameters:
+      - name: filter
+        in: query
+        description: Generic filter
+        required: false
+        schema:
+          type: string
+          nullable: true
+        example: '{ "where": { "name": { "eq": "test" } } }'
       responses:
         '200':
           description: List of namespace
@@ -626,7 +832,7 @@ paths:
         required: true
       responses:
         '200':
-          description: List of namespace
+          description: The created namespace
           content:
             application/json:
               schema:
@@ -637,7 +843,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /namespaces/{Name}:
+  /namespaces/{name}:
     delete:
       tags:
       - Namespaces
@@ -645,26 +851,22 @@ paths:
       description: Delete a namespace
       operationId: delete_namespace
       parameters:
-      - name: Name
+      - name: name
         in: path
-        description: The namespace name to delete
+        description: Name of the namespace to delete
         required: true
         schema:
           type: string
       responses:
-        '200':
-          description: Delete response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericDelete'
+        '202':
+          description: Namespace have been deleted
         '404':
           description: Namespace is not existing
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /namespaces/{Name}/inspect:
+  /namespaces/{name}/inspect:
     get:
       tags:
       - Namespaces
@@ -672,7 +874,7 @@ paths:
       description: Get detailed information about a namespace
       operationId: inspect_namespace
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The namespace name to inspect
         required: true
@@ -722,25 +924,25 @@ paths:
   /processes:
     get:
       tags:
-      - System
-      summary: List instances (cargo/vm) including non running ones
-      description: List instances (cargo/vm) including non running ones
-      operationId: get_processes
+      - Processes
+      summary: List process (Vm, Job, Cargo)
+      description: List process (Vm, Job, Cargo)
+      operationId: list_process
       parameters:
-      - name: All
+      - name: all
         in: query
         description: Return instances from all nodes
         required: true
         schema:
           type: boolean
-      - name: Last
+      - name: last
         in: query
         description: Return this number of most recently created containers
         required: false
         schema:
           type: integer
           nullable: true
-      - name: Namespace
+      - name: namespace
         in: query
         description: Return instances from this namespace only
         required: false
@@ -755,7 +957,260 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/NodeContainerSummary'
+                  $ref: '#/components/schemas/Process'
+  /processes/{kind}/{name}/logs:
+    get:
+      tags:
+      - Processes
+      summary: Get logs of a process
+      description: Get logs of a process
+      operationId: logs_process
+      parameters:
+      - name: kind
+        in: path
+        description: Kind of the process
+        required: true
+        schema:
+          type: string
+        example: cargo
+      - name: name
+        in: path
+        description: Name of the process
+        required: true
+        schema:
+          type: string
+        example: deploy-example
+      - name: namespace
+        in: query
+        description: Namespace of the process
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: since
+        in: query
+        description: Only logs returned since timestamp
+        required: false
+        schema:
+          type: integer
+          format: int64
+          nullable: true
+      - name: until
+        in: query
+        description: Only logs returned until timestamp
+        required: false
+        schema:
+          type: integer
+          format: int64
+          nullable: true
+      - name: timestamps
+        in: query
+        description: Add timestamps to every log line
+        required: false
+        schema:
+          type: boolean
+          nullable: true
+      - name: follow
+        in: query
+        description: Boolean to return a stream or not
+        required: false
+        schema:
+          type: boolean
+          nullable: true
+      - name: tail
+        in: query
+        description: Only return the n last (integer) or all ("all") logs
+        required: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        '200':
+          description: Process instances logs
+        '404':
+          description: Process don't exist
+  /processes/{kind}/{name}/start:
+    post:
+      tags:
+      - Processes
+      summary: Start a process
+      description: Start a process
+      operationId: start_process
+      parameters:
+      - name: kind
+        in: path
+        description: Kind of the process
+        required: true
+        schema:
+          type: string
+        example: cargo
+      - name: name
+        in: path
+        description: Name of the process
+        required: true
+        schema:
+          type: string
+        example: deploy-example
+      - name: namespace
+        in: query
+        description: Namespace where the process belongs is needed
+        required: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        '202':
+          description: Process started
+        '404':
+          description: Process does not exist
+  /processes/{kind}/{name}/stop:
+    post:
+      tags:
+      - Processes
+      summary: Stop a cargo
+      description: Stop a cargo
+      operationId: stop_process
+      parameters:
+      - name: kind
+        in: path
+        description: Kind of the process
+        required: true
+        schema:
+          type: string
+        example: cargo
+      - name: name
+        in: path
+        description: Name of the process
+        required: true
+        schema:
+          type: string
+        example: deploy-example
+      - name: namespace
+        in: query
+        description: Namespace where the process belongs is needed
+        required: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        '202':
+          description: Cargo stopped
+        '404':
+          description: Cargo does not exist
+  /resource/kinds:
+    get:
+      tags:
+      - ResourceKinds
+      summary: List resource kinds
+      description: List resource kinds
+      operationId: list_resource_kind
+      responses:
+        '200':
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceKind'
+    post:
+      tags:
+      - ResourceKinds
+      summary: Create a resource kind
+      description: Create a resource kind
+      operationId: create_resource_kind
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceKindPartial'
+        required: true
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceKind'
+  /resource/kinds/{domain}/{name}:
+    delete:
+      tags:
+      - ResourceKinds
+      summary: Delete a resource kind
+      description: Delete a resource kind
+      operationId: delete_resource_kind
+      parameters:
+      - name: domain
+        in: path
+        description: Domain of the resource kind
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        description: Name of the resource kind
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: Resource kind deleted
+        '404':
+          description: Resource kind does not exist
+  /resource/kinds/{domain}/{name}/inspect:
+    get:
+      tags:
+      - ResourceKinds
+      summary: Inspect a resource kind
+      description: Inspect a resource kind
+      operationId: inspect_resource_kind
+      parameters:
+      - name: domain
+        in: path
+        description: Domain of the resource kind
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        description: Name of the resource kind
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Details about a resource kind
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceKindInspect'
+  /resource/kinds/{domain}/{name}/version/{version}:
+    get:
+      tags:
+      - ResourceKinds
+      summary: Inspect a specific version of a resource kind
+      description: Inspect a specific version of a resource kind
+      operationId: inspect_resource_kind_version
+      parameters:
+      - name: domain
+        in: path
+        description: Domain of the resource kind
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        description: Name of the resource kind
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Details about a resource kind
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceKindVersion'
   /resources:
     get:
       tags:
@@ -764,20 +1219,14 @@ paths:
       description: List resources
       operationId: list_resource
       parameters:
-      - name: Kind
+      - name: filter
         in: query
-        description: Filter by resource kind
+        description: Generic filter
         required: false
         schema:
           type: string
           nullable: true
-      - name: Contains
-        in: query
-        description: Filter by resource content
-        required: false
-        schema:
-          type: string
-          nullable: true
+        example: '{ "where": { "kind": { "eq": "ProxyRule" } } }'
       responses:
         '200':
           description: List of resources
@@ -806,7 +1255,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Resource'
-  /resources/{Name}:
+  /resources/{name}:
     get:
       tags:
       - Resources
@@ -814,7 +1263,7 @@ paths:
       description: Get detailed information about a resource
       operationId: inspect_resource
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The resource name to inspect
         required: true
@@ -833,36 +1282,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-    delete:
+    put:
       tags:
       - Resources
-      summary: Delete a resource
-      description: Delete a resource
-      operationId: delete_resource
+      summary: Patch a resource (update its version and/or spec) and create a new history
+      description: Patch a resource (update its version and/or spec) and create a new history
+      operationId: put_resource
       parameters:
-      - name: Name
-        in: path
-        description: The resource name to delete
-        required: true
-        schema:
-          type: string
-      responses:
-        '202':
-          description: The resource and his history has been deleted
-        '404':
-          description: Resource is not existing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-    patch:
-      tags:
-      - Resources
-      summary: Patch a resource (update its version and/or config) and create a new history
-      description: Patch a resource (update its version and/or config) and create a new history
-      operationId: patch_resource
-      parameters:
-      - name: Name
+      - name: name
         in: path
         description: The resource name to patch
         required: true
@@ -872,7 +1299,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourcePatch'
+              $ref: '#/components/schemas/ResourceUpdate'
         required: true
       responses:
         '200':
@@ -887,7 +1314,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /resources/{Name}/histories:
+    delete:
+      tags:
+      - Resources
+      summary: Delete a resource
+      description: Delete a resource
+      operationId: delete_resource
+      parameters:
+      - name: name
+        in: path
+        description: The resource name to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: The resource and his history has been deleted
+        '404':
+          description: Resource is not existing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /resources/{name}/histories:
     get:
       tags:
       - Resources
@@ -895,7 +1344,7 @@ paths:
       description: List resource history
       operationId: list_resource_history
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The resource name to list history
         required: true
@@ -909,36 +1358,36 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourceConfig'
+                  $ref: '#/components/schemas/ResourceSpec'
         '404':
           description: Resource is not existing
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /resources/{Name}/histories/{Id}/reset:
+  /resources/{name}/histories/{id}/revert:
     patch:
       tags:
       - Resources
-      summary: Reset a resource to a specific history
-      description: Reset a resource to a specific history
-      operationId: reset_resource
+      summary: Revert a resource to a specific history
+      description: Revert a resource to a specific history
+      operationId: revert_resource
       parameters:
-      - name: Name
+      - name: name
         in: path
-        description: The resource name to reset
+        description: The resource name to revert
         required: true
         schema:
           type: string
-      - name: Id
+      - name: id
         in: path
-        description: The resource history id to reset to
+        description: The resource history id to revert to
         required: true
         schema:
           type: string
       responses:
         '200':
-          description: The resource has been reset
+          description: The resource has been revert
           content:
             application/json:
               schema:
@@ -949,6 +1398,152 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /secrets:
+    get:
+      tags:
+      - Secrets
+      summary: List secret
+      description: List secret
+      operationId: list_secret
+      parameters:
+      - name: filter
+        in: query
+        description: Generic filter
+        required: false
+        schema:
+          type: string
+          nullable: true
+        example: '{ "where": { "kind": { "eq": "Env" } } }'
+      responses:
+        '200':
+          description: List of secret
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Secret'
+    post:
+      tags:
+      - Secrets
+      summary: Create a secret
+      description: Create a secret
+      operationId: create_secret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretPartial'
+        required: true
+      responses:
+        '200':
+          description: List of secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret'
+        '409':
+          description: Namespace already exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /secrets/{key}:
+    delete:
+      tags:
+      - Secrets
+      summary: Delete a secret
+      description: Delete a secret
+      operationId: delete_secret
+      parameters:
+      - name: key
+        in: path
+        description: Key of the secret
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: Secret have been deleted
+        '404':
+          description: Secret don't exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    patch:
+      tags:
+      - Secrets
+      summary: Update a secret
+      description: Update a secret
+      operationId: patch_secret
+      parameters:
+      - name: key
+        in: path
+        description: Key of the secret
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretUpdate'
+        required: true
+      responses:
+        '200':
+          description: Secret scaled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret'
+        '404':
+          description: Secret does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /secrets/{key}/inspect:
+    get:
+      tags:
+      - Secrets
+      summary: Get detailed information about a secret
+      description: Get detailed information about a secret
+      operationId: inspect_secret
+      parameters:
+      - name: key
+        in: path
+        description: Key of the secret
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Detailed information about a secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret'
+        '404':
+          description: Namespace is not existing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /version:
+    get:
+      tags:
+      - System
+      summary: Get version information
+      description: Get version information
+      operationId: get_version
+      responses:
+        '200':
+          description: Version information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BinaryInfo'
   /vms:
     get:
       tags:
@@ -957,7 +1552,7 @@ paths:
       description: List virtual machines
       operationId: list_vm
       parameters:
-      - name: Namespace
+      - name: namespace
         in: query
         description: The namespace of the virtual machine
         required: false
@@ -980,7 +1575,7 @@ paths:
       description: Create a virtual machine
       operationId: create_vm
       parameters:
-      - name: Namespace
+      - name: namespace
         in: query
         description: The namespace of the virtual machine
         required: false
@@ -991,7 +1586,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VmConfigPartial'
+              $ref: '#/components/schemas/VmSpecPartial'
         required: true
       responses:
         '200':
@@ -1007,6 +1602,15 @@ paths:
       summary: List virtual machine images
       description: List virtual machine images
       operationId: list_vm_images
+      parameters:
+      - name: filter
+        in: query
+        description: Generic filter
+        required: false
+        schema:
+          type: string
+          nullable: true
+        example: '{ "where": { "kind": { "eq": "Env" } } }'
       responses:
         '200':
           description: List of vm images
@@ -1016,7 +1620,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/VmImage'
-  /vms/images/{Name}:
+  /vms/images/{name}:
     delete:
       tags:
       - VmImages
@@ -1024,7 +1628,7 @@ paths:
       description: Delete a virtual machine image
       operationId: delete_vm_image
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the vm image
         required: true
@@ -1033,7 +1637,7 @@ paths:
       responses:
         '200':
           description: Image have been deleted
-  /vms/images/{Name}/clone/{CloneName}:
+  /vms/images/{name}/clone/{clone_name}:
     post:
       tags:
       - VmImages
@@ -1041,13 +1645,13 @@ paths:
       description: Clone a virtual machine image
       operationId: clone_vm_image
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the vm image
         required: true
         schema:
           type: string
-      - name: CloneName
+      - name: clone_name
         in: path
         description: The name of the clone
         required: true
@@ -1066,7 +1670,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VmImage'
-  /vms/images/{Name}/import:
+  /vms/images/{name}/import:
     post:
       tags:
       - VmImages
@@ -1074,7 +1678,7 @@ paths:
       description: Import a virtual machine image from a file
       operationId: import_vm_image
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the vm image
         required: true
@@ -1089,7 +1693,7 @@ paths:
       responses:
         '200':
           description: Image have been imported
-  /vms/images/{Name}/resize:
+  /vms/images/{name}/resize:
     post:
       tags:
       - VmImages
@@ -1097,15 +1701,9 @@ paths:
       description: Resize a virtual machine image
       operationId: resize_vm_image
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the vm image
-        required: true
-        schema:
-          type: string
-      - name: CloneName
-        in: path
-        description: The name of the clone
         required: true
         schema:
           type: string
@@ -1122,7 +1720,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VmImage'
-  /vms/images/{Name}/snapshot/{SnapshotName}:
+  /vms/images/{name}/snapshot/{snapshot_name}:
     post:
       tags:
       - VmImages
@@ -1130,13 +1728,13 @@ paths:
       description: Create a snapshot of a virtual machine image
       operationId: snapshot_vm_image
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the vm image
         required: true
         schema:
           type: string
-      - name: SnapshotName
+      - name: snap
         in: path
         description: The name of the snapshot
         required: true
@@ -1155,7 +1753,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VmImage'
-  /vms/{Name}:
+  /vms/{name}:
     delete:
       tags:
       - Vms
@@ -1163,13 +1761,13 @@ paths:
       description: Delete a virtual machine
       operationId: delete_vm
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the virtual machine
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
         description: The namespace of the virtual machine
         required: false
@@ -1186,13 +1784,13 @@ paths:
       description: Patch a virtual machine config meaning merging current config with the new one and add history entry
       operationId: patch_vm
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the virtual machine
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
         description: Namespace of the virtual machine
         required: false
@@ -1203,7 +1801,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VmConfigUpdate'
+              $ref: '#/components/schemas/VmSpecUpdate'
         required: true
       responses:
         '200':
@@ -1218,7 +1816,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /vms/{Name}/attach:
+  /vms/{name}/attach:
     get:
       tags:
       - Vms
@@ -1226,13 +1824,13 @@ paths:
       description: Attach to a virtual machine via websocket
       operationId: vm_attach
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: Name of the virtual machine
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
         description: Namespace of the virtual machine
         required: false
@@ -1242,7 +1840,7 @@ paths:
       responses:
         '101':
           description: Websocket connection
-  /vms/{Name}/histories:
+  /vms/{name}/histories:
     get:
       tags:
       - Vms
@@ -1250,13 +1848,13 @@ paths:
       description: List virtual machine histories
       operationId: list_vm_history
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the virtual machine
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
         description: The namespace of the virtual machine
         required: false
@@ -1271,8 +1869,8 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VmConfig'
-  /vms/{Name}/inspect:
+                  $ref: '#/components/schemas/VmSpec'
+  /vms/{name}/inspect:
     get:
       tags:
       - Vms
@@ -1280,13 +1878,13 @@ paths:
       description: Inspect a virtual machine
       operationId: inspect_vm
       parameters:
-      - name: Name
+      - name: name
         in: path
         description: The name of the virtual machine
         required: true
         schema:
           type: string
-      - name: Namespace
+      - name: namespace
         in: query
         description: The namespace of the virtual machine
         required: false
@@ -1300,56 +1898,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VmInspect'
-  /vms/{Name}/start:
-    post:
-      tags:
-      - Vms
-      summary: Start a virtual machine
-      description: Start a virtual machine
-      operationId: start_vm
-      parameters:
-      - name: Name
-        in: path
-        description: The name of the virtual machine
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: The namespace of the virtual machine
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '200':
-          description: The virtual machine has been started
-  /vms/{Name}/stop:
-    post:
-      tags:
-      - Vms
-      summary: Stop a virtual machine
-      description: Stop a virtual machine
-      operationId: stop_vm
-      parameters:
-      - name: Name
-        in: path
-        description: The name of the virtual machine
-        required: true
-        schema:
-          type: string
-      - name: Namespace
-        in: query
-        description: The namespace of the virtual machine
-        required: false
-        schema:
-          type: string
-          nullable: true
-      responses:
-        '200':
-          description: The virtual machine has been stopped
 components:
   schemas:
+    Address:
+      type: object
+      description: Address represents an IPv4 or IPv6 IP address.
+      properties:
+        Addr:
+          type: string
+          description: IP address.
+          nullable: true
+        PrefixLen:
+          type: integer
+          format: int64
+          description: Mask length of the IP address.
+          nullable: true
     Any:
       oneOf:
       - type: string
@@ -1362,7 +1925,7 @@ components:
       - type: object
         additionalProperties:
           $ref: '#/components/schemas/Any'
-      description: Helper to generate have Any type for [OpenApi](OpenApi) usefull for dynamic json objects like [ResourceConfig](ResourceConfig)
+      description: Helper to generate have Any type for [OpenApi](OpenApi) usefull for dynamic json objects like [ResourceSpec](ResourceSpec)
     ApiError:
       type: object
       description: When returning a [HttpError](HttpError) the status code is stripped and the error is returned as a json object with the message field set to the error message.
@@ -1371,12 +1934,147 @@ components:
       properties:
         msg:
           type: string
+    BinaryInfo:
+      type: object
+      description: Details about the binary
+      required:
+      - Arch
+      - Channel
+      - Version
+      - CommitId
+      properties:
+        Arch:
+          type: string
+          description: Arch is the architecture of the current binary
+        Channel:
+          type: string
+          description: Channel is the channel of the current binary
+        Version:
+          type: string
+          description: Version is the version of the current binary
+        CommitId:
+          type: string
+          description: CommitID is the commit id of the current binary
+    BlkioStats:
+      type: object
+      description: I/O statistics for the container.
+      properties:
+        io_service_bytes_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_serviced_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_queue_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_service_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_wait_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_merged_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        io_time_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+        sectors_recursive:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlkioStatsEntry'
+          nullable: true
+    BlkioStatsEntry:
+      type: object
+      required:
+      - major
+      - minor
+      - op
+      - value
+      properties:
+        major:
+          type: integer
+          format: int64
+          minimum: 0
+        minor:
+          type: integer
+          format: int64
+          minimum: 0
+        op:
+          type: string
+        value:
+          type: integer
+          format: int64
+          minimum: 0
     BollardDate:
       type: string
       title: BollardDate
       description: BollardDate
       example: 2021-01-01T00:00:00.000000000Z
       nullable: true
+    CPUStats:
+      type: object
+      description: General CPU statistics for the container.
+      required:
+      - cpu_usage
+      - throttling_data
+      properties:
+        cpu_usage:
+          $ref: '#/components/schemas/CPUUsage'
+        system_cpu_usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        online_cpus:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        throttling_data:
+          $ref: '#/components/schemas/ThrottlingData'
+    CPUUsage:
+      type: object
+      description: CPU usage statistics for the container.
+      required:
+      - usage_in_usermode
+      - total_usage
+      - usage_in_kernelmode
+      properties:
+        percpu_usage:
+          type: array
+          items:
+            type: integer
+            format: int64
+            minimum: 0
+          nullable: true
+        usage_in_usermode:
+          type: integer
+          format: int64
+          minimum: 0
+        total_usage:
+          type: integer
+          format: int64
+          minimum: 0
+        usage_in_kernelmode:
+          type: integer
+          format: int64
+          minimum: 0
     Cargo:
       type: object
       description: |-
@@ -1385,103 +2083,23 @@ components:
         You can define the number of replicas you want to run
         You can also define the minimum and maximum number of replicas
         The cluster will automatically scale the number of replicas to match the number of replicas you want
-        Cargo contain a configuration which is used to create the container
-        The configuration can be updated and the old configuration will be kept in the history
-        That way you can rollback to a previous configuration quickly
+        Cargo contain a specification which is used to create the container
+        The specification can be updated and the old specification will be kept in the history
+        That way you can rollback to a previous specification quickly
       required:
-      - Key
       - NamespaceName
-      - Name
-      - ConfigKey
-      - Config
+      - CreatedAt
+      - Spec
       properties:
-        Key:
-          type: string
-          description: Key of the cargo
         NamespaceName:
           type: string
           description: Name of the namespace
-        Name:
-          type: string
-          description: Name of the cargo
-        ConfigKey:
-          type: string
-          format: uuid
-          description: Unique identifier of the cargo config
-        Config:
-          $ref: '#/components/schemas/CargoConfig'
-    CargoConfig:
-      type: object
-      description: |-
-        A cargo config is the configuration of a cargo
-        It used to know the state of the cargo
-        It keep tracking of an history when you patch an existing cargo
-      required:
-      - Key
-      - CreatedAt
-      - Name
-      - Version
-      - CargoKey
-      - Container
-      properties:
-        Key:
-          type: string
-          format: uuid
-          description: Unique identifier of the cargo config
         CreatedAt:
           type: string
           format: date-time
-          description: Creation date of the cargo config
-        Name:
-          type: string
-          description: Name of the cargo
-        Version:
-          type: string
-          description: Version of the config
-        CargoKey:
-          type: string
-          description: The key of the cargo
-        Replication:
-          allOf:
-          - $ref: '#/components/schemas/ReplicationMode'
-          nullable: true
-        Container:
-          $ref: '#/components/schemas/Config'
-    CargoConfigPartial:
-      type: object
-      description: A cargo config partial is used to create a Cargo
-      required:
-      - Name
-      - Container
-      properties:
-        Name:
-          type: string
-          description: Name of the cargo
-        Replication:
-          allOf:
-          - $ref: '#/components/schemas/ReplicationMode'
-          nullable: true
-        Container:
-          $ref: '#/components/schemas/Config'
-    CargoConfigUpdate:
-      type: object
-      description: |-
-        Payload used to patch a cargo
-        It will create a new [CargoConfig](CargoConfig) with the new values
-        It will keep the old values in the history
-      properties:
-        Name:
-          type: string
-          description: New name of the cargo
-          nullable: true
-        Container:
-          allOf:
-          - $ref: '#/components/schemas/Config'
-          nullable: true
-        Replication:
-          allOf:
-          - $ref: '#/components/schemas/ReplicationMode'
-          nullable: true
+          description: When the cargo was created
+        Spec:
+          $ref: '#/components/schemas/CargoSpec'
     CargoImagePartial:
       type: object
       description: Cargo Image Partial is used to pull a new container image
@@ -1495,119 +2113,203 @@ components:
     CargoInspect:
       type: object
       description: |-
-        A Cargo Inspect is a detailed view of a cargo
-        It is used to inspect a cargo
+        Cargo Inspect is a detailed view of a cargo
         It contains all the information about the cargo
         It also contains the list of containers
       required:
-      - Key
-      - Name
-      - ConfigKey
       - NamespaceName
-      - Config
+      - CreatedAt
       - InstanceTotal
       - InstanceRunning
+      - Spec
       - Instances
       properties:
-        Key:
-          type: string
-          description: Key of the cargo
-        Name:
-          type: string
-          description: Name of the cargo
-        ConfigKey:
-          type: string
-          format: uuid
-          description: Unique identifier of the cargo config
         NamespaceName:
           type: string
           description: Name of the namespace
-        Config:
-          $ref: '#/components/schemas/CargoConfig'
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the cargo was created
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/CargoSpec'
         Instances:
           type: array
           items:
-            $ref: '#/components/schemas/NodeContainerSummary'
-          description: List of containers
+            $ref: '#/components/schemas/Process'
+          description: List of instances
     CargoKillOptions:
       type: object
       description: Options for the kill command
       required:
-      - Signal
+      - signal
       properties:
-        Signal:
+        signal:
           type: string
           description: 'Signal to send to the container default: SIGKILL'
-    CargoSummary:
+    CargoScale:
+      type: object
+      description: Payload for the cargo scale endpoint
+      required:
+      - Replicas
+      properties:
+        Replicas:
+          type: integer
+          description: Number of replicas to scale up or down can be negative value
+    CargoSpec:
       type: object
       description: |-
-        A Cargo Summary is a summary of a cargo
-        It is used to list all the cargos
+        A cargo spec is the specification of a cargo
+        It used to know the state of the cargo
+        It keep tracking of an history when you patch an existing cargo
       required:
       - Key
+      - CargoKey
+      - Version
       - CreatedAt
-      - UpdatedAt
       - Name
-      - ConfigKey
-      - NamespaceName
-      - Config
-      - InstanceTotal
-      - InstanceRunning
+      - Container
       properties:
         Key:
           type: string
-          description: Key of the cargo
+          format: uuid
+          description: Unique identifier of the cargo spec
+        CargoKey:
+          type: string
+          description: The key of the cargo
+        Version:
+          type: string
+          description: Version of the spec
         CreatedAt:
           type: string
           format: date-time
-          description: Creation date of the cargo
-        UpdatedAt:
-          type: string
-          format: date-time
-          description: Update date of the cargo
+          description: Creation date of the cargo spec
         Name:
           type: string
           description: Name of the cargo
-        ConfigKey:
+        Metadata:
+          type: object
+          description: Metadata of the cargo (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        InitContainer:
+          allOf:
+          - $ref: '#/components/schemas/Config'
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
+          nullable: true
+        Container:
+          $ref: '#/components/schemas/Config'
+        Replication:
+          allOf:
+          - $ref: '#/components/schemas/ReplicationMode'
+          nullable: true
+    CargoSpecPartial:
+      type: object
+      description: A cargo spec partial is used to create a Cargo
+      required:
+      - Name
+      - Container
+      properties:
+        Name:
           type: string
-          format: uuid
-          description: Unique identifier of the cargo config
+          description: Name of the cargo
+        Metadata:
+          type: object
+          description: Metadata of the cargo (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        InitContainer:
+          allOf:
+          - $ref: '#/components/schemas/Config'
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
+          nullable: true
+        Container:
+          $ref: '#/components/schemas/Config'
+        Replication:
+          allOf:
+          - $ref: '#/components/schemas/ReplicationMode'
+          nullable: true
+    CargoSpecUpdate:
+      type: object
+      description: |-
+        Payload used to patch a cargo
+        It will create a new [CargoSpec](CargoSpec) with the new values
+        It will keep the old values in the history
+      properties:
+        Name:
+          type: string
+          description: New name of the cargo
+          nullable: true
+        Metadata:
+          type: object
+          description: New metadata of the cargo (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        InitContainer:
+          allOf:
+          - $ref: '#/components/schemas/Config'
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: List of secrets to use as environment variables
+          nullable: true
+        Container:
+          allOf:
+          - $ref: '#/components/schemas/Config'
+          nullable: true
+        Replication:
+          allOf:
+          - $ref: '#/components/schemas/ReplicationMode'
+          nullable: true
+    CargoSummary:
+      type: object
+      description: |-
+        A CargoSummary is a summary of a cargo
+        It's the datastructure returned by the list operation
+      required:
+      - NamespaceName
+      - CreatedAt
+      - InstanceTotal
+      - InstanceRunning
+      - Spec
+      properties:
         NamespaceName:
           type: string
           description: Name of the namespace
-        Config:
-          $ref: '#/components/schemas/CargoConfig'
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the cargo was created
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
-    CargoTarget:
-      type: object
-      description: Defines a proxy rule target
-      required:
-      - Key
-      - Port
-      properties:
-        Key:
-          type: string
-          description: The cargo key
-        Port:
-          type: integer
-          format: int32
-          description: The cargo port
-          minimum: 0.0
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/CargoSpec'
     ClusterInfo:
       type: object
       description: ClusterInfo represents information about the swarm as is returned by the \"/info\" endpoint. Join-tokens are not included.
@@ -1645,7 +2347,7 @@ components:
           format: int32
           description: DataPathPort specifies the data path port number for data traffic. Acceptable port range is 1024 to 49151. If no port is set or is set to 0, the default port (4789) is used.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         DefaultAddrPool:
           type: array
           items:
@@ -1657,7 +2359,7 @@ components:
           format: int32
           description: SubnetSize specifies the subnet size of the networks created from the default subnet pool.
           nullable: true
-          minimum: 0.0
+          minimum: 0
     Commit:
       type: object
       description: Commit holds the Git-commit (SHA1) that a binary was built from, as reported in the version-string of external tools, such as `containerd`, or `runC`.
@@ -1941,6 +2643,169 @@ components:
             type: string
           description: Shell for when `RUN`, `CMD`, and `ENTRYPOINT` uses a shell.
           nullable: true
+    ContainerInspectResponse:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The ID of the container
+          nullable: true
+        Created:
+          type: string
+          description: The time the container was created
+          nullable: true
+        Path:
+          type: string
+          description: The path to the command being run
+          nullable: true
+        Args:
+          type: array
+          items:
+            type: string
+          description: The arguments to the command being run
+          nullable: true
+        State:
+          allOf:
+          - $ref: '#/components/schemas/ContainerState'
+          nullable: true
+        Image:
+          type: string
+          description: The container's image ID
+          nullable: true
+        ResolvConfPath:
+          type: string
+          nullable: true
+        HostnamePath:
+          type: string
+          nullable: true
+        HostsPath:
+          type: string
+          nullable: true
+        LogPath:
+          type: string
+          nullable: true
+        Name:
+          type: string
+          nullable: true
+        RestartCount:
+          type: integer
+          format: int64
+          nullable: true
+        Driver:
+          type: string
+          nullable: true
+        Platform:
+          type: string
+          nullable: true
+        MountLabel:
+          type: string
+          nullable: true
+        ProcessLabel:
+          type: string
+          nullable: true
+        AppArmorProfile:
+          type: string
+          nullable: true
+        ExecIDs:
+          type: array
+          items:
+            type: string
+          description: IDs of exec instances that are running in the container.
+          nullable: true
+        HostConfig:
+          allOf:
+          - $ref: '#/components/schemas/HostConfig'
+          nullable: true
+        GraphDriver:
+          allOf:
+          - $ref: '#/components/schemas/GraphDriverData'
+          nullable: true
+        SizeRw:
+          type: integer
+          format: int64
+          description: The size of files that have been created or changed by this container.
+          nullable: true
+        SizeRootFs:
+          type: integer
+          format: int64
+          description: The total size of all the files in this container.
+          nullable: true
+        Mounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/MountPoint'
+          nullable: true
+        Config:
+          allOf:
+          - $ref: '#/components/schemas/ContainerConfig'
+          nullable: true
+        NetworkSettings:
+          allOf:
+          - $ref: '#/components/schemas/NetworkSettings'
+          nullable: true
+    ContainerState:
+      type: object
+      description: ContainerState stores container's running state. It's part of ContainerJSONBase and will be returned by the \"inspect\" command.
+      properties:
+        Status:
+          allOf:
+          - $ref: '#/components/schemas/ContainerStateStatusEnum'
+          nullable: true
+        Running:
+          type: boolean
+          description: 'Whether this container is running.  Note that a running container can be _paused_. The `Running` and `Paused` booleans are not mutually exclusive:  When pausing a container (on Linux), the freezer cgroup is used to suspend all processes in the container. Freezing the process requires the process to be running. As a result, paused containers are both `Running` _and_ `Paused`.  Use the `Status` field instead to determine if a container''s state is \"running\".'
+          nullable: true
+        Paused:
+          type: boolean
+          description: Whether this container is paused.
+          nullable: true
+        Restarting:
+          type: boolean
+          description: Whether this container is restarting.
+          nullable: true
+        OOMKilled:
+          type: boolean
+          description: Whether a process within this container has been killed because it ran out of memory since the container was last started.
+          nullable: true
+        Dead:
+          type: boolean
+          nullable: true
+        Pid:
+          type: integer
+          format: int64
+          description: The process ID of this container
+          nullable: true
+        ExitCode:
+          type: integer
+          format: int64
+          description: The last exit code of this container
+          nullable: true
+        Error:
+          type: string
+          nullable: true
+        StartedAt:
+          type: string
+          description: The time when this container was last started.
+          nullable: true
+        FinishedAt:
+          type: string
+          description: The time when this container last exited.
+          nullable: true
+        Health:
+          allOf:
+          - $ref: '#/components/schemas/Health'
+          nullable: true
+    ContainerStateStatusEnum:
+      type: string
+      enum:
+      - EMPTY
+      - created
+      - running
+      - paused
+      - restarting
+      - removing
+      - exited
+      - dead
     ContainerSummary:
       type: object
       properties:
@@ -2081,6 +2946,54 @@ components:
           type: string
           description: The working directory for the exec process inside the container.
           nullable: true
+    DaemonConfig:
+      type: object
+      description: |-
+        Configuration of the daemon
+        It is used to configure the daemon
+      required:
+      - hosts
+      - state_dir
+      - gateway
+      - hostname
+      - nodes
+      - advertise_addr
+      - conf_dir
+      - gid
+      properties:
+        hosts:
+          type: array
+          items:
+            type: string
+          description: List of hosts to listen on
+        state_dir:
+          type: string
+          description: Path to the state directory
+        docker_host:
+          type: string
+          description: Docker host to use
+        gateway:
+          type: string
+          description: Host gateway automatically detected to host default gateway if not set
+        hostname:
+          type: string
+          description: Hostname to use for the node automatically detected if not set
+        nodes:
+          type: array
+          items:
+            type: string
+          description: List of nodes to join
+        advertise_addr:
+          type: string
+          description: Address to advertise to other nodes
+        conf_dir:
+          type: string
+          description: Config directory
+        gid:
+          type: integer
+          format: int32
+          description: Group id
+          minimum: 0
     DeviceMapping:
       type: object
       description: A device mapping between the host and container
@@ -2124,6 +3037,16 @@ components:
           additionalProperties:
             type: string
           nullable: true
+    DnsEntry:
+      type: object
+      required:
+      - Name
+      - IpAddress
+      properties:
+        Name:
+          type: string
+        IpAddress:
+          type: string
     Driver:
       type: object
       description: Driver represents a driver (network, logging, secrets).
@@ -2221,16 +3144,174 @@ components:
           additionalProperties:
             type: string
           nullable: true
-    GenericDelete:
+    ExecInspectResponse:
       type: object
-      description: Generic delete response
+      properties:
+        CanRemove:
+          type: boolean
+          nullable: true
+        DetachKeys:
+          type: string
+          nullable: true
+        ID:
+          type: string
+          nullable: true
+        Running:
+          type: boolean
+          nullable: true
+        ExitCode:
+          type: integer
+          format: int64
+          nullable: true
+        ProcessConfig:
+          allOf:
+          - $ref: '#/components/schemas/ProcessConfig'
+          nullable: true
+        OpenStdin:
+          type: boolean
+          nullable: true
+        OpenStderr:
+          type: boolean
+          nullable: true
+        OpenStdout:
+          type: boolean
+          nullable: true
+        ContainerID:
+          type: string
+          nullable: true
+        Pid:
+          type: integer
+          format: int64
+          description: The system process ID for the exec process.
+          nullable: true
+    GenericClause:
+      oneOf:
+      - type: object
+        required:
+        - eq
+        properties:
+          eq:
+            type: string
+            description: Equal
+      - type: object
+        required:
+        - ne
+        properties:
+          ne:
+            type: string
+            description: Not equal
+      - type: object
+        required:
+        - gt
+        properties:
+          gt:
+            type: string
+            description: Greater than
+      - type: object
+        required:
+        - lt
+        properties:
+          lt:
+            type: string
+            description: Less than
+      - type: object
+        required:
+        - ge
+        properties:
+          ge:
+            type: string
+            description: Greater than or equal
+      - type: object
+        required:
+        - le
+        properties:
+          le:
+            type: string
+            description: Less than or equal
+      - type: object
+        required:
+        - like
+        properties:
+          like:
+            type: string
+            description: Like
+      - type: object
+        required:
+        - not-like
+        properties:
+          not-like:
+            type: string
+            description: Not like
+      - type: object
+        required:
+        - in
+        properties:
+          in:
+            type: array
+            items:
+              type: string
+            description: In
+      - type: object
+        required:
+        - not-in
+        properties:
+          not-in:
+            type: array
+            items:
+              type: string
+            description: Not in
+      - type: string
+        description: Is null
+        enum:
+        - is-null
+      - type: string
+        description: Is not null
+        enum:
+        - is-not-null
+      - type: object
+        required:
+        - contains
+        properties:
+          contains:
+            description: JSON contains
+      - type: object
+        required:
+        - has-key
+        properties:
+          has-key:
+            type: string
+            description: JSON Has key
+      description: Generic where clause
+    GenericCount:
+      type: object
+      description: Generic count response
       required:
       - Count
       properties:
         Count:
           type: integer
-          description: Number of deleted items
-          minimum: 0.0
+          format: int64
+          description: Number of items
+    GenericFilter:
+      type: object
+      description: Generic filter for list operation
+      properties:
+        where:
+          type: object
+          description: Where clause
+          additionalProperties:
+            $ref: '#/components/schemas/GenericClause'
+          nullable: true
+        limit:
+          type: integer
+          description: Limit number of items default (100)
+          nullable: true
+          minimum: 0
+        offset:
+          type: integer
+          description: Offset to navigate through items
+          nullable: true
+          minimum: 0
     GenericResources:
       type: object
       properties:
@@ -2276,6 +3357,25 @@ components:
           description: Low-level storage metadata, provided as key/value pairs.  This information is driver-specific, and depends on the storage-driver in use, and should be used for informational purposes only.
           additionalProperties:
             type: string
+    Health:
+      type: object
+      description: Health stores information about the container's healthcheck results.
+      properties:
+        Status:
+          allOf:
+          - $ref: '#/components/schemas/HealthStatusEnum'
+          nullable: true
+        FailingStreak:
+          type: integer
+          format: int64
+          description: FailingStreak is the number of consecutive failures
+          nullable: true
+        Log:
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthcheckResult'
+          description: Log contains the last few results (oldest first)
+          nullable: true
     HealthConfig:
       type: object
       description: A test to perform to check that the container is healthy.
@@ -2306,6 +3406,35 @@ components:
           format: int64
           description: Start period for the container to initialize before starting health-retries countdown in nanoseconds. It should be 0 or at least 1000000 (1 ms). 0 means inherit.
           nullable: true
+    HealthStatusEnum:
+      type: string
+      enum:
+      - EMPTY
+      - none
+      - starting
+      - healthy
+      - unhealthy
+    HealthcheckResult:
+      type: object
+      description: HealthcheckResult stores information about a single run of a healthcheck probe
+      properties:
+        Start:
+          allOf:
+          - $ref: '#/components/schemas/BollardDate'
+          nullable: true
+        End:
+          allOf:
+          - $ref: '#/components/schemas/BollardDate'
+          nullable: true
+        ExitCode:
+          type: integer
+          format: int64
+          description: 'ExitCode meanings:  - `0` healthy - `1` unhealthy - `2` reserved (considered unhealthy) - other values: error running probe'
+          nullable: true
+        Output:
+          type: string
+          description: Output from last check
+          nullable: true
     HostConfig:
       type: object
       description: Container configuration that depends on the host we are running on
@@ -2329,7 +3458,7 @@ components:
           format: int32
           description: Block IO weight (relative weight).
           nullable: true
-          minimum: 0.0
+          minimum: 0
         BlkioWeightDevice:
           type: array
           items:
@@ -2523,6 +3652,12 @@ components:
             format: int32
           description: Initial console size, as an `[height, width]` array.
           nullable: true
+        Annotations:
+          type: object
+          description: Arbitrary non-identifying metadata attached to container and provided to the runtime when the container is started.
+          additionalProperties:
+            type: string
+          nullable: true
         CapAdd:
           type: array
           items:
@@ -2692,10 +3827,13 @@ components:
       - type: object
         required:
         - HostGateway
+        - Config
         properties:
           HostGateway:
             type: string
             description: HostGateway is the gateway address of the host
+          Config:
+            $ref: '#/components/schemas/DaemonConfig'
       description: HostInfo contains information about the host and the docker daemon
     HttpTarget:
       type: object
@@ -2785,7 +3923,7 @@ components:
         VirtualSize:
           type: integer
           format: int64
-          description: Total size of the image including all layers it is composed of.  In versions of Docker before v1.10, this field was calculated from the image itself and all of its parent images. Docker v1.10 and up store images self-contained, and no longer use a parent-chain, making this field an equivalent of the Size field.  This field is kept for backward compatibility, but may be removed in a future version of the API.
+          description: 'Total size of the image including all layers it is composed of.  In versions of Docker before v1.10, this field was calculated from the image itself and all of its parent images. Images are now stored self-contained, and no longer use a parent-chain, making this field an equivalent of the Size field.  > **Deprecated**: this field is kept for backward compatibility, but > will be removed in API v1.44.'
           nullable: true
         GraphDriver:
           allOf:
@@ -2830,7 +3968,6 @@ components:
       - Created
       - Size
       - SharedSize
-      - VirtualSize
       - Labels
       - Containers
       properties:
@@ -2865,7 +4002,8 @@ components:
         VirtualSize:
           type: integer
           format: int64
-          description: Total size of the image including all layers it is composed of.  In versions of Docker before v1.10, this field was calculated from the image itself and all of its parent images. Docker v1.10 and up store images self-contained, and no longer use a parent-chain, making this field an equivalent of the Size field.  This field is kept for backward compatibility, but may be removed in a future version of the API.
+          description: 'Total size of the image including all layers it is composed of.  In versions of Docker before v1.10, this field was calculated from the image itself and all of its parent images. Images are now stored self-contained, and no longer use a parent-chain, making this field an equivalent of the Size field.  Deprecated: this field is kept for backward compatibility, and will be removed in API v1.44.'
+          nullable: true
         Labels:
           type: object
           description: User-defined key/value metadata.
@@ -2933,6 +4071,148 @@ components:
           additionalProperties:
             type: string
           nullable: true
+    Job:
+      type: object
+      description: A job is a collection of containers to run in sequence as a single unit to act like a command
+      required:
+      - Name
+      - CreatedAt
+      - UpdatedAt
+      - Containers
+      properties:
+        Name:
+          type: string
+          description: Name of the job
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the job have been created
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: When the job have been updated
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: Secrets to load as environment variables
+          nullable: true
+        Metadata:
+          type: object
+          description: Metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Schedule:
+          type: string
+          description: Schedule of the job (cron)
+          nullable: true
+        Ttl:
+          type: integer
+          description: Remove the job after (x) seconds after execution
+          nullable: true
+          minimum: 0
+        Containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Config'
+          description: Containers to run
+    JobInspect:
+      type: object
+      description: Detailed information about a job
+      required:
+      - InstanceTotal
+      - InstanceSuccess
+      - InstanceRunning
+      - InstanceFailed
+      - Spec
+      - Instances
+      properties:
+        InstanceTotal:
+          type: integer
+          description: Number of instances
+          minimum: 0
+        InstanceSuccess:
+          type: integer
+          description: Number of instance that succeeded
+          minimum: 0
+        InstanceRunning:
+          type: integer
+          description: Number of instance running
+          minimum: 0
+        InstanceFailed:
+          type: integer
+          description: Number of instance failed
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/Job'
+        Instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+          description: List of instances
+    JobPartial:
+      type: object
+      description: Job partial is used to create a new job
+      required:
+      - Name
+      - Containers
+      properties:
+        Name:
+          type: string
+          description: Name of the job
+        Secrets:
+          type: array
+          items:
+            type: string
+          description: Secrets to load as environment variables
+          nullable: true
+        Metadata:
+          type: object
+          description: Metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Schedule:
+          type: string
+          description: Schedule of the job (cron)
+          nullable: true
+        Ttl:
+          type: integer
+          description: Remove the job after (x) seconds after execution
+          nullable: true
+          minimum: 0
+        Containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Config'
+          description: List of container to run
+    JobSummary:
+      type: object
+      description: Summary of a job (used in list)
+      required:
+      - InstanceTotal
+      - InstanceSuccess
+      - InstanceRunning
+      - InstanceFailed
+      - Spec
+      properties:
+        InstanceTotal:
+          type: integer
+          description: Number of instances
+          minimum: 0
+        InstanceSuccess:
+          type: integer
+          description: Number of instance that succeeded
+          minimum: 0
+        InstanceRunning:
+          type: integer
+          description: Number of instance running
+          minimum: 0
+        InstanceFailed:
+          type: integer
+          description: Number of instance failed
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/Job'
     LocalNodeState:
       type: string
       description: |-
@@ -2949,18 +4229,451 @@ components:
       - locked
     LocationTarget:
       oneOf:
-      - type: object
-        required:
-        - Cargo
-        properties:
-          Cargo:
-            $ref: '#/components/schemas/CargoTarget'
-      - type: object
-        required:
-        - Http
-        properties:
-          Http:
-            $ref: '#/components/schemas/HttpTarget'
+      - $ref: '#/components/schemas/UpstreamTarget'
+      - $ref: '#/components/schemas/HttpTarget'
+      - $ref: '#/components/schemas/UnixTarget'
+    MemoryStats:
+      type: object
+      description: General memory statistics for the container.
+      properties:
+        stats:
+          allOf:
+          - $ref: '#/components/schemas/MemoryStatsStats'
+          nullable: true
+        max_usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        usage:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        failcnt:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commit_peak:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commitbytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        commitpeakbytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        privateworkingset:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+    MemoryStatsStats:
+      oneOf:
+      - $ref: '#/components/schemas/MemoryStatsStatsV1'
+      - $ref: '#/components/schemas/MemoryStatsStatsV2'
+      description: Granular memory statistics for the container.
+    MemoryStatsStatsV1:
+      type: object
+      description: |-
+        Granular memory statistics for the container, v1 cgroups.
+
+        Exposed in the docker library [here](https://github.com/moby/moby/blob/40d9e2aff130b42ba0f83d5238b9b53184c8ab3b/daemon/daemon_unix.go#L1436).
+      required:
+      - cache
+      - dirty
+      - mapped_file
+      - total_inactive_file
+      - pgpgout
+      - rss
+      - total_mapped_file
+      - writeback
+      - unevictable
+      - pgpgin
+      - total_unevictable
+      - pgmajfault
+      - total_rss
+      - total_rss_huge
+      - total_writeback
+      - total_inactive_anon
+      - rss_huge
+      - hierarchical_memory_limit
+      - total_pgfault
+      - total_active_file
+      - active_anon
+      - total_active_anon
+      - total_pgpgout
+      - total_cache
+      - total_dirty
+      - inactive_anon
+      - active_file
+      - pgfault
+      - inactive_file
+      - total_pgmajfault
+      - total_pgpgin
+      properties:
+        cache:
+          type: integer
+          format: int64
+          minimum: 0
+        dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        mapped_file:
+          type: integer
+          format: int64
+          minimum: 0
+        total_inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        pgpgout:
+          type: integer
+          format: int64
+          minimum: 0
+        rss:
+          type: integer
+          format: int64
+          minimum: 0
+        total_mapped_file:
+          type: integer
+          format: int64
+          minimum: 0
+        writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgpgin:
+          type: integer
+          format: int64
+          minimum: 0
+        total_unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_rss:
+          type: integer
+          format: int64
+          minimum: 0
+        total_rss_huge:
+          type: integer
+          format: int64
+          minimum: 0
+        total_writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        total_inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        rss_huge:
+          type: integer
+          format: int64
+          minimum: 0
+        hierarchical_memory_limit:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        total_active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgpgout:
+          type: integer
+          format: int64
+          minimum: 0
+        total_cache:
+          type: integer
+          format: int64
+          minimum: 0
+        total_dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        total_pgpgin:
+          type: integer
+          format: int64
+          minimum: 0
+        hierarchical_memsw_limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        shmem:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        total_shmem:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+    MemoryStatsStatsV2:
+      type: object
+      description: |-
+        Granular memory statistics for the container, v2 cgroups.
+
+        Exposed in the docker library [here](https://github.com/moby/moby/blob/40d9e2aff130b42ba0f83d5238b9b53184c8ab3b/daemon/daemon_unix.go#L1542).
+      required:
+      - anon
+      - file
+      - kernel_stack
+      - slab
+      - sock
+      - shmem
+      - file_mapped
+      - file_dirty
+      - file_writeback
+      - anon_thp
+      - inactive_anon
+      - active_anon
+      - inactive_file
+      - active_file
+      - unevictable
+      - slab_reclaimable
+      - slab_unreclaimable
+      - pgfault
+      - pgmajfault
+      - workingset_refault
+      - workingset_activate
+      - workingset_nodereclaim
+      - pgrefill
+      - pgscan
+      - pgsteal
+      - pgactivate
+      - pgdeactivate
+      - pglazyfree
+      - pglazyfreed
+      - thp_fault_alloc
+      - thp_collapse_alloc
+      properties:
+        anon:
+          type: integer
+          format: int64
+          minimum: 0
+        file:
+          type: integer
+          format: int64
+          minimum: 0
+        kernel_stack:
+          type: integer
+          format: int64
+          minimum: 0
+        slab:
+          type: integer
+          format: int64
+          minimum: 0
+        sock:
+          type: integer
+          format: int64
+          minimum: 0
+        shmem:
+          type: integer
+          format: int64
+          minimum: 0
+        file_mapped:
+          type: integer
+          format: int64
+          minimum: 0
+        file_dirty:
+          type: integer
+          format: int64
+          minimum: 0
+        file_writeback:
+          type: integer
+          format: int64
+          minimum: 0
+        anon_thp:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        active_anon:
+          type: integer
+          format: int64
+          minimum: 0
+        inactive_file:
+          type: integer
+          format: int64
+          minimum: 0
+        active_file:
+          type: integer
+          format: int64
+          minimum: 0
+        unevictable:
+          type: integer
+          format: int64
+          minimum: 0
+        slab_reclaimable:
+          type: integer
+          format: int64
+          minimum: 0
+        slab_unreclaimable:
+          type: integer
+          format: int64
+          minimum: 0
+        pgfault:
+          type: integer
+          format: int64
+          minimum: 0
+        pgmajfault:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_refault:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_activate:
+          type: integer
+          format: int64
+          minimum: 0
+        workingset_nodereclaim:
+          type: integer
+          format: int64
+          minimum: 0
+        pgrefill:
+          type: integer
+          format: int64
+          minimum: 0
+        pgscan:
+          type: integer
+          format: int64
+          minimum: 0
+        pgsteal:
+          type: integer
+          format: int64
+          minimum: 0
+        pgactivate:
+          type: integer
+          format: int64
+          minimum: 0
+        pgdeactivate:
+          type: integer
+          format: int64
+          minimum: 0
+        pglazyfree:
+          type: integer
+          format: int64
+          minimum: 0
+        pglazyfreed:
+          type: integer
+          format: int64
+          minimum: 0
+        thp_fault_alloc:
+          type: integer
+          format: int64
+          minimum: 0
+        thp_collapse_alloc:
+          type: integer
+          format: int64
+          minimum: 0
+    Metric:
+      type: object
+      description: Metric entry
+      required:
+      - Key
+      - CreatedAt
+      - ExpireAt
+      - NodeName
+      - Kind
+      - Data
+      properties:
+        Key:
+          type: string
+          format: uuid
+          description: The key of the metric in the database `UUID`
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the metric was created
+        ExpireAt:
+          type: string
+          format: date-time
+          description: When the metric will expire
+        NodeName:
+          type: string
+          description: The node where the metric come from
+        Kind:
+          type: string
+          description: The kind of the metric
+        Data:
+          description: The data of the metric
+    MetricPartial:
+      type: object
+      description: Used to create a new metric
+      required:
+      - Kind
+      - Data
+      properties:
+        Kind:
+          type: string
+          description: The kind of the metric
+        Data:
+          description: The data of the metric
     Mount:
       type: object
       properties:
@@ -3258,6 +4971,134 @@ components:
         IPv6Address:
           type: string
           nullable: true
+    NetworkSettings:
+      type: object
+      description: NetworkSettings exposes the network settings in the API
+      properties:
+        Bridge:
+          type: string
+          description: Name of the network's bridge (for example, `docker0`).
+          nullable: true
+        SandboxID:
+          type: string
+          description: SandboxID uniquely represents a container's network stack.
+          nullable: true
+        HairpinMode:
+          type: boolean
+          description: Indicates if hairpin NAT should be enabled on the virtual interface.
+          nullable: true
+        LinkLocalIPv6Address:
+          type: string
+          description: IPv6 unicast address using the link-local prefix.
+          nullable: true
+        LinkLocalIPv6PrefixLen:
+          type: integer
+          format: int64
+          description: Prefix length of the IPv6 unicast address.
+          nullable: true
+        Ports:
+          allOf:
+          - $ref: '#/components/schemas/PortMap'
+          nullable: true
+        SandboxKey:
+          type: string
+          description: SandboxKey identifies the sandbox
+          nullable: true
+        SecondaryIPAddresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+          nullable: true
+        SecondaryIPv6Addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+          nullable: true
+        EndpointID:
+          type: string
+          description: 'EndpointID uniquely represents a service endpoint in a Sandbox.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        Gateway:
+          type: string
+          description: 'Gateway address for the default \"bridge\" network.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        GlobalIPv6Address:
+          type: string
+          description: 'Global IPv6 address for the default \"bridge\" network.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        GlobalIPv6PrefixLen:
+          type: integer
+          format: int64
+          description: 'Mask length of the global IPv6 address.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        IPAddress:
+          type: string
+          description: 'IPv4 address for the default \"bridge\" network.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        IPPrefixLen:
+          type: integer
+          format: int64
+          description: 'Mask length of the IPv4 address.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        IPv6Gateway:
+          type: string
+          description: 'IPv6 gateway address for this network.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        MacAddress:
+          type: string
+          description: 'MAC address for the container on the default \"bridge\" network.  <p><br /></p>  > **Deprecated**: This field is only propagated when attached to the > default \"bridge\" network. Use the information from the \"bridge\" > network inside the `Networks` map instead, which contains the same > information. This field was deprecated in Docker 1.9 and is scheduled > to be removed in Docker 17.12.0'
+          nullable: true
+        Networks:
+          type: object
+          description: Information about all networks that the container is connected to.
+          additionalProperties:
+            $ref: '#/components/schemas/EndpointSettings'
+          nullable: true
+    NetworkStats:
+      type: object
+      description: Network statistics for the container.
+      required:
+      - rx_dropped
+      - rx_bytes
+      - rx_errors
+      - tx_packets
+      - tx_dropped
+      - rx_packets
+      - tx_errors
+      - tx_bytes
+      properties:
+        rx_dropped:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_bytes:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_errors:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_packets:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_dropped:
+          type: integer
+          format: int64
+          minimum: 0
+        rx_packets:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_errors:
+          type: integer
+          format: int64
+          minimum: 0
+        tx_bytes:
+          type: integer
+          format: int64
+          minimum: 0
     NetworkingConfig:
       type: object
       description: NetworkingConfig represents the container's networking configuration for each of its interfaces. It is used for the networking configs specified in the `docker create` and `docker network connect` commands.
@@ -3278,19 +5119,6 @@ components:
           type: string
         IpAddress:
           type: string
-    NodeContainerSummary:
-      type: object
-      required:
-      - Node
-      - IpAddress
-      - Container
-      properties:
-        Node:
-          type: string
-        IpAddress:
-          type: string
-        Container:
-          $ref: '#/components/schemas/ContainerSummary'
     ObjectVersion:
       type: object
       description: The version number of the object such as node, service, etc. This is needed to avoid conflicting writes. The client must send the version number along with the modified specification when updating these objects.  This approach ensures safe concurrency and determinism in that the change on the object may not be applied if the version number has changed from the last read. In other words, if two update requests specify the same base version, only one of the requests can succeed. As a result, two separate update requests that happen at the same time will not unintentionally overwrite each other.
@@ -3299,7 +5127,7 @@ components:
           type: integer
           format: int64
           nullable: true
-          minimum: 0.0
+          minimum: 0
     PeerNode:
       type: object
       description: Represents a peer-node in the swarm
@@ -3312,6 +5140,20 @@ components:
           type: string
           description: IP address and ports at which this node can be reached.
           nullable: true
+    PidsStats:
+      type: object
+      description: Process ID statistics for the container.
+      properties:
+        current:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        limit:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
     PluginsInfo:
       type: object
       description: 'Available plugins per type.  <p><br /></p>  > **Note**: Only unmanaged (V1) plugins are included in this list. > V1 plugins are \"lazily\" loaded, and are not returned in this list > if there is no resource using the plugin.'
@@ -3352,13 +5194,15 @@ components:
           nullable: true
         PrivatePort:
           type: integer
-          format: int64
+          format: int32
           description: Port on the container
+          minimum: 0
         PublicPort:
           type: integer
-          format: int64
+          format: int32
           description: Port exposed on the host
           nullable: true
+          minimum: 0
         Type:
           allOf:
           - $ref: '#/components/schemas/PortTypeEnum'
@@ -3397,6 +5241,69 @@ components:
       - tcp
       - udp
       - sctp
+    Process:
+      type: object
+      description: Represents a process (Vm, Job, Cargo)
+      required:
+      - Key
+      - CreatedAt
+      - UpdatedAt
+      - Name
+      - Kind
+      - NodeKey
+      - KindKey
+      - Data
+      properties:
+        Key:
+          type: string
+          description: The key of the process
+        CreatedAt:
+          type: string
+          format: date-time
+          description: The created at date
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Last time the instance was updated
+        Name:
+          type: string
+          description: Name of the process
+        Kind:
+          $ref: '#/components/schemas/ProcessKind'
+        NodeKey:
+          type: string
+          description: Key of the node where the container is running
+        KindKey:
+          type: string
+          description: Key of the related kind
+        Data:
+          $ref: '#/components/schemas/ContainerInspectResponse'
+    ProcessConfig:
+      type: object
+      properties:
+        privileged:
+          type: boolean
+          nullable: true
+        user:
+          type: string
+          nullable: true
+        tty:
+          type: boolean
+          nullable: true
+        entrypoint:
+          type: string
+          nullable: true
+        arguments:
+          type: array
+          items:
+            type: string
+          nullable: true
+    ProcessKind:
+      type: string
+      enum:
+      - vm
+      - job
+      - cargo
     ProxyHttpLocation:
       type: object
       description: Defines a proxy rule location
@@ -3409,22 +5316,21 @@ components:
           description: The path
         Target:
           $ref: '#/components/schemas/LocationTarget'
+        Headers:
+          type: array
+          items:
+            type: string
+          description: Extras header to add
+          nullable: true
+        Version:
+          type: number
+          format: double
+          description: Http version to use
+          nullable: true
     ProxyRule:
       oneOf:
-      - type: object
-        required:
-        - Http
-        properties:
-          Http:
-            $ref: '#/components/schemas/ProxyRuleHttp'
-      - type: object
-        required:
-        - Stream
-        properties:
-          Stream:
-            type: array
-            items:
-              $ref: '#/components/schemas/ProxyRuleStream'
+      - $ref: '#/components/schemas/ProxyRuleHttp'
+      - $ref: '#/components/schemas/ProxyRuleStream'
       description: Proxy rules modes
     ProxyRuleHttp:
       type: object
@@ -3447,7 +5353,7 @@ components:
           description: The locations to handle multiple paths
         Ssl:
           allOf:
-          - $ref: '#/components/schemas/ProxySslConfig'
+          - $ref: '#/components/schemas/ProxySsl'
           nullable: true
         Includes:
           type: array
@@ -3473,13 +5379,17 @@ components:
           type: integer
           format: int32
           description: The port to open on nodes
-          minimum: 0.0
+          minimum: 0
         Ssl:
           allOf:
-          - $ref: '#/components/schemas/ProxySslConfig'
+          - $ref: '#/components/schemas/ProxySsl'
           nullable: true
         Target:
           $ref: '#/components/schemas/StreamTarget'
+    ProxySsl:
+      oneOf:
+      - $ref: '#/components/schemas/ProxySslConfig'
+      - type: string
     ProxySslConfig:
       type: object
       required:
@@ -3492,6 +5402,14 @@ components:
         CertificateKey:
           type: string
           description: Path to the certificate key
+        CertificateClient:
+          type: string
+          description: Path to the certificate client
+          nullable: true
+        VerifyClient:
+          type: boolean
+          description: Enable or disable client verification
+          nullable: true
         DhParam:
           type: string
           description: Path to the dhparam file
@@ -3537,144 +5455,311 @@ components:
           nullable: true
     ReplicationMode:
       oneOf:
-      - type: string
-        enum:
-        - Auto
-      - type: string
-        enum:
-        - Unique
-      - type: string
-        enum:
-        - UniqueByNode
       - type: object
         required:
-        - UniqueByNodeGroups
+        - Mode
         properties:
-          UniqueByNodeGroups:
-            type: object
-            description: UniqueByNodeGroups is used to ensure one replica is running on each node group
-            required:
-            - groups
-            properties:
-              groups:
-                type: array
-                items:
-                  type: string
+          Mode:
+            type: string
+            enum:
+            - Auto
       - type: object
         required:
-        - UniqueByNodeNames
+        - Mode
         properties:
-          UniqueByNodeNames:
-            type: object
-            description: UniqueByNodeNames is used to ensure one replica is running on each node name
-            required:
-            - names
-            properties:
-              names:
-                type: array
-                items:
-                  type: string
+          Mode:
+            type: string
+            enum:
+            - Unique
       - type: object
         required:
-        - Number
+        - Mode
         properties:
-          Number:
+          Mode:
+            type: string
+            enum:
+            - UniqueByNode
+      - type: object
+        description: UniqueByNodeGroups is used to ensure one replica is running on each node group
+        required:
+        - groups
+        - Mode
+        properties:
+          groups:
+            type: array
+            items:
+              type: string
+          Mode:
+            type: string
+            enum:
+            - UniqueByNodeGroups
+      - type: object
+        description: UniqueByNodeNames is used to ensure one replica is running on each node name
+        required:
+        - names
+        - Mode
+        properties:
+          names:
+            type: array
+            items:
+              type: string
+          Mode:
+            type: string
+            enum:
+            - UniqueByNodeNames
+      - allOf:
+        - $ref: '#/components/schemas/ReplicationStatic'
+        - type: object
+          required:
+          - Mode
+          properties:
+            Mode:
+              type: string
+              enum:
+              - Static
+      - allOf:
+        - $ref: '#/components/schemas/ReplicationStatic'
+        - type: object
+          required:
+          - Mode
+          properties:
+            Mode:
+              type: string
+              enum:
+              - StaticByNodes
+      - type: object
+        description: NumberByNodeGroups is used to manually set the number of replicas in each node group
+        required:
+        - groups
+        - number
+        - Mode
+        properties:
+          groups:
+            type: array
+            items:
+              type: string
+          number:
             type: integer
             format: int64
-            description: Number is used to manually set the number of replicas in one node
+          Mode:
+            type: string
+            enum:
+            - StaticByNodeGroups
       - type: object
+        description: NumberByNodeNames is used to manually set the number of replicas in each node name
         required:
-        - NumberByNodes
+        - names
+        - number
+        - Mode
         properties:
-          NumberByNodes:
+          names:
+            type: array
+            items:
+              type: string
+          number:
             type: integer
             format: int64
-            description: NumberByNodes is used to manually set the number of replicas in each node
-      - type: object
-        required:
-        - NumberByNodeGroups
-        properties:
-          NumberByNodeGroups:
-            type: object
-            description: NumberByNodeGroups is used to manually set the number of replicas in each node group
-            required:
-            - groups
-            - number
-            properties:
-              groups:
-                type: array
-                items:
-                  type: string
-              number:
-                type: integer
-                format: int64
-      - type: object
-        required:
-        - NumberByNodeNames
-        properties:
-          NumberByNodeNames:
-            type: object
-            description: NumberByNodeNames is used to manually set the number of replicas in each node name
-            required:
-            - names
-            - number
-            properties:
-              names:
-                type: array
-                items:
-                  type: string
-              number:
-                type: integer
-                format: int64
+          Mode:
+            type: string
+            enum:
+            - StaticByNodeNames
       description: |-
         Auto is used to automatically define that the number of replicas in the cluster
         Number is used to manually set the number of replicas
         Note: auto will ensure at least 1 replica exists in the cluster
+      discriminator:
+        propertyName: Mode
+    ReplicationStatic:
+      type: object
+      required:
+      - Number
+      properties:
+        Number:
+          type: integer
+          minimum: 0
     Resource:
       type: object
       description: |-
-        Resource is a configuration with a name and a kind
-        It is used to define [proxy rules](ProxyRule) and other kind of config
+        Resource is a specification with a name and a kind
+        It is used to define [proxy rules](ProxyRule) and other kind of spec
       required:
-      - Name
-      - CreatedAt
-      - UpdatedAt
-      - Version
       - Kind
-      - ConfigKey
-      - Config
+      - CreatedAt
+      - Spec
       properties:
-        Name:
+        Kind:
           type: string
-          description: The name of the resource
+          description: The kind of the resource
         CreatedAt:
           type: string
           format: date-time
           description: The creation date of the resource
-        UpdatedAt:
+        Spec:
+          $ref: '#/components/schemas/ResourceSpec'
+    ResourceDnsRule:
+      type: object
+      required:
+      - Network
+      - Entries
+      properties:
+        Network:
           type: string
-          format: date-time
-          description: The update date of the resource
+        Entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsEntry'
+    ResourceKind:
+      type: object
+      required:
+      - Name
+      - Version
+      - CreatedAt
+      - Data
+      properties:
+        Name:
+          type: string
+          description: Name of the kind
         Version:
           type: string
-          description: Version of the resource
-        Kind:
+          description: When the kind have been created
+        CreatedAt:
           type: string
-          description: The kind of the resource
-        ConfigKey:
+          format: date-time
+          description: When the kind have been created
+        Metadata:
+          description: When the kind have been created
+          nullable: true
+        Data:
+          $ref: '#/components/schemas/ResourceKindSpec'
+    ResourceKindInspect:
+      type: object
+      required:
+      - Name
+      - CreatedAt
+      - Versions
+      properties:
+        Name:
           type: string
-          format: uuid
-          description: The config of the resource
-        Config:
+          description: Name of the kind
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the kind have been created
+        Versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceKindVersion'
+          description: List of versions available
+    ResourceKindPartial:
+      type: object
+      description: |-
+        This structure is a partial representation of a resource kind.
+        Used to define a new kind type for plugins.
+      required:
+      - Name
+      - Version
+      - Data
+      properties:
+        Name:
+          type: string
+          description: The name of the resource kind
+        Version:
+          type: string
+          description: The version of the resource kind
+        Metadata:
           type: object
-          description: The config of the resource as a json object
+          description: Metadata (user defined) of the resource kind
           additionalProperties:
             $ref: '#/components/schemas/Any'
-    ResourceConfig:
+        Data:
+          $ref: '#/components/schemas/ResourceKindSpec'
+    ResourceKindSpec:
+      type: object
+      description: |-
+        Specification of a resource kind.
+        Depending on the spec it will validate a JSONSchema or call a service.
+      properties:
+        Schema:
+          type: object
+          description: The JSONSchema of the resource of this kind and version
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Url:
+          type: string
+          description: The service to call when creating, updating or deleting a resource of this kind and version
+          nullable: true
+    ResourceKindVersion:
       type: object
       required:
       - Key
+      - CreatedAt
+      - KindKey
       - Version
+      - Data
+      properties:
+        Key:
+          type: string
+          format: uuid
+          description: Key of the version
+        CreatedAt:
+          type: string
+          format: date-time
+          description: When the version have been created
+        KindKey:
+          type: string
+          description: Kind linked to this version
+        Version:
+          type: string
+          description: Version
+        Metadata:
+          type: object
+          description: Metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Data:
+          $ref: '#/components/schemas/ResourceKindSpec'
+    ResourcePartial:
+      type: object
+      description: Payload used to create a new resource
+      required:
+      - Name
+      - Kind
+      - Data
+      properties:
+        Name:
+          type: string
+          description: The name of the resource
+        Kind:
+          type: string
+          description: The kind of the resource
+        Data:
+          type: object
+          description: The data of the resource (json object)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+    ResourceProxyRule:
+      type: object
+      description: Define proxy rules to apply
+      required:
+      - Rules
+      properties:
+        Rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProxyRule'
+          description: The rules to apply
+    ResourceSpec:
+      type: object
+      description: The spec of a resource once created in the system
+      required:
+      - Key
+      - Version
+      - CreatedAt
       - ResourceKey
       - Data
       properties:
@@ -3684,66 +5769,40 @@ components:
           description: Key of the resource
         Version:
           type: string
-          description: Version of the config
+          description: Version of the resource
+        CreatedAt:
+          type: string
+          format: date-time
+          description: The creation date of the resource
         ResourceKey:
           type: string
-          description: Resource key associated with the config
+          description: Resource key associated with the data
         Data:
           type: object
-          description: The config of the resource as a json object
+          description: The data of the resource as a json object
           additionalProperties:
             $ref: '#/components/schemas/Any'
-    ResourcePartial:
-      type: object
-      description: Resource partial is a payload used to create a new resource
-      required:
-      - Name
-      - Kind
-      - Version
-      - Config
-      properties:
-        Name:
-          type: string
-          description: The name of the resource
-        Kind:
-          type: string
-          description: The kind of the resource
-        Version:
-          type: string
-          description: Version of the config
-        Config:
+        Metadata:
           type: object
-          description: The config of the resource (json object)
+          description: The metadata of the resource (user defined)
           additionalProperties:
             $ref: '#/components/schemas/Any'
-    ResourcePatch:
+    ResourceUpdate:
       type: object
+      description: Payload used to update a resource
       required:
-      - Version
-      - Config
+      - Data
       properties:
-        Version:
-          type: string
-          description: Version of the config
-        Config:
+        Data:
           type: object
-          description: The config of the resource as a json object
+          description: The spec of the resource as a json object
           additionalProperties:
             $ref: '#/components/schemas/Any'
-    ResourceProxyRule:
-      type: object
-      description: Define proxy rules to apply
-      required:
-      - Watch
-      - Rule
-      properties:
-        Watch:
-          type: array
-          items:
-            type: string
-          description: Cargo to watch for changes
-        Rule:
-          $ref: '#/components/schemas/ProxyRule'
+        Metadata:
+          type: object
+          description: The metadata of the resource as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
     ResourcesBlkioWeightDevice:
       type: object
       properties:
@@ -3753,7 +5812,7 @@ components:
         Weight:
           type: integer
           nullable: true
-          minimum: 0.0
+          minimum: 0
     ResourcesUlimits:
       type: object
       properties:
@@ -3806,20 +5865,259 @@ components:
             type: string
           description: List of command-line arguments to pass to the runtime when invoked.
           nullable: true
+    Secret:
+      type: object
+      description: |-
+        This structure represent the secret in the database.
+        A secret is a key/value pair that can be used by the user to store
+        sensitive data. It is stored as a json object in the database.
+      required:
+      - Name
+      - CreatedAt
+      - UpdatedAt
+      - Kind
+      - Immutable
+      - Data
+      properties:
+        Name:
+          type: string
+          description: The name of the secret
+        CreatedAt:
+          type: string
+          format: date-time
+          description: The creation date
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: The last update date
+        Kind:
+          type: string
+          description: The kind of secret
+        Immutable:
+          type: boolean
+          description: The secret cannot be updated
+        Metadata:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Data:
+          type: object
+          description: The secret data
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+    SecretPartial:
+      type: object
+      description: |-
+        A partial secret object. This is used to create a secret.
+        A secret is a key/value pair that can be used by the user to store
+        sensitive data. It is stored as a json object in the database.
+      required:
+      - Name
+      - Kind
+      - Data
+      properties:
+        Name:
+          type: string
+          description: The name of the secret
+        Kind:
+          type: string
+          description: The kind of secret
+        Immutable:
+          type: boolean
+          description: The secret cannot be updated
+          nullable: true
+        Metadata:
+          type: object
+          description: The metadata of the resource (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Data:
+          type: object
+          description: The secret data
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+    SecretUpdate:
+      type: object
+      description: This structure is used to update a secret.
+      required:
+      - Data
+      properties:
+        Metadata:
+          type: object
+          description: The metadata of the secret (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Data:
+          type: object
+          description: The data of the secret as a json object
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+    StartExecOptions:
+      type: object
+      description: Exec configuration used in the [Create Exec API](Docker::create_exec())
+      required:
+      - Detach
+      - Tty
+      properties:
+        Detach:
+          type: boolean
+          description: Detach from the command.
+        Tty:
+          type: boolean
+          description: Allocate a pseudo-TTY.
+        OutputCapacity:
+          type: integer
+          description: The maximum size for a line of output. The default is 8 * 1024 (roughly 1024 characters).
+          nullable: true
+          minimum: 0
+    Statefile:
+      type: object
+      description: Structure that represent a Statefile
+      required:
+      - ApiVersion
+      properties:
+        ApiVersion:
+          type: string
+          description: Api version to use or remote url
+        Args:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatefileArg'
+          description: Arguments to pass to the Statefile
+          nullable: true
+        Group:
+          type: string
+          description: Set the group of defined objects default to `{name_of_directory}.{name_of_file}`
+          nullable: true
+        Namespace:
+          type: string
+          description: Namespace where the cargoes and virtual machines are deployed
+          nullable: true
+        Secrets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretPartial'
+          description: List of secrets to create
+          nullable: true
+        Resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourcePartial'
+          description: List of resources to create
+          nullable: true
+        Cargoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoSpecPartial'
+          description: List of cargoes to create and run
+          nullable: true
+        VirtualMachines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmSpecPartial'
+          description: List of virtual machines to create and run
+          nullable: true
+        Jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobPartial'
+          description: List of jobs to create and run
+          nullable: true
+    StatefileArg:
+      type: object
+      description: Statefile argument definition to pass to the Statefile
+      required:
+      - Name
+      - Kind
+      properties:
+        Name:
+          type: string
+          description: Name of the build arg
+        Kind:
+          type: string
+          description: Kind of the build arg
+        Default:
+          type: string
+          description: Default value of the build arg
+          nullable: true
+    Stats:
+      type: object
+      description: Statistics for the container.
+      required:
+      - read
+      - preread
+      - num_procs
+      - pids_stats
+      - memory_stats
+      - blkio_stats
+      - cpu_stats
+      - precpu_stats
+      - storage_stats
+      - name
+      - id
+      properties:
+        read:
+          type: string
+        preread:
+          type: string
+        num_procs:
+          type: integer
+          format: int32
+          minimum: 0
+        pids_stats:
+          $ref: '#/components/schemas/PidsStats'
+        network:
+          allOf:
+          - $ref: '#/components/schemas/NetworkStats'
+          nullable: true
+        networks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NetworkStats'
+          nullable: true
+        memory_stats:
+          $ref: '#/components/schemas/MemoryStats'
+        blkio_stats:
+          $ref: '#/components/schemas/BlkioStats'
+        cpu_stats:
+          $ref: '#/components/schemas/CPUStats'
+        precpu_stats:
+          $ref: '#/components/schemas/CPUStats'
+        storage_stats:
+          $ref: '#/components/schemas/StorageStats'
+        name:
+          type: string
+        id:
+          type: string
+    StorageStats:
+      type: object
+      description: File I/O statistics for the container.
+      properties:
+        read_count_normalized:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        read_size_bytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        write_count_normalized:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        write_size_bytes:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
     StreamTarget:
       oneOf:
-      - type: object
-        required:
-        - Cargo
-        properties:
-          Cargo:
-            $ref: '#/components/schemas/CargoTarget'
-      - type: object
-        required:
-        - Uri
-        properties:
-          Uri:
-            $ref: '#/components/schemas/UriTarget'
+      - $ref: '#/components/schemas/UpstreamTarget'
+      - $ref: '#/components/schemas/UriTarget'
+      - $ref: '#/components/schemas/UnixTarget'
     SwarmInfo:
       type: object
       description: Represents generic information about swarm.
@@ -3928,7 +6226,7 @@ components:
           format: int64
           description: An integer whose purpose is to force swarm to generate a new signing CA certificate and key, if none have been specified in `SigningCACert` and `SigningCAKey`
           nullable: true
-          minimum: 0.0
+          minimum: 0
     SwarmSpecCaConfigExternalCas:
       type: object
       properties:
@@ -3990,19 +6288,19 @@ components:
           format: int64
           description: The number of log entries between snapshots.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         KeepOldSnapshots:
           type: integer
           format: int64
           description: The number of snapshots to keep beyond the current snapshot.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         LogEntriesForSlowFollowers:
           type: integer
           format: int64
           description: The number of log entries to keep around to sync up slow followers after a snapshot is created.
           nullable: true
-          minimum: 0.0
+          minimum: 0
         ElectionTick:
           type: integer
           format: int64
@@ -4292,7 +6590,7 @@ components:
           type: array
           items:
             type: string
-          description: List of security features that are enabled on the daemon, such as apparmor, seccomp, SELinux, user-namespaces (userns), and rootless.  Additional configuration options for each security feature may be present, and are included as a comma-separated list of key/value pairs.
+          description: List of security features that are enabled on the daemon, such as apparmor, seccomp, SELinux, user-namespaces (userns), rootless and no-new-privileges.  Additional configuration options for each security feature may be present, and are included as a comma-separated list of key/value pairs.
           nullable: true
         ProductLicense:
           type: string
@@ -4354,6 +6652,26 @@ components:
           format: int64
           description: Rate
           nullable: true
+    ThrottlingData:
+      type: object
+      description: CPU throttling statistics.
+      required:
+      - periods
+      - throttled_periods
+      - throttled_time
+      properties:
+        periods:
+          type: integer
+          format: int64
+          minimum: 0
+        throttled_periods:
+          type: integer
+          format: int64
+          minimum: 0
+        throttled_time:
+          type: integer
+          format: int64
+          minimum: 0
     TlsInfo:
       type: object
       description: Information about the issuer of leaf TLS certificates and the trusted root CA certificate.
@@ -4370,6 +6688,36 @@ components:
           type: string
           description: The base64-url-safe-encoded raw public key bytes of the issuer.
           nullable: true
+    UnixTarget:
+      type: object
+      required:
+      - UnixPath
+      properties:
+        UnixPath:
+          type: string
+    UpstreamTarget:
+      type: object
+      description: Config for targetting a cargo or a vm
+      required:
+      - Key
+      - Port
+      properties:
+        Key:
+          type: string
+          description: The key of the cargo or the vm to target
+        Port:
+          type: integer
+          format: int32
+          description: The port of the cargo or the vm to target
+          minimum: 0
+        Path:
+          type: string
+          description: The http path to target when using http
+          nullable: true
+        DisableLogging:
+          type: boolean
+          description: Disable logging for this target
+          nullable: true
     UriTarget:
       type: object
       required:
@@ -4382,174 +6730,26 @@ components:
       type: string
       enum:
       - MovedPermanently
-      - PermanentRedirect
-      - TemporaryRedirect
+      - Permanent
+      - Temporary
     Vm:
       type: object
       description: A virtual machine instance
       required:
-      - Key
       - NamespaceName
-      - Name
-      - ConfigKey
-      - Config
+      - CreatedAt
+      - Spec
       properties:
-        Key:
-          type: string
-          description: Key of the vm
         NamespaceName:
           type: string
           description: Name of the namespace
-        Name:
-          type: string
-          description: Name of the vm
-        ConfigKey:
-          type: string
-          format: uuid
-          description: Unique identifier of the vm config
-        Config:
-          $ref: '#/components/schemas/VmConfig'
-    VmConfig:
-      type: object
-      description: |-
-        A vm config is the configuration of a vm
-        It used to know the state of the vm
-        It keep tracking of an history when you patch an existing vm
-      required:
-      - Key
-      - CreatedAt
-      - Name
-      - Version
-      - VmKey
-      - Disk
-      - HostConfig
-      properties:
-        Key:
-          type: string
-          format: uuid
-          description: Unique identifier of the vm config
         CreatedAt:
           type: string
           format: date-time
-          description: Creation date of the vm config
-        Name:
-          type: string
-          description: Name of the vm
-        Version:
-          type: string
-          description: Version of the config
-        VmKey:
-          type: string
-          description: The key of the vm
-        Hostname:
-          type: string
-          description: Hostname of the vm
-          nullable: true
-        Password:
-          type: string
-          description: Default password of the vm (cloud)
-          nullable: true
-        SshKey:
-          type: string
-          description: Default ssh key for the user
-          nullable: true
-        User:
-          type: string
-          description: Default user of the vm (cloud)
-          nullable: true
-        Disk:
-          $ref: '#/components/schemas/VmDiskConfig'
-        MacAddress:
-          type: string
-          description: Mac address of the vm
-          nullable: true
-        Labels:
-          type: object
-          description: User-defined key/value metadata.
-          additionalProperties:
-            type: string
-          nullable: true
-        HostConfig:
-          $ref: '#/components/schemas/VmHostConfig'
-    VmConfigPartial:
-      type: object
-      description: A vm config partial is used to create a Vm
-      required:
-      - Name
-      - Disk
-      - HostConfig
-      properties:
-        Name:
-          type: string
-          description: Name of the vm
-        Hostname:
-          type: string
-          description: Hostname of the vm
-          nullable: true
-        User:
-          type: string
-          description: Default user of the vm (cloud)
-          nullable: true
-        Password:
-          type: string
-          description: Default password of the vm (cloud)
-          nullable: true
-        SshKey:
-          type: string
-          description: Default ssh key for the user
-          nullable: true
-        Disk:
-          $ref: '#/components/schemas/VmDiskConfig'
-        MacAddress:
-          type: string
-          description: Mac address of the vm
-          nullable: true
-        Labels:
-          type: object
-          description: User-defined key/value metadata.
-          additionalProperties:
-            type: string
-          nullable: true
-        HostConfig:
-          $ref: '#/components/schemas/VmHostConfig'
-    VmConfigUpdate:
-      type: object
-      description: |-
-        Payload used to patch a vm
-        It will create a new [VmConfig](VmConfig) with the new values
-        It will keep the old values in the history
-      properties:
-        Name:
-          type: string
-          description: Name of the vm
-          nullable: true
-        Hostname:
-          type: string
-          description: Hostname of the vm
-          nullable: true
-        User:
-          type: string
-          description: Default user of the vm (cloud)
-          nullable: true
-        Password:
-          type: string
-          description: Default password of the vm (cloud)
-          nullable: true
-        SshKey:
-          type: string
-          description: Default ssh key for the user
-          nullable: true
-        Labels:
-          type: object
-          description: User-defined key/value metadata.
-          additionalProperties:
-            type: string
-          nullable: true
-        HostConfig:
-          allOf:
-          - $ref: '#/components/schemas/VmHostConfig'
-          nullable: true
-    VmDiskConfig:
+          description: When the vm was created
+        Spec:
+          $ref: '#/components/schemas/VmSpec'
+    VmDisk:
       type: object
       description: Disk representation of a VM
       required:
@@ -4561,9 +6761,9 @@ components:
         Size:
           type: integer
           format: int64
-          description: Virtual size allowed for the disk
+          description: 'Virtual size allowed for the disk in GB (default: 20)'
           nullable: true
-          minimum: 0.0
+          minimum: 0
     VmHostConfig:
       type: object
       description: A vm's resources (cpu, memory, network)
@@ -4574,33 +6774,41 @@ components:
         Cpu:
           type: integer
           format: int64
-          description: Number of cpu of the vm
-          minimum: 0.0
+          description: 'Number of cpu of the vm (default: 1)'
+          minimum: 0
         Memory:
           type: integer
           format: int64
-          description: Memory of the vm
-          minimum: 0.0
+          description: 'Memory of the vm in MB (default: 512)'
+          minimum: 0
         NetIface:
           type: string
-          description: default network interface of the vm
+          description: 'Network interface of the vm to setup (default: ens3)'
+          nullable: true
+        LinkNetIface:
+          type: string
+          description: 'Network interface to link the vm (default: eth0)'
           nullable: true
         Kvm:
           type: boolean
-          description: Enable KVM
+          description: 'Enable KVM acceleration (default: false)'
           nullable: true
         Dns:
           type: array
           items:
             type: string
-          description: A list of DNS servers for the vm to use.
+          description: A list of DNS servers for the vm to use
           nullable: true
         Runtime:
           type: string
-          description: 'Container image name to use for vm default: nexthat/nanocl-qemu'
+          description: 'Container image name to use for vm (default: nanocl-qemu)'
           nullable: true
-        RuntimeNet:
+        RuntimeNetwork:
           type: string
+          nullable: true
+        HostTun:
+          type: boolean
+          description: Use host tun device
           nullable: true
     VmImage:
       type: object
@@ -4647,102 +6855,234 @@ components:
           type: integer
           format: int64
           description: The new size of the image in bytes
-          minimum: 0.0
+          minimum: 0
         Shrink:
           type: boolean
           description: Whether to shrink the image or not
     VmInspect:
       type: object
       description: |-
-        A Vm Inspect is a detailed view of a cargo
-        It is used to inspect a cargo
-        It contains all the information about the cargo
+        A Vm Inspect is a detailed view of a vm
+        It is used to inspect a vm
+        It contains all the information about the vm
         It also contains the list of containers
       required:
-      - Key
-      - Name
-      - ConfigKey
       - NamespaceName
-      - Config
+      - CreatedAt
       - InstanceTotal
       - InstanceRunning
+      - Spec
       - Instances
       properties:
-        Key:
-          type: string
-          description: Key of the cargo
-        Name:
-          type: string
-          description: Name of the cargo
-        ConfigKey:
-          type: string
-          format: uuid
-          description: Unique identifier of the cargo config
         NamespaceName:
           type: string
           description: Name of the namespace
-        Config:
-          $ref: '#/components/schemas/VmConfig'
+        CreatedAt:
+          type: string
+          format: date-time
+          description: Creation date of the vm
         InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
+          minimum: 0
         InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/VmSpec'
         Instances:
           type: array
           items:
-            $ref: '#/components/schemas/ContainerSummary'
-          description: List of containers
+            $ref: '#/components/schemas/Process'
+          description: List of instances
+    VmSpec:
+      type: object
+      description: |-
+        A vm spec is the specification of a vm
+        It used to know the state of the vm
+        It keep tracking of an history when you patch an existing vm
+      required:
+      - Key
+      - CreatedAt
+      - Name
+      - Version
+      - VmKey
+      - Disk
+      - HostConfig
+      properties:
+        Key:
+          type: string
+          format: uuid
+          description: Unique identifier of the vm spec
+        CreatedAt:
+          type: string
+          format: date-time
+          description: Creation date of the vm spec
+        Name:
+          type: string
+          description: Name of the vm
+        Version:
+          type: string
+          description: Version of the spec
+        VmKey:
+          type: string
+          description: The key of the vm
+        Metadata:
+          type: object
+          description: The metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Hostname:
+          type: string
+          description: Hostname of the vm
+          nullable: true
+        Password:
+          type: string
+          description: Default password of the vm (cloud)
+          nullable: true
+        SshKey:
+          type: string
+          description: Default ssh key for the user
+          nullable: true
+        User:
+          type: string
+          description: Default user of the vm (cloud)
+          nullable: true
+        Disk:
+          $ref: '#/components/schemas/VmDisk'
+        MacAddress:
+          type: string
+          description: Mac address of the vm
+          nullable: true
+        Labels:
+          type: object
+          description: User-defined key/value metadata.
+          additionalProperties:
+            type: string
+          nullable: true
+        HostConfig:
+          $ref: '#/components/schemas/VmHostConfig'
+    VmSpecPartial:
+      type: object
+      description: A vm spec partial is used to create a vm
+      required:
+      - Name
+      - Disk
+      properties:
+        Name:
+          type: string
+          description: Name of the vm
+        Metadata:
+          type: object
+          description: The metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Hostname:
+          type: string
+          description: 'Hostname of the vm (default: generated from name)'
+          nullable: true
+        User:
+          type: string
+          description: 'Default user of the vm (default: cloud)'
+          nullable: true
+        Password:
+          type: string
+          description: 'Default password of the vm (default: cloud)'
+          nullable: true
+        SshKey:
+          type: string
+          description: Default ssh pub key for the user (recommended)
+          nullable: true
+        Disk:
+          $ref: '#/components/schemas/VmDisk'
+        MacAddress:
+          type: string
+          description: 'Mac address of the vm (default: generated)'
+          nullable: true
+        Labels:
+          type: object
+          description: User-defined key/value metadata.
+          additionalProperties:
+            type: string
+          nullable: true
+        HostConfig:
+          allOf:
+          - $ref: '#/components/schemas/VmHostConfig'
+          nullable: true
+    VmSpecUpdate:
+      type: object
+      description: |
+        ## VmSpecUpdate
+
+        Payload used to patch a vm
+        It will create a new [VmSpec](VmSpec) with the new values
+        and keep the old values in the history
+      properties:
+        Name:
+          type: string
+          description: Name of the vm
+          nullable: true
+        Metadata:
+          type: object
+          description: The metadata (user defined)
+          additionalProperties:
+            $ref: '#/components/schemas/Any'
+        Hostname:
+          type: string
+          description: Hostname of the vm
+          nullable: true
+        User:
+          type: string
+          description: Default user of the vm (cloud)
+          nullable: true
+        Password:
+          type: string
+          description: Default password of the vm (cloud)
+          nullable: true
+        SshKey:
+          type: string
+          description: Default ssh key for the user
+          nullable: true
+        Labels:
+          type: object
+          description: User-defined key/value metadata.
+          additionalProperties:
+            type: string
+          nullable: true
+        HostConfig:
+          allOf:
+          - $ref: '#/components/schemas/VmHostConfig'
+          nullable: true
     VmSummary:
       type: object
       description: |-
         A Vm Summary is a summary of a vm
         It is used to list all the vms
       required:
-      - Key
-      - CreatedAt
-      - UpdatedAt
-      - Name
-      - ConfigKey
       - NamespaceName
-      - Config
-      - Instances
-      - RunningInstances
+      - CreatedAt
+      - InstanceTotal
+      - InstanceRunning
+      - Spec
       properties:
-        Key:
+        NamespaceName:
           type: string
-          description: Key of the vm
+          description: Name of the namespace
         CreatedAt:
           type: string
           format: date-time
           description: Creation date of the vm
-        UpdatedAt:
-          type: string
-          format: date-time
-          description: Update date of the vm
-        Name:
-          type: string
-          description: Name of the vm
-        ConfigKey:
-          type: string
-          format: uuid
-          description: Unique identifier of the vm config
-        NamespaceName:
-          type: string
-          description: Name of the namespace
-        Config:
-          $ref: '#/components/schemas/VmConfig'
-        Instances:
+        InstanceTotal:
           type: integer
           description: Number of instances
-          minimum: 0.0
-        RunningInstances:
+          minimum: 0
+        InstanceRunning:
           type: integer
           description: Number of running instances
-          minimum: 0.0
+          minimum: 0
+        Spec:
+          $ref: '#/components/schemas/VmSpec'
 tags:
 - name: CargoImages
   description: Cargo images management endpoints.
@@ -4758,3 +7098,7 @@ tags:
   description: Virtual machine images management endpoints.
 - name: Vms
   description: Virtual machines management endpoints.
+- name: Metrics
+  description: Metrics management endpoints.
+- name: Processes
+  description: Processes management endpoints.

@@ -13,8 +13,7 @@ pagination_prev: null
 Below you can find a basic example to deploy a [redis][redis] server using their official [docker image][docker image]:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -44,7 +43,7 @@ nanocl state apply -s redis.yml -- --volume /opt/redis
 
 :::tip
 Other cargo created in the same namespace **global** will be able to connect to the redis using is key **redis.global.c**
-The key can be predicted and caculated, it's formated this way: **{cargo_name}.{namespace_name}.{c|v}** **c** for container or **v** for virtual machine.
+The key can be predicted and caculated, it's formated this way: **cargo_name.namespace_name.c|v** **c** for container or **v** for virtual machine.
 This allow us to have the same name for virtual machine and containers.
 :::
 

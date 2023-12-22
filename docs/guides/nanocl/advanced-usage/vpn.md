@@ -26,8 +26,7 @@ wget https://nhnr.io/sys/vpn.yml
 Here is the content of the VPN `Statefile`:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Args:
   - Name: namespace
@@ -118,8 +117,7 @@ You can have a deeper understanding of the container image in the [official docu
 Now we can create cargoes on any namespace we want and make them accessible from our vpn for example:
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -128,7 +126,7 @@ Namespace: global
 Cargoes:
 - Name: deploy-example
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
     Env:
     - APP=GET_STARTED1
 
@@ -136,8 +134,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: vpn-dns
-  Kind: DnsRule
-  Version: v0.3
+  Kind: ncdns.io/rule/v0.4
   Data:
     Network: private.nsp
     Entries:
@@ -145,8 +142,7 @@ Resources:
       IpAddress: private.nsp
 
 - Name: my-domain.internal
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: my-domain.internal

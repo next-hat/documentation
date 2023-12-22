@@ -14,8 +14,7 @@ pagination_prev: null
 You can easily deploy [gitlab][gitlab] using their official [docker image][docker image]:
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -46,8 +45,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: gitlab
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Network: ${{ Args.network }}

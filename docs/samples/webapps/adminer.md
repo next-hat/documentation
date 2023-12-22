@@ -14,8 +14,7 @@ pagination_prev: null
 You can easily deploy [adminer][adminer] using their official [docker image][docker image]:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -38,8 +37,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: adminer
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Network: ${{ Args.network }}

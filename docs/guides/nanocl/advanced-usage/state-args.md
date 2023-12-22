@@ -14,23 +14,22 @@ Statefile Arguments are a way to reuse your `Statefile` by taking advantage of `
 Let considere this example, create a new file called `my-deployment.yml` and add the following content :
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 # Definition of your arguments
 Args:
-  - Name: name
-    # The type of argument, can be:
-    # - String
-    # - Number
-    # - Boolean
-    Kind: String
-  - Name: domain
-    Kind: String
-  - Name: image
-    Kind: String
-  - Name: port
-    Kind: String
+- Name: name
+  # The type of argument, can be:
+  # - String
+  # - Number
+  # - Boolean
+  Kind: String
+- Name: domain
+  Kind: String
+- Name: image
+  Kind: String
+- Name: port
+  Kind: String
 
 Namespace: global
 
@@ -81,7 +80,7 @@ The correct command is now:
 ```sh
 state apply -s my-deployment.yml -- --name deploy-example \
   --domain deploy-example.com \
-  --image nexthat/nanocl-get-started:latest \
+  --image ghcr.io/next-hat/nanocl-get-started:latest \
   --port 9000
 ```
 

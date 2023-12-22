@@ -25,13 +25,11 @@ To follow up the tutorial you must have a cargo called my-cargo running with por
 Create a file called `proxy.deploy-example.yml` and copy the following content:
 
 ```yml
-Kind: Resource
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com
@@ -82,30 +80,28 @@ Should output:
 
 ```json
 {
-  "now": 1696517487975,
   "headers": {
-    "host": "deploy-example.com",
-    "x-forwarded-scheme": "http",
     "x-forwarded-proto": "http",
     "x-forwarded-for": "127.0.0.1",
+    "accept": "*/*",
     "x-real-ip": "127.0.0.1",
     "connection": "close",
-    "user-agent": "curl/7.88.1",
-    "accept": "*/*"
+    "x-forwarded-scheme": "http",
+    "host": "deploy-example.com",
+    "user-agent": "curl/8.2.1"
   },
-  "env": {
-    "NODE_VERSION": "16.18.1",
-    "HOSTNAME": "my-cargo-global-c",
-    "YARN_VERSION": "1.22.19",
-    "PORT": "9001",
-    "HOME": "/home/node",
-    "NANOCL_CARGO_NAMESPACE": "global",
-    "TERM": "xterm",
+  "envs": {
+    "   ": "/bin/nanocl-get-started",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "HOME": "/",
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TERM": "xterm",
+    "PORT": "9001",
+    "HOSTNAME": "my-cargo-46cAuD.global.c",
     "NANOCL_CARGO_KEY": "my-cargo.global",
-    "HOST": "0.0.0.0",
-    "PWD": "/home/node/app",
-    "NANOCL_CARGO_INSTANCE": "0"
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_NODE": "behuman"
   }
 }
 ```

@@ -22,14 +22,13 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 There is an `Statefile` example on how to do it:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
 Secrets:
 - Key: cert.deploy-example.com
-  Kind: Tls
+  Kind: nanocl.io/tls
   Data:
     Certificate: |
       -----BEGIN CERTIFICATE-----
@@ -86,14 +85,13 @@ Secrets:
 Cargoes:
 - Name: my-cargo
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com
@@ -121,8 +119,7 @@ After the command finished Ssl will be enabled already but you need to update yo
 To use the `secret` for your next deployment:
 
 ```yaml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
@@ -131,14 +128,13 @@ Namespace: global
 Cargoes:
 - Name: my-cargo
   Container:
-    Image: nexthat/nanocl-get-started:latest
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.7
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

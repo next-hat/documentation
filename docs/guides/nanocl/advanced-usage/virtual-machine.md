@@ -19,7 +19,7 @@ To facilitate networking, Nanocl starts a virtual machine inside a container usi
 It is not installed by default, so you need to install it. You can easily do this by running the following command:
 
 ```sh
-nanocl cargo image pull ghcr.io/nxthat/nanocl-qemu:8.0.2.0
+nanocl cargo image pull ghcr.io/next-hat/nanocl-qemu:8.0.2.0
 ```
 
 ## Create a VM base image
@@ -168,7 +168,7 @@ Instances:
 - Id: b082dcba19dfa7d177d12871e8702923dc2a95a80842001408a08c23766d012a
   Names:
   - /myvm.global.v
-  Image: ghcr.io/nxthat/nanocl-qemu:8.0.2.0
+  Image: ghcr.io/next-hat/nanocl-qemu:8.0.2.0
   ImageID: sha256:119c0cf552aa9651fafc2fe6d7c4e13fa8cfdcd69e222506d935f4aa7a73d896
   Command: /bin/sh entrypoint.sh -hda /home/leone/.nanocl/state/vms/images/ubuntu-22.myvm.global.img --nographic -accel kvm -smp 4 -m 2048M
   Created: 1688480226
@@ -177,7 +177,7 @@ Instances:
     io.nanocl.vnsp: global
     io.nanocl: enabled
     io.nanocl.v: myvm.global
-    org.opencontainers.image.source: https://github.com/nxthat/nanocl-qemu
+    org.opencontainers.image.source: https://github.com/next-hat/nanocl-qemu
     org.opencontainers.image.description: Nanocl Qemu Runtime
   State: running
   Status: Up 28 seconds
@@ -216,20 +216,19 @@ ssh cloud@10.2.0.2
 You can define a virtual machine using a ``Statefile``. Here is an example:
 
 ```yml
-Kind: VirtualMachine
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/virtual-machine
 VirtualMachines:
-  - Name: myvm
-    Disk:
-      Image: ubuntu-22
-    HostConfig:
-      Cpu: 2
-      Memory: 2048
+- Name: myvm
+  Disk:
+    Image: ubuntu-22
+  HostConfig:
+    Cpu: 2
+    Memory: 2048
 ```
 
 ## Expose your VM
@@ -238,39 +237,36 @@ You can use a `ProxyRule` to expose a specific port of your virtual machine.
 Here is a complete example of exposing the virtual machine's port 22 for SSH to a public port 5555:
 
 ```yml
-Kind: Deployment
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Namespace: global
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
-  - Name: myvm
-    Kind: ProxyRule
-    Version: v0.7
-    Config:
-      Watch:
-        - myvm.global.v
-      Rules:
-        - Domain: deploy-example.com
-          Network: Public
-          Protocol: Tcp
-          Port: 5555
-          Target:
-            Key: myvm.global.v
-            Port: 22
+- Name: myvm
+  Kind: ncproxy.io/rule/v0.9
+  Config:
+    - myvm.global.v
+    Rules:
+    - Domain: deploy-example.com
+      Network: Public
+      Protocol: Tcp
+      Port: 5555
+      Target:
+        Key: myvm.global.v
+        Port: 22
 
 # See all options:
 # https://docs.next-hat.com/references/nanocl/virtual-machine
 VirtualMachines:
-  - Name: myvm
-    Disk:
-      Image: ubuntu-22
-    HostConfig:
-      Cpu: 2
-      Memory: 2048
+- Name: myvm
+  Disk:
+    Image: ubuntu-22
+  HostConfig:
+    Cpu: 2
+    Memory: 2048
 ```
 
 [cloud-init]: https://cloud-init.io
-[nanocl-qemu]: https://github.com/nxthat/nanocl-qemu
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

@@ -1,9 +1,9 @@
 ---
 title: Nanocl Secret References
-keywords: [documentation, references, nanocl, nanocld, secret, specification]
+keywords: [documentation, references, nanocl, nanocld, secret, specification, spec]
 image: /img/logo.webp
 sidebar_label: Secret
-sidebar_position: 5
+sidebar_position: 7
 ---
 
 import ApiSchema from '@theme/ApiSchema'
@@ -53,9 +53,8 @@ Nanocl doesn't impose any constraints on the type name. However, if you are usin
 
 | Built-in Kind      | 	Usage |
 | ----------- | ----------- |
-| `Env` | data for an environments variables |
-| `Tls`   | data for a TLS client or server    |
-
+| `nanocl.io/env` | data for an environments variables |
+| `nanocl.io/tls`   | data for a TLS client or server    |
 
 ### Env
 
@@ -63,15 +62,14 @@ Secret of `Kind` `Env` are environement variable that you can bind to your `Carg
 You can create then using the following `Statefile`:
 
 ```yaml
-Kind: Secret
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Secrets:
-  - Key: env.super-secret
-    Kind: Env
-    Data:
-      - MY_ENV=MY_VALUE
-      - MY_ENV1=MY_VALUE1
+- Key: env.super-secret
+  Kind: nanocl.io/env
+  Data:
+  - MY_ENV=MY_VALUE
+  - MY_ENV1=MY_VALUE1
 ```
 
 ### Tls
@@ -80,19 +78,18 @@ Secret of `Kind` `Tls` are certificat that you can bind to your `ProxyRules`.<br
 You can create then using the following `Statefile`:
 
 ```yaml
-Kind: Secret
-ApiVersion: v0.10
+ApiVersion: v0.12
 
 Secrets:
-  - Key: cert.my-certificate
-    Kind: Tls
-    Data:
-      Certificate: |
-        -----BEGIN CERTIFICATE-----
-        MIIDETCCAfkCFFOJVQs8PxWlcJQDn...
-      CertificateKey: |
-        -----BEGIN PRIVATE KEY-----
-        MIIEvQIBADANBgkqhkiG9w0B...
+- Key: cert.my-certificate
+  Kind: nanocl.io/tls
+  Data:
+    Certificate: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfkCFFOJVQs8PxWlcJQDn...
+    CertificateKey: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0B...
 ```
 
 Below you can find the full spec of the `Tls` `Kind`:

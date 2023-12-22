@@ -112,7 +112,7 @@ To do so we crafted a generic `Statefile` for you that can handle the job and cr
 The secret will be named as follow: `cert.{domain_name}`.<br/>
 
 ```sh
-nanocl state apply -s nhnr.io/sys/certbot.yml -f -- --email your@email.com --domain deploy-example.com
+nanocl state apply -s nhnr.io/v0.12/sys/certbot.yml -f -- --email your@email.com --domain deploy-example.com
 ```
 
 After the command finished Ssl will be enabled already but you need to update your `ProxyRule`.<br/>

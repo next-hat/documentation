@@ -1,9 +1,9 @@
 ---
 title: Nanocl Resource References
-keywords: [documentation, references, nanocl, nanocld, resource, specification]
+keywords: [documentation, references, nanocl, nanocld, resource, specification, spec, proxy]
 image: /img/logo.webp
 sidebar_label: Resource
-sidebar_position: 4
+sidebar_position: 6
 ---
 
 import ApiSchema from '@theme/ApiSchema'

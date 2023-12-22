@@ -3,7 +3,7 @@ title: Nanocl Statefile References
 keywords: [documentation, references, nanocl, nanocld, Statefile, specification]
 image: /img/logo.webp
 sidebar_label: Statefile
-sidebar_position: 6
+sidebar_position: 8
 ---
 
 import ApiSchema from '@theme/ApiSchema'

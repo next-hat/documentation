@@ -3,7 +3,7 @@ title: Virtual Machine References | Nanocl
 keywords: [documentation, references, nanocl, nanocld, virtual machine, vm, vms, specification, spec]
 image: /img/logo.webp
 sidebar_label: Virtual Machine
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Virtual Machine

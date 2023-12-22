@@ -1,9 +1,9 @@
 ---
 title: Nanocl Secret References
-keywords: [documentation, references, nanocl, nanocld, secret, specification]
+keywords: [documentation, references, nanocl, nanocld, secret, specification, spec]
 image: /img/logo.webp
 sidebar_label: Secret
-sidebar_position: 5
+sidebar_position: 7
 ---
 
 import ApiSchema from '@theme/ApiSchema'
@@ -53,9 +53,8 @@ Nanocl doesn't impose any constraints on the type name. However, if you are usin
 
 | Built-in Kind      | 	Usage |
 | ----------- | ----------- |
-| `Env` | data for an environments variables |
-| `Tls`   | data for a TLS client or server    |
-
+| `nanocl.io/env` | data for an environments variables |
+| `nanocl.io/tls`   | data for a TLS client or server    |
 
 ### Env
 

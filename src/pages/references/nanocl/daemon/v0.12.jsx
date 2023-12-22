@@ -1,5 +1,5 @@
 import React from 'react';
-import OpenApi from '@site/src/components/OpenApi';
+import OpenApi from '@site/src/components/open_api';
 
 export default function OpenApiPage() {
     return (

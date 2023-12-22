@@ -27,8 +27,8 @@ Namespace: global
 # See all options:
 # https://docs.next-hat.com/references/nanocl/secret
 Secrets:
-- Key: env.my-secret
-  Kind: Env
+- Name: env.my-secret
+  Kind: nanocl.io/env
   Data:
   - MY_ENV=MY_VALUE
   - MY_ENV1=MY_VALUE1
@@ -47,8 +47,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

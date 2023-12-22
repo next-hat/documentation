@@ -37,8 +37,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: adminer
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Network: ${{ Args.network }}

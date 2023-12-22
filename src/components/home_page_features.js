@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import styles from './style.module.css';
+import styles from './home_page_features.module.css';
 
 const FeatureList = [
   {

@@ -134,8 +134,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: vpn-dns
-  Kind: DnsRule
-  Version: v0.4
+  Kind: ncdns.io/rule/v0.4
   Data:
     Network: private.nsp
     Entries:
@@ -143,8 +142,7 @@ Resources:
       IpAddress: private.nsp
 
 - Name: my-domain.internal
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: my-domain.internal

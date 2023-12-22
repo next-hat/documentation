@@ -67,7 +67,7 @@ ApiVersion: v0.12
 
 Secrets:
 - Key: env.super-secret
-  Kind: Env
+  Kind: nanocl.io/env
   Data:
   - MY_ENV=MY_VALUE
   - MY_ENV1=MY_VALUE1
@@ -83,7 +83,7 @@ ApiVersion: v0.12
 
 Secrets:
 - Key: cert.my-certificate
-  Kind: Tls
+  Kind: nanocl.io/tls
   Data:
     Certificate: |
       -----BEGIN CERTIFICATE-----

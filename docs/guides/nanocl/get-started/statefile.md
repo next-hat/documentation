@@ -33,7 +33,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
+  Kind: ncproxy.io/rule
   Version: v0.9
   Data:
     Rules:

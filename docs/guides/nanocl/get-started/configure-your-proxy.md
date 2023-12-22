@@ -29,8 +29,7 @@ ApiVersion: v0.12
 
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

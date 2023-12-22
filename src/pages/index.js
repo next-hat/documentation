@@ -4,7 +4,7 @@ import Layout from '@theme/Layout';
 import Head from '@docusaurus/Head';
 import {useHistory} from '@docusaurus/router';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import HomepageFeatures from '@site/src/components/home_page_features';
 
 import styles from './index.module.css';
 

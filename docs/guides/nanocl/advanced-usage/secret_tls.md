@@ -28,7 +28,7 @@ Namespace: global
 
 Secrets:
 - Key: cert.deploy-example.com
-  Kind: Tls
+  Kind: nanocl.io/tls
   Data:
     Certificate: |
       -----BEGIN CERTIFICATE-----
@@ -91,8 +91,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com
@@ -135,8 +134,7 @@ Cargoes:
 # https://docs.next-hat.com/references/nanocl/resource
 Resources:
 - Name: deploy-example.com
-  Kind: ProxyRule
-  Version: v0.9
+  Kind: ncproxy.io/rule/v0.9
   Data:
     Rules:
     - Domain: deploy-example.com

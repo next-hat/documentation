@@ -27,7 +27,7 @@ ApiVersion: v0.12
 Namespace: global
 
 Secrets:
-- Key: cert.deploy-example.com
+- Name: cert.deploy-example.com
   Kind: nanocl.io/tls
   Data:
     Certificate: |

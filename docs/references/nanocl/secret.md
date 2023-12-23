@@ -65,7 +65,7 @@ You can create then using the following `Statefile`:
 ApiVersion: v0.12
 
 Secrets:
-- Key: env.super-secret
+- Name: env.super-secret
   Kind: nanocl.io/env
   Data:
   - MY_ENV=MY_VALUE
@@ -81,7 +81,7 @@ You can create then using the following `Statefile`:
 ApiVersion: v0.12
 
 Secrets:
-- Key: cert.my-certificate
+- Name: cert.my-certificate
   Kind: nanocl.io/tls
   Data:
     Certificate: |

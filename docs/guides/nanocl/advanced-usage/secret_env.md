@@ -8,6 +8,8 @@ sidebar_label: Secret Env
 pagination_next: null
 ---
 
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Secret Env
 
 You can create `Secret` to pass then as environement variable for your `Cargoes`.<br/>
@@ -19,46 +21,6 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 
 There is an `Statefile` example on how to do it:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/secret
-Secrets:
-- Name: env.my-secret
-  Kind: nanocl.io/env
-  Data:
-  - MY_ENV=MY_VALUE
-  - MY_ENV1=MY_VALUE1
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: my-cargo
-  # Specify what secrets to use
-  Secrets:
-  - env.my-secret
-  Container:
-    Image: ghcr.io/next-hat/nanocl-get-started:latest
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-- Name: deploy-example.com
-  Kind: ncproxy.io/rule/v0.9
-  Data:
-    Rules:
-    - Domain: deploy-example.com
-      Network: Public
-      # Enable usage of our secret
-      Ssl: cert.deploy-example.com
-      Locations:
-      - Path: /
-        Target:
-          Key: my-cargo.global.c
-          Port: 9000
-```
+<StatefileBlock example="advanced-secret-env" />
 
 For more information about secrets refer to our [Secret reference](/references/nanocl/secret)

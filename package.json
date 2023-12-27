@@ -1,6 +1,6 @@
 {
   "name": "docs-next-hat-com",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -21,7 +21,8 @@
     "redocusaurus": "^2.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.0.1"
+    "@docusaurus/module-type-aliases": "^3.0.1",
+    "raw-loader": "^4.0.2"
   },
   "browserslist": {
     "production": [

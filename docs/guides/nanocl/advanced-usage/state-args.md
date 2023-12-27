@@ -8,50 +8,14 @@ sidebar_label: Statefile Args
 pagination_next: null
 ---
 
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Statefile Arguments
 
 Statefile Arguments are a way to reuse your `Statefile` by taking advantage of `Liquid` templating.<br />
 Let considere this example, create a new file called `my-deployment.yml` and add the following content :
 
-```yml
-ApiVersion: v0.12
-
-# Definition of your arguments
-Args:
-- Name: name
-  # The type of argument, can be:
-  # - String
-  # - Number
-  # - Boolean
-  Kind: String
-- Name: domain
-  Kind: String
-- Name: image
-  Kind: String
-- Name: port
-  Kind: String
-
-Namespace: global
-
-Cargoes:
-- Name: ${{ Args.name }}
-  Container:
-    Image: ${{ Args.image }}
-
-Resources:
-- Name: ${{ Args.domain }}
-  Kind: ProxyRule
-  Version: v0.10
-  Data:
-    Rules:
-    - Domain: ${{ Args.domain }}
-      Network: Public
-      Locations:
-      - Path: /
-        Target:
-          Key: ${{ Args.name }}.global.c
-          Port: ${{ Args.port }}
-```
+<StatefileBlock example="advanced-args" />
 
 Now if you apply it with:
 

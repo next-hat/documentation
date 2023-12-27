@@ -1,0 +1,35 @@
+ApiVersion: $NANOCL_VERSION
+
+Namespace: global
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/cargo
+Cargoes:
+- Name: deploy-example
+  Container:
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+    Env:
+    - APP=GET_STARTED1
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: vpn-dns
+  Kind: ncdns.io/rule/$NCDNS_VERSION
+  Data:
+    Network: private.nsp
+    Entries:
+    - Name: my-domain.internal
+      IpAddress: private.nsp
+
+- Name: my-domain.internal
+  Kind: ncproxy.io/rule/$NCPROXY_VERSION
+  Data:
+    Rules:
+    - Domain: my-domain.internal
+      Network: private.nsp
+      Locations:
+      - Path: /
+        Target:
+          Key: deploy-example.global.c
+          Port: 9000

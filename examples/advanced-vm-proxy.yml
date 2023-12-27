@@ -1,0 +1,27 @@
+ApiVersion: $NANOCL_VERSION
+
+Namespace: global
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: myvm.ssh
+  Kind: ncproxy.io/rule/$NCPROXY_VERSION
+  Data:
+    Rules:
+    - Protocol: Tcp
+      Network: Public
+      Port: 5555
+      Target:
+        Key: myvm.global.v
+        Port: 22
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/virtual-machine
+VirtualMachines:
+- Name: myvm
+  Disk:
+    Image: ubuntu-22
+  HostConfig:
+    Cpu: 2
+    Memory: 2048

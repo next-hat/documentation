@@ -27,7 +27,7 @@ wget https://nhnr.io/v0.12/sys/vpn.yml
 
 Here is the content of the VPN `Statefile`:
 
-<StatefileBlock example="advanced-vpn" />
+<StatefileBlock example="advanced/vpn" />
 
 You can use it in the following way:
 
@@ -64,7 +64,7 @@ You can have a deeper understanding of the container image in the [official docu
 
 Now we can create cargoes on any namespace we want and make them accessible from our vpn for example:
 
-<StatefileBlock example="advanced-vpn-cargo" />
+<StatefileBlock example="advanced/vpn-cargo" />
 
 Notice that we use alot of `private.nsp` that reference to the gateway of our namespace `private` you may have to change it if you used a different namespace.
 

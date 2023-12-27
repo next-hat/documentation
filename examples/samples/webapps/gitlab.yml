@@ -1,0 +1,41 @@
+ApiVersion: $NANOCL_VERSION
+
+Namespace: global
+
+Args:
+- Name: domain
+  Kind: String
+  Default: gitlab.internal
+- Name: network
+  Kind: String
+  Default: Public
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/cargo
+Cargoes:
+- Name: gitlab
+  Container:
+    Image: gitlab/gitlab-ee:16.4.0-ee.0
+    Env:
+    - GITLAB_ROOT_PASSWORD=root
+    HostConfig:
+      ShmSize: 268435456
+      Binds:
+      - /opt/gitlab/config:/etc/gitlab
+      - /opt/gitlab/logs:/var/log/gitlab
+      - /opt/gitlab/data:/var/opt/gitlab
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/resource
+Resources:
+- Name: gitlab
+  Kind: ncproxy.io/rule/$NCPROXY_VERSION
+  Data:
+    Rules:
+    - Network: ${{ Args.network }}
+      Domain: ${{ Args.domain }}
+      Locations:
+      - Path: /
+        Target:
+          Key: gitlab.global.c
+          Port: 80

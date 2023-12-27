@@ -24,7 +24,7 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 
 There is an `Statefile` example on how to do it:
 
-<StatefileBlock example="advanced-secret-tls" />
+<StatefileBlock example="advanced/secret-tls" />
 
 ## Automatic with Let's Encrypt
 
@@ -40,6 +40,6 @@ The secret will be named as follow: `cert.{domain_name}`.<br/>
 After the command finished Ssl will be enabled already but you need to update your `ProxyRule`.<br/>
 To use the `secret` for your next deployment:
 
-<StatefileBlock example="advanced-secret-tls-cargo" />
+<StatefileBlock example="advanced/secret-tls-cargo" />
 
 For more information about secrets refer to our [Secret reference](/references/nanocl/secret)

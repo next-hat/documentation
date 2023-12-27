@@ -1,0 +1,19 @@
+ApiVersion: $NANOCL_VERSION
+
+Namespace: global
+
+Args:
+- Name: volume
+  Kind: String
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/cargo
+Cargoes:
+- Name: redis
+  Container:
+    Image: redis:7.2.1
+    Env:
+      # More info on env variable can be found there https://hub.docker.com/_/redis
+    HostConfig:
+      Binds:
+      - ${{ Args.volume }}:/data

@@ -15,7 +15,7 @@ import StatefileBlock from '@site/src/components/statefile_block';
 Statefile Arguments are a way to reuse your `Statefile` by taking advantage of `Liquid` templating.<br />
 Let considere this example, create a new file called `my-deployment.yml` and add the following content :
 
-<StatefileBlock example="advanced-args" />
+<StatefileBlock example="advanced/args" />
 
 Now if you apply it with:
 

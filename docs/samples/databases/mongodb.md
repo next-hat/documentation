@@ -7,36 +7,15 @@ keywords: [documentation, samples, examples, MongoDB, nanocl, nanocl CLI, CLI]
 pagination_next: samples/webapps/mongo-express
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Mongodb
 
 [MongoDB][mongodb] is a popular document database.<br />
 Below you can find a basic example to deploy a [mongodb][mongodb] server using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: password
-  Kind: String
-- Name: volume
-  Kind: String
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: mongodb
-  Container:
-    Image: mongo:5.0.21
-    Env:
-      # More info on env variable can be found there https://hub.docker.com/_/mongo
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${{ Args.password }}
-    HostConfig:
-      Binds:
-        - ${{ Args.volume }}:/data/db
-```
+<StatefileBlock example="samples/databases/mongodb" />
 
 Copy past the previous content and save it under a file called `mongodb.yml`.<br />
 Then execute the following command to startup a [mongodb](mongodb) server:

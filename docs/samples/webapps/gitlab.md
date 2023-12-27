@@ -8,54 +8,15 @@ sidebar_position: 3
 pagination_next: null
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Gitlab
 
 [Gitlab][gitlab] is a Project Planning and Source Code Management to CI/CD.<br />
 You can easily deploy [gitlab][gitlab] using their official [docker image][docker image]:
 
-```yml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: domain
-  Kind: String
-  Default: gitlab.internal
-- Name: network
-  Kind: String
-  Default: Public
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: gitlab
-  Container:
-    Image: gitlab/gitlab-ee:16.4.0-ee.0
-    Env:
-      - GITLAB_ROOT_PASSWORD=root
-    HostConfig:
-      ShmSize: 268435456
-      Binds:
-      - /opt/gitlab/config:/etc/gitlab
-      - /opt/gitlab/logs:/var/log/gitlab
-      - /opt/gitlab/data:/var/opt/gitlab
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-- Name: gitlab
-  Kind: ncproxy.io/rule/v0.9
-  Data:
-    Rules:
-    - Network: ${{ Args.network }}
-      Domain: ${{ Args.domain }}
-      Locations:
-      - Path: /
-        Target:
-          Key: gitlab.global.c
-          Port: 80
-```
+<StatefileBlock example="samples/webapps/gitlab" />
 
 Copy past the previous content and save it under a file called `gitlab.yml`.<br />
 Then execute the following command to startup a [gitlab][gitlab] server:

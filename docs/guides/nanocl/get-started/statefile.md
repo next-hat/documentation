@@ -19,7 +19,7 @@ Statefile are a way to describe the state you want for a specific namespace.
 
 It use yaml form we can sumerize the deployment of our cargo as follow :
 
-<StatefileBlock example="get-started" />
+<StatefileBlock example="get-started/deployment" />
 
 Save this file under `my-cargo.yml` and apply it using:
 

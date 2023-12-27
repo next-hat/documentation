@@ -26,7 +26,7 @@ To follow up the tutorial you must have a cargo called my-cargo running with por
 
 Create a file called `proxy.deploy-example.yml` and copy the following content:
 
-<StatefileBlock example="get-started-proxy" />
+<StatefileBlock example="get-started/proxy" />
 
 Now let's create the proxy rule by running:
 

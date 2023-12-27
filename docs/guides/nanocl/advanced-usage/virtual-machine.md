@@ -217,14 +217,14 @@ ssh cloud@10.2.0.2
 
 You can define a virtual machine using a ``Statefile``. Here is an example:
 
-<StatefileBlock example="advanced-vm" />
+<StatefileBlock example="advanced/vm" />
 
 ## Expose your VM
 
 You can use a `ProxyRule` to expose a specific port of your virtual machine.
 Here is a complete example of exposing the virtual machine's port 22 for SSH to a public port 5555:
 
-<StatefileBlock example="advanced-vm-proxy" />
+<StatefileBlock example="advanced/vm-proxy" />
 
 [cloud-init]: https://cloud-init.io
 [nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

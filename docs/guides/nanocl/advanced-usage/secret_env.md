@@ -21,6 +21,6 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 
 There is an `Statefile` example on how to do it:
 
-<StatefileBlock example="advanced-secret-env" />
+<StatefileBlock example="advanced/secret-env" />
 
 For more information about secrets refer to our [Secret reference](/references/nanocl/secret)

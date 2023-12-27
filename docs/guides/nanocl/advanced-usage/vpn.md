@@ -8,22 +8,26 @@ sidebar_label: Your own VPN
 pagination_next: null
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import StatefileBlock from '@site/src/components/statefile_block';
+import { nanoclMajorVersion } from '@site/vars';
 
 # Your own VPN
 
 Nanocl aim to make your life easier so we have a prebuilt VPN Statefile.<br />
 Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) from [@Lin Song](https://github.com/hwdsl2) you can use it from our [Official Nanocl Repository](https://nhnr.io)
 
-```sh
-nanocl state apply -s nhnr.io/sys/vpn.yml
-```
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -s nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
+</CodeBlock>
 
 If you want to tweak it more than what is already possible from the `Statefile Args`, you can download it and customize it to fit your needs:
 
-```sh
-wget https://nhnr.io/v0.12/sys/vpn.yml
-```
+
+<CodeBlock className="language-sh">
+{`wget nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
+</CodeBlock>
 
 Here is the content of the VPN `Statefile`:
 
@@ -31,9 +35,9 @@ Here is the content of the VPN `Statefile`:
 
 You can use it in the following way:
 
-```console
-nanocl state apply -s nhnr.io/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)
-```
+<CodeBlock className="language-sh">
+{`nanocl state apply -s nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+</CodeBlock>
 
 From the file above, you can notice that we create a custom DNS for our VPN.<br/>
 This allows us to create and override existing domains and redirect them to our Cargoes.<br/>

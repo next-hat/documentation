@@ -89,3 +89,10 @@ th {
   --ifm-color-primary-lighter: #ffc165;
   --ifm-color-primary-lightest: #ffc46b;
 }
+
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+}

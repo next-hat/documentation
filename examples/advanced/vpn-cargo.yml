@@ -3,7 +3,7 @@ ApiVersion: $NANOCL_VERSION
 Namespace: global
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
+# https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: deploy-example
   Container:
@@ -12,7 +12,7 @@ Cargoes:
     - APP=GET_STARTED1
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/resource
+# https://docs.next-hat.com/references/nanocl/objects/resource
 Resources:
 - Name: vpn-dns
   Kind: ncdns.io/rule/$NCDNS_VERSION

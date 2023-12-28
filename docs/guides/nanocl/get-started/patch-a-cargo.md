@@ -8,8 +8,6 @@ sidebar_label: 2. Patch a cargo
 ---
 
 # Patch a cargo
-> **Tags** <br />
-> documentation, guides. nanocl, get started, cargo, patch, update
 
 Patch a cargo to update his image or his environment variables and redeploy them instantly.
 

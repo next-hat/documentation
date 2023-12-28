@@ -12,7 +12,7 @@ Args:
 Namespace: ${{ Args.namespace }}
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
+# https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: vpn
   Container:

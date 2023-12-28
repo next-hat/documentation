@@ -9,9 +9,6 @@ sidebar_label: 1. Orientation and Setup
 
 # Orientation and Setup
 
-> **Tags** <br />
-> documentation, guides, nanocl, get started, orientation and setup
-
 #### Welcome! We are excited that you want to learn Nanocl.
 
 This page contains instructions on how to get started with Nanocl. <br />
@@ -24,7 +21,7 @@ In this tutorial, you’ll learn how to:
 - Use `state configuration` file for fast deployment
 
 This tutorial assumes you have a current version of Nanocl installed on your machine. <br />
-If you do not have Nanocl installed, see [how to install it](/docs/setups/nanocl/linux/ubuntu.md).
+If you do not have Nanocl installed, see [how to install it](/docs/manuals/nanocl/install/overview.md).
 
 
 ## Start the tutorial

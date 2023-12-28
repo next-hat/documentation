@@ -3,7 +3,7 @@ ApiVersion: $NANOCL_VERSION
 Namespace: global
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/resource
+# https://docs.next-hat.com/references/nanocl/objects/resource
 Resources:
 - Name: myvm.ssh
   Kind: ncproxy.io/rule/$NCPROXY_VERSION
@@ -17,7 +17,7 @@ Resources:
         Port: 22
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/virtual-machine
+# https://docs.next-hat.com/references/nanocl/objects/virtual-machine
 VirtualMachines:
 - Name: myvm
   Disk:

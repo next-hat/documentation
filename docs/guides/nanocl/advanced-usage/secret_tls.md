@@ -42,4 +42,6 @@ To use the `secret` for your next deployment:
 
 <StatefileBlock example="advanced/secret-tls-cargo" />
 
-For more information about secrets refer to our [Secret reference](/references/nanocl/secret)
+For more information about secrets refer to our [secret reference][secret_ref]
+
+[secret_ref]: /docs/references/nanocl/objects/secret.md

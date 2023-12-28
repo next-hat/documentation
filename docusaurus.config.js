@@ -68,7 +68,7 @@ const config = {
                 (item) =>
                   // @ts-ignore
                   // This makes sure that the landing pages are not duplicated in the sidebars
-                  item.id !== 'guides/summary' && item.id !== 'setups/summary' && item.id !== 'references/summary' && item.id !== 'samples/overview'
+                  item.id !== 'guides/summary' && item.id !== 'manuals/summary' && item.id !== 'references/summary' && item.id !== 'samples/overview'
               )
           },
         },
@@ -137,8 +137,8 @@ const config = {
           {
             type: 'doc',
             position: 'left',
-            docId: 'setups/summary',
-            label: 'Setups',
+            docId: 'manuals/summary',
+            label: 'Manuals',
           },
           {
             type: 'doc',

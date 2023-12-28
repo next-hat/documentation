@@ -12,9 +12,6 @@ import StatefileBlock from '@site/src/components/statefile_block';
 
 # Statefile
 
-> **Tags** <br />
-> documentation, nanocl, guides, get started, statefile
-
 Statefile are a way to describe the state you want for a specific namespace.
 
 It use yaml form we can sumerize the deployment of our cargo as follow :

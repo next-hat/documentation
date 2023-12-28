@@ -23,4 +23,6 @@ There is an `Statefile` example on how to do it:
 
 <StatefileBlock example="advanced/secret-env" />
 
-For more information about secrets refer to our [Secret reference](/references/nanocl/secret)
+For more information about secrets refer to our [secret reference][secret_ref]
+
+[secret_ref]: /docs/references/nanocl/objects/secret.md

@@ -11,7 +11,7 @@ Args:
   Default: Public
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
+# https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: mongo-express
   Container:
@@ -24,7 +24,7 @@ Cargoes:
     - ME_CONFIG_MONGODB_URL=mongodb://root:root@mongodb.global.c:27017/
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/resource
+# https://docs.next-hat.com/references/nanocl/objects/resource
 Resources:
 - Name: mongo-express
   Kind: ncproxy.io/rule/$NCPROXY_VERSION

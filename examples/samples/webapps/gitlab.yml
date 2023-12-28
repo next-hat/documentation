@@ -11,7 +11,7 @@ Args:
   Default: Public
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
+# https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: gitlab
   Container:
@@ -26,7 +26,7 @@ Cargoes:
       - /opt/gitlab/data:/var/opt/gitlab
 
 # See all options:
-# https://docs.next-hat.com/references/nanocl/resource
+# https://docs.next-hat.com/references/nanocl/objects/resource
 Resources:
 - Name: gitlab
   Kind: ncproxy.io/rule/$NCPROXY_VERSION

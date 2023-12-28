@@ -11,9 +11,6 @@ import StatefileBlock from '@site/src/components/statefile_block';
 
 # Configure your proxy
 
-> **Tags** <br />
-> documentation, nanocl, guides, get started, proxy, configuration
-
 You can create `proxy rules` using the `proxy controller` to expose your cargo. <br/>
 A `proxy rule` allow you to redirect a specific ip address / port or domain name to an upstream of a cargo.
 

@@ -134,7 +134,7 @@ You might create your own images or you might only use those created by others a
 
 #### Virtual Machine Images
 
-A virtual machine image is a template for creating a virtual machine. It is similar to a container image, except it is used to create virthat is deployed. For example, you might have a cargo that includes a web server and a cargo that includes a database. The container in a cargo share an IP address, IPC, and PID namespace, as well as other resources. They can also communicate with each other using standard inter-process communication channels.tual machines instead of containers. A virtual machine image typically contains a bootable operating system image. Nanocl supports the following virtual machine image formats: `qcow2`, `raw`, `vdi`, `vmdk`, `vhd`, `vhdx`.
+It is similar to a container image, except it is used to create virtual machine. A virtual machine image typically contains a bootable operating system image. Nanocl supports the following virtual machine image formats: `qcow2`, `raw`, `vdi`, `vmdk`, `vhd`, `vhdx`.
 
 #### Jobs
 
@@ -156,4 +156,3 @@ A container is a runnable instance of an container image. You can create, start,
 By default, a container is relatively well isolated from other containers and its host machine. You can control how isolated a container's network, storage, or other underlying subsystems are from other containers or from the host machine.
 
 A container is defined by its image as well as any configuration options you provide to it when you create or start it. When a container is removed, any changes to its state that aren't stored in persistent storage disappear.
-

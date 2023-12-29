@@ -16,12 +16,12 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Download and Install',
-    url: '/setups/summary',
+    title: 'Manuals',
+    url: '/manuals/summary',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-         Download and install Next Hat tools in a few easy steps.
+         Manuals of Next Hat tools.
       </>
     ),
   },

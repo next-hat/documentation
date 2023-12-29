@@ -8,6 +8,8 @@ sidebar_label: Virtual Machine
 pagination_next: null
 ---
 
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Create a VM
 
 With `Nanocl`, you can quickly spin up virtual machines that are compatible with [cloud-init][cloud-init].<br/>
@@ -215,58 +217,14 @@ ssh cloud@10.2.0.2
 
 You can define a virtual machine using a ``Statefile``. Here is an example:
 
-```yml
-ApiVersion: v0.12
-
-Namespace: global
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/virtual-machine
-VirtualMachines:
-- Name: myvm
-  Disk:
-    Image: ubuntu-22
-  HostConfig:
-    Cpu: 2
-    Memory: 2048
-```
+<StatefileBlock example="advanced/vm" />
 
 ## Expose your VM
 
 You can use a `ProxyRule` to expose a specific port of your virtual machine.
 Here is a complete example of exposing the virtual machine's port 22 for SSH to a public port 5555:
 
-```yml
-ApiVersion: v0.12
-
-Namespace: global
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-- Name: myvm
-  Kind: ncproxy.io/rule/v0.9
-  Config:
-    - myvm.global.v
-    Rules:
-    - Domain: deploy-example.com
-      Network: Public
-      Protocol: Tcp
-      Port: 5555
-      Target:
-        Key: myvm.global.v
-        Port: 22
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/virtual-machine
-VirtualMachines:
-- Name: myvm
-  Disk:
-    Image: ubuntu-22
-  HostConfig:
-    Cpu: 2
-    Memory: 2048
-```
+<StatefileBlock example="advanced/vm-proxy" />
 
 [cloud-init]: https://cloud-init.io
 [nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

@@ -8,46 +8,15 @@ sidebar_position: 1
 pagination_next: null
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Adminer
 
 [Adminer][adminer] (formerly phpMinAdmin) is a full-featured database management tool written in PHP.
 You can easily deploy [adminer][adminer] using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: domain
-  Kind: String
-  Default: adminer.internal
-- Name: network
-  Kind: String
-  Default: Public
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: adminer
-  Container:
-    Image: adminer:4.8.1
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-- Name: adminer
-  Kind: ncproxy.io/rule/v0.9
-  Data:
-    Rules:
-    - Network: ${{ Args.network }}
-      Domain: ${{ Args.domain }}
-      Locations:
-        - Path: /
-          Target:
-            Key: adminer.global.c
-            Port: 8080
-```
+<StatefileBlock example="samples/webapps/adminer" />
 
 Copy past the previous content and save it under a file called `adminer.yml`.<br />
 Then execute the following command to startup a [adminer][adminer] server:

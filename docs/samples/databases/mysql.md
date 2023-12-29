@@ -7,35 +7,15 @@ keywords: [documentation, samples, examples, Mysql, nanocl, nanocl CLI, CLI]
 pagination_next: samples/webapps/adminer
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Mysql
 
 [MySQL][mysql] is a relational database management system (RDBMS) developed by Oracle that is based on structured query language (SQL).<br />
 Below you can find a basic example to deploy a [mysql][mysql] server using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: password
-  Kind: String
-- Name: volume
-  Kind: String
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: mysql
-  Container:
-    Image: mysql:8.1.0
-    Env:
-      # More info on env variable can be found there https://hub.docker.com/_/mysql
-      - MYSQL_ROOT_PASSWORD=${{ Args.password }}
-    HostConfig:
-      Binds:
-        - ${{ Args.volume }}:/var/lib/mysql
-```
+<StatefileBlock example="samples/databases/mysql" />
 
 Copy past the previous content and save it under a file called `mysql.yml`.<br />
 Then execute the following command to startup a [mysql][mysql] server:

@@ -7,36 +7,16 @@ keywords: [documentation, samples, examples, MariaDB, nanocl, nanocl CLI, CLI]
 pagination_next: samples/webapps/adminer
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Mariadb
 
 [MariaDB][mariadb] is one of the most popular open source relational databases.<br/>
 It's made by the original developers of MySQL and guaranteed to stay open source.<br />
 Below you can find a basic example to deploy a [mariadb][mariadb] server using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: password
-  Kind: String
-- Name: volume
-  Kind: String
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: mariadb
-  Container:
-    Image: mariadb:11.1.2
-    Env:
-      # More info on env variables can be found there https://hub.docker.com/_/mariadb
-      - MARIADB_ROOT_PASSWORD=${{ Args.password }}
-    HostConfig:
-      Binds:
-        - ${{ Args.volume }}:/var/lib/mysql
-```
+<StatefileBlock example="samples/databases/mariadb" />
 
 Copy past the previous content and save it under a file called `mariadb.yml`.<br />
 Then execute the following command to startup a [mariadb][mariadb] server:

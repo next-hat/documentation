@@ -55,8 +55,8 @@ const config = {
                     /// Add version reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.12 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.12',
+                      label: 'v0.13 reference (latest)',
+                      href: '/references/nanocl/daemon/v0.13',
                     })
                   }
                   return subItem;
@@ -68,7 +68,7 @@ const config = {
                 (item) =>
                   // @ts-ignore
                   // This makes sure that the landing pages are not duplicated in the sidebars
-                  item.id !== 'guides/summary' && item.id !== 'setups/summary' && item.id !== 'references/summary' && item.id !== 'samples/overview'
+                  item.id !== 'guides/summary' && item.id !== 'manuals/summary' && item.id !== 'references/summary' && item.id !== 'samples/overview'
               )
           },
         },
@@ -92,7 +92,7 @@ const config = {
         config: path.join(__dirname, 'redocly.yaml'),
         specs: [{
           id: 'nanocld-latest',
-          spec: 'static/specs/nanocld/0.12.yaml',
+          spec: 'static/specs/nanocld/0.13.yaml',
         }],
         // See https://redocly.com/docs/api-reference-docs/configuration/theming/
         theme: {
@@ -137,8 +137,8 @@ const config = {
           {
             type: 'doc',
             position: 'left',
-            docId: 'setups/summary',
-            label: 'Setups',
+            docId: 'manuals/summary',
+            label: 'Manuals',
           },
           {
             type: 'doc',

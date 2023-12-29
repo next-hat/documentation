@@ -1,33 +1,29 @@
 ---
-title: Install Nanocl on Ubuntu
-description: This section contains required procedures for installaling Nanocl on Ubuntu.
-keywords: [documentation, nanocl , setup, installation, ubuntu]
+title: Install on Debian / Ubuntu | Nanocl
+description: This section contains required procedures for installaling Nanocl on Debian / Ubuntu.
+keywords: [documentation, nanocl , setup, installation, ubuntu, install, debian, ubuntu, linux]
 image: /img/logo.webp
 sidebar_position: 1
-sidebar_label: Ubuntu / Debian
-pagination_next: setups/nanocl/linux/post-installation
+sidebar_label: Debian / Ubuntu
+pagination_prev: manuals/nanocl/install/overview
+pagination_next: manuals/nanocl/install/post-installation
 ---
 
-# Install Nanocl on Ubuntu / Debian
+# Install Nanocl on Debian / Ubuntu
 
-> **Tags** <br />
-> documentation, nanocl , setup, installation, ubuntu
+This section contains required procedures to install Nanocl on Debian / Ubuntu.
 
-This section contains required procedures for installaling Nanocl on Ubuntu.
+## OS requirements
 
-## Prerequisites
-
-### OS requirements
-
-To install Nanocl, you need the 64-bit version of one of these Ubuntu versions :
+Nanocl have been tested on one of the Ubuntu 64-bit versions listed below:
 
 - Ubuntu Jammy 22.04 (LTS)
 - Ubuntu Impish 21.10
 - Ubuntu Focal 20.04 (LTS)
 - Ubuntu Bionic 18.04 (LTS)
 
-And be sure to have a docker installation with the right to communication with `/run/docker.sock`. <br />
-You can see how to install docker on ubuntu [there](https://docs.docker.com/engine/install/ubuntu)
+But it can be installed on any debian based distribution.
+Only the CLI ([nanocl][nanocl]) is installed from our repository, the rest of the components are running inside containers and are available where docker is available.
 
 ## Installation methods
 
@@ -36,11 +32,9 @@ You can install Nanocl in different ways, depending on your needs:
 - Most users set up Next Hat’s repositories and install from them, for ease of
   installation and upgrade tasks. This is the recommended approach.
 
-- Some users download the DEB package and install it manually and manage
+- Some users download the [DEB package][deb_package] and install it manually and manage
   upgrades completely manually. This is useful in situations such as installing
   Nanocl on air-gapped systems with no access to the internet.
-
-- You can also install it from [crates.io](https://crates.io/crates/nanocl)
 
 ### Install using the repository
 
@@ -78,7 +72,7 @@ You can install Nanocl in different ways, depending on your needs:
    sudo apt-get install -y nanocl
    ```
 
-   Alternativatly you can install [c2ncl](/docs/references/c2ncl/cli.md) to convert existing `docker-compose` to Nanocl `Statefile`
+   Alternativatly you can install [c2ncl][c2ncl_ref] to convert existing `docker-compose` to Nanocl `Statefile`
 
    ```sh
    sudo apt install -y c2ncl
@@ -93,15 +87,10 @@ sudo chmod a+r /etc/apt/keyrings/next-hat.gpg
 ```
 :::
 
-### Install from crates.io
-
-If you already have `Rust` and `Cargo` installed you can download nanocl using this command:
-
-```sh
-cargo install nanocl
-```
-
-Be sure to have `libpq` and `openssl` installed
-
 You are almost done !
-To continue see our [post installation guide](/docs/setups/nanocl/linux/post-installation.md)
+To continue see our [post installation guide][post_installation_guide]
+
+[nanocl]: /docs/references/nanocl/cli.md
+[post_installation_guide]: /docs/manuals/nanocl/install/post-installation.md
+[deb_package]: https://download.next-hat.com/repo/linux/ubuntu/pool/stable/main
+[c2ncl_ref]: /docs/references/c2ncl/cli.md

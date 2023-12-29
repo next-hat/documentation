@@ -8,52 +8,15 @@ sidebar_position: 2
 pagination_next: null
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Mongo Express
 
 [Mongo Express][mongo express] is a Web-based MongoDB admin interface, written with Node.js and express!<br />
 You can easily deploy [mongo express][mongo express] using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: domain
-  Kind: String
-  Default: mongo-express.internal
-- Name: network
-  Kind: String
-  Default: Public
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: mongo-express
-  Container:
-    Image: mongo-express:0.54
-    Env:
-    - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-    - ME_CONFIG_MONGODB_ADMINPASSWORD=root
-    - ME_CONFIG_MONGODB_SERVER=mongodb.global.c
-    - ME_CONFIG_MONGODB_PORT=27017
-    - ME_CONFIG_MONGODB_URL=mongodb://root:root@mongodb.global.c:27017/
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/resource
-Resources:
-- Name: mongo-express
-  Kind: ncproxy.io/rule/v0.9
-  Data:
-    Rules:
-    - Network: ${{ Args.network }}
-      Domain: ${{ Args.domain }}
-      Locations:
-      - Path: /
-        Target:
-          Key: mongo-express.global.c
-          Port: 8081
-```
+<StatefileBlock example="samples/webapps/mongo-express" />
 
 Copy past the previous content and save it under a file called `mongo-express.yml`.<br />
 Then execute the following command to startup a [mongo express][mongo-express] server:

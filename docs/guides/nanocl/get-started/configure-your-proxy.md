@@ -7,10 +7,9 @@ sidebar_position: 3
 sidebar_label: 3. Configure your proxy
 ---
 
-# Configure your proxy
+import StatefileBlock from '@site/src/components/statefile_block';
 
-> **Tags** <br />
-> documentation, nanocl, guides, get started, proxy, configuration
+# Configure your proxy
 
 You can create `proxy rules` using the `proxy controller` to expose your cargo. <br/>
 A `proxy rule` allow you to redirect a specific ip address / port or domain name to an upstream of a cargo.
@@ -24,28 +23,7 @@ To follow up the tutorial you must have a cargo called my-cargo running with por
 
 Create a file called `proxy.deploy-example.yml` and copy the following content:
 
-```yml
-ApiVersion: v0.12
-
-Resources:
-- Name: deploy-example.com
-  Kind: ncproxy.io/rule/v0.9
-  Data:
-    Rules:
-    - Domain: deploy-example.com
-      # Internal mean only accessible from 127.0.0.1 other possibility are :
-      # - All to bind on all network interface
-      # - Public to bind only on public ip address
-      # - `namespace_name`.nsp to bind only on a namespace network
-      Network: Internal
-      Locations:
-      - Path: /
-        Target:
-          # Cargo to target formated as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
-          Key: my-cargo.global.c
-          # Cargo port to target
-          Port: 9001
-```
+<StatefileBlock example="get-started/proxy" />
 
 Now let's create the proxy rule by running:
 

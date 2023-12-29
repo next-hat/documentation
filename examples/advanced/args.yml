@@ -1,0 +1,36 @@
+ApiVersion: $NANOCL_VERSION
+
+# Definition of your arguments
+# The type of argument, can be:
+# - String
+# - Number
+# - Boolean
+Args:
+- Name: name
+  Kind: String
+- Name: domain
+  Kind: String
+- Name: image
+  Kind: String
+- Name: port
+  Kind: String
+
+Namespace: global
+
+Cargoes:
+- Name: ${{ Args.name }}
+  Container:
+    Image: ${{ Args.image }}
+
+Resources:
+- Name: ${{ Args.domain }}
+  Kind: ncproxy.io/rule/$NCPROXY_VERSION
+  Data:
+    Rules:
+    - Domain: ${{ Args.domain }}
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Key: ${{ Args.name }}.global.c
+          Port: ${{ Args.port }}

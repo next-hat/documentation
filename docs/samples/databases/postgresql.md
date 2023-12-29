@@ -7,35 +7,15 @@ keywords: [documentation, samples, examples, Postgresql, nanocl, nanocl CLI, CLI
 pagination_next: samples/webapps/adminer
 pagination_prev: null
 ---
+
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Postgresql
 
 [PostgreSQL][postgresql] is a powerful, open source object-relational database system with over 35 years of active development.<br />
 Below you can find a basic example to deploy a [postgresql][postgresql] server using their official [docker image][docker image]:
 
-```yaml
-ApiVersion: v0.12
-
-Namespace: global
-
-Args:
-- Name: password
-  Kind: String
-- Name: volume
-  Kind: String
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/cargo
-Cargoes:
-- Name: postgresql
-  Container:
-    Image: postgres:16.0
-    Env:
-      # More info on env variable can be found there https://hub.docker.com/_/postgres
-      - POSTGRES_PASSWORD=${{ Args.password }}
-    HostConfig:
-      Binds:
-        - ${{ Args.volume }}:/var/lib/postgresql/data
-```
+<StatefileBlock example="samples/databases/postgresql" />
 
 Copy past the previous content and save it under a file called `postgresql.yml`.<br />
 Then execute the following command to startup a `postgresql` server:

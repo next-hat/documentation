@@ -29,6 +29,15 @@ There is the openapi specification to create a proxy `ProxyRule`:
 
 <ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceProxyRule" />
 
+### Proxy Rule Network
+
+| Network    | 	Usage |
+| ----------- | ----------- |
+| Internal | Bind only on 127.0.0.1 |
+| Public   | Bind only on public ip address |
+| All | Bind on all interfaces |
+| \{namespace_name\}.nsp | Bind on namespace gateway |
+
 ## Dns Rule
 
 As the name suggests, a `DnsRule` is a configuration that determines how a dns server is configured.<br/>

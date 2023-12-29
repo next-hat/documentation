@@ -13,7 +13,7 @@ The name Nanocl is a shortcut for nano cloud, because it's a platform that allow
 
 ## Why Nanocl
 
-We did give a try to Nanocl, docker swarm, docker compose, and other solutions but we wasn't satisfied with the results, so we decided to create our own solution.
+We did give a try to Kubernetes, docker swarm, docker compose, and other solutions but we wasn't satisfied with the results, so we decided to create our own solution.
 Also we have the dream to give to everyone the ability to run their own cloud infrastructure at scale like the big cloud providers, but in their own infrastructure, and nanocl is the first step to achieve this dream.
 
 ## Going back in time

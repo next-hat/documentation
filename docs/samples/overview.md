@@ -1,5 +1,5 @@
 ---
-title: Samples | Nanocl
+title: Samples - Nanocl
 sidebar_label: Samples
 image: /img/logo.webp
 description: Learn how to deploy different types of services by walking through Official Nanocl samples.

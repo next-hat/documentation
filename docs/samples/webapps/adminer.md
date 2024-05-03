@@ -1,5 +1,5 @@
 ---
-title: Adminer | Nanocl
+title: Adminer - Nanocl
 sidebar_label: Adminer
 image: /img/logo.webp
 description: Easily deploy a Adminer instance with Nanocl !

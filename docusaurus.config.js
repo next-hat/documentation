@@ -2,6 +2,7 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const path = require('path');
+const vars = require('./vars');
 
 const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.oceanicNext;
@@ -55,8 +56,8 @@ const config = {
                     /// Add version reference to the sidebar for the daemon
                     subItem.items.push({
                       type: 'link',
-                      label: 'v0.13 reference (latest)',
-                      href: '/references/nanocl/daemon/v0.13',
+                      label: `v${vars.nanoclMajorVersion} reference (latest)`,
+                      href: `/references/nanocl/daemon/v${vars.nanoclMajorVersion}`,
                     })
                   }
                   return subItem;
@@ -92,7 +93,7 @@ const config = {
         config: path.join(__dirname, 'redocly.yaml'),
         specs: [{
           id: 'nanocld-latest',
-          spec: 'static/specs/nanocld/0.13.yaml',
+          spec: `static/specs/nanocld/${vars.nanoclMajorVersion}.yaml`,
         }],
         // See https://redocly.com/docs/api-reference-docs/configuration/theming/
         theme: {

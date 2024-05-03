@@ -1,5 +1,5 @@
 ---
-title: Install | Nanocl
+title: Install - Nanocl
 description: This section describes how to install Nanocl. Nanocl is available for Windows, macOS, and Linux, through Docker Desktop.
 keywords: [documentation, nanocl , setup, installation, ubuntu, install, debian, linux, macos, windows]
 image: /img/logo.webp

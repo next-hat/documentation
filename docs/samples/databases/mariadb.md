@@ -1,5 +1,5 @@
 ---
-title: MariaDB | Nanocl
+title: MariaDB - Nanocl
 sidebar_label: MariaDB
 image: /img/logo.webp
 description: Easily deploy a MariaDB instance with Nanocl !

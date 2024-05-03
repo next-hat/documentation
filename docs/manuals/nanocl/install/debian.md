@@ -1,5 +1,5 @@
 ---
-title: Install on Debian / Ubuntu | Nanocl
+title: Install on Debian / Ubuntu - Nanocl
 description: This section contains required procedures for installaling Nanocl on Debian / Ubuntu.
 keywords: [documentation, nanocl , setup, installation, ubuntu, install, debian, ubuntu, linux]
 image: /img/logo.webp

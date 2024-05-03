@@ -1,5 +1,5 @@
 ---
-title: Post install | Nanocl
+title: Post install - Nanocl
 description: This section contains required procedures for configuring Nanocl after installation.
 keywords: [documentation, nanocl , setup, installation, post installation]
 image: /img/logo.webp

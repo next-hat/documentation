@@ -1,5 +1,5 @@
 ---
-title: Secret Env | Nanocl
+title: Secret Env - Nanocl
 description: Use secret in your .
 keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, ssl, tls, certificate]
 image: /img/logo.webp

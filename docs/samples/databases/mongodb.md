@@ -1,5 +1,5 @@
 ---
-title: MongoDB | Nanocl
+title: MongoDB - Nanocl
 sidebar_label: MongoDB
 image: /img/logo.webp
 description: Easily deploy a MongoDB instance with Nanocl !

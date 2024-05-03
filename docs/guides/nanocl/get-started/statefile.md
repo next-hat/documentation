@@ -1,5 +1,5 @@
 ---
-title: Statefile | Nanocl
+title: Statefile - Nanocl
 description: Use Statefile to manage your state
 keywords: [documentation, nanocl, guides, get started, proxy, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp

@@ -1,5 +1,5 @@
 ---
-title: Postgresql | Nanocl
+title: Postgresql - Nanocl
 sidebar_label: Postgresql
 image: /img/logo.webp
 description: Easily deploy a Postgresql instance with Nanocl !

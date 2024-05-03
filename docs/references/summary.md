@@ -11,8 +11,8 @@ This section include the summary of references for Next Hat based product and to
 
 | Title      | Description |
 | ----------- | ----------- |
-| [nanocl][nanocl]   | Nanocl CLI reference    |
-| [nanocld][nanocld] | Nanocl DAEMON reference |
+| [nanocl][nanocl]   - Nanocl CLI reference    |
+| [nanocld][nanocld] - Nanocl DAEMON reference |
 | [c2ncl][c2ncl] | A tool to convert `docker-compose.yml` to nanocl [statefile][statefile]
 
 [nanocl]: /docs/references/nanocl/cli.md

@@ -1,5 +1,5 @@
 ---
-title: Mysql | Nanocl
+title: Mysql - Nanocl
 sidebar_label: Mysql
 image: /img/logo.webp
 description: Easily deploy a Mysql instance with Nanocl !

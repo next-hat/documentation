@@ -1,5 +1,5 @@
 ---
-title: Redis | Nanocl
+title: Redis - Nanocl
 sidebar_label: Redis
 image: /img/logo.webp
 description: Easily deploy a Redis instance with Nanocl !

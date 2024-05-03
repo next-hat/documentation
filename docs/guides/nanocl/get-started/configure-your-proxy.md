@@ -1,5 +1,5 @@
 ---
-title: Configure your proxy | Nanocl
+title: Configure your proxy - Nanocl
 description: Configure your proxy to expose your cargo
 keywords: [documentation, nanocl, guides, get started, proxy, configuration]
 image: /img/logo.webp

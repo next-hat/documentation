@@ -1,8 +1,9 @@
 ---
-title: Overview
+title: Overview - Nanocl
 keywords: [documentation, nanocl, guides, get started, overview]
 image: /img/logo.webp
 sidebar_position: 1
+sidebar_label: Overview
 ---
 
 # Nanocl overview

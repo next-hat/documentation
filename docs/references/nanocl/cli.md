@@ -58,7 +58,7 @@ For more information about installing Nanocl or `sudo` configuration, refer to t
 
 | Name, shorthand      | Default | Description 
 | -------------------- | ------- | ----------- 
-| **-H**, **\--host**=*HOST* | unix://run/nanocl/nanocl.sock | Nanocld host
+| **-H**, **\--host**=*HOST* | unix://run/nanocl/nanocl.sock - Nanocld host
 | **-h**, **\--help** | | Print help information
 | **-V**, **\--version** | | Print version information
 

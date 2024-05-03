@@ -1,5 +1,5 @@
 ---
-title: Install from crates.io | Nanocl
+title: Install from crates.io - Nanocl
 description: This section describes how to install from source using crates.io.
 keywords: [documentation, nanocl , setup, installation, ubuntu, install, debian, linux, macos, windows, crates.io, cargo]
 image: /img/logo.webp

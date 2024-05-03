@@ -1,5 +1,5 @@
 ---
-title: Virtual Machine References | Nanocl
+title: Virtual Machine References - Nanocl
 keywords: [documentation, references, nanocl, nanocld, virtual machine, vm, vms, specification, spec]
 image: /img/logo.webp
 sidebar_label: Virtual Machine

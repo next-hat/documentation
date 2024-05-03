@@ -1,5 +1,5 @@
 ---
-title: Gitlab | Nanocl
+title: Gitlab - Nanocl
 sidebar_label: Gitlab
 image: /img/logo.webp
 description: Easily deploy a Gitlab instance with Nanocl !

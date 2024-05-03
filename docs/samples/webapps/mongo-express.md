@@ -1,5 +1,5 @@
 ---
-title: Mongo Express | Nanocl
+title: Mongo Express - Nanocl
 sidebar_label: Mongo Express
 image: /img/logo.webp
 description: Easily deploy a Mongo Express instance with Nanocl !

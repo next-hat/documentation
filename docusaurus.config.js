@@ -35,7 +35,11 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        blog: false,
+        // blog: {
+        //   blogTitle: 'Next Hat blog',
+        //   blogDescription: 'Latest new about Next Hat technologies',
+        //   postsPerPage: 'ALL',
+        // },
         docs: {
           path: 'docs',
           routeBasePath: '/',
@@ -129,6 +133,7 @@ const config = {
           height: '32',
         },
         items: [
+          // {to: 'blog', label: 'Blog', position: 'left'},
           {
             type: 'doc',
             position: 'left',

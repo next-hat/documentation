@@ -3,6 +3,8 @@ title: Contexts - Nanocl
 sidebar_label: Contexts
 ---
 
+import StatefileBlock from '@site/src/components/statefile_block';
+
 # Contexts
 
 Contexts are a way to communicate with different [nanocl daemon](../../../references/nanocl/daemon/overview.md)
@@ -41,27 +43,7 @@ sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
 
 Next you can create the ProxyRule to expose the daemon to the internet.
 
-```yaml
-ApiVersion: v0.14
-
-# See all options:
-# https://docs.next-hat.com/references/nanocl/objects/resource
-Resources:
-  - Name: nanocl-daemon
-    Kind: ncproxy.io/rule
-    Data:
-      Rules:
-        - Protocol: Tcp
-          Port: 9443
-          Network: All
-          Ssl:
-            Certificate: /var/lib/nanocl/proxy/certs/nanocl_server.crt
-            CertificateKey: /var/lib/nanocl/proxy/certs/nanocl_server.key
-            CertificateClient: /var/lib/nanocl/proxy/certs/nanocl_ca.crt
-            VerifyClient: true
-          Target:
-            UnixPath: /run/nanocl/nanocl.sock
-```
+<StatefileBlock example="advanced/context-resource" />
 
 ## Create the Context
 
@@ -77,17 +59,7 @@ Finally, you can create the context to switch between the different daemons.
 
 Let create a `my-secure-context.yml` file:
 
-```yaml
-Name: my-secure-context
-MetaData:
-  Description: Secure connection to my remote server
-Endpoints:
-  Nanocl:
-    Host: https://my-remote-server:9443
-    Ssl:
-      Cert: /home/my-user/.nanocl/certs/nanocl_client.crt
-      CertKey: /home/my-user/.nanocl/certs/nanocl_client.key
-```
+<StatefileBlock example="advanced/context" />
 
 :::note
 Make sure to replace `my-remote-server` with the actual IP address or domain name of your remote server.<br/>

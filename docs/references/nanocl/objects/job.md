@@ -1,5 +1,5 @@
 ---
-title: Nanocl Job References
+title: Job References - Nanocl
 keywords: [documentation, references, nanocl, nanocld, job, specification, spec]
 image: /img/logo.webp
 sidebar_label: Job

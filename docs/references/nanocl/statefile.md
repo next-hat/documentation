@@ -1,5 +1,5 @@
 ---
-title: Nanocl Statefile References
+title: Statefile References - Nanocl
 keywords: [documentation, references, nanocl, nanocld, Statefile, specification]
 image: /img/logo.webp
 sidebar_label: Statefile

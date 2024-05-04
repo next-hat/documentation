@@ -1,5 +1,8 @@
 ---
 title: Upgrading - Nanocl
+description: Upgrade Nanocl to the latest version.
+keywords: [documentation, nanocl, guides, upgrade, update, version, latest]
+image: /img/logo.webp
 sidebar_label: Upgrade
 ---
 

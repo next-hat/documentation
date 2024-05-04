@@ -1,5 +1,8 @@
 ---
 title: Contexts - Nanocl
+description: Use contexts to switch between different nanocl daemons.
+keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, ssl, tls, certificate]
+image: /img/logo.webp
 sidebar_label: Contexts
 ---
 
@@ -39,11 +42,19 @@ sudo mv server.crt /var/lib/nanocl/proxy/certs/nanocl_server.crt
 sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
 ```
 
-## Create the ProxyRule
+## Apply the ProxyRule
 
-Next you can create the ProxyRule to expose the daemon to the internet.
+Next you need to apply a ProxyRule to expose the daemon to the internet.
+
+Create a `nanocl-proxy.yml` file:
 
 <StatefileBlock example="advanced/context-resource" />
+
+Apply the ProxyRule by running:
+
+```sh
+nanocl apply -f nanocl-proxy.yml
+```
 
 ## Create the Context
 

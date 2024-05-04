@@ -1,5 +1,6 @@
 ---
 title: Overview - Nanocl
+description: Nanocl is a portable, extensible, open-source platform for managing workloads, that facilitates both declarative configuration and automation. It has a rapidly growing ecosystem. Nanocl runs on many platforms from your garage to the space.
 keywords: [documentation, nanocl, guides, get started, overview]
 image: /img/logo.webp
 sidebar_position: 1

@@ -1,4 +1,5 @@
 ---
+title: Summary - Manuals
 sidebar_label: Summary
 description: This section include the summary setups for Next Hat products and tools.
 keywords: [documentation, setups, summary]

@@ -1,5 +1,5 @@
 ---
-title: Nanocl Secret References
+title: Secret References - Nanocl
 keywords: [documentation, references, nanocl, nanocld, secret, specification, spec]
 image: /img/logo.webp
 sidebar_label: Secret

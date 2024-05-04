@@ -1,4 +1,5 @@
 ---
+title: Overview - Manuals - Nanocl
 sidebar_label: Overview
 description: Overview of the Nanocl Manual
 keywords: [documentation, setups, summary, nanocl, manual, overview]

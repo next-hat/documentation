@@ -1,5 +1,5 @@
 ---
-title: Nanocl CLI References
+title: CLI References - Nanocl
 description: To list available commands, either run nanocl with no parameters or execute nanocl help
 keywords: [documentation, references, nanocl, nanocl CLI, CLI]
 image: /img/logo.webp

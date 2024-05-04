@@ -1,5 +1,5 @@
 ---
-title: Nanocl Resource References
+title: Resource References - Nanocl
 keywords: [documentation, references, nanocl, nanocld, resource, specification, spec, proxy]
 image: /img/logo.webp
 sidebar_label: Resource

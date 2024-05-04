@@ -1,6 +1,6 @@
 ---
 title: Statefile - Nanocl
-description: Use Statefile to manage your state
+description: Use Statefile to describe the state you want for a specific namespace.
 keywords: [documentation, nanocl, guides, get started, proxy, configuration, state, file, config, yaml, yml, statefile]
 image: /img/logo.webp
 sidebar_position: 4

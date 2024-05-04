@@ -1,4 +1,6 @@
 ---
+title: Guides Summary
+description: Summary of guides for Next Hat products and tools.
 keywords: [documentation, guides, summary, nanocl, docker, rust, Tauri, Next.js, next tauri, nextjs tauri, nextjs, next.js]
 image: /img/logo.webp
 pagination_next: null

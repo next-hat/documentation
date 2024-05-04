@@ -90,7 +90,7 @@ Endpoints:
 ```
 
 :::note
-Make sure to replace `my-remote-server` with the actual IP address or domain name of your remote server.
+Make sure to replace `my-remote-server` with the actual IP address or domain name of your remote server.<br/>
 And replace `my-user` with your actual username.
 :::
 

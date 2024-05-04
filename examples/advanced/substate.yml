@@ -1,0 +1,36 @@
+ApiVersion: $NANOCL_VERSION
+
+Namespace: global
+
+SubStates:
+# You can require substates from remote urls
+- https://nhnr.io/v0.14/tests/sub_state.yml
+# Or from local files
+- ./sub_child.yml
+# If you substate have arguments, you can pass them like this
+- Path: ./sub_child.yml
+  Args:
+  - Name: my-arg
+    Value: my-value
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/objects/cargo
+Cargoes:
+- Name: my-cargo
+  Container:
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+
+# See all options:
+# https://docs.next-hat.com/references/nanocl/objects/resource
+Resources:
+- Name: deploy-example.com
+  Kind: ncproxy.io/rule/$NCPROXY_VERSION
+  Data:
+    Rules:
+    - Domain: deploy-example.com
+      Network: All
+      Locations:
+      - Path: /
+        Target:
+          Key: my-cargo.global.c
+          Port: 9000

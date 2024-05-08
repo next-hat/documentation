@@ -7,7 +7,7 @@ SubStates:
 - https://nhnr.io/v0.14/tests/sub_state.yml
 # Or from local files
 - ./sub_child.yml
-# If you substate have arguments, you can pass them like this
+# If your substate have arguments, you can pass them like this
 - Path: ./sub_child.yml
   Args:
   - Name: my-arg

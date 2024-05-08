@@ -3,7 +3,7 @@ title: Secret Env - Nanocl
 description: Use secret in your .
 keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, ssl, tls, certificate]
 image: /img/logo.webp
-sidebar_position: 0
+sidebar_position: 1
 sidebar_label: Secret Env
 pagination_next: null
 ---

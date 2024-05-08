@@ -3,7 +3,7 @@ title: Secret TLS - Nanocl
 description: Use TLS to protect your services.
 keywords: [documentation, nanocl, guides, get started, configuration, state, file, config, yaml, yml, statefile, ssl, tls, certificate]
 image: /img/logo.webp
-sidebar_position: 1
+sidebar_position: 2
 sidebar_label: Secret TLS
 pagination_next: null
 ---

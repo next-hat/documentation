@@ -3,7 +3,7 @@ MetaData:
   Description: Secure connection to my remote server
 Endpoints:
   Nanocl:
-    Host: https://my-remote-server:9443
+    Host: https://my-remote-server:9943
     Ssl:
       Cert: /home/my-user/.nanocl/certs/nanocl_client.crt
       CertKey: /home/my-user/.nanocl/certs/nanocl_client.key

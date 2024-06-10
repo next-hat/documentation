@@ -19,6 +19,11 @@ To do so don't hesitate to create [issues][github_issues], create [discussions][
 
 To upgrade Nanocl, you will need to follow these steps:
 
+-  Backup your current state by running:
+    ```sh
+    nanocl backup -o /path/to/backup
+    ```
+
 -   Uninstall the current version of Nanocl
     ```sh
     nanocl uninstall

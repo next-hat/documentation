@@ -25,7 +25,7 @@ COPY --chown=node ./.git ./.git
 
 RUN npm run build
 
-FROM nginx:1.25-alpine
+FROM nginx:1.26-alpine
 
 WORKDIR /etc/nginx/conf.d
 

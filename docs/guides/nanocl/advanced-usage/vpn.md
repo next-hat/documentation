@@ -19,7 +19,7 @@ Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec
 
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -s nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
+{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
 </CodeBlock>
 
 If you want to tweak it more than what is already possible from the `Statefile Args`, you can download it and customize it to fit your needs:
@@ -36,7 +36,7 @@ Here is the content of the VPN `Statefile`:
 You can use it in the following way:
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -s nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
 </CodeBlock>
 
 From the file above, you can notice that we create a custom DNS for our VPN.<br/>

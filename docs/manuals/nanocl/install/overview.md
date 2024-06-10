@@ -61,7 +61,7 @@ For information about the open source project, refer to the [github repository][
 <License />
 
 [next_hat]: https://next-hat.com
-[nanocl]: /docs/references/nanocl/cli.md
+[nanocl]: /docs/references/nanocl/cli/overview.md
 [git_nanocl]: https://github.com/next-hat/nanocl
 [rust]: https://www.rust-lang.org/
 [docker]: https://www.docker.com/

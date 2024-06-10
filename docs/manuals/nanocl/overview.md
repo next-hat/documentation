@@ -18,7 +18,7 @@ It acts as a client-server application with:
 
 * A server with a long-running daemon process [nanocld](/docs/references/nanocl/daemon/overview.md).
 * APIs which specify interfaces that programs can use to talk to and instruct the Nanocl daemon.
-* A command-line interface (CLI) [nanocl](/docs/references/nanocl/cli.md) that communicates with the daemon process.
+* A command-line interface (CLI) [nanocl](/docs/references/nanocl/cli/overview.md) that communicates with the daemon process.
 
 The CLI uses Nanocl APIs to control or interact with the Nanocl daemon through scripting or direct CLI commands. Many other Nanocl applications use the underlying API and CLI. The daemon creates and manage Nanocl objects, such as images, jobs, cargoes and virtual machines.
 

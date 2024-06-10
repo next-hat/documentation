@@ -32,7 +32,7 @@ For your convenience, we created a `Statefile` that will generate the necessary 
 You can apply the following `Statefile` to generate the certificates and apply the `ProxyRule`:
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -s nhnr.io/v${nanoclMajorVersion}/sys/enable-remote-nanocld.yml`}
+{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/enable-remote-nanocld.yml`}
 </CodeBlock>
 
 Once the `Statefile` applied, you can create the context to switch between the different daemons.

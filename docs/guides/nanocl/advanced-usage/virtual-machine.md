@@ -18,11 +18,7 @@ Most Linux cloud images have it as a baseline, which allows us to set up network
 ## Install the default VM runtime
 
 To facilitate networking, Nanocl starts a virtual machine inside a container using the default runtime image [nanocl-qemu][nanocl-qemu].<br/>
-It is not installed by default, so you need to install it. You can easily do this by running the following command:
 
-```sh
-nanocl cargo image pull ghcr.io/next-hat/nanocl-qemu:8.0.2.0
-```
 
 ## Create a VM base image
 
@@ -144,70 +140,8 @@ If you are not using Docker Desktop, you can connect to the virtual machine usin
 nanocl vm inspect myvm
 ```
 
-The command should output something like:
-
-```yml
-Key: myvm.global
-Name: myvm
-ConfigKey: e83fb53b-d645-44a6-9074-38625872fb14
-NamespaceName: global
-Config:
-  Key: e83fb53b-d645-44a6-9074-38625872fb14
-  CreatedAt: 2023-07-04T14:14:39.310696
-  Name: myvm
-  Version: v0.9.0
-  VmKey: myvm.global
-  Disk:
-    Image: ubuntu-22.myvm.global
-    Size: 20
-  HostConfig:
-    Cpu: 4
-    Memory: 2048
-    Kvm: true
-InstanceTotal: 1
-InstanceRunning: 1
-Instances:
-- Id: b082dcba19dfa7d177d12871e8702923dc2a95a80842001408a08c23766d012a
-  Names:
-  - /myvm.global.v
-  Image: ghcr.io/next-hat/nanocl-qemu:8.0.2.0
-  ImageID: sha256:119c0cf552aa9651fafc2fe6d7c4e13fa8cfdcd69e222506d935f4aa7a73d896
-  Command: /bin/sh entrypoint.sh -hda /home/leone/.nanocl/state/vms/images/ubuntu-22.myvm.global.img --nographic -accel kvm -smp 4 -m 2048M
-  Created: 1688480226
-  Ports: []
-  Labels:
-    io.nanocl.vnsp: global
-    io.nanocl: enabled
-    io.nanocl.v: myvm.global
-    org.opencontainers.image.source: https://github.com/next-hat/nanocl-qemu
-    org.opencontainers.image.description: Nanocl Qemu Runtime
-  State: running
-  Status: Up 28 seconds
-  HostConfig:
-    NetworkMode: global
-  NetworkSettings:
-    Networks:
-      global:
-        NetworkID: f2cd255919069b028aa8399582baa3e2d91ed9ca62186cb50184eb6b422b6bc4
-        EndpointID: ea733ed8cc6db1d8f0c594e15c41f1c6154779a37d280ae3b998bcea1405d9ed
-        Gateway: 10.2.0.1
-        IPAddress: 10.2.0.2
-        IPPrefixLen: 16
-        IPv6Gateway: ''
-        GlobalIPv6Address: ''
-        GlobalIPv6PrefixLen: 0
-        MacAddress: 02:42:0a:02:00:02
-  Mounts:
-  - Type: bind
-    Source: /home/leone/.nanocl/state/vms/images
-    Destination: /home/leone/.nanocl/state/vms/images
-    Mode: ''
-    RW: true
-    Propagation: rprivate
-```
-
 You can grab the `IPAddress`, which in this case is `10.2.0.2`.
-Afterwards, you can connect using SSH with the default credentials:
+Afterwards, you can connect using SSH with the default credentials: `cloud:cloud`.
 
 ```sh
 ssh cloud@10.2.0.2

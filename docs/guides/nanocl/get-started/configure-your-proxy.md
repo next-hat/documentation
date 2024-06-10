@@ -37,21 +37,10 @@ You can see existing resources with:
 nanocl resource ls
 ```
 
-Now we should add deploy-example.com to the hosts
-
-```sh
-sudo vim /etc/hosts
-```
-
-and add the following line:
-```console
-127.0.0.1 deploy-example.com
-```
-
 Now we can test that our proxy rule was working
 
 ```sh
-curl deploy-example.com
+curl --header "Host: deploy-example.com" 127.0.0.1
 ```
 
 Should output:

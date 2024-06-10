@@ -90,7 +90,7 @@ sudo chmod a+r /etc/apt/keyrings/next-hat.gpg
 You are almost done !
 To continue see our [post installation guide][post_installation_guide]
 
-[nanocl]: /docs/references/nanocl/cli.md
+[nanocl]: /docs/references/nanocl/cli/overview.md
 [post_installation_guide]: /docs/manuals/nanocl/install/post-installation.md
 [deb_package]: https://download.next-hat.com/repo/linux/ubuntu/pool/stable/main
 [c2ncl_ref]: /docs/references/c2ncl/cli.md

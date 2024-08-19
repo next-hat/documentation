@@ -22,7 +22,7 @@
     "redocusaurus": "^2.0.2"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.4.0"
+    "@docusaurus/module-type-aliases": "^3.5.2"
   },
   "browserslist": {
     "production": [

@@ -7,14 +7,14 @@ Resources:
     Rules:
       # Domain name for the target
     - Domain: deploy-example.com
-      # See https://docs.next-hat.com/references/nanocl/resource#proxy-rule-network
+      # See https://docs.next-hat.com/references/nanocl/objects/resource#proxy-rule-network
       # For more information about proxy rule network
       Network: All
       # List of target by path for maximum flexibility
       Locations:
       - Path: /
         Target:
-          # Cargo to target formated as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
+          # Cargo to target formatted as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
           Key: my-cargo.global.c
           # Cargo port to target
           Port: 9001

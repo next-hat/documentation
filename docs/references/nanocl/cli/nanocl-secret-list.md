@@ -1,6 +1,6 @@
 ---
 title: Secret list
-sidebar_position: 58
+sidebar_position: 60
 ---
 
 # Secret list

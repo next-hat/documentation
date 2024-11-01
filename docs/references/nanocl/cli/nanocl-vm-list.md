@@ -1,6 +1,6 @@
 ---
 title: Vm list
-sidebar_position: 76
+sidebar_position: 78
 ---
 
 # Vm list

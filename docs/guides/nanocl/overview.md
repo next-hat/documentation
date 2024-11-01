@@ -121,8 +121,8 @@ When you use Nanocl, you are creating and using namespaces, container images, vi
 
 #### Namespaces
 
-A namespace contains a group of services (Cargoes, Vms) that will share the same network.
-This is useful when you want to isolate a group of services from the rest of the cluster.
+A namespace contains a group of services (Cargoes, Vms).
+This is useful when you want to isolate a group of services.
 There is 2 namespaces by default:
 
 * ***global*** The default namespace that will be used if you don't specify a namespace.
@@ -155,6 +155,6 @@ For example a CI/CD pipeline that will build your code and run the tests.
 
 A container is a runnable instance of an container image. You can create, start, stop, move, or delete a container using the Nanocl API or CLI when using jobs, cargoes or virtual machines.
 
-By default, a container is relatively well isolated from other containers and its host machine. You can control how isolated a container's network, storage, or other underlying subsystems are from other containers or from the host machine.
+By default, a container is relatively well isolated from other containers and its host machine. You can control how isolated a container's storage, or other underlying subsystems are from other containers or from the host machine.
 
 A container is defined by its image as well as any configuration options you provide to it when you create or start it. When a container is removed, any changes to its state that aren't stored in persistent storage disappear.

@@ -1,9 +1,9 @@
 ---
-title: Job logs
-sidebar_position: 32
+title: Logs
+sidebar_position: 36
 ---
 
-# Job logs
+# Logs
 
 ## SYNOPSIS
 
@@ -12,7 +12,7 @@ sidebar_position: 32
 
 ## DESCRIPTION
 
-Show logs of a job
+Get logs of a process
 
 ## OPTIONS
 
@@ -35,4 +35,4 @@ Bool, if set open the log as stream
 Print help
 
 \<*NAME*\>  
-Name of job to show logs
+Name of process to show logs

@@ -1,6 +1,6 @@
 ---
 title: Resource history
-sidebar_position: 47
+sidebar_position: 49
 ---
 
 # Resource history

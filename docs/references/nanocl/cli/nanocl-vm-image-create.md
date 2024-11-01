@@ -1,6 +1,6 @@
 ---
 title: Vm image create
-sidebar_position: 71
+sidebar_position: 73
 ---
 
 # Vm image create

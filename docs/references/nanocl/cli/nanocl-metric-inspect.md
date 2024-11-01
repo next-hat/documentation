@@ -1,6 +1,6 @@
 ---
 title: Metric inspect
-sidebar_position: 36
+sidebar_position: 38
 ---
 
 # Metric inspect

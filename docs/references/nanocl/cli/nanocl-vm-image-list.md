@@ -1,6 +1,6 @@
 ---
 title: Vm image list
-sidebar_position: 72
+sidebar_position: 74
 ---
 
 # Vm image list

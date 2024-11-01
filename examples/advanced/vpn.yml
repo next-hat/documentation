@@ -19,7 +19,7 @@ Cargoes:
     Image: hwdsl2/ipsec-vpn-server:latest
     Env:
     - VPN_PUBLIC_IP=${{ Args.public-ip }}
-    - VPN_DNS_SRV1=${{ Namespaces[ Args.namespace ].Gateway }}
+    - VPN_DNS_SRV1=$$INTERNAL_GATEWAY
     - VPN_DNS_SRV2=${{ Args.dns }}
     - VPN_L2TP_NET=192.168.42.0/16
     - VPN_L2TP_LOCAL=192.168.42.1

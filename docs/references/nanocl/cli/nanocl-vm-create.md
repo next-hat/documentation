@@ -1,6 +1,6 @@
 ---
 title: Vm create
-sidebar_position: 68
+sidebar_position: 70
 ---
 
 # Vm create

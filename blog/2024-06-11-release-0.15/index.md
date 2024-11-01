@@ -1,15 +1,16 @@
 ---
 slug: nanocl-0.15
-title: Announcing Nanocl 0.15
+title: Introducing Nanocl 0.15
+description: Nanocl 0.15.0 is packed with exciting new features, significant enhancements, and important fixes to streamline your container orchestration and virtualization management. Dive into the details!
+image: /img/logo.png
 authors: [leone]
 tags: [nanocl, release, 0.15]
+keywords: [containerization, Docker, Kubernetes, Nanocl, NGINX, software development, deployment, release, 0.15]
 ---
 
-# Announcing Nanocl 0.15
-
-## Enhanced Functionality and Improved Performance
-
 We are thrilled to announce the release of **Nanocl 0.15.0**, packed with exciting new features, significant enhancements, and important fixes to streamline your container orchestration and virtualization management. This release, effective from **June 11, 2024**, brings you the tools and improvements you’ve been waiting for. Let’s dive into the details!
+
+<!-- truncate -->
 
 ## Key Highlights
 

@@ -1,9 +1,9 @@
 ---
-title: Resource inspect
-sidebar_position: 50
+title: Inspect
+sidebar_position: 27
 ---
 
-# Resource inspect
+# Inspect
 
 ## SYNOPSIS
 
@@ -11,7 +11,7 @@ sidebar_position: 50
 
 ## DESCRIPTION
 
-Inspect a resource
+Inspect a process
 
 ## OPTIONS
 

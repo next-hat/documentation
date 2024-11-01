@@ -1,6 +1,6 @@
 ---
 title: Namespace
-sidebar_position: 38
+sidebar_position: 40
 ---
 
 # Namespace

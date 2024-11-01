@@ -1,6 +1,6 @@
 ---
 title: Job remove
-sidebar_position: 32
+sidebar_position: 33
 ---
 
 # Job remove

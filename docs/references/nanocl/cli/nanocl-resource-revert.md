@@ -1,6 +1,6 @@
 ---
 title: Resource revert
-sidebar_position: 51
+sidebar_position: 53
 ---
 
 # Resource revert

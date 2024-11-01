@@ -33,10 +33,10 @@ There is the openapi specification to create a proxy `ProxyRule`:
 
 | Network    | 	Usage |
 | ----------- | ----------- |
-| Internal | Bind only on 127.0.0.1 |
+| All | Bind on all network addresses |
+| Local | Bind only on 127.0.0.1 |
 | Public   | Bind only on public ip address |
-| All | Bind on all interfaces |
-| \{namespace_name\}.nsp | Bind on namespace gateway |
+| Internal | Bind on internal nanocl gateway |
 
 ## Dns Rule
 

@@ -1,6 +1,6 @@
 ---
 title: Secret remove
-sidebar_position: 59
+sidebar_position: 61
 ---
 
 # Secret remove

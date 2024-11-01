@@ -1,6 +1,6 @@
 ---
 title: Resource remove
-sidebar_position: 50
+sidebar_position: 52
 ---
 
 # Resource remove

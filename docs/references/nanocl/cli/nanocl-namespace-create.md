@@ -1,6 +1,6 @@
 ---
 title: Namespace create
-sidebar_position: 39
+sidebar_position: 41
 ---
 
 # Namespace create

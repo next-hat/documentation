@@ -1,6 +1,6 @@
 ---
 title: Vm image resize
-sidebar_position: 74
+sidebar_position: 76
 ---
 
 # Vm image resize

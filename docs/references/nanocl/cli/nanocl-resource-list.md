@@ -1,6 +1,6 @@
 ---
 title: Resource list
-sidebar_position: 49
+sidebar_position: 51
 ---
 
 # Resource list

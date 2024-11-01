@@ -1,6 +1,6 @@
 ---
 title: Namespace list
-sidebar_position: 41
+sidebar_position: 43
 ---
 
 # Namespace list

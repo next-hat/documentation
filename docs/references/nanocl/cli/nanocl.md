@@ -63,6 +63,12 @@ Show or watch events
 nanocl-ps(1)  
 Show processes
 
+nanocl-logs(1)  
+Get logs of a process
+
+nanocl-inspect(1)  
+Inspect a process
+
 nanocl-info(1)  
 Show nanocl host information
 
@@ -83,4 +89,4 @@ Print this message or the help of the given subcommand(s)
 
 # VERSION
 
-v0.15.0
+v0.16.0

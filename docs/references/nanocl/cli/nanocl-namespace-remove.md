@@ -1,6 +1,6 @@
 ---
 title: Namespace remove
-sidebar_position: 42
+sidebar_position: 44
 ---
 
 # Namespace remove

@@ -1,6 +1,6 @@
 ---
 title: Namespace inspect
-sidebar_position: 40
+sidebar_position: 42
 ---
 
 # Namespace inspect

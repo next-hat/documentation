@@ -1,6 +1,6 @@
 ---
 title: Secret create container registry
-sidebar_position: 54
+sidebar_position: 56
 ---
 
 # Secret create container registry

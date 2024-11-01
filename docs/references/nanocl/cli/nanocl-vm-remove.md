@@ -1,6 +1,6 @@
 ---
 title: Vm remove
-sidebar_position: 78
+sidebar_position: 80
 ---
 
 # Vm remove

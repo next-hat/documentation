@@ -1,6 +1,6 @@
 ---
 title: Vm image
-sidebar_position: 69
+sidebar_position: 71
 ---
 
 # Vm image

@@ -2,7 +2,7 @@
 slug: nanocl-0.16
 title: Introducing Nanocl 0.16
 description: Nanocl 0.16 is here with a range of changes and improvements across the Nanocl ecosystem. Dive into the details!
-image: /img/logo.png
+image: /img/cloud.webp
 authors: [leone]
 tags: [nanocl, release, 0.16]
 keywords: [containerization, Docker, Kubernetes, Nanocl, NGINX, software development, deployment, release, 0.16]

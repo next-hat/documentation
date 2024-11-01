@@ -3575,6 +3575,17 @@ components:
             type: string
           propertyNames:
             type: string
+    DnsEntry:
+      type: object
+      required:
+      - Name
+      - IpAddress
+      properties:
+        Name:
+          type: string
+        IpAddress:
+          $ref: '#/components/schemas/NetworkKind'
+      additionalProperties: false
     EndpointIpamConfig:
       type: object
       description: EndpointIPAMConfig represents an endpoint's IPAM configuration.
@@ -4531,6 +4542,20 @@ components:
             $ref: '#/components/schemas/DaemonConfig'
             description: Daemon configuration
       description: HostInfo contains information about the host and the docker daemon
+    HttpTarget:
+      type: object
+      required:
+      - Url
+      properties:
+        Url:
+          type: string
+          description: Url to target
+        Redirect:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/UrlRedirect'
+            description: Redirect type if it's a redirect
+      additionalProperties: false
     ImagePullPolicy:
       type: string
       description: Policy for pulling images related to process objects (job, cargo, vm)
@@ -4789,6 +4814,37 @@ components:
         Spec:
           $ref: '#/components/schemas/Job'
           description: Specification of the job
+    LimitReq:
+      type: object
+      required:
+      - Burst
+      properties:
+        Burst:
+          type: integer
+          description: The burst size
+          minimum: 0
+        Delay:
+          type:
+          - integer
+          - 'null'
+          description: The delay to wait before retrying
+          minimum: 0
+      additionalProperties: false
+    LimitReqZone:
+      type: object
+      required:
+      - Size
+      - Rate
+      properties:
+        Size:
+          type: integer
+          description: The max size of the cache in megabytes
+          minimum: 0
+        Rate:
+          type: integer
+          description: The max number of request per second
+          minimum: 0
+      additionalProperties: false
     LocalNodeState:
       type: string
       description: |-
@@ -4803,6 +4859,14 @@ components:
       - active
       - error
       - locked
+    LocationTarget:
+      oneOf:
+      - $ref: '#/components/schemas/UpstreamTarget'
+        description: Target an existing cargo
+      - $ref: '#/components/schemas/HttpTarget'
+        description: Target a specific http url
+      - $ref: '#/components/schemas/UnixTarget'
+        description: Target a specific unix socket
     MemoryStats:
       type: object
       description: General memory statistics for the container.
@@ -5691,6 +5755,33 @@ components:
           type:
           - string
           - 'null'
+    NetworkKind:
+      oneOf:
+      - type: string
+        description: All networks
+        enum:
+        - All
+      - type: string
+        description: Only 127.0.0.1
+        enum:
+        - Local
+      - type: string
+        description: Only public ip addresses
+        enum:
+        - Public
+      - type: string
+        description: Only internal ip addresses
+        enum:
+        - Internal
+      - type: object
+        description: Specific ip address
+        required:
+        - Other
+        properties:
+          Other:
+            type: string
+            description: Specific ip address
+      description: Network binding kinds
     NetworkSettings:
       type: object
       description: NetworkSettings exposes the network settings in the API
@@ -6074,6 +6165,164 @@ components:
           type: string
         Stats:
           $ref: '#/components/schemas/Stats'
+    ProxyHttpLocation:
+      type: object
+      description: Defines a proxy rule location
+      required:
+      - Path
+      - Target
+      properties:
+        Path:
+          type: string
+          description: The path
+        Target:
+          $ref: '#/components/schemas/LocationTarget'
+          description: The target cargo
+        LimitReq:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/LimitReq'
+            description: Setup limit request for this location
+        AllowedIps:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Allowed ip addr
+        Headers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Extras header to add
+        Version:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Http version to use
+      additionalProperties: false
+    ProxyRule:
+      oneOf:
+      - $ref: '#/components/schemas/ProxyRuleHttp'
+        description: Redirect http traffic
+      - $ref: '#/components/schemas/ProxyRuleStream'
+        description: Redirect tcp and udp traffic
+      description: Proxy rules modes
+    ProxyRuleHttp:
+      type: object
+      description: Defines a proxy rule http config
+      required:
+      - Network
+      - Locations
+      properties:
+        Domain:
+          type:
+          - string
+          - 'null'
+          description: The domain
+        Port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Port to listen on (default 80 or 443)
+          minimum: 0
+        Network:
+          $ref: '#/components/schemas/NetworkKind'
+          description: Type of network binding
+        LimitReqZone:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/LimitReqZone'
+            description: Optional limit request zone
+        Locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProxyHttpLocation'
+          description: The locations to handle multiple paths
+        Ssl:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProxySsl'
+            description: The ssl configuration
+        Includes:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Path to extra config file to include
+      additionalProperties: false
+    ProxyRuleStream:
+      type: object
+      description: Proxy rules modes
+      required:
+      - Network
+      - Protocol
+      - Port
+      - Target
+      properties:
+        Network:
+          $ref: '#/components/schemas/NetworkKind'
+          description: Type of the network binding
+        Protocol:
+          $ref: '#/components/schemas/ProxyStreamProtocol'
+          description: Protocol to use Tcp | Udp
+        Port:
+          type: integer
+          format: int32
+          description: The port to open on nodes
+          minimum: 0
+        Ssl:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProxySsl'
+            description: The ssl configuration
+        Target:
+          $ref: '#/components/schemas/StreamTarget'
+          description: The target
+      additionalProperties: false
+    ProxySsl:
+      oneOf:
+      - $ref: '#/components/schemas/ProxySslConfig'
+      - type: string
+    ProxySslConfig:
+      type: object
+      required:
+      - Certificate
+      - CertificateKey
+      properties:
+        Certificate:
+          type: string
+          description: Path to the certificate
+        CertificateKey:
+          type: string
+          description: Path to the certificate key
+        CertificateClient:
+          type:
+          - string
+          - 'null'
+          description: Path to the certificate client
+        VerifyClient:
+          type:
+          - boolean
+          - 'null'
+          description: Enable or disable client verification
+        Dhparam:
+          type:
+          - string
+          - 'null'
+          description: Path to the dhparam file
+      additionalProperties: false
+    ProxyStreamProtocol:
+      type: string
+      description: Proxy rules modes
+      enum:
+      - Tcp
+      - Udp
     RegistryServiceConfig:
       type: object
       description: RegistryServiceConfig stores daemon registry services configuration.
@@ -6267,6 +6516,19 @@ components:
         Spec:
           $ref: '#/components/schemas/ResourceSpec'
           description: Specification of the ressource
+    ResourceDnsRule:
+      type: object
+      required:
+      - Network
+      - Entries
+      properties:
+        Network:
+          $ref: '#/components/schemas/NetworkKind'
+        Entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsEntry'
+      additionalProperties: false
     ResourceKind:
       type: object
       required:
@@ -6419,6 +6681,18 @@ components:
             $ref: '#/components/schemas/Any'
           propertyNames:
             type: string
+      additionalProperties: false
+    ResourceProxyRule:
+      type: object
+      description: Define proxy rules to apply
+      required:
+      - Rules
+      properties:
+        Rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProxyRule'
+          description: The rules to apply
       additionalProperties: false
     ResourceSpec:
       type: object
@@ -6694,6 +6968,101 @@ components:
           - 'null'
           description: The maximum size for a line of output. The default is 8 * 1024 (roughly 1024 characters).
           minimum: 0
+    Statefile:
+      type: object
+      description: Structure that represent a Statefile
+      required:
+      - ApiVersion
+      properties:
+        ApiVersion:
+          type: string
+          description: Api version to use or remote url
+        Args:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/StatefileArg'
+          description: Arguments to pass to the Statefile
+        SubStates:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SubState'
+          description: Include sub states that will be applied before the current state
+        Group:
+          type:
+          - string
+          - 'null'
+          description: Set the group of defined objects default to `{name_of_directory}.{name_of_file}`
+        Namespace:
+          type:
+          - string
+          - 'null'
+          description: Namespace where the cargoes and virtual machines are deployed
+        Secrets:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SecretPartial'
+          description: List of secrets to create
+        Resources:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ResourcePartial'
+          description: List of resources to create
+        Cargoes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CargoSpecPartial'
+          description: List of cargoes to create and run
+        VirtualMachines:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/VmSpecPartial'
+          description: List of virtual machines to create and run
+        Jobs:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/JobPartial'
+          description: List of jobs to create and run
+      additionalProperties: false
+    StatefileArg:
+      type: object
+      description: Statefile argument definition to pass to the Statefile
+      required:
+      - Name
+      - Kind
+      properties:
+        Name:
+          type: string
+          description: Name of the build arg
+        Kind:
+          $ref: '#/components/schemas/StatefileArgKind'
+          description: Kind of the build arg
+        Default:
+          type:
+          - string
+          - 'null'
+          description: Default value of the build arg
+      additionalProperties: false
+    StatefileArgKind:
+      type: string
+      description: Statefile argument definition to pass to the Statefile
+      enum:
+      - String
+      - Number
+      - Boolean
     Stats:
       type: object
       description: Statistics for the container.
@@ -6772,8 +7141,55 @@ components:
           - 'null'
           format: int64
           minimum: 0
+    StreamTarget:
+      oneOf:
+      - $ref: '#/components/schemas/UpstreamTarget'
+        description: Target an existing cargo
+      - $ref: '#/components/schemas/UriTarget'
+        description: Target a specific uri
+      - $ref: '#/components/schemas/UnixTarget'
+        description: Target a specific unix socket
     String:
       type: string
+    SubState:
+      oneOf:
+      - type: string
+      - $ref: '#/components/schemas/SubStateDef'
+    SubStateArg:
+      type: object
+      description: Statefile argument definition to pass to the Statefile
+      required:
+      - Name
+      - Value
+      properties:
+        Name:
+          type: string
+          description: Name of the argument
+        Value:
+          $ref: '#/components/schemas/SubStateValue'
+          description: Value for the argument
+      additionalProperties: false
+    SubStateDef:
+      type: object
+      required:
+      - Path
+      properties:
+        Path:
+          type: string
+        Args:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SubStateArg'
+      additionalProperties: false
+    SubStateValue:
+      oneOf:
+      - type: number
+        format: double
+      - type: string
+      - type: boolean
+      description: Statefile argument definition to pass to the Statefile
     SwarmInfo:
       type: object
       description: Represents generic information about swarm.
@@ -7439,6 +7855,60 @@ components:
           - string
           - 'null'
           description: The base64-url-safe-encoded raw public key bytes of the issuer.
+    UnixTarget:
+      type: object
+      required:
+      - UnixPath
+      properties:
+        UnixPath:
+          type: string
+      additionalProperties: false
+    UpstreamTarget:
+      type: object
+      description: Config for targeting a cargo or a vm
+      required:
+      - Key
+      - Port
+      properties:
+        Key:
+          type: string
+          description: The key of the cargo or the vm to target
+        Port:
+          type: integer
+          format: int32
+          description: The port of the cargo or the vm to target
+          minimum: 0
+        Path:
+          type:
+          - string
+          - 'null'
+          description: The http path to target when using http
+        DisableLogging:
+          type:
+          - boolean
+          - 'null'
+          description: Disable logging for this target
+        Ssl:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProxySsl'
+            description: SSL configuration for this target
+      additionalProperties: false
+    UriTarget:
+      type: object
+      required:
+      - Uri
+      properties:
+        Uri:
+          type: string
+          description: Uri to target
+      additionalProperties: false
+    UrlRedirect:
+      type: string
+      enum:
+      - MovedPermanently
+      - Permanent
+      - Temporary
     Vm:
       type: object
       description: A virtual machine instance

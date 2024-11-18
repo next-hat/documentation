@@ -62,7 +62,7 @@ Secret of `Kind` `Env` are environement variable that you can bind to your `Carg
 You can create then using the following `Statefile`:
 
 ```yaml
-ApiVersion: v0.13
+ApiVersion: v0.16
 
 Secrets:
 - Name: env.super-secret
@@ -78,7 +78,7 @@ Secret of `Kind` `Tls` are certificat that you can bind to your `ProxyRules`.<br
 You can create then using the following `Statefile`:
 
 ```yaml
-ApiVersion: v0.13
+ApiVersion: v0.16
 
 Secrets:
 - Name: cert.my-certificate

@@ -15,7 +15,7 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/logo.webp',
+  favicon: 'img/logo3.png',
   trailingSlash: false,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -128,7 +128,7 @@ const config = {
         title: 'Next Hat Docs',
         logo: {
           alt: 'Next Hat logo',
-          src: 'img/logo.webp',
+          src: 'img/logo3.png',
           width: '32',
           height: '32',
         },

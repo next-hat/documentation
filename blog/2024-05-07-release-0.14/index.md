@@ -4,7 +4,7 @@ title: Introducing Nanocl 0.14
 authors: [leone]
 tags: [nanocl, release, 0.14]
 description: Nanocl 0.14 is here with a host of new features and enhancements to streamline your deployment workflows. Dive into the details!
-image: /img/logo.png
+image: /img/logo3.png
 keywords: [containerization, Docker, Kubernetes, Nanocl, NGINX, software development, deployment, release, 0.15]
 ---
 

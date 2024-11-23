@@ -1,0 +1,31 @@
+ApiVersion: v0.16
+
+Args:
+- Name: version
+  Kind: String
+
+Cargoes:
+- Name: nh-doc
+  Container:
+    Image: ghcr.io/next-hat/documentation:${{ Args.version }}
+
+Resources:
+- Name: http.docs.next-hat.com
+  Kind: ncproxy.io/rule
+  Data:
+    Rules:
+    - Domain: docs.next-hat.com
+      Network: Public
+      Ssl: cert.next-hat.com
+      Locations:
+      - Path: /
+        Target:
+          Key: nh-doc.global.c
+          Port: 80
+    - Domain: docs.next-hat.com
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Url: https://docs.next-hat.com
+          Redirect: Temporary

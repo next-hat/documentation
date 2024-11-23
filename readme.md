@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://download.next-hat.com/ressources/images/logo3.png" >
+  <img src="https://download.next-hat.com/ressources/images/logo.png" >
   <h1>Next Hat Documentation</h1>
 </div>
 

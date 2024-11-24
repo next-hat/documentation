@@ -362,7 +362,7 @@ nanocl state apply -fs https://nhnr.io/v0.16/sys/certbot.yml -- --email contact@
 
 ## Conclusion
 
-By following the steps outlined in this guide, you can automate the deployment of your applications to your server with minimal effort. This will help you deliver high-quality software quickly and efficiently, making it easier to manage your infrastructure and deploy your applications with confidence.
+By following the steps outlined in this guide, you can automate the deployment of your applications to your server with minimal effort and zero downtime. This will help you deliver high-quality software quickly and efficiently, making it easier to manage your infrastructure and deploy your applications with confidence.
 
 Now that you know how to automate your deployment with GitHub Actions and Nanocl, why not give it a try with your own project? Let us know how it goes or if you have any questions!
 

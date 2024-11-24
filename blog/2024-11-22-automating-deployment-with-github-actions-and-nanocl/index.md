@@ -1,15 +1,14 @@
 ---
 slug: automating-deployment-with-github-actions-and-nanocl
 title: Automating deployment with GitHub Actions and Nanocl
-description: Learn how to automate your CI/CD pipeline with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using two powerful open-source tools.
+description: Learn how to automate your deployment with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort and zero downtime. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using powerful open-source tools.
 image: /img/cloud.webp
 authors: [leone]
 tags: [ci/cd, github actions, devops, automation, nanocl, deployment, open source, cloud infrastructure, docker, software development]
 keywords: [CI/CD, GitHub Actions, automation, Nanocl, deployment, software development, DevOps, continuous integration, continuous delivery, cloud infrastructure]
 ---
 
-Learn how to automate your deployment with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using powerful open-source tools.
-
+Learn how to automate your deployment with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort and zero downtime. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using powerful open-source tools.
 
 <!-- truncate -->
 

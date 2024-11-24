@@ -227,7 +227,9 @@ Resources:
     Rules:
     - Domain: docs.next-hat.com
       Network: Public
-      Ssl: cert.next-hat.com
+      # Secret created for the certbot job below
+      # You can remove this line if you don't want https
+      Ssl: cert.docs.next-hat.com
       Locations:
       - Path: /
         Target:

@@ -1,4 +1,4 @@
-FROM node:22.11-alpine AS builder
+FROM node:22.14-alpine AS builder
 
 RUN apk add git
 
@@ -17,7 +17,7 @@ COPY --chown=node package*.json ./
 ENV NODE_ENV=production
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Bundle app source code
 COPY --chown=node . .
@@ -25,7 +25,7 @@ COPY --chown=node ./.git ./.git
 
 RUN npm run build
 
-FROM nginx:1.27-alpine3.20-slim
+FROM nginx:1.27-alpine3.21-slim
 
 WORKDIR /etc/nginx/conf.d
 

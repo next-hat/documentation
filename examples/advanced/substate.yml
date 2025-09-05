@@ -4,7 +4,7 @@ Namespace: global
 
 SubStates:
 # You can require substates from remote urls
-- https://nhnr.io/v0.14/tests/sub_state.yml
+- https://nr.next-hat.com/v0.14/tests/sub_state.yml
 # Or from local files
 - ./sub_child.yml
 # If your substate have arguments, you can pass them like this

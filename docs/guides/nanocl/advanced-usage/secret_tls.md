@@ -33,7 +33,7 @@ To do so we crafted a generic `Statefile` for you that can handle the job and cr
 The secret will be named as follow: `cert.{domain_name}`.<br/>
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/certbot.yml -- --email your@email.com --domain deploy-example.com
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/sys/certbot.yml -- --email your@email.com --domain deploy-example.com
 `}
 </CodeBlock>
 

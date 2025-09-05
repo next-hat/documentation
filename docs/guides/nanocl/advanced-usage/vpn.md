@@ -15,18 +15,18 @@ import { nanoclMajorVersion } from '@site/vars';
 # Your own VPN
 
 Nanocl aim to make your life easier so we have a prebuilt VPN Statefile.<br />
-Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) from [@Lin Song](https://github.com/hwdsl2) you can use it from our [Official Nanocl Repository](https://nhnr.io)
+Based on [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) from [@Lin Song](https://github.com/hwdsl2) you can use it from our [Official Nanocl Repository](https://nr.next-hat.com)
 
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/sys/vpn.yml`}
 </CodeBlock>
 
 If you want to tweak it more than what is already possible from the `Statefile Args`, you can download it and customize it to fit your needs:
 
 
 <CodeBlock className="language-sh">
-{`wget nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml`}
+{`wget nr.next-hat.com/v${nanoclMajorVersion}/sys/vpn.yml`}
 </CodeBlock>
 
 Here is the content of the VPN `Statefile`:
@@ -36,7 +36,7 @@ Here is the content of the VPN `Statefile`:
 You can use it in the following way:
 
 <CodeBlock className="language-sh">
-{`nanocl state apply -fs nhnr.io/v${nanoclMajorVersion}/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/sys/vpn.yml -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
 </CodeBlock>
 
 From the file above, you can notice that we create a custom DNS for our VPN.<br/>

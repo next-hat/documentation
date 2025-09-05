@@ -175,7 +175,7 @@ Hopefully, we have a pre-configured rule that you can apply to expose the Nanocl
 On your dedicated server or VPS, run the following command to apply the rule:
 
 ```bash
-nanocl state apply -fs https://nhnr.io/v0.16/sys/enable-remote-nanocld.yml
+nanocl state apply -fs https://nr.next-hat.com/v0.16/sys/enable-remote-nanocld.yml
 ```
 
 It will expose the Nanocl Daemon to the public internet with a self signed SSL/TLS certificate on the port 9943.
@@ -358,7 +358,7 @@ Now you have set up your CI/CD pipeline with GitHub Actions and Nanocl. Every ti
 Additionally you can enable public SSL/TLS with Let's Encrypt. You can use the following command to enable public SSL/TLS with Let's Encrypt:
 
 ```bash
-nanocl state apply -fs https://nhnr.io/v0.16/sys/certbot.yml -- --email contact@next-hat.com --domain docs.next-hat.com
+nanocl state apply -fs https://nr.next-hat.com/v0.16/sys/certbot.yml -- --email contact@next-hat.com --domain docs.next-hat.com
 ```
 
 ## Conclusion

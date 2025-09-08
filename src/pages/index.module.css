@@ -51,3 +51,7 @@
   text-align: center;
   color: var(--ifm-navbar-link-color);
 }
+
+a[href="https://redocly.com/redoc/"] {
+  display: none !important;
+}

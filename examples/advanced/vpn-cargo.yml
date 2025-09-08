@@ -17,17 +17,16 @@ Resources:
 - Name: vpn-dns
   Kind: ncdns.io/rule/$NCDNS_VERSION
   Data:
-    Network: private.nsp
     Entries:
     - Name: my-domain.internal
-      IpAddress: private.nsp
+      IpAddress: Internal
 
 - Name: my-domain.internal
   Kind: ncproxy.io/rule/$NCPROXY_VERSION
   Data:
     Rules:
     - Domain: my-domain.internal
-      Network: private.nsp
+      Network: Internal
       Locations:
       - Path: /
         Target:

@@ -49,7 +49,6 @@ function HomepageHeader() {
 }
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       description="Welcome on Next Hat documentation, you will find guide and tutorial regarding Next Hat product and tools."

@@ -1,14 +1,14 @@
 ---
 slug: your-own-private-internet-with-nanocl-and-wireguard
 title: Your Own Private Internet with Nanocl and WireGuard
-description: "Set up your own self-hosted WireGuard VPN with Nanocl and Docker—deploy in minutes, manage peers, and securely access internal services via Nanocl DNS and proxy."
+description: "Set up your own self-hosted WireGuard VPN with Nanocl and Docker deploy in minutes, manage peers, and securely access internal services via Nanocl DNS and proxy."
 image: /img/vpn_diagram.png
 authors: [leone]
 tags: [wireguard, vpn, security, self-hosted, nanocl, docker, networking, privacy, devops, cloud]
 keywords: [WireGuard, VPN, self-hosted VPN, Nanocl, Docker, internal DNS, reverse proxy, private network, security, DevOps, tutorial]
 ---
 
-Want blazing-fast, ultra-secure access to your private network from anywhere in the world? Tired of relying on third-party VPNs? With WireGuard and Nanocl, you can launch your own VPN server in minutes—no advanced sysadmin skills required!
+Want blazing-fast, ultra-secure access to your private network from anywhere in the world? Tired of relying on third-party VPNs? With WireGuard and Nanocl, you can launch your own VPN server in minutes no advanced sysadmin skills required!
 
 <!-- truncate -->
 
@@ -21,7 +21,7 @@ In short, Nanocl + WireGuard gives you a clean way to publish and discover inter
 
 Let's get started and take control of your privacy!
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 - **A Linux server with a public IP address**
   - This server will host your WireGuard VPN and be your secure gateway.
@@ -30,11 +30,11 @@ Let's get started and take control of your privacy!
 - **[Nanocl][nanocl] installed**
   - Nanocl makes container orchestration simple and comes with a built-in proxy and DNS server.
 
-## 🐳 Install Docker
+## Install Docker
 
 Follow the official [Docker installation guide][docker] for your Linux distribution. It's quick and easy!
 
-## ⚡ Install Nanocl
+## Install Nanocl
 
 Download and install the Nanocl CLI binary with this simple command:
 
@@ -51,7 +51,7 @@ newgrp nanocl
 nanocl install
 ```
 
-## 🔒 Deploy WireGuard (Your Private VPN)
+## Deploy WireGuard (Your Private VPN)
 
 Now for the fun part! We'll use the popular [linuxserver/wireguard](https://hub.docker.com/r/linuxserver/wireguard) image.
 
@@ -216,25 +216,25 @@ Once connected to your VPN you can now browse [http://my-domain.internal](http:/
 
 ---
 
-## 🛡️ Security Best Practices
+## Security Best Practices
 
 - Restrict UDP port 51820 to trusted IPs using your firewall.
-- Keep your private keys secret—never share them!
+- Keep your private keys secret never share them!
 - Regularly update Docker, Nanocl, and WireGuard images.
 - Monitor server logs for suspicious activity.
 
-## 🧩 Troubleshooting Tips
+## Troubleshooting Tips
 
 - If the WireGuard container won't start, check Nanocl logs for errors.
 - Make sure your firewall allows UDP traffic on port 51820.
 - Verify the config path exists and is writable.
 - Use `nanocl ps` and `nanocl cargo -n your_namespace list` to check running instances.
 
-## 📊 Visualize Your Setup
+## Visualize Your Setup
 
 ![WireGuard Diagram](/img/vpn_diagram.png)
 
-## 🎉 Next Steps & Call to Action
+## Next Steps & Call to Action
 
 You did it! You now have your own high-performance VPN server. Share this guide with friends, tweet your success, and help others take control of their privacy!
 

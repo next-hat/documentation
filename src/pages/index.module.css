@@ -20,16 +20,29 @@
 .search_bar {
   display: flex;
   flex: 1;
-  padding: 16.5px 14px;
-  box-sizing: content-box;
-  height: 1.4375em;
+  padding: 14px 16px;
+  height: 48px;
   margin: 0;
-  width: max-content;
-  max-width: 500px;
-  min-width: auto;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: 0 3px 6px rgb(11 33 74 / 9%), 0 -2px 2px rgb(11 33 74 / 3%);
+  width: 100%;
+  max-width: 720px;
+  min-width: 240px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 10px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+  transition: box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+}
+
+.search_bar::placeholder {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.search_bar:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.10), 0 0 0 3px rgba(255, 152, 0, 0.25);
+  background: var(--ifm-background-color);
 }
 
 .headerBanner {
@@ -43,7 +56,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--ifm-background-color);
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 64px 16px;
+  /* Fill viewport height accounting for fixed navbar */
+  min-height: calc(100vh - var(--ifm-navbar-height, 64px));
+  min-height: calc(100svh - var(--ifm-navbar-height, 64px));
+  background: linear-gradient(135deg, rgba(255,152,0,0.12) 0%, rgba(99,102,241,0.10) 50%, rgba(0,0,0,0.05) 100%);
 }
 
 .heroTitle {
@@ -52,6 +72,89 @@
   color: var(--ifm-navbar-link-color);
 }
 
+/* Container inside hero for content width control */
+.heroBannerContent {
+  width: 100%;
+  max-width: 960px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Decorative blurred shapes for depth */
+.heroBanner::before,
+.heroBanner::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+}
+
+.heroBanner::before {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(closest-side, rgba(255,152,0,0.45), transparent 70%);
+  top: -120px;
+  left: -120px;
+}
+
+.heroBanner::after {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(closest-side, rgba(99,102,241,0.4), transparent 70%);
+  bottom: -160px;
+  right: -160px;
+}
+
 a[href="https://redocly.com/redoc/"] {
   display: none !important;
+}
+
+/* Responsive typography and spacing */
+@media (min-width: 768px) {
+  .heroBanner {
+  padding: 88px 24px;
+  }
+  .heroTitle {
+    font-size: 48px;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 767px) {
+  .heroBanner {
+    padding: 48px 12px;
+    min-height: calc(100dvh - var(--ifm-navbar-height, 56px));
+  }
+  .heroTitle {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+}
+
+/* When viewport height is very small, avoid crowding */
+@media (max-height: 600px) {
+  .heroBanner {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+}
+
+/* Dark theme tuning */
+[data-theme='dark'] .heroBanner {
+  background: linear-gradient(135deg, rgba(255,152,0,0.10) 0%, rgba(99,102,241,0.12) 50%, rgba(255,255,255,0.03) 100%);
+}
+
+[data-theme='dark'] .search_bar {
+  background: var(--ifm-background-color);
+  border-color: var(--ifm-color-emphasis-300);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='dark'] .search_bar::placeholder {
+  color: var(--ifm-color-emphasis-500);
 }

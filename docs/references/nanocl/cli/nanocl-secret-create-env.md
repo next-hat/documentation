@@ -1,9 +1,13 @@
 ---
 title: Secret create env
-sidebar_position: 57
+sidebar_position: 55
 ---
 
 # Secret create env
+
+# NAME
+
+env - Create a new nanocl.io/env secret
 
 ## SYNOPSIS
 

@@ -1,5 +1,6 @@
 module.exports = {
-  nanoclMajorVersion: '0.16',
-  ncproxyMajorVersion: '0.13',
-  ncdnsMajorVersion: '0.8',
+  nanoclMajorVersion: '0.17',
+  ncproxyMajorVersion: '0.14',
+  ncdnsMajorVersion: '0.9',
+  nanoclLatestBinaryVersion: '0.17.0',
 };

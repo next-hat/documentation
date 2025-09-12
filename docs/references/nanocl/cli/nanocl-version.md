@@ -1,9 +1,13 @@
 ---
 title: Version
-sidebar_position: 67
+sidebar_position: 76
 ---
 
 # Version
+
+# NAME
+
+version - Show nanocl version information
 
 ## SYNOPSIS
 

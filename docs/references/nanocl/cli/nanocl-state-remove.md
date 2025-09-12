@@ -1,13 +1,17 @@
 ---
 title: State remove
-sidebar_position: 65
+sidebar_position: 71
 ---
 
 # State remove
 
+# NAME
+
+remove - Remove elements from a Statefile
+
 ## SYNOPSIS
 
-**remove** \[**-s**\|**--state-location**\] \[**-y**\|**--yes**\]
+**remove** \[**-s**\|**--source**\] \[**-y**\|**--yes**\]
 \[**-h**\|**--help**\] \[*ARGS*\]
 
 ## DESCRIPTION
@@ -16,7 +20,7 @@ Remove elements from a Statefile
 
 ## OPTIONS
 
-**-s**, **--state-location**=*STATE_LOCATION*  
+**-s**, **--source** *\<SOURCE\>*  
 Path or Url to the Statefile
 
 **-y**, **--yes**  

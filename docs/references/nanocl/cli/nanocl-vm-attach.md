@@ -1,9 +1,13 @@
 ---
 title: Vm attach
-sidebar_position: 69
+sidebar_position: 77
 ---
 
 # Vm attach
+
+# NAME
+
+attach - Attach to a vm
 
 ## SYNOPSIS
 

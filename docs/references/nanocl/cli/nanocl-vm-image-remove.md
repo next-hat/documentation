@@ -1,9 +1,13 @@
 ---
 title: Vm image remove
-sidebar_position: 75
+sidebar_position: 82
 ---
 
 # Vm image remove
+
+# NAME
+
+remove - Remove a VM image
 
 ## SYNOPSIS
 

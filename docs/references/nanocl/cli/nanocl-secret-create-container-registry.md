@@ -1,9 +1,13 @@
 ---
 title: Secret create container registry
-sidebar_position: 56
+sidebar_position: 54
 ---
 
 # Secret create container registry
+
+# NAME
+
+container-registry - Create a new nanocl.io/container-registry secret
 
 ## SYNOPSIS
 

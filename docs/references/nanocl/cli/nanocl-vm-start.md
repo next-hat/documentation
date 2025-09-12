@@ -1,9 +1,13 @@
 ---
 title: Vm start
-sidebar_position: 82
+sidebar_position: 90
 ---
 
 # Vm start
+
+# NAME
+
+start - Start a vm
 
 ## SYNOPSIS
 

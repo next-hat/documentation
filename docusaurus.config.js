@@ -165,11 +165,23 @@ const config = {
                 label: 'Discord',
                 href: 'https://discord.gg/WV4Aac8uZg',
               },
+              {
+                label: 'Twitter',
+                href: 'https://twitter.com/next_hat',
+              }
             ],
           },
           {
             title: 'More',
             items: [
+              {
+                label: 'Blog',
+                to: 'blog',
+              },
+              {
+                label: "Registry",
+                href: 'https://nr.next-hat.com',
+              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/next-hat',

@@ -20,6 +20,22 @@ We're excited to announce the release of **Nanocl 0.17**! This version focuses o
 
 ---
 
+## New: Official Nanocl Registry
+
+We launched the official [Nanocl Registry](https://nr.next-hat.com).<br/>
+It hosts a curated catalog of prebuilt statefiles you can use to quickly deploy common stacks.
+
+![Nanocl registry](/img/nanocl-registry.png)
+
+- Browse the catalog: https://nr.next-hat.com
+- Contribute statefiles (PRs welcome): https://github.com/next-hat/nanocl-registry
+
+:::tip
+View manual for any statefile from your terminal: nanocl man -s `<statefile-source>`
+:::
+
+---
+
 ## Component Changes
 
 ### nanocl 0.17.0
@@ -192,7 +208,9 @@ Cargoes:
     Image: nginx:latest
 ```
 
+:::info
 Refer to the [Statefile][statefile-doc] documentation for all available metadata and argument options.
+:::
 
 ---
 

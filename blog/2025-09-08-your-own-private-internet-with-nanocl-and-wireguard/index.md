@@ -91,7 +91,7 @@ nanocl state man -s nr.next-hat.com/v0.17/wireguard
 The content of the file is as follows:
 
 ```yaml
-ApiVersion: v0.16
+ApiVersion: v0.17
 
 Args:
 - Name: namespace
@@ -183,7 +183,7 @@ They will be accessible through the WireGuard VPN.<br/>
 For example, we will deploy a simple service that returns HTTP headers.
 
 ```yaml
-ApiVersion: v0.16
+ApiVersion: v0.17
 
 Namespace: global
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import CodeBlock from '@theme/CodeBlock';
+import Terminal from './terminal';
 
 /**
  * DirTree renders a simple directory structure tree.
@@ -9,20 +10,20 @@ import CodeBlock from '@theme/CodeBlock';
 export default function DirTree({ variant = 'unix' }) {
   if (variant === 'windows') {
     return (
-      <CodeBlock language="text">{`<extract-dir>
+      <Terminal language="text">{`<extract-dir>
 ├─ bin\\
-│  └─ nanocl.exe
+│  └─ nanocl.exe (the nanocl binary)
 └─ share\\
    └─ man\\
-      └─ man1\\   (multiple .1 man pages for nanocl and subcommands)`}</CodeBlock>
+      └─ man1\\   (multiple man pages for nanocl and its subcommands)`}</Terminal>
     );
   }
   return (
-    <CodeBlock language="text">{`.
+    <Terminal language="text">{`.
 ├─ bin/
-│  └─ nanocl
+│  └─ nanocl (the nanocl binary)
 └─ share/
    └─ man/
-      └─ man1/   (multiple .1 man pages for nanocl and subcommands)`}</CodeBlock>
+      └─ man1/   (multiple man pages for nanocl and its subcommands)`}</Terminal>
   );
 }

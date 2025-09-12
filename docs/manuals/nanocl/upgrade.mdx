@@ -6,6 +6,8 @@ image: /img/logo.webp
 sidebar_label: Upgrade
 ---
 
+import Terminal from '@site/src/components/terminal';
+
 # Overview
 
 In the current state of Nanocl, upgrading is not as simple as it should be. This is because Nanocl is still in development and the API is not stable yet. This means that the API can change at any time and upgrading Nanocl can break because of the previous database state.
@@ -15,28 +17,35 @@ We encourage our community to help us stabilize the API and make upgrading as si
 To do so don't hesitate to create [issues][github_issues], create [discussions][github_discussions] on our github repository or join our [discord][discord] server.
 :::
 
-# Upgrading
+## Upgrading
 
 To upgrade Nanocl, you will need to follow these steps:
 
--  Backup your current state by running:
-    ```sh
-    nanocl backup -o /path/to/backup
-    ```
+### Backup your current state by running:
 
--   Uninstall the current version of Nanocl
-    ```sh
-    nanocl uninstall
-    ```
--   Remove the current nanocl state by running:
-    ```sh
-    sudo rm -rf /var/lib/nanocl
-    ```
--   Grap the latest version of the nanocl cli using our [installation guide](/manuals/nanocl/install/overview)
--   Install the new version
-    ```sh
-    nanocl install
-    ```
+<Terminal language="sh">
+{`nanocl backup -o /path/to/backup`}
+</Terminal>
+
+### Uninstall the current version of Nanocl
+
+<Terminal language="sh">
+{`nanocl uninstall`}
+</Terminal>
+
+### Remove the current nanocl state by running:
+
+<Terminal language="sh">
+{`sudo rm -rf /var/lib/nanocl`}
+</Terminal>
+
+### Install the new version
+
+Grap the latest version of the nanocl cli using our [installation guide](/manuals/nanocl/install/overview)
+
+<Terminal language="sh">
+{`nanocl install`}
+</Terminal>
 
 Then you need to reapply your Statefiles to recover your previous state.
 

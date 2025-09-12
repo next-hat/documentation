@@ -1,0 +1,67 @@
+:root {
+  --t-bg: #0d1117;
+  --t-bg-elev: #0f1420;
+  --t-border: rgba(240, 246, 252, 0.08);
+  --t-text: #e6edf3;
+  --t-dim: #8b949e;
+  --t-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.terminal {
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0;
+  width: 100%;
+  /* box-shadow: var(--t-shadow); */
+  margin-bottom: 1.5rem;
+}
+
+.terminal__bar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  background: linear-gradient(180deg, #161b22, #0d1117);
+  border-bottom: 1px solid var(--t-border);
+}
+
+.terminal__traffic {
+  display: inline-flex;
+  gap: 8px;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+.dot--red { background: #ff5f56; }
+.dot--amber { background: #ffbd2e; }
+.dot--green { background: #27c93f; }
+
+.terminal__title {
+  color: var(--t-dim);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.terminal__spacer {
+  height: 0; /* keeps layout when no filename */
+}
+
+.terminal__body {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Make Docusaurus CodeBlock blend in */
+.terminal .theme-code-block {
+  margin: 0;
+  border-radius: 0;
+}
+
+/* .terminal pre { */
+  /* color: var(--t-text); */
+/* } */

@@ -1,0 +1,17 @@
+import Terminal from './terminal';
+
+## Quick install
+
+<Terminal language="sh" filename="sh">
+  {`curl -fsSL https://download.next-hat.com/scripts/get-nanocl.sh | sh`}
+</Terminal>
+
+This script will download and install the latest version of Nanocl for your platform.
+It doesn't require root privileges. Since it install it in your home directory,
+under the `~/.nanocl` directory. And add a `~/.nanocl/env` file in your shell profile to
+have the `nanocl` command in your `PATH`. But then the command will only be available for your user.
+
+:::info
+The script will fallback to build from source from crates.io if no prebuilt
+binary is available for your platform. Therefore no man pages will be installed in this case.
+:::

@@ -1,9 +1,13 @@
 ---
 title: Vm image create
-sidebar_position: 73
+sidebar_position: 80
 ---
 
 # Vm image create
+
+# NAME
+
+create - Create a base VM image
 
 ## SYNOPSIS
 

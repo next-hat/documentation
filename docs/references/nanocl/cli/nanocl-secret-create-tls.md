@@ -1,9 +1,13 @@
 ---
 title: Secret create tls
-sidebar_position: 58
+sidebar_position: 56
 ---
 
 # Secret create tls
+
+# NAME
+
+tls - Create a new nanocl.io/tls secret
 
 ## SYNOPSIS
 
@@ -18,25 +22,25 @@ Create a new nanocl.io/tls secret
 
 ## OPTIONS
 
-**--certificate**=*CERTIFICATE*  
+**--certificate** *\<CERTIFICATE\>*  
 Certificate
 
-**--certificate-path**=*CERTIFICATE_PATH*  
+**--certificate-path** *\<CERTIFICATE_PATH\>*  
 Certificate path to read from a file
 
-**--certificate-key**=*CERTIFICATE_KEY*  
+**--certificate-key** *\<CERTIFICATE_KEY\>*  
 Certificate key
 
-**--certificate-key-path**=*CERTIFICATE_KEY_PATH*  
+**--certificate-key-path** *\<CERTIFICATE_KEY_PATH\>*  
 Certificate key path to read from a file
 
-**--certificate-client**=*CERTIFICATE_CLIENT*  
+**--certificate-client** *\<CERTIFICATE_CLIENT\>*  
 Client certificate
 
-**--certificate-client-path**=*CERTIFICATE_CLIENT_PATH*  
+**--certificate-client-path** *\<CERTIFICATE_CLIENT_PATH\>*  
 Client certificate path to read from a file
 
-**--dhparam**=*DHPARAM*  
+**--dhparam** *\<DHPARAM\>*  
 DHParam
 
 **--verify-client**  

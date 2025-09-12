@@ -1,9 +1,13 @@
 ---
 title: Vm stop
-sidebar_position: 83
+sidebar_position: 91
 ---
 
 # Vm stop
+
+# NAME
+
+stop - Stop a vm
 
 ## SYNOPSIS
 

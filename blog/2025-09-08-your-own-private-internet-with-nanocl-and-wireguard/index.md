@@ -73,19 +73,25 @@ WG_USERS=user1,user2,user3
 And then apply the remote file with:
 
 ```bash
-nanocl state apply -s nr.next-hat.com/v0.16/wireguard.yml
+nanocl state apply -s nr.next-hat.com/v0.17/wireguard
 ```
 
 Or apply it directly with:
 
 ```bash
-WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.16/wireguard.yml
+WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.17/wireguard
+```
+
+The manual for this Statefile is available with:
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/wireguard
 ```
 
 The content of the file is as follows:
 
 ```yaml
-ApiVersion: v0.16
+ApiVersion: v0.17
 
 Args:
 - Name: namespace
@@ -143,7 +149,7 @@ Cargoes:
 You can customize the namespace, PUID, PGID, DNS server, and config path by passing them as arguments for example:
 
 ```bash
-WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.16/wireguard.yml -- --config-path /my/custom/path --puid 1001 --pgid 1001 --dns 8.8.8.8
+WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.17/wireguard -- --config-path /my/custom/path --puid 1001 --pgid 1001 --dns 8.8.8.8
 ```
 
 To get your WireGuard client config, run:
@@ -177,7 +183,7 @@ They will be accessible through the WireGuard VPN.<br/>
 For example, we will deploy a simple service that returns HTTP headers.
 
 ```yaml
-ApiVersion: v0.16
+ApiVersion: v0.17
 
 Namespace: global
 

@@ -5,6 +5,10 @@ sidebar_position: 28
 
 # Install
 
+# NAME
+
+install - Install components
+
 ## SYNOPSIS
 
 **install** \[**--docker-host**\] \[**--docker-desktop**\]
@@ -19,37 +23,37 @@ Install components
 
 ## OPTIONS
 
-**--docker-host**=*DOCKER_HOST*  
+**--docker-host** *\<DOCKER_HOST\>*  
 The docker host to install nanocl default is unix:///var/run/docker.sock
 
 **--docker-desktop**  
 Specify if the docker host is docker desktop detected if docker context
 is desktop-linux
 
-**--state-dir**=*STATE_DIR*  
+**--state-dir** *\<STATE_DIR\>*  
 The state directory to store the state of the nanocl daemon default is
 /var/lib/nanocl
 
-**--conf-dir**=*CONF_DIR*  
+**--conf-dir** *\<CONF_DIR\>*  
 The configuration directory to store the configuration of the nanocl
 daemon default is /etc/nanocl
 
-**--gateway**=*GATEWAY*  
+**--gateway** *\<GATEWAY\>*  
 The gateway address to use for the nanocl daemon default is detected
 
-**--advertise-addr**=*ADVERTISE_ADDR*  
+**--advertise-addr** *\<ADVERTISE_ADDR\>*  
 The hosts to use for the nanocl daemon default is detected
 
-**--daemon-hosts**=*DAEMON_HOSTS*  
+**--daemon-hosts** *\<DAEMON_HOSTS\>*  
 The hosts to use for the nanocl daemon default is detected
 
-**--group**=*GROUP*  
+**--group** *\<GROUP\>*  
 The group to use for the nanocl daemon default is nanocl
 
-**--hostname**=*HOSTNAME*  
+**--hostname** *\<HOSTNAME\>*  
 The hostname to use for the nanocl daemon default is detected
 
-**-t**, **--template**=*TEMPLATE*  
+**-t**, **--template** *\<TEMPLATE\>*  
 Installation template to use for nanocl by default its detected
 
 **-p**, **--force-pull**  

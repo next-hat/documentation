@@ -8,6 +8,8 @@ sidebar_label: Post Installation
 pagination_next: guides/nanocl/get-started/orientation-and-setup
 ---
 
+import Terminal from '@site/src/components/terminal';
+
 # Nanocl post installation instruction
 
 This section contains the required procedures for configuring Nanocl after installation.
@@ -20,11 +22,12 @@ By default that Unix socket is owned by the user `root` and group `nanocl` and o
 If you don't want to preface the nanocl command with sudo, create a Unix group
 called nanocl and add users to it. When the Nanocl daemon starts, it creates a
 Unix socket accessible by members of the `nanocl` group.
-```sh
-sudo groupadd nanocl
+
+<Terminal language="sh">
+{`sudo groupadd nanocl
 sudo usermod -aG nanocl $USER
-newgrp nanocl
-```
+newgrp nanocl`}
+</Terminal>
 
 ## Install Nanocl Components
 
@@ -33,27 +36,30 @@ It's use a default installation template that you can find [here][nanocl_install
 Nanocl have a strong docker support so it will detect automatically if you are running docker or docker desktop and detect the unix socket to use.
 But for some reason if you want to use a custom unix socket you can pass the `--docker-host` argument to the install command as follow
 
-```sh
-nanocl install --docker-host unix:///var/run/docker.sock
-```
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/docker.sock`}
+</Terminal>
 
 If you are using podman you need to specify the `--docker-host` argument as follow
 
-```sh
-nanocl install --docker-host unix:///var/run/podman/podman.sock
-```
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/podman/podman.sock`}
+</Terminal>
 
 You can also choose the group assiociated to the unix socket by passing the `--group` argument to the install command as follow
 
-```sh
-nanocl install --group my-custom-group
-```
+<Terminal language="sh">
+{`nanocl install --group my-custom-group`}
+</Terminal>
 
 ## Test if everything is good
-```sh
-nanocl version
-nanocl cargo run my-cargo nginx:latest
-```
+
+After the installation is complete you can check if everything is working by running the following commands
+
+<Terminal language="sh">
+{`nanocl version
+nanocl cargo run my-cargo nginx:latest`}
+</Terminal>
 
 Congratz you are now ready to you use Nanocl !<br />
 

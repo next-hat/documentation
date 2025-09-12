@@ -4,7 +4,7 @@ Namespace: global
 
 SubStates:
 # You can require substates from remote urls
-- https://nr.next-hat.com/v0.14/tests/sub_state.yml
+- https://my-domain/remote-statefile.yml
 # Or from local files
 - ./sub_child.yml
 # If your substate have arguments, you can pass them like this
@@ -13,15 +13,11 @@ SubStates:
   - Name: my-arg
     Value: my-value
 
-# See all options:
-# https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: my-cargo
   Container:
     Image: ghcr.io/next-hat/nanocl-get-started:latest
 
-# See all options:
-# https://docs.next-hat.com/references/nanocl/objects/resource
 Resources:
 - Name: deploy-example.com
   Kind: ncproxy.io/rule/$NCPROXY_VERSION

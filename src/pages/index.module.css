@@ -3,73 +3,385 @@
  * and scoped locally.
  */
 
-
-.buttons {
+/* Hero Section */
+.heroBanner {
+  width: 100%;
+  min-height: calc(100vh - 60px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 2rem 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Background decorations */
+.heroBackground {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Gradient overlay */
+.heroBackground::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(99, 102, 241, 0.10) 50%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+/* Grid pattern with radial mask */
+.heroBackground::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  mask-image: radial-gradient(50% 50% at 50% 50%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, black 30%, transparent 100%);
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+:root {
+  --grid-color: rgba(200, 200, 220, 0.4);
+}
+
+[data-theme="dark"] {
+  --grid-color: rgba(100, 100, 120, 0.3);
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 900px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  gap: 1rem;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--ifm-font-color-base);
+  line-height: 1.1;
+}
+
+[data-theme="dark"] .heroTitle {
+  color: #f0f0f5;
+}
+
+.heroDescription {
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 820px;
+}
+
+[data-theme="dark"] .heroDescription {
+  color: #aaa;
+}
+
+.heroQuote {
+  pointer-events: none;
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+  text-align: right;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ifm-font-color-base);
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .heroQuote {
+  color: #ccc;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.heroButton {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.heroButtonOutline {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+.heroButtonOutline:hover {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+/* Search Bar */
 .form_search {
   display: flex;
   justify-content: center;
-  padding: 0px 14px;
-  min-width: 100%;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 1rem;
 }
 
 .search_bar {
   display: flex;
   flex: 1;
-  padding: 14px 16px;
-  height: 48px;
-  margin: 0;
-  width: 100%;
-  max-width: 720px;
-  min-width: 240px;
-  border: 1px solid var(--ifm-color-emphasis-200);
-  border-radius: 10px;
-  background: var(--ifm-background-color);
-  color: var(--ifm-font-color-base);
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
-  transition: box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-family: var(--ifm-font-family-base);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #1a1a2e;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.search_bar::placeholder {
-  color: var(--ifm-color-emphasis-600);
+[data-theme="dark"] .search_bar {
+  background-color: #1a1a2e;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f0f0f5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .search_bar:focus {
   outline: none;
   border-color: var(--ifm-color-primary);
-  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.10), 0 0 0 3px rgba(255, 152, 0, 0.25);
-  background: var(--ifm-background-color);
+  box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.headerBanner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+[data-theme="dark"] .search_bar:focus {
+  box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
-.heroBanner {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 64px 16px;
-  /* Fill viewport height accounting for fixed navbar */
-  min-height: calc(100vh - var(--ifm-navbar-height, 64px));
-  min-height: calc(100svh - var(--ifm-navbar-height, 64px));
-  background: linear-gradient(135deg, rgba(255,152,0,0.12) 0%, rgba(99,102,241,0.10) 50%, rgba(0,0,0,0.05) 100%);
+.search_bar::placeholder {
+  color: #888;
 }
 
-.heroTitle {
-  padding-bottom: 20px;
+[data-theme="dark"] .search_bar::placeholder {
+  color: #777;
+}
+
+/* Why Nanocl Section */
+.whySection {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
   text-align: center;
-  color: var(--ifm-navbar-link-color);
+  margin-bottom: 0.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+.sectionSubtitle {
+  font-size: 1.25rem;
+  text-align: center;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 3rem;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.featureCard {
+  padding: 1.5rem;
+  background-color: var(--ifm-background-color);
+  border-radius: 12px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.featureTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+.featureDescription {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Comparison Section */
+.comparisonSection {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-color);
+}
+
+.comparisonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.comparisonCard {
+  padding: 2rem;
+  background-color: var(--ifm-background-surface-color);
+  border-radius: 12px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  text-align: center;
+}
+
+.comparisonCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.comparisonCardHighlight {
+  border: 2px solid var(--ifm-color-primary);
+  background: linear-gradient(180deg, rgba(255, 152, 0, 0.05) 0%, var(--ifm-background-surface-color) 100%);
+  transform: scale(1.05);
+}
+
+.comparisonStatus {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-500);
+  margin-bottom: 1rem;
+}
+
+.comparisonStatusGood {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+}
+
+.comparisonList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.comparisonList li {
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-700);
+}
+
+.comparisonList li:last-child {
+  border-bottom: none;
+}
+
+/* Responsive */
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    min-height: calc(100vh - 60px);
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroQuote {
+    font-size: 0.7rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .featureGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .comparisonGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .comparisonCardHighlight {
+    transform: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .heroBanner {
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 60px);
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+  }
+
+  .heroDescription {
+    font-size: 0.95rem;
+  }
+
+  .heroButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .heroButton,
+  .heroButtonOutline {
+    width: 100%;
+    text-align: center;
+  }
+
+  .heroQuote {
+    font-size: 0.6rem;
+    white-space: normal;
+    max-width: 10rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Container inside hero for content width control */

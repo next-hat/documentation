@@ -80,6 +80,12 @@ Get logs of a process
 nanocl-inspect(1)  
 Inspect a process
 
+nanocl-exec(1)
+Execute a command in a process
+
+nanocl-kill(1)
+Send a signal to a process
+
 nanocl-info(1)  
 Show nanocl host information
 
@@ -103,4 +109,4 @@ Print this message or the help of the given subcommand(s)
 
 # VERSION
 
-v0.17.0
+v0.18.0

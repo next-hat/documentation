@@ -65,8 +65,8 @@ Should output:
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
     "TERM": "xterm",
     "PORT": "9001",
-    "HOSTNAME": "my-cargo-46cAuD.global.c",
-    "NANOCL_CARGO_KEY": "my-cargo.global",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
     "NANOCL_CARGO_NAMESPACE": "global",
     "NANOCL_NODE": "behuman"
   }

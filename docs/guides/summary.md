@@ -1,21 +1,20 @@
 ---
-title: Guides Summary
-description: Summary of guides for Next Hat products and tools.
-keywords: [documentation, guides, summary, nanocl, docker, rust, Tauri, Next.js, next tauri, nextjs tauri, nextjs, next.js]
+title: Guides
+description: Task-focused guides for deploying and operating with Nanocl.
+keywords: [documentation, guides, nanocl, containers, virtual machines, infrastructure]
 image: /img/logo.webp
 pagination_next: null
 pagination_prev: null
 ---
 
-# Guides Summary
+# Guides
 
-This section include the summary guides for Next Hat products and tools.<br/>
-But also some guide about Rust, Docker, and other dev and devops tools that Nexthat use!
+Use these task-focused guides to learn Nanocl and the infrastructure practices around it.
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl][nanocl]   | Guides for Nanocl        |
-| [From locahost to vps][from_localhost_to_vps] | A guide to understand what nanocl automatise |
+| [Nanocl][nanocl] | Deploy and operate containers and virtual machines with Nanocl. |
+| [From localhost to VPS][from_localhost_to_vps] | Understand the infrastructure workflow that Nanocl automates. |
 
-[nanocl]: /docs/guides/nanocl/overview.md
-[from_localhost_to_vps]: /docs/guides/infrastructure/from_locahost_to_vps/introduction.md
+[nanocl]: /guides/nanocl/overview
+[from_localhost_to_vps]: /guides/infrastructure/from_locahost_to_vps/introduction

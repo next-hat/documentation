@@ -19,7 +19,8 @@ Namespace: global
 
 Cargoes:
 - Name: ${{ Args.name }}
-  Container:
+  Containers:
+  - Name: app
     Image: ${{ Args.image }}
 
 Resources:
@@ -32,5 +33,5 @@ Resources:
       Locations:
       - Path: /
         Target:
-          Key: ${{ Args.name }}.global.c
+          Key: global.${{ Args.name }}.c
           Port: ${{ Args.port }}

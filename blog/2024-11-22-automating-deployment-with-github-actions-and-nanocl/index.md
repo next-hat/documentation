@@ -215,7 +215,7 @@ A [Statefile][statefile] is a configuration file that contains the settings for 
 This is the [Statefile][statefile] we use for the deployment of the next-hat documentation:
 
 ```yaml
-ApiVersion: v0.17
+ApiVersion: v0.18
 
 Args:
 - Name: version
@@ -223,7 +223,8 @@ Args:
 
 Cargoes:
 - Name: nh-doc
-  Container:
+  Containers:
+  - Name: docs
     Image: ghcr.io/next-hat/documentation:${{ Args.version }}
 
 Resources:
@@ -239,7 +240,7 @@ Resources:
       Locations:
       - Path: /
         Target:
-          Key: nh-doc.global.c
+          Key: global.nh-doc.c
           Port: 80
     - Domain: docs.next-hat.com
       Network: Public

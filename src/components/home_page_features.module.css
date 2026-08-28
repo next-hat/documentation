@@ -1,12 +1,23 @@
 /* Documentation Section */
 .docsSection {
-  padding: 4rem 0;
-  background-color: var(--ifm-background-surface-color);
+  padding: 5rem 0;
+  background-color: var(--nh-section-background);
+}
+
+.docsEyebrow {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .docsTitle {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
   text-align: center;
   margin-bottom: 0.5rem;
   color: var(--ifm-font-color-base);
@@ -22,18 +33,19 @@
 /* Feature Cards */
 .body_cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
 }
 
 .body_card {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background-color: var(--ifm-background-color);
-  border-radius: 12px;
-  border: 1px solid var(--ifm-color-emphasis-200);
+  min-height: 13rem;
+  background-color: var(--nh-card-background);
+  border-radius: 8px;
+  border: 1px solid var(--nh-border);
+  box-shadow: var(--nh-card-shadow);
   text-decoration: none !important;
   color: var(--ifm-font-color-base);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -42,7 +54,7 @@
 
 .body_card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
   border-color: var(--ifm-color-primary);
 }
 
@@ -50,9 +62,13 @@
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
-.body_card_icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
+.body_card_label {
+  margin-bottom: 1.5rem;
+  color: var(--ifm-color-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .body_card_title {
@@ -64,7 +80,7 @@
 
 .body_card_description {
   font-size: 0.9rem;
-  color: var(--ifm-color-emphasis-600);
+  color: var(--nh-muted);
   margin: 0;
   line-height: 1.5;
   flex-grow: 1;
@@ -76,64 +92,13 @@
   right: 1.5rem;
   font-size: 1.25rem;
   color: var(--ifm-color-primary);
-  opacity: 0;
-  transform: translateX(-8px);
+  opacity: 0.65;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .body_card:hover .body_card_arrow {
   opacity: 1;
-  transform: translateX(0);
-}
-
-/* Resource Links Section */
-.resourceSection {
-  padding-top: 2rem;
-  border-top: 1px solid var(--ifm-color-emphasis-200);
-}
-
-.resourceSectionTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: var(--ifm-font-color-base);
-}
-
-.resourceGrid {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.resource_link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--ifm-background-color);
-  border-radius: 8px;
-  border: 1px solid var(--ifm-color-emphasis-200);
-  text-decoration: none !important;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.resource_link:hover {
-  border-color: var(--ifm-color-primary);
-  background-color: rgba(255, 152, 0, 0.05);
-}
-
-.resource_title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ifm-color-primary);
-  margin-bottom: 0.25rem;
-}
-
-.resource_description {
-  font-size: 0.8rem;
-  color: var(--ifm-color-emphasis-600);
+  transform: translateX(4px);
 }
 
 /* Responsive */
@@ -152,12 +117,4 @@
     grid-template-columns: 1fr;
   }
 
-  .resourceGrid {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .resource_link {
-    padding: 1rem;
-  }
 }

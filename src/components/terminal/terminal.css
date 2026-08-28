@@ -8,11 +8,12 @@
 }
 
 .terminal {
+  border: 1px solid var(--t-border);
   border-radius: 12px;
   overflow: hidden;
   margin: 0;
   width: 100%;
-  /* box-shadow: var(--t-shadow); */
+  box-shadow: var(--t-shadow);
   margin-bottom: 1.5rem;
 }
 
@@ -58,10 +59,19 @@
 
 /* Make Docusaurus CodeBlock blend in */
 .terminal .theme-code-block {
+  --prism-background-color: var(--t-bg) !important;
+  --prism-color: var(--t-text) !important;
+  border: 0;
   margin: 0;
   border-radius: 0;
+  box-shadow: none;
 }
 
-/* .terminal pre { */
-  /* color: var(--t-text); */
-/* } */
+.terminal .theme-code-block pre.prism-code {
+  background-color: var(--t-bg) !important;
+  color: var(--t-text) !important;
+}
+
+.terminal .theme-code-block :is(.token-line, .token) {
+  color: inherit !important;
+}

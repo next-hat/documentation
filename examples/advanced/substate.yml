@@ -15,7 +15,8 @@ SubStates:
 
 Cargoes:
 - Name: my-cargo
-  Container:
+  Containers:
+  - Name: web
     Image: ghcr.io/next-hat/nanocl-get-started:latest
 
 Resources:
@@ -28,5 +29,5 @@ Resources:
       Locations:
       - Path: /
         Target:
-          Key: my-cargo.global.c
+          Key: global.my-cargo.c
           Port: 9000

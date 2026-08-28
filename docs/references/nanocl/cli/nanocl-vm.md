@@ -11,8 +11,7 @@ vm - Manage virtual machines
 
 ## SYNOPSIS
 
-**vm** \[**-n**\|**--namespace**\] \[**-h**\|**--help**\]
-\<*subcommands*\>
+**vm** \[**-h**\|**--help**\] \<*subcommands*\>
 
 ## DESCRIPTION
 
@@ -20,43 +19,37 @@ Manage virtual machines
 
 ## OPTIONS
 
-**-n**, **--namespace** *\<NAMESPACE\>*  
-namespace to target by default global is used
-
-**-h**, **--help**  
+**-h**, **--help**
 Print help
 
 # SUBCOMMANDS
 
-vm-run(1)  
+vm-run(1)
 Run a vm
 
-vm-image(1)  
-Manage vm images
-
-vm-create(1)  
+vm-create(1)
 Create a vm
 
-vm-list(1)  
+vm-list(1)
 List vms
 
-vm-remove(1)  
-Remove vms
+vm-remove(1)
+Remove VMs by canonical keys
 
-vm-inspect(1)  
-Inspect a vm
+vm-inspect(1)
+Inspect a VM by canonical key
 
-vm-start(1)  
-Start a vm
+vm-start(1)
+Start VMs by canonical keys
 
-vm-stop(1)  
-Stop a vm
+vm-stop(1)
+Stop VMs by canonical keys
 
-vm-attach(1)  
+vm-attach(1)
 Attach to a vm
 
-vm-patch(1)  
+vm-patch(1)
 Patch a vm
 
-vm-help(1)  
+vm-help(1)
 Print this message or the help of the given subcommand(s)

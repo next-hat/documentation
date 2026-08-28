@@ -20,43 +20,62 @@ Most Linux cloud images have it as a baseline, which allows us to set up network
 To facilitate networking, Nanocl starts a virtual machine inside a container using the default runtime image [nanocl-qemu][nanocl-qemu].<br/>
 
 
-## Create a VM base image
+## Download Ubuntu and create a VM disk with an init container
 
-Let's start by downloading an Ubuntu image from the official repository:
+Nanocl uses the VM image path directly. In Nanocl 0.18, use the VM
+`InitContainer` to download the Ubuntu cloud image and create an independent
+qcow2 disk with `qemu-img` before the QEMU runtime container starts. This keeps
+the download and disk preparation in the VM lifecycle instead of requiring a
+manual host-side preparation step.
 
-```sh
-wget https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img
+The following Statefile creates the disk for `web-01` under
+`/var/lib/nanocl/vm`. The init container downloads Ubuntu Server 24.04, then
+uses `qemu-img convert` to create the writable `web-01.qcow2` copy. The VM
+runtime starts only after that command exits with status `0`.
+
+```yaml
+ApiVersion: v0.18
+VirtualMachines:
+- Name: web-01
+  Image: /var/lib/nanocl/vm/web-01.qcow2
+  InitContainer:
+    # Omit Image to use Nanocl's default nanocl-qemu runtime image.
+    Entrypoint: ["sh", "-ec"]
+    Cmd:
+    - |
+      mkdir -p /images
+      test ! -e /images/web-01.qcow2 || {
+        echo "VM disk already exists: /images/web-01.qcow2" >&2
+        exit 1
+      }
+      curl -fL \
+        -o /images/ubuntu-24.04-base.img \
+        https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      qemu-img convert -p -O qcow2 \
+        /images/ubuntu-24.04-base.img \
+        /images/web-01.qcow2
+    HostConfig:
+      Binds:
+      - /var/lib/nanocl/vm:/images
 ```
 
-Then, we add the virtual machine image to the Nanocl system using the following command:
-
-```sh
-nanocl vm image create ubuntu-22 ubuntu-22.04-minimal-cloudimg-amd64.img
-```
-
-Here is some information about the options being utilized:
-
-* `ubuntu-22` - the name of the image.
-* `ubuntu-22.04-minimal-cloudimg-amd64.img` - the path of the image.
-
-Once the image has been added, you should be able to list them using the following command:
-
-```sh
-nanocl vm image ls
-```
+`qemu-img convert` creates a full, independent qcow2 copy; repeat the VM with
+a different output filename for every VM. The existence check prevents an init
+container rerun from overwriting a VM disk. The Nanocl daemon and VM runtime
+must be allowed to write `/var/lib/nanocl/vm`.
 
 ## Run a VM
 
 To run a virtual machine, you can use a simple command:
 
 ```sh
-nanocl vm run myvm ubuntu-22
+nanocl vm run web-01 /var/lib/nanocl/vm/web-01.qcow2
 ```
 
 You can observe a few options being used:
 
-* `myvm` - the name of the virtual machine.
-* `ubuntu-22` - the name of the image to use.
+* `web-01` - the name of the virtual machine.
+* `/var/lib/nanocl/vm/web-01.qcow2` - the full path to the VM's writable disk copy.
 
 The virtual machine will boot with the following default settings if no options are provided:
 
@@ -66,14 +85,15 @@ The virtual machine will boot with the following default settings if no options 
 The initial boot time with default settings is approximately 90 seconds. This can be improved by enabling KVM and allocating more resources to your virtual machine.
 
 :::info
-The virtual machine won't use the base image directly.<br/>
-Instead, it will create a snapshot of the base image and use the snapshot as its own disk.
+Nanocl does not create a disk snapshot automatically. Use the copied disk path
+for the VM and retain the downloaded base image only as the source for future
+VM copies.
 :::
 
 You can monitor the status by attaching to the virtual machine using the following command:
 
 ```sh
-nanocl vm attach myvm
+nanocl vm attach web-01
 ```
 
 This command allows you to attach to the running virtual machine, where you can execute commands and perform other actions.

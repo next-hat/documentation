@@ -4,8 +4,24 @@
 const path = require('path');
 const vars = require('./vars');
 
-const lightCodeTheme = require('prism-react-renderer').themes.github;
-const darkCodeTheme = require('prism-react-renderer').themes.oceanicNext;
+const prismThemes = require('prism-react-renderer').themes;
+
+const lightCodeTheme = {
+  ...prismThemes.oneLight,
+  plain: {
+    ...prismThemes.oneLight.plain,
+    color: '#1e293b',
+    backgroundColor: '#f5f6f8',
+  },
+};
+
+const darkCodeTheme = {
+  ...prismThemes.oceanicNext,
+  plain: {
+    ...prismThemes.oceanicNext.plain,
+    backgroundColor: '#24262d',
+  },
+};
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {

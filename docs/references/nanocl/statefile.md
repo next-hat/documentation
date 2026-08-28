@@ -10,7 +10,8 @@ import ApiSchema from '@theme/ApiSchema'
 
 # Statefile
 
-In Nanocl, a `Statefile` refers to a file that will containt the current state you want.<br />
-It will help you manage your `Cargoes`, `Virtual Machines`, `Resources`, `Jobs` and `Secrets`.
+A Statefile describes the desired Cargoes, virtual machines, Resources, Jobs,
+and Secrets. Nanocl 0.18 expects `ApiVersion: v0.18`; Cargoes use named
+`Containers` and optional `InitContainers`.
 
 <ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/Statefile" />

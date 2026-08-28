@@ -70,28 +70,22 @@ You can add multiple users separated by commas:
 WG_USERS=user1,user2,user3
 ```
 
-And then apply the remote file with:
+Save the 0.18 Statefile below as `wireguard.yml`, then apply it with:
 
 ```bash
-nanocl state apply -s nr.next-hat.com/v0.17/wireguard
-```
-
-Or apply it directly with:
-
-```bash
-WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.17/wireguard
+WG_USERS=myuser nanocl state apply -s ./wireguard.yml
 ```
 
 The manual for this Statefile is available with:
 
 ```bash
-nanocl state man -s nr.next-hat.com/v0.17/wireguard
+nanocl state man -s ./wireguard.yml
 ```
 
 The content of the file is as follows:
 
 ```yaml
-ApiVersion: v0.17
+ApiVersion: v0.18
 
 Args:
 - Name: namespace
@@ -114,7 +108,15 @@ Namespace: ${{ Args.namespace }}
 
 Cargoes:
 - Name: wgsrv
-  Container:
+  PortBindings:
+    51820/udp:
+    - HostPort: "51820"
+  Dns:
+  # Nanocl replaces $$INTERNAL_GATEWAY with the selected network gateway.
+  - $$INTERNAL_GATEWAY
+  - ${{ Args.dns }}
+  Containers:
+  - Name: wireguard
     Image: lscr.io/linuxserver/wireguard:latest
     Cmd:
     - -c
@@ -128,18 +130,8 @@ Cargoes:
     - PEERS=${{ Envs.WG_USERS }}
     - PERSISTENTKEEPALIVE_PEERS=all
     HostConfig:
-      PortBindings:
-        51820/udp:
-        - HostPort: "51820"
       CapAdd:
       - NET_ADMIN
-      Dns:
-      # nanocl will replace this $$INTERNAL_GATEWAY variable
-      # with the internal gateway ip
-      # which will allow wireguard to resolve internal services
-      # registered by nanocl internal dns
-      - $$INTERNAL_GATEWAY
-      - ${{ Args.dns }}
       Binds:
       -  ${{ Args.config-path }}/config:/config
       Sysctls:
@@ -149,7 +141,7 @@ Cargoes:
 You can customize the namespace, PUID, PGID, DNS server, and config path by passing them as arguments for example:
 
 ```bash
-WG_USERS=myuser nanocl state apply -s nr.next-hat.com/v0.17/wireguard -- --config-path /my/custom/path --puid 1001 --pgid 1001 --dns 8.8.8.8
+WG_USERS=myuser nanocl state apply -s ./wireguard.yml -- --config-path /my/custom/path --puid 1001 --pgid 1001 --dns 8.8.8.8
 ```
 
 To get your WireGuard client config, run:
@@ -183,20 +175,21 @@ They will be accessible through the WireGuard VPN.<br/>
 For example, we will deploy a simple service that returns HTTP headers.
 
 ```yaml
-ApiVersion: v0.17
+ApiVersion: v0.18
 
 Namespace: global
 
 Cargoes:
 - Name: deploy-example
-  Container:
+  Containers:
+  - Name: web
     Image: ghcr.io/next-hat/nanocl-get-started:latest
     Env:
     - APP=EXAMPLE
 
 Resources:
 - Name: dns.my-domain.internal
-  Kind: ncdns.io/rule/v0.8
+  Kind: ncdns.io/rule/v0.10
   Data:
     Network: Internal
     Entries:
@@ -204,7 +197,7 @@ Resources:
       IpAddress: Internal
 
 - Name: my-domain.internal
-  Kind: ncproxy.io/rule/v0.13
+  Kind: ncproxy.io/rule/v0.15
   Data:
     Rules:
     - Domain: my-domain.internal
@@ -212,7 +205,7 @@ Resources:
       Locations:
       - Path: /
         Target:
-          Key: deploy-example.global.c
+          Key: global.deploy-example.c
           Port: 9000
 ```
 
@@ -234,7 +227,7 @@ Once connected to your VPN you can now browse [http://my-domain.internal](http:/
 - If the WireGuard container won't start, check Nanocl logs for errors.
 - Make sure your firewall allows UDP traffic on port 51820.
 - Verify the config path exists and is writable.
-- Use `nanocl ps` and `nanocl cargo -n your_namespace list` to check running instances.
+- Use `nanocl ps` and `nanocl cargo list --namespace your_namespace` to check running instances.
 
 ## Visualize Your Setup
 

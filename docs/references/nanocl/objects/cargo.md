@@ -8,11 +8,16 @@ sidebar_position: 3
 
 # Cargo
 
-In Nanocl, a `Cargo` refers to a replicable container configuration.<br />
-Once created the system will ensure your cargo is always running.<br />
-If too many errors occurs it may automatically rollback to a previous version if available in the history.<br />
-There is the openapi specification for a `CargoSpecPartial` used to create a `cargo`:
+In Nanocl 0.18, a `Cargo` is a durable workload containing named application
+`Containers`, optional ordered `InitContainers`, and an integer `Replicas`
+count. Cargo-owned network and port settings describe each replica's shared
+network boundary; Docker configuration and container-only secrets remain on
+each named container.
+
+The OpenAPI schema below is the source reference for `CargoSpec`. For
+runtime topology and examples, see
+[Multi-container Cargoes](/guides/nanocl/advanced-usage/multi-container-cargoes).
 
 import ApiSchema from '@theme/ApiSchema'
 
-<ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpecPartial" />
+<ApiSchema example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpec" />

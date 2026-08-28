@@ -1,62 +1,37 @@
 ---
 title: DAEMON References - Nanocl
-description: Nanocl DAEMON References, to list available options, run nanocld --help
-keywords: [documentation, references, nanocl, nanocld, nanocl DAEMON, DAEMON]
+description: Nanocl daemon options and operational scope.
+keywords: [documentation, references, nanocl, nanocld, daemon]
 image: /img/logo.webp
 sidebar_label: Overview
 ---
 
-# Nanocl DAEMON
+# Nanocl daemon
 
-## Nanocld
+`nanocld` manages the local Docker node, persists desired and observed state,
+and exposes the Nanocl API. Node join options remain experimental in 0.18; do
+not treat them as an automatic multi-node scheduling or high-availability
+setup.
 
 ```sh
 nanocld [OPTIONS]
 ```
 
-To list available options, run `nanocld --help` :
+| Option | Purpose |
+| --- | --- |
+| `-H, --hosts HOSTS` | API listeners; the installed default uses `unix:///run/nanocl.sock` |
+| `--docker-host DOCKER_HOST` | Docker daemon endpoint; installed default `unix:///var/run/docker.sock` |
+| `--store-addr STORE_ADDR` | CockroachDB connection address |
+| `--state-dir STATE_DIR` | Runtime state directory; installed default `/var/lib/nanocl` |
+| `--conf-dir CONF_DIR` | Configuration directory; default `/etc/nanocl` |
+| `--gateway GATEWAY` | Host gateway; detected when omitted |
+| `--hostname HOSTNAME` | Node name; detected when omitted |
+| `--node NODES` | Experimental node endpoints to join |
+| `--advertise-addr ADDRESS` | Address advertised to other nodes |
+| `--gid GID` | Group ID for the Unix socket; default `0` |
+| `--cert`, `--cert-key`, `--cert-ca` | Optional API TLS material |
+| `--verify`, `--password` | Optional API TLS verification and password settings |
 
-```console
-$ nanocld --help
-Nanocl Daemon - Self Sufficient Hybrid Cloud Orchestrator
-
-Usage: nanocld [OPTIONS]
-
-Options:
-      --init
-          Ensure state is inited
-  -H, --hosts <HOSTS>
-          Hosts to listen to use tcp:// and unix:// [default: unix:///run/nanocl.sock]
-      --docker-host <DOCKER_HOST>
-          Docker daemon socket to connect [default: unix:///var/run/docker.sock]
-      --state-dir <STATE_DIR>
-          State directory [default: /var/lib/nanocl]
-      --conf-dir <CONF_DIR>
-          Config directory [default: /etc/nanocl]
-      --gateway <GATEWAY>
-          Gateway automatically detected to host default source ip gateway if not set
-      --hostname <HOSTNAME>
-          Hostname to use for the node automatically detected if not set
-      --node <NODES>
-          Join current node to a cluster
-      --advertise-addr <ADVERTISE_ADDR>
-          Address to advertise to other nodes
-      --gid <GID>
-          Group id [default: 0]
-  -h, --help
-          Print help
-  -V, --version
-          Print version
-
-```
-
-## Options
-
-| Name, shorthand      | Default | Description 
-| -------------------- | ------- | -----------
-| **-H**, **\--host**=*HOSTS* | unix:///run/nanocl/nanocl.sock | Daemon host to listen to you can use tcp:// and unix://
-| **\--docker-host**=*DOCKER\_HOST* | unix:///run/nanocl/docker.sock | Docker daemon socket to connect
-| **\--state-dir**=*STATE\_DIR* | /var/lib/nanocl | State directory
-| **\--config-dir**=*CONFIG\_DIR* | /etc/nanocl | Config directory
-| **-h**, **\--help** | | Print help information
-| **-V**, **\--version** | | Print version information
+Run `nanocld --help` for the exact syntax of the installed build. The latest
+0.18 API is available from the sidebar or at the
+[versioned OpenAPI page](/references/nanocl/daemon/v0.18).

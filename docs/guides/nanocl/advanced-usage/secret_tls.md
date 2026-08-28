@@ -15,6 +15,10 @@ import { nanoclMajorVersion } from '@site/vars';
 
 To add an SSL Certificate you must create a secret.<br/>
 
+Nanocl stores TLS certificate, private-key, certificate-authority, and DH
+parameter values as PEM contents in CockroachDB. `ncproxy` writes those values
+to its runtime directory only when Nginx requires files.
+
 ## Manual Setup
 
 :::tip
@@ -25,6 +29,26 @@ But we recommend you to use `Secret` kind of Statefile and manage them separatly
 There is an `Statefile` example on how to do it:
 
 <StatefileBlock example="advanced/secret-tls" />
+
+You can also load local PEM files with the CLI. Nanocl reads the files before
+creating the secret, so CockroachDB stores their contents instead of the local
+paths:
+
+<CodeBlock className="language-sh">
+{`nanocl secret create tls tls.secret \\
+  --certificate-path ./server.crt \\
+  --certificate-key-path ./server.key \\
+  --certificate-client-path ./ca.crt
+`}
+</CodeBlock>
+
+:::info
+On the first startup after upgrading to Nanocl 0.18, `nanocld` converts the
+legacy database TLS secret from readable filesystem paths to PEM contents.
+Keep the old files available for that startup. If they will not be available,
+patch the secret to PEM contents while the 0.17 daemon and files are still
+accessible, or restore the files before starting 0.18.
+:::
 
 ## Automatic with Let's Encrypt
 

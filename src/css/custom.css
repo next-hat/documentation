@@ -4,18 +4,17 @@
  * work well for content-centric websites.
  */
 
-/* Geist Sans Font (similar to next-hat.com) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 html, body {
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-code, span {
+code {
   white-space: pre;
 }
 
@@ -79,9 +78,10 @@ th {
 /* You can override the default Infima variables here. */
 :root {
   /* Font */
-  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --ifm-font-family-base: var(--font-sans);
   --ifm-font-family-monospace: 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --ifm-heading-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --ifm-heading-font-family: var(--font-sans);
+  --ifm-line-height-base: 1.7;
   /* Text */
   --ifm-color-primary: #ff9800;
   --ifm-color-primary-dark: #df8013;
@@ -90,7 +90,28 @@ th {
   --ifm-color-primary-light: #ffb340;
   --ifm-color-primary-lighter: #ffc165;
   --ifm-color-primary-lightest: #ffc46b;
+  --ifm-font-color-base: hsl(222.2deg 47.4% 11.2%);
+  --ifm-font-color-secondary: hsl(215deg 16% 46%);
+  --ifm-background-color: hsl(220deg 20% 98%);
+  --ifm-background-surface-color: #ffffff;
+  --ifm-navbar-background-color: rgba(248, 249, 251, 0.82);
+  --ifm-footer-background-color: hsl(220deg 14% 96%);
+  --ifm-toc-border-color: hsl(220deg 13% 90%);
+  --ifm-global-radius: 0.5rem;
+  --ifm-button-border-radius: 0.5rem;
+  --ifm-card-border-radius: 0.5rem;
+  --ifm-navbar-height: 60px;
   --ifm-code-font-size: 95%;
+  --nh-action-background: hsl(222.2deg 47.4% 11.2%);
+  --nh-action-foreground: hsl(210deg 40% 98%);
+  --nh-border: hsl(220deg 13% 90%);
+  --nh-section-background: hsl(220deg 20% 96%);
+  --nh-card-background: #ffffff;
+  --nh-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 8px 24px rgba(15, 23, 42, 0.04);
+  --nh-code-background: #f5f6f8;
+  --nh-code-border: hsl(220deg 13% 88%);
+  --nh-muted: hsl(215deg 16% 46%);
+  --nh-surface-hover: hsl(220deg 14% 96%);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -103,6 +124,23 @@ th {
   --ifm-color-primary-light: #ffb340;
   --ifm-color-primary-lighter: #ffc165;
   --ifm-color-primary-lightest: #ffc46b;
+  --ifm-font-color-base: hsl(0deg 0% 96%);
+  --ifm-font-color-secondary: hsl(0deg 0% 60%);
+  --ifm-background-color: #000000;
+  --ifm-background-surface-color: hsl(0deg 0% 6%);
+  --ifm-navbar-background-color: rgba(0, 0, 0, 0.8);
+  --ifm-footer-background-color: hsl(0deg 0% 6%);
+  --ifm-toc-border-color: hsl(0deg 0% 16%);
+  --nh-action-background: hsl(0deg 0% 96%);
+  --nh-action-foreground: hsl(0deg 0% 10%);
+  --nh-border: hsl(0deg 0% 16%);
+  --nh-section-background: hsl(0deg 0% 10%);
+  --nh-card-background: hsl(0deg 0% 6%);
+  --nh-card-shadow: none;
+  --nh-code-background: #24262d;
+  --nh-code-border: hsl(220deg 8% 24%);
+  --nh-muted: hsl(0deg 0% 60%);
+  --nh-surface-hover: hsl(0deg 0% 12%);
 }
 
 
@@ -110,4 +148,229 @@ th {
   display: flex;
   justify-content: center;
   align-items: center;  
+}
+
+/* Shared Next Hat chrome */
+.navbar {
+  border-bottom: 1px solid var(--nh-border);
+  box-shadow: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar__title {
+  font-size: 0.875rem;
+}
+
+.navbar__link {
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  background: var(--nh-surface-hover);
+  color: var(--ifm-font-color-base);
+}
+
+.button.button--primary {
+  --ifm-button-background-color: var(--nh-action-background);
+  --ifm-button-border-color: var(--nh-action-background);
+  --ifm-button-color: var(--nh-action-foreground);
+}
+
+.button.button--primary:hover {
+  --ifm-button-background-color: color-mix(in srgb, var(--nh-action-background) 90%, transparent);
+  --ifm-button-border-color: transparent;
+}
+
+.menu__link,
+.table-of-contents__link {
+  border-radius: 0.375rem;
+}
+
+.menu__link--active:not(.menu__link--sublist),
+.menu__link:hover {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+}
+
+.theme-doc-sidebar-container,
+.pagination-nav__link,
+.card,
+.footer {
+  border-color: var(--nh-border);
+}
+
+.pagination-nav__link,
+.card {
+  box-shadow: none;
+}
+
+.pagination-nav__link:hover,
+.card:hover {
+  border-color: color-mix(in srgb, var(--ifm-color-primary) 55%, var(--nh-border));
+}
+
+.footer {
+  border-top: 1px solid var(--nh-border);
+}
+
+/* Keep every fenced language on the same quiet documentation surface. */
+.theme-code-block {
+  --prism-background-color: var(--nh-code-background) !important;
+  border: 1px solid var(--nh-code-border);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.theme-code-block pre.prism-code {
+  background-color: var(--prism-background-color) !important;
+}
+
+/* Lunr search dropdown */
+.navbar__search {
+  --search-border: var(--nh-border);
+  --search-muted: var(--nh-muted);
+  --search-surface: var(--ifm-background-surface-color);
+  --search-surface-hover: var(--nh-surface-hover);
+}
+
+html .navbar__search .algolia-autocomplete .ds-dropdown-menu {
+  width: min(38rem, calc(100vw - 2rem));
+  min-width: 0;
+  max-width: none;
+  margin-top: 0.6rem;
+  border: 1px solid var(--search-border);
+  border-radius: 0.75rem;
+  background: var(--search-surface);
+  box-shadow: 0 1rem 3rem rgba(15, 23, 42, 0.18);
+  overflow: hidden;
+}
+
+html .navbar__search .algolia-autocomplete .ds-dropdown-menu::before {
+  display: none;
+}
+
+html .navbar__search .algolia-autocomplete .ds-dropdown-menu [class^='ds-dataset-'] {
+  max-height: min(34rem, calc(100vh - var(--ifm-navbar-height) - 2rem));
+  border-radius: 0;
+  background: var(--search-surface);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+html .navbar__search .algolia-autocomplete .ds-suggestions,
+html .navbar__search .algolia-autocomplete .ds-suggestion {
+  display: block;
+  white-space: normal;
+}
+
+html .navbar__search .algolia-autocomplete .ds-suggestion:not(:last-child) {
+  border-bottom: 1px solid var(--search-border);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion {
+  color: var(--ifm-font-color-base);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--category-header {
+  padding: 0.55rem 1rem;
+  background: var(--search-surface-hover) !important;
+  color: var(--search-muted) !important;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--search-border);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--wrapper,
+html[data-theme='dark'] .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--wrapper {
+  display: block;
+  float: none;
+  padding: 0.8rem 1rem;
+  background: var(--search-surface) !important;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--subcategory-column {
+  display: none !important;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--content {
+  display: block;
+  float: none;
+  width: 100%;
+  padding: 0;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--content::before {
+  display: none;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--title,
+html[data-theme='dark'] .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--title {
+  margin-bottom: 0.25rem;
+  color: var(--ifm-font-color-base) !important;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--text {
+  display: -webkit-box;
+  padding: 0;
+  color: var(--search-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  white-space: normal;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--version {
+  padding-top: 0.3rem;
+  color: var(--search-muted);
+  font-size: 0.7rem;
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
+  padding: 0;
+  background: transparent;
+  color: var(--ifm-color-primary-dark);
+}
+
+html[data-theme='dark'] .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
+  color: var(--ifm-color-primary-light);
+}
+
+html .navbar__search .algolia-autocomplete .ds-cursor .algolia-docsearch-suggestion--wrapper,
+html[data-theme='dark'] .navbar__search .algolia-autocomplete .ds-cursor .algolia-docsearch-suggestion--wrapper {
+  background: var(--search-surface-hover) !important;
+  box-shadow: inset 3px 0 var(--ifm-color-primary);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--no-results {
+  margin: 0;
+  padding: 1rem;
+  background: var(--search-surface);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-suggestion--no-results .algolia-docsearch-suggestion--text {
+  display: block;
+  color: var(--search-muted);
+}
+
+html .navbar__search .algolia-autocomplete .algolia-docsearch-footer {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  html .navbar__search .algolia-autocomplete .ds-dropdown-menu {
+    top: var(--ifm-navbar-height) !important;
+    right: 0.75rem !important;
+    width: calc(100vw - 1.5rem);
+    max-width: none;
+    max-height: calc(100dvh - var(--ifm-navbar-height) - 1rem);
+    margin-top: 0.5rem;
+  }
 }

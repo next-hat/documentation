@@ -15,7 +15,13 @@ Namespace: ${{ Args.namespace }}
 # https://docs.next-hat.com/references/nanocl/objects/cargo
 Cargoes:
 - Name: vpn
-  Container:
+  PortBindings:
+    500/udp:
+    - HostPort: "500"
+    4500/udp:
+    - HostPort: "4500"
+  Containers:
+  - Name: vpn
     Image: hwdsl2/ipsec-vpn-server:latest
     Env:
     - VPN_PUBLIC_IP=${{ Args.public-ip }}
@@ -27,11 +33,6 @@ Cargoes:
     - VPN_XAUTH_NET=192.168.43.0/16
     - VPN_XAUTH_POOL=192.168.43.10-192.168.83.254
     HostConfig:
-      PortBindings:
-        500/udp:
-        - HostPort: "500"
-        4500/udp:
-        - HostPort: "4500"
       Binds:
       - /opt/vpn:/etc/ipsec.d
       - /lib/modules:/lib/modules

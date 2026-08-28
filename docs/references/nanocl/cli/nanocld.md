@@ -12,9 +12,10 @@ Nanocl - Nanocl Daemon - Self Sufficient Orchestrator
 ## SYNOPSIS
 
 **Nanocl** \[**-H**\|**--hosts**\] \[**--docker-host**\]
-\[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--store-addr**\] \[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
 \[**--hostname**\] \[**--node**\] \[**--advertise-addr**\] \[**--gid**\]
-\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\]
+\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\] \[**--verify**\]
+\[**--password**\]
 \[**-h**\|**--help**\] \[**-V**\|**--version**\]
 
 ## DESCRIPTION
@@ -29,6 +30,9 @@ unix:///run/nanocl.sock\]
 
 **--docker-host**=*DOCKER_HOST*  
 Docker daemon socket to connect \[default: unix:///var/run/docker.sock\]
+
+**--store-addr**=*STORE_ADDR*
+Store address to connect to
 
 **--state-dir**=*STATE_DIR*  
 State directory \[default: /var/lib/nanocl\]
@@ -58,6 +62,12 @@ Group id
 
 **--cert-ca**=*CERT_CA*  
 
+**--verify**
+Verify certificate authority
+
+**--password**=*PASSWORD*
+The certificate password if any
+
 **-h**, **--help**  
 Print help
 
@@ -66,7 +76,7 @@ Print version
 
 # VERSION
 
-v0.17.0
+v0.18.0
 
 # AUTHORS
 

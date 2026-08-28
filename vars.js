@@ -1,4 +1,4 @@
-const nanoclLatestBinaryVersion = '0.16.3';
+const nanoclLatestBinaryVersion = '0.18.0';
 const nanoclGithubRepository = 'https://github.com/next-hat/nanocl';
 const nanoclReleaseTagUrl = `${nanoclGithubRepository}/releases/tag/nanocl-${nanoclLatestBinaryVersion}`
 const nanoclDownloadUrl = `${nanoclGithubRepository}/releases/download/nanocl-${nanoclLatestBinaryVersion}`
@@ -12,9 +12,9 @@ const nanoclWindowsTarballName = `nanocl_${nanoclLatestBinaryVersion}_windows_am
 const nanoclWindowsTarballUrl = `${nanoclDownloadUrl}/${nanoclWindowsTarballName}`
 
 module.exports = {
-  nanoclMajorVersion: '0.17',
-  ncproxyMajorVersion: '0.14',
-  ncdnsMajorVersion: '0.9',
+  nanoclMajorVersion: '0.18',
+  ncproxyMajorVersion: '0.15',
+  ncdnsMajorVersion: '0.10',
   nanoclLatestBinaryVersion,
   nanoclGithubRepository,
   nanoclReleaseTagUrl,

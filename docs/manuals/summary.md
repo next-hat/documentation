@@ -1,18 +1,20 @@
 ---
-title: Summary - Manuals
+title: Manuals
 sidebar_label: Summary
-description: This section include the summary setups for Next Hat products and tools.
-keywords: [documentation, setups, summary]
+description: Installation, setup, and lifecycle manuals for Nanocl.
+keywords: [documentation, manuals, installation, setup, upgrade, nanocl]
 image: /img/logo.webp
 sidebar_position: 1
 pagination_next: null
 pagination_prev: null
 ---
 
-# Manual Summary
+# Manuals
+
+Use the manuals for installation, system setup, and lifecycle procedures.
 
 | Title      | Description |
 | ----------- | ----------- |
-| [Nanocl][nanocl]   | Install and setup Nanocl on your machine or server     |
+| [Nanocl][nanocl] | Install, configure, and upgrade Nanocl on a machine or server. |
 
-[nanocl]: /docs/manuals/nanocl/overview.md
+[nanocl]: /manuals/nanocl/overview

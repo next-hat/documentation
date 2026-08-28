@@ -6,7 +6,7 @@
 /* Hero Section */
 .heroBanner {
   width: 100%;
-  min-height: calc(100vh - 60px);
+  min-height: min(760px, calc(100vh - var(--ifm-navbar-height)));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,11 +61,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 900px;
+  max-width: 1100px;
   text-align: center;
   position: relative;
   z-index: 1;
   gap: 1rem;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--nh-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ifm-background-surface-color) 75%, transparent);
+  color: var(--nh-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
 }
 
 .heroTitle {
@@ -77,11 +91,11 @@
 }
 
 [data-theme="dark"] .heroTitle {
-  color: #f0f0f5;
+  color: var(--ifm-font-color-base);
 }
 
 .heroDescription {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: var(--ifm-color-emphasis-600);
   margin: 0;
   line-height: 1.6;
@@ -89,27 +103,7 @@
 }
 
 [data-theme="dark"] .heroDescription {
-  color: #aaa;
-}
-
-.heroQuote {
-  pointer-events: none;
-  position: absolute;
-  bottom: 1.5rem;
-  right: 2rem;
-  text-align: right;
-  z-index: 2;
-  margin: 0;
-  padding: 0;
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--ifm-font-color-base);
-  white-space: nowrap;
-}
-
-[data-theme="dark"] .heroQuote {
-  color: #ccc;
+  color: var(--nh-muted);
 }
 
 .heroButtons {
@@ -126,21 +120,23 @@
   font-weight: 600;
   border-radius: 8px;
   font-size: 0.95rem;
+  min-width: 15rem;
 }
 
 .heroButtonOutline {
   padding: 0.75rem 1.5rem;
   font-weight: 600;
   border-radius: 8px;
-  border: 2px solid var(--ifm-color-primary);
-  color: var(--ifm-color-primary);
-  background: transparent;
+  border: 1px solid var(--nh-border);
+  color: var(--ifm-font-color-base);
+  background: var(--ifm-background-surface-color);
   font-size: 0.95rem;
+  min-width: 15rem;
 }
 
 .heroButtonOutline:hover {
-  background-color: var(--ifm-color-primary);
-  color: white;
+  background: var(--nh-surface-hover);
+  color: var(--ifm-font-color-base);
 }
 
 /* Search Bar */
@@ -154,23 +150,44 @@
 
 .search_bar {
   display: flex;
+  align-items: center;
   flex: 1;
+  gap: 0.75rem;
   padding: 1rem 1.5rem;
   font-size: 0.95rem;
   font-family: var(--ifm-font-family-base);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  background-color: #ffffff;
-  color: #1a1a2e;
+  border: 1px solid var(--nh-border);
+  border-radius: 8px;
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  appearance: none;
+  cursor: pointer;
+  text-align: left;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-[data-theme="dark"] .search_bar {
-  background-color: #1a1a2e;
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #f0f0f5;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+.searchIcon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--nh-muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.searchShortcut {
+  margin-left: auto;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--nh-border);
+  border-radius: 0.3rem;
+  background: var(--nh-surface-hover);
+  color: var(--nh-muted);
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.7rem;
+  box-shadow: none;
 }
 
 .search_bar:focus {
@@ -183,23 +200,16 @@
   box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
-.search_bar::placeholder {
-  color: #888;
-}
-
-[data-theme="dark"] .search_bar::placeholder {
-  color: #777;
-}
-
 /* Why Nanocl Section */
 .whySection {
   padding: 4rem 0;
-  background-color: var(--ifm-background-surface-color);
+  border-top: 1px solid var(--nh-border);
+  background-color: var(--nh-section-background);
 }
 
 .sectionTitle {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   margin-bottom: 0.5rem;
   color: var(--ifm-font-color-base);
@@ -220,21 +230,34 @@
 
 .featureCard {
   padding: 1.5rem;
-  background-color: var(--ifm-background-color);
-  border-radius: 12px;
-  border: 1px solid var(--ifm-color-emphasis-200);
+  background-color: var(--nh-card-background);
+  border-radius: 8px;
+  border: 1px solid var(--nh-border);
+  box-shadow: var(--nh-card-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .featureCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+}
+
+[data-theme='dark'] .featureCard:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
 .featureIcon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-  display: block;
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 1rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 35%, var(--nh-border));
+  border-radius: 999px;
+  color: var(--ifm-color-primary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .featureTitle {
@@ -251,71 +274,6 @@
   line-height: 1.5;
 }
 
-/* Comparison Section */
-.comparisonSection {
-  padding: 4rem 0;
-  background-color: var(--ifm-background-color);
-}
-
-.comparisonGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.comparisonCard {
-  padding: 2rem;
-  background-color: var(--ifm-background-surface-color);
-  border-radius: 12px;
-  border: 1px solid var(--ifm-color-emphasis-200);
-  text-align: center;
-}
-
-.comparisonCard h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.comparisonCardHighlight {
-  border: 2px solid var(--ifm-color-primary);
-  background: linear-gradient(180deg, rgba(255, 152, 0, 0.05) 0%, var(--ifm-background-surface-color) 100%);
-  transform: scale(1.05);
-}
-
-.comparisonStatus {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ifm-color-emphasis-500);
-  margin-bottom: 1rem;
-}
-
-.comparisonStatusGood {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ifm-color-primary);
-  margin-bottom: 1rem;
-}
-
-.comparisonList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-
-.comparisonList li {
-  font-size: 0.9rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-emphasis-700);
-}
-
-.comparisonList li:last-child {
-  border-bottom: none;
-}
-
 /* Responsive */
 @media screen and (max-width: 996px) {
   .heroBanner {
@@ -326,23 +284,8 @@
     font-size: 2.5rem;
   }
 
-  .heroQuote {
-    font-size: 0.7rem;
-    right: 1rem;
-    bottom: 1rem;
-  }
-
   .featureGrid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .comparisonGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .comparisonCardHighlight {
-    transform: none;
   }
 }
 
@@ -365,18 +308,14 @@
     width: 100%;
   }
 
+  .searchShortcut {
+    display: none;
+  }
+
   .heroButton,
   .heroButtonOutline {
     width: 100%;
     text-align: center;
-  }
-
-  .heroQuote {
-    font-size: 0.6rem;
-    white-space: normal;
-    max-width: 10rem;
-    right: 0.5rem;
-    bottom: 0.5rem;
   }
 
   .featureGrid {
@@ -432,8 +371,14 @@ a[href="https://redocly.com/redoc/"] {
   padding: 88px 24px;
   }
   .heroTitle {
-    font-size: 48px;
+    font-size: 60px;
     line-height: 1.1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: 72px;
   }
 }
 
@@ -458,15 +403,9 @@ a[href="https://redocly.com/redoc/"] {
 
 /* Dark theme tuning */
 [data-theme='dark'] .heroBanner {
-  background: linear-gradient(135deg, rgba(255,152,0,0.10) 0%, rgba(99,102,241,0.12) 50%, rgba(255,255,255,0.03) 100%);
+  background: var(--ifm-background-color);
 }
 
 [data-theme='dark'] .search_bar {
-  background: var(--ifm-background-color);
-  border-color: var(--ifm-color-emphasis-300);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-}
-
-[data-theme='dark'] .search_bar::placeholder {
-  color: var(--ifm-color-emphasis-500);
 }

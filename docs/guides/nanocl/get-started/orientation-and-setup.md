@@ -21,7 +21,7 @@ In this tutorial, you’ll learn how to:
 - Use `state configuration` file for fast deployment
 
 This tutorial assumes you have a current version of Nanocl installed on your machine. <br />
-If you do not have Nanocl installed, see [how to install it](/docs/manuals/nanocl/install/overview.md).
+If you do not have Nanocl installed, see [how to install it](/manuals/nanocl/install/overview).
 
 
 ## Start the tutorial
@@ -47,7 +47,7 @@ Running this command will create and start a single `cargo instance` of *my-carg
 To display the chosen IP, inspect your cargo using:
 
 ```sh
-nanocl cargo inspect my-cargo
+nanocl cargo inspect global.my-cargo
 ```
 
 So for me, the ipv4 address assigned is `10.2.0.2`; let's curl it to see what is going on!
@@ -61,9 +61,9 @@ As you can notice we now have a Nginx `cargo instance` running on ipv4 address `
 ## What is a Cargo ?
 
 Now that you’ve run a `cargo`, what is a `cargo`? <br />
-Cargoes are lightweight configurations based on a container image, containing everything needed to deploy and scale your application or share it while working to be sure that everyone gets it works the same way.
-Running a cargo in Nanocl will create one or multiple `cargo instances` or `container`.
-Based on the number of Nanocl nodes and the number of replicas you need. They can also autoscale based on ressources available on your hosts.
+Cargoes are durable workload configurations. A Cargo contains one or more
+named application containers, optional ordered init containers, and a fixed
+replica count. Each replica contains the processes declared by the Cargo.
 
 :::info
 If you’re familiar with `Kubernetes` then think of a
@@ -79,8 +79,8 @@ nanocl cargo ls
 It should output something like this:
 
 ```console
-NAME        IMAGE         STATUS         INSTANCES    VERSION    CREATED AT             UPDATED AT             
-my-cargo    nginx:1.23    start/start    1/1          v0.15.0    2024-06-10 23:24:27    2024-06-10 23:24:27
+KEY                CONTAINERS             STATUS                   INSTANCES  VERSION  CREATED AT           UPDATED AT
+global.my-cargo    my-cargo=nginx:1.23    start/start (unknown)    1/1        v0.1.0   2026-08-28 21:24:27  2026-08-28 21:24:27
 ```
 
 In a more general way to manage our `cargoes` we will use:
@@ -105,14 +105,12 @@ Usage: nanocl cargo [OPTIONS] <COMMAND>
 Commands:
   list     List existing cargo
   create   Create a new cargo
-  start    Start a cargo by its name
-  stop     Stop a cargo by its name
-  restart  Restart a cargo by its name
-  remove   Remove cargo by its name
-  inspect  Inspect a cargo by its name
-  patch    Update a cargo by its name
-  image    Manage cargo image
-  exec     Execute a command inside a cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
   history  List cargo history
   revert   Revert cargo to a specific history
   logs     Show logs
@@ -121,30 +119,28 @@ Commands:
   help     Print this message or the help of the given subcommand(s)
 
 Options:
-  -n, --namespace <NAMESPACE>  namespace to target by default global is used
-  -h, --help                   Print help
+  -h, --help  Print help
 ```
 
 To summarize, a `Cargo`:
 
-- Is a lightweight configuration based on a container image.
-- Contains every configuration needed to deploy your application which can be autoscaled.
-- Will spawn and manage containers, called `cargo instances`.
+- Describes one or more named application containers.
+- Can declare ordered init containers and a durable replica count.
+- Spawns and manages the processes that belong to each replica.
 
 ## What is a cargo instance ?
 
 Now that you know what a `Cargo` is, what is a `Cargo instance`?
-A Cargo instance is exactly like a container but with possibly multiple instances of the same Cargo. It’s a sandboxed process on your host machine that is isolated from the rest of the host's processes. That isolation leverages kernel namespaces and cgroups, features that have been in Linux for a long time.
+A Cargo replica is one realization of the Cargo specification. It can contain
+multiple application processes and, on non-host networks, an internal shared
+network sandbox. Container isolation uses Docker's Linux namespaces and
+cgroups.
 
 To summarize, a `Cargo instance`:
 
-- Is most likely a container instance where `Cargo` is the configuration.
-- is a runnable instance of a `Container image`. You can create, start, stop, move, or
-  delete a cargo instance using the Nanocl API or CLI.
-- can be run on local machines or virtual machines.
-- is portable (can be run on any OS).
-- are isolated from each other and run their own software, binaries, and
-  configurations.
+- Contains the named application processes declared by its Cargo.
+- Has an ordinal exposed through `NANOCL_CARGO_INSTANCE`.
+- Is isolated from other replicas and runs on the local Docker node.
 
 ## What is a container image ?
 
@@ -163,6 +159,7 @@ But, a container adds additional isolation not available when simply using chroo
 
 ## What is a namespace ?
 
-A `namespace` in Nanocl encapsulates cargoes along networks.<br />
+A `namespace` groups namespaced Nanocl objects such as Cargoes and virtual
+machines. Docker networks are node-local and are not owned by namespaces.<br />
 For example, if you have different domain names like *facebook.com*, *instagram.com*,
 you may separate them using different namespaces.

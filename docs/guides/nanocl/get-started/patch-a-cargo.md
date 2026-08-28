@@ -16,19 +16,19 @@ Patch a cargo to update his image or his environment variables and redeploy them
 So now let’s change our `Cargo` *my-cargo* with the image we previously downloaded:
 
 ```sh
-nanocl cargo patch my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
+nanocl cargo patch global.my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
 ```
 
 You'll notice a few options being used. Here's some more info on them:
 
-- `my-cargo` is the name of the cargo you want to update
+- `global.my-cargo` is the canonical key of the cargo you want to update
 - `--image` is the value we want to change and it's the cargo image
 - `ghcr.io/next-hat/nanocl-get-started:latest` is the new image name
 
 We can verify if our changes are made by inspecting our `cargo`:
 
 ```sh
-nanocl cargo inspect my-cargo
+nanocl cargo inspect global.my-cargo
 ```
 
 The default port of our *get-started* is **9000** so we can test if access to it.
@@ -54,13 +54,13 @@ You should have something like this as output:
   "envs": {
     "HOME": "/",
     "NANOCL_NODE_ADDR": "192.168.8.102",
-    "NANOCL_CARGO_KEY": "my-cargo.global",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
     "NANOCL_CARGO_NAMESPACE": "global",
     "NANOCL_CARGO_INSTANCE": "0",
     "TERM": "xterm",
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
     "   ": "/bin/nanocl-get-started",
-    "HOSTNAME": "my-cargo-dBxXso.global.c",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-a1b2c3.c",
     "NANOCL_NODE": "behuman"
   }
 }
@@ -76,13 +76,13 @@ we are going to update some `Environnement variables`
 Let's update the port used by your `cargo` by updating the **PORT** `environment variable`:
 
 ```sh
-nanocl cargo patch my-cargo --env PORT=9001
+nanocl cargo patch global.my-cargo --env PORT=9001
 ```
 
 As said before this will update the IP address so we run:
 
 ```sh
-nanocl cargo inspect my-cargo
+nanocl cargo inspect global.my-cargo
 ```
 
 To get his new IP
@@ -105,14 +105,14 @@ That output to us:
   "envs": {
     "NANOCL_CARGO_INSTANCE": "0",
     "   ": "/bin/nanocl-get-started",
-    "HOSTNAME": "my-cargo-46cAuD.global.c",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
     "HOME": "/",
     "NANOCL_NODE": "behuman",
     "TERM": "xterm",
     "NANOCL_NODE_ADDR": "192.168.8.102",
     "PORT": "9001",
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-    "NANOCL_CARGO_KEY": "my-cargo.global",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
     "NANOCL_CARGO_NAMESPACE": "global"
   }
 }

@@ -14,7 +14,7 @@ Resources:
       Locations:
       - Path: /
         Target:
-          # Cargo to target formatted as follow `cargo-name.namespace_name.type` `c` cargo, `v` vm
-          Key: my-cargo.global.c
+          # Canonical target: `namespace.name.c` for a Cargo or `namespace.name.v` for a VM
+          Key: global.my-cargo.c
           # Cargo port to target
           Port: 9001

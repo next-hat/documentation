@@ -10,7 +10,7 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.9.2",
+    "@docusaurus/core": "^3.10.2",
     "@docusaurus/plugin-google-analytics": "^3.9.2",
     "@docusaurus/preset-classic": "^3.9.2",
     "@mdx-js/react": "^3.1.1",

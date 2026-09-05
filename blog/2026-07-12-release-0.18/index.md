@@ -16,6 +16,25 @@ stack.
 
 <!-- truncate -->
 
+## Watch the walkthrough
+
+Deploy a multi-container workload with Nanocl 0.18, explore the new process
+commands, and apply a health-aware update.
+
+<iframe
+  src="https://www.youtube.com/embed/Hg19pMC6SSs"
+  title="Nanocl 0.18: Full Deployment, Init Containers, Exec, Logs & Stats"
+  width="560"
+  height="315"
+  style={{width: '100%', height: 'auto', aspectRatio: '16 / 9', border: 0, display: 'block'}}
+  loading="lazy"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
+
+[Watch on YouTube](https://www.youtube.com/watch?v=Hg19pMC6SSs).
+
 ## A Cargo is now a multi-container workload
 
 `Containers` replaces the old singular `Container` field. Every application

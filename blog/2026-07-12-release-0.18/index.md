@@ -16,11 +16,6 @@ stack.
 
 <!-- truncate -->
 
-:::note Publication date
-The Nanocl component changelogs still mark these releases as unreleased. The
-final publication date for this post requires maintainer confirmation.
-:::
-
 ## A Cargo is now a multi-container workload
 
 `Containers` replaces the old singular `Container` field. Every application

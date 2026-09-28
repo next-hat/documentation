@@ -25,12 +25,12 @@ info:
   license:
     name: MIT OR Apache-2.0
     identifier: MIT OR Apache-2.0
-  version: v0.18.0
+  version: v0.18.1
 servers:
 - url: /{Version}
   variables:
     Version:
-      default: v0.18.0
+      default: v0.18.1
       description: API version
 paths:
   /_ping:
@@ -5752,7 +5752,9 @@ components:
           type:
           - string
           - 'null'
-          description: Schedule of the job (cron)
+          description: |-
+            Five-field cron expression or supported shortcut; see
+            [`crate::cron::validate_schedule`].
         Ttl:
           type:
           - integer
@@ -6996,6 +6998,12 @@ components:
             $ref: '#/components/schemas/EndpointSettings'
           propertyNames:
             type: string
+    NginxDuration:
+      type: string
+      description: A validated nginx timeout value, such as `900s` or `5m`.
+    NginxSize:
+      type: string
+      description: A validated nginx size value, such as `0`, `10m`, or `2g`.
     Node:
       type: object
       required:
@@ -7195,6 +7203,11 @@ components:
         KindKey:
           type: string
           description: Canonical resource key for cargoes and VMs; jobs use their name
+        IpAddress:
+          type:
+          - string
+          - 'null'
+          description: Effective IP address resolved from the last observed process state
         Data:
           $ref: '#/components/schemas/ContainerInspectResponse'
           description: The data of the process a ContainerInspect
@@ -7292,6 +7305,9 @@ components:
           type: string
         Stats:
           $ref: '#/components/schemas/Stats'
+    ProxyCache:
+      type: string
+      description: 'A validated nginx proxy cache value: `off` or a configured cache zone.'
     ProxyHttp3:
       oneOf:
       - type: boolean
@@ -7382,7 +7398,62 @@ components:
           - 'null'
           format: double
           description: Http version to use
+        ClientMaxBodySize:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NginxSize'
+            description: Maximum request body size for this location
+        ClientBodyTimeout:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NginxDuration'
+            description: Request body read timeout
+        RequestBuffering:
+          type:
+          - boolean
+          - 'null'
+          description: Buffer client request bodies
+        ResponseBuffering:
+          type:
+          - boolean
+          - 'null'
+          description: Buffer upstream responses
+        Cache:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProxyCache'
+            description: Enable the proxy cache
+        ReadTimeout:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NginxDuration'
+            description: Upstream response read timeout
+        SendTimeout:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NginxDuration'
+            description: Upstream response send timeout
+        ConnectTimeout:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NginxDuration'
+            description: Upstream connection timeout
+        NextUpstream:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProxyNextUpstream'
+            description: Upstream retry behavior
+        InterceptErrors:
+          type:
+          - boolean
+          - 'null'
+          description: Intercept upstream errors
       additionalProperties: false
+    ProxyNextUpstream:
+      type: string
+      description: Supported location-level `proxy_next_upstream` values.
+      enum:
+      - off
     ProxyRule:
       oneOf:
       - $ref: '#/components/schemas/ProxyRuleHttp'
@@ -7934,6 +8005,11 @@ components:
             $ref: '#/components/schemas/Any'
           propertyNames:
             type: string
+    SecretEnv:
+      type: array
+      items:
+        type: string
+      description: 'Data for a nanocl.io/env secret: KEY=VALUE entries.'
     SecretPartial:
       type: object
       description: |-

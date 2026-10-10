@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -9,6 +10,7 @@ if (!existsSync(output)) {
   process.exit(1)
 }
 const inventory = JSON.parse(readFileSync(join(repository, 'scripts/migrate-content.inventory.json'), 'utf8'))
+const { parse: parseYaml } = createRequire(join(repository, 'apps/documentation/package.json'))('yaml')
 const posts = JSON.parse(readFileSync(join(repository, 'apps/documentation/lib/blog-posts.json'), 'utf8'))
 const walk = directory => readdirSync(directory).flatMap(name => {
   const path = join(directory, name)
@@ -33,6 +35,15 @@ const records = new Map(htmlFiles.map(path => {
   return [path, { html, ids, route: routeForFile(path) }]
 }))
 const failures = []
+const nonIndexableRoutes = new Set(['/404', '/_not-found', '/search'])
+const indexableRecords = [...records.values()].filter(record => !nonIndexableRoutes.has(record.route))
+const sourceModified = new Map(walk(join(repository, 'apps/documentation/content')).filter(path => /\.mdx?$/.test(path)).flatMap(path => {
+  const source = readFileSync(path, 'utf8').match(/^---\r?\n(.*?)\r?\n---\r?\n/s)?.[1] || ''
+  const timestamp = source.match(/^timestamp:\s*(\d+)\s*$/m)?.[1]
+  if (!timestamp) return []
+  const route = ('/' + relative(join(repository, 'apps/documentation/content'), path).replace(/\.mdx?$/, '')).replace(/\/index$/, '') || '/'
+  return [[route, new Date(Number(timestamp)).toISOString()]]
+}))
 const resolveExport = pathname => {
   let decoded
   try { decoded = decodeURIComponent(pathname) } catch { return null }
@@ -82,6 +93,213 @@ for (const [path, { html, route }] of records) {
     }
   }
   if (/vundefined|\/undefined(?:[\s"<]|$)|\$NANOCL_VERSION|\$NCPROXY_VERSION|\$NCDNS_VERSION/.test(stripTags(visible))) failures.push(`${route}: unresolved documentation version interpolation`)
+}
+
+// References must be present in the static export, including when JavaScript is disabled.
+const apiMethods = new Set(['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'])
+const daemonSpecs = new Map(Array.from({ length: 7 }, (_, index) => {
+  const version = `0.${12 + index}`
+  return [version, parseYaml(readFileSync(join(repository, 'apps/documentation/public/specs/nanocld', `${version}.yaml`), 'utf8'))]
+}))
+const renderedReference = record => record.html.replace(/<(script|style)\b[^>]*>.*?<\/\1>/gs, '')
+const hasRedocStyles = html => /<style\b[^>]*\bdata-styled=/.test(html)
+let checkedRedocOperations = 0
+let checkedRedocSchemas = 0
+for (const [version, spec] of daemonSpecs) {
+  const route = `/references/nanocl/daemon/v${version}`
+  const record = records.get(resolveExport(route))
+  if (!record) continue
+  const expected = new Set(Object.values(spec.paths).flatMap(path => Object.entries(path)
+    .filter(([method]) => apiMethods.has(method)).map(([, operation]) => operation.operationId)))
+  const rendered = new Set([...record.ids].filter(id => id.startsWith('operation/')).map(id => id.slice('operation/'.length)))
+  for (const operation of expected) {
+    checkedRedocOperations++
+    if (!rendered.has(operation)) failures.push(`${route}: operation ${operation} missing from server-rendered Redoc`)
+  }
+  for (const operation of rendered) if (!expected.has(operation)) failures.push(`${route}: unexpected operation ${operation}, possibly rendered from another version`)
+  if (!hasRedocStyles(record.html)) failures.push(`${route}: missing server-rendered Redoc styles`)
+  const viewer = [...renderedReference(record).matchAll(/<[^>]+\bdata-redoc-version=[^>]+>/g)]
+    .map(match => attributes(match[0])).find(attrs => attrs['data-redoc-version'] === version)
+  if (!viewer) failures.push(`${route}: missing the matching Redoc version in exported HTML`)
+}
+const inlineSchemas = [
+  ['/references/nanocl/statefile', 'Statefile'],
+  ['/references/nanocl/objects/cargo', 'CargoSpec'],
+  ['/references/nanocl/objects/job', 'JobPartial'],
+  ['/references/nanocl/objects/resource', 'ResourceProxyRule'],
+  ['/references/nanocl/objects/resource', 'ResourceDnsRule'],
+  ['/references/nanocl/objects/secret', 'ProxySslConfig'],
+  ['/references/nanocl/objects/virtual-machine', 'VmSpecPartial']
+]
+for (const [route, name] of inlineSchemas) {
+  const record = records.get(resolveExport(route))
+  if (!record) continue
+  const visible = renderedReference(record)
+  const wrappers = [...visible.matchAll(/<[^>]+\bdata-redoc-schema=[^>]+>/g)].map(match => attributes(match[0]))
+  const wrapper = wrappers.find(attrs => attrs['data-redoc-schema'] === `#/components/schemas/${name}`)
+  checkedRedocSchemas++
+  if (!wrapper || wrapper['data-redoc-example'] !== 'false') failures.push(`${route}: missing original embedded Redoc schema ${name} with examples disabled`)
+  if (!hasRedocStyles(record.html)) failures.push(`${route}: missing server-rendered Redoc schema styles`)
+  const text = stripTags(visible)
+  for (const property of Object.keys(daemonSpecs.get('0.18').components.schemas[name].properties || {})) {
+    if (!text.includes(property)) failures.push(`${route}: ${name}.${property} missing from exported schema reference`)
+  }
+}
+
+const checkedCards = new Set()
+let checkedStructuredPages = 0
+const descriptions = new Map()
+const pageTitles = new Map()
+const absoluteUrl = value => {
+  try { return /^https?:$/.test(new URL(value).protocol) ? new URL(value) : null } catch { return null }
+}
+const validDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}(?:T.+)?$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value.slice(0, 10)
+const schemaTypes = node => Array.isArray(node?.['@type']) ? node['@type'] : [node?.['@type']]
+const schemaUrl = value => typeof value === 'string' ? value : value?.['@id'] || value?.url
+const schemaNodes = value => Array.isArray(value) ? value.flatMap(schemaNodes) : value && typeof value === 'object' ? [value, ...schemaNodes(value['@graph'])] : []
+const checkMetadataAsset = (route, reference) => {
+  const url = absoluteUrl(reference)
+  if (url?.origin === origin && !resolveExport(url.pathname)) failures.push(`${route}: missing metadata asset ${reference}`)
+}
+for (const { html, route } of records.values()) {
+  const visible = html.replace(/<script\b[^>]*>.*?<\/script>/gs, '')
+  const metas = [...visible.matchAll(/<meta\b[^>]*>/g)].map(match => attributes(match[0]))
+  const metaValues = key => metas.filter(attrs => (attrs.name || attrs.property)?.toLowerCase() === key).map(attrs => attrs.content || '')
+  const oneMeta = key => {
+    const values = metaValues(key)
+    if (values.length !== 1 || !values[0].trim()) failures.push(`${route}: expected one non-empty ${key} metadata field, found ${values.length}`)
+    return values[0] || ''
+  }
+  for (const attrs of metas) {
+    if (/^(?:og:(?:image|video|audio)(?::(?:url|secure_url))?|twitter:image(?::src)?)$/.test(attrs.property || attrs.name || '') && attrs.content) checkMetadataAsset(route, attrs.content)
+  }
+  const structured = []
+  for (const match of html.matchAll(/<script\b([^>]*)>(.*?)<\/script>/gs)) {
+    if (attributes(match[1]).type !== 'application/ld+json') continue
+    try {
+      const value = JSON.parse(match[2])
+      if (![value].flat().every(node => /^https?:\/\/schema\.org\/?$/.test(node?.['@context']))) failures.push(`${route}: JSON-LD must declare the schema.org context`)
+      structured.push(...schemaNodes(value))
+    } catch { failures.push(`${route}: invalid JSON-LD`) }
+  }
+  const site = structured.find(node => schemaTypes(node).includes('WebSite'))
+  const organization = structured.find(node => schemaTypes(node).includes('Organization'))
+  if (!site || !site.name || !absoluteUrl(site.url) || new URL(site.url).origin !== origin) failures.push(`${route}: missing documentation WebSite structured data`)
+  if (!organization || organization.name !== 'Next Hat' || !absoluteUrl(organization.url)) failures.push(`${route}: missing Next Hat Organization structured data`)
+  for (const node of structured) {
+    const assets = [node.logo, ...(Array.isArray(node.image) ? node.image : [node.image])].filter(Boolean)
+    for (const asset of assets) checkMetadataAsset(route, typeof asset === 'string' ? asset : asset.url || asset.contentUrl)
+  }
+  if (route === '/search') {
+    const robots = oneMeta('robots').toLowerCase().split(/\s*,\s*/)
+    if (!robots.includes('noindex') || !robots.includes('follow') || robots.includes('nofollow')) failures.push(`${route}: search must have noindex, follow metadata`)
+    continue
+  }
+  if (nonIndexableRoutes.has(route)) continue
+  for (const key of ['robots', 'googlebot']) if (metaValues(key).some(value => /(?:^|[\s,])(?:noindex|nofollow|none)(?:$|[\s,])/.test(value.toLowerCase()))) failures.push(`${route}: indexable page has restrictive ${key} metadata`)
+
+  const titles = [...visible.matchAll(/<title\b[^>]*>(.*?)<\/title>/gs)].map(match => stripTags(match[1]))
+  const title = titles[0] || ''
+  if (titles.length !== 1 || !title.endsWith(' — Next Hat Docs') || !title.slice(0, -' — Next Hat Docs'.length).trim()) failures.push(`${route}: expected one page-specific title ending in — Next Hat Docs`)
+  if (title && pageTitles.has(title)) failures.push(`${route}: title duplicates ${pageTitles.get(title)}`)
+  else if (title) pageTitles.set(title, route)
+  const description = oneMeta('description')
+  if (description && descriptions.has(description)) failures.push(`${route}: description duplicates ${descriptions.get(description)}`)
+  else if (description) descriptions.set(description, route)
+  const canonicalLinks = [...visible.matchAll(/<link\b[^>]*>/g)].map(match => attributes(match[0])).filter(attrs => attrs.rel?.split(/\s+/).includes('canonical'))
+  const canonical = origin + (route === '/' ? '' : route)
+  const post = posts.find(post => post.route === route)
+  if (canonicalLinks.length !== 1 || canonicalLinks[0]?.href !== canonical) failures.push(`${route}: expected one canonical URL ${canonical}`)
+  for (const [key, expected] of [
+    ['og:url', canonical], ['og:title', title], ['og:description', description], ['og:site_name', 'Next Hat Docs'], ['og:locale', 'en_US'], ['og:type', post ? 'article' : 'website'],
+    ['twitter:card', 'summary_large_image'], ['twitter:site', '@next_hat'], ['twitter:creator', '@next_hat'], ['twitter:title', title], ['twitter:description', description],
+    ['og:image:width', '1200'], ['og:image:height', '630'], ['og:image:type', 'image/png']
+  ]) if (oneMeta(key) !== expected) failures.push(`${route}: ${key} must match ${expected}`)
+
+  const image = `${origin}/social${route === '/' ? '/index' : route}.png`
+  const ogImage = oneMeta('og:image')
+  const twitterImage = oneMeta('twitter:image')
+  if (ogImage !== image || twitterImage !== image) failures.push(`${route}: Open Graph and Twitter must use the absolute page card ${image}`)
+  const imageAlt = oneMeta('og:image:alt')
+  if (oneMeta('twitter:image:alt') !== imageAlt) failures.push(`${route}: Twitter image alt must match Open Graph image alt`)
+  for (const reference of new Set([ogImage, twitterImage].filter(Boolean))) {
+    const url = absoluteUrl(reference)
+    const path = url?.origin === origin ? resolveExport(url.pathname) : null
+    if (!path || checkedCards.has(path)) continue
+    checkedCards.add(path)
+    const bytes = readFileSync(path)
+    if (bytes.length < 33 || !bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) || bytes.toString('ascii', 12, 16) !== 'IHDR' || bytes.readUInt32BE(8) !== 13) failures.push(`${route}: social card must be raw PNG bytes ${reference}`)
+    else if (bytes.readUInt32BE(16) !== 1200 || bytes.readUInt32BE(20) !== 630) failures.push(`${route}: social card must be 1200×630 ${reference}`)
+    if (bytes.length >= 5 * 1024 * 1024) failures.push(`${route}: social card must be smaller than 5 MB ${reference}`)
+  }
+
+  const pages = structured.filter(node => schemaTypes(node).some(type => ['WebPage', 'TechArticle', 'BlogPosting'].includes(type)))
+  if (pages.length !== 1 || pages[0]?.url !== canonical || schemaUrl(pages[0]?.mainEntityOfPage) !== canonical) failures.push(`${route}: expected one page schema with matching absolute url and mainEntityOfPage`)
+  const page = pages[0]
+  if (page) {
+    checkedStructuredPages++
+    if ((page.headline || page.name) !== title.replace(/ — Next Hat Docs$/, '') || page.description !== description) failures.push(`${route}: page schema title/description must match HTML metadata`)
+  }
+  if (route !== '/') {
+    const breadcrumb = structured.find(node => schemaTypes(node).includes('BreadcrumbList')) || (schemaTypes(page?.breadcrumb).includes('BreadcrumbList') ? page.breadcrumb : null)
+    const items = breadcrumb?.itemListElement
+    if (!Array.isArray(items) || items.length < 2 || schemaUrl(items.at(-1)?.item) !== canonical) failures.push(`${route}: missing breadcrumb ending at the canonical page`)
+    else for (const [index, item] of items.entries()) {
+      const url = absoluteUrl(schemaUrl(item.item))
+      if (item.position !== index + 1 || !item.name || !url || url.origin !== origin || !resolveExport(url.pathname)) failures.push(`${route}: invalid breadcrumb item ${index + 1}`)
+    }
+  }
+
+  if (post && page) {
+    if (!schemaTypes(page).includes('BlogPosting')) failures.push(`${route}: blog must use BlogPosting structured data`)
+    if (!validDate(page.datePublished) || page.datePublished.slice(0, 10) !== post.date) failures.push(`${route}: schema publication date must match the original blog date`)
+    if (sourceModified.has(route) && (!validDate(page.dateModified) || new Date(page.dateModified).toISOString() !== sourceModified.get(route))) failures.push(`${route}: schema modification date must match the original source timestamp`)
+    const authors = Array.isArray(page.author) ? page.author : [page.author]
+    if (authors.length !== post.authors.length || post.authors.some(author => !authors.some(value => value?.name === author.name && (!author.url || value.url === author.url)))) failures.push(`${route}: schema authors must match the original blog authors`)
+    if (schemaUrl(page.image) !== image) failures.push(`${route}: blog schema image must match its generated social card`)
+    const published = oneMeta('article:published_time')
+    if (!validDate(published) || published.slice(0, 10) !== post.date) failures.push(`${route}: Open Graph publication date must match the original blog date`)
+    if (sourceModified.has(route) && oneMeta('article:modified_time') !== sourceModified.get(route)) failures.push(`${route}: Open Graph modification date must match the original source timestamp`)
+    if (metaValues('article:author').length !== post.authors.length || post.authors.some(author => !metaValues('article:author').includes(author.url))) failures.push(`${route}: Open Graph authors must match the original blog authors`)
+  }
+}
+
+let checkedSitemapUrls = 0
+const sitemapPath = resolveExport('/sitemap.xml')
+if (!sitemapPath) failures.push('Missing exported sitemap: /sitemap.xml')
+else {
+  const sitemap = readFileSync(sitemapPath, 'utf8')
+  const urls = [...sitemap.matchAll(/<url\b[^>]*>(.*?)<\/url>/gs)].map(match => ({
+    url: decodeEntities(match[1].match(/<loc>(.*?)<\/loc>/s)?.[1] || ''),
+    modified: match[1].match(/<lastmod>(.*?)<\/lastmod>/s)?.[1]
+  }))
+  const expected = new Set(indexableRecords.map(({ route }) => origin + (route === '/' ? '' : route)))
+  const found = new Set()
+  for (const entry of urls) {
+    checkedSitemapUrls++
+    if (!expected.has(entry.url)) failures.push(`Sitemap includes a non-canonical or non-indexable URL: ${entry.url}`)
+    if (found.has(entry.url)) failures.push(`Sitemap contains a duplicate URL: ${entry.url}`)
+    found.add(entry.url)
+    if (entry.modified !== undefined) {
+      const route = absoluteUrl(entry.url)?.pathname
+      if (!validDate(entry.modified) || !sourceModified.has(route) || new Date(entry.modified).toISOString() !== sourceModified.get(route)) failures.push(`Sitemap lastmod must match a real source timestamp: ${entry.url}`)
+    }
+  }
+  for (const url of expected) if (!found.has(url)) failures.push(`Sitemap is missing an indexable canonical URL: ${url}`)
+}
+
+const robotsPath = resolveExport('/robots.txt')
+if (!robotsPath) failures.push('Missing exported robots.txt')
+else {
+  const lines = readFileSync(robotsPath, 'utf8').split(/\r?\n/).map(line => line.replace(/\s*#.*$/, '').trim()).filter(Boolean)
+  if (!lines.some(line => /^User-agent:\s*\*$/i.test(line)) || !lines.some(line => /^Allow:\s*\/$/i.test(line))) failures.push('robots.txt must allow crawling the documentation')
+  if (!lines.some(line => line === `Sitemap: ${origin}/sitemap.xml`)) failures.push('robots.txt must advertise the canonical sitemap')
+  for (const line of lines) {
+    const pattern = line.match(/^Disallow:\s*(.+)$/i)?.[1]
+    if (!pattern) continue
+    const regex = new RegExp('^' + pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\\\$$/, '$'))
+    if (regex.test('/search') || regex.test('/')) failures.push('robots.txt must keep search crawlable so its noindex metadata can be read')
+  }
 }
 
 for (const original of inventory.pages) {
@@ -152,5 +370,5 @@ if (failures.length) {
   }
   process.exitCode = 1
 } else {
-  console.log(`Verified ${htmlFiles.length} exported HTML pages, ${inventory.pages.length} preserved document routes, ${checkedLinks} local links/assets, ${checkedFragments} fragment targets, blog metadata/tags, and three feeds.`)
+  console.log(`Verified ${htmlFiles.length} exported HTML pages, ${inventory.pages.length} preserved document routes, ${checkedRedocOperations} Redoc operations, ${checkedRedocSchemas} embedded schema references, ${indexableRecords.length} SEO metadata sets, ${checkedCards.size} PNG social cards, ${checkedStructuredPages} page schemas, ${checkedSitemapUrls} canonical sitemap URLs, crawl/noindex rules, ${checkedLinks} local links/assets, ${checkedFragments} fragment targets, blog metadata/tags, and three feeds.`)
 }

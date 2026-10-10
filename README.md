@@ -45,6 +45,14 @@ pnpm preview
 
 Nextra 4.6.1 uses a scoped Zod 4.1.13 pin to avoid its [upstream layout validation bug](https://github.com/shuding/nextra/issues/5008). The shared UI source remains unchanged.
 
+## SEO and social previews
+
+Public pages use `https://docs.next-hat.com` for canonical and social URLs. Titles and descriptions come from MDX frontmatter; pages without a description use their opening paragraph or command description. Add a concise `description` when editing content. Original `timestamp` values supply sitemap and structured-data modification dates, and blog publication dates and authors come from the existing blog inventory.
+
+Every public page gets a 1200 × 630 PNG at `/social/<page-path>.png` (the homepage uses `/social/index.png`). The build renders the Next Hat artwork from `apps/documentation/assets` with local fonts, the page title, and its description. Open Graph and Twitter share the same card. All cards, metadata, and JSON-LD are generated during the static build; nginx needs no image-generation service or external requests.
+
+The export verifier checks every public page's metadata, structured data, canonical sitemap entry, and actual PNG dimensions and size. Search is excluded from the sitemap and has `noindex, follow` metadata while remaining crawlable.
+
 ## Docker
 
 Initialize submodules before building so the shared UI source is present in the build context.

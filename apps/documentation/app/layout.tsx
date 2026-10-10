@@ -6,6 +6,9 @@ import { getPageMap } from 'nextra/page-map'
 import Image from 'next/image'
 import logo from '@next-hat/ui/images/logo3.png'
 import { ThemeSwitcher } from '@next-hat/ui/components/theme-switcher'
+import RedocStyleRegistry from '@/components/redoc-style-registry'
+import { pageMetadata, serializeJsonLd, siteSchema, SITE_URL } from '@/lib/seo'
+import { getSeoPage } from '@/lib/seo-content'
 import '@fontsource/ibm-plex-mono/400.css'
 import '@fontsource/ibm-plex-mono/500.css'
 import '@fontsource/ibm-plex-mono/600.css'
@@ -13,19 +16,22 @@ import 'nextra-theme-docs/style.css'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://docs.next-hat.com'),
+  ...pageMetadata(getSeoPage('/')),
+  metadataBase: new URL(SITE_URL),
   title: { default: 'Next Hat Documentation', template: '%s — Next Hat Docs' },
-  description: 'Practical guides, manuals, and references for deploying containers and virtual machines with Nanocl.',
   applicationName: 'Next Hat Docs',
-  icons: { icon: '/img/logo3.png' },
-  openGraph: { siteName: 'Next Hat Docs', type: 'website', images: ['/img/logo.webp'] },
-  alternates: { types: { 'application/rss+xml': '/blog/rss.xml' } }
+  publisher: 'Next Hat', creator: 'Next Hat',
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } },
+  icons: { icon: { url: '/img/logo3.png', type: 'image/png' }, apple: '/img/logo3.png' },
+  alternates: { types: { 'application/rss+xml': '/blog/rss.xml', 'application/atom+xml': '/blog/atom.xml', 'application/feed+json': '/blog/feed.json' } }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en" dir="ltr" suppressHydrationWarning>
     <Head color={{ hue: { light: 17.5, dark: 24.6 }, saturation: { light: 88.3, dark: 95 }, lightness: { light: 40.4, dark: 53.1 } }} backgroundColor={{ light: "rgb(249, 250, 251)", dark: "rgb(0, 0, 0)" }} />
     <body>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(siteSchema) }} />
+      <RedocStyleRegistry>
       <Layout pageMap={await getPageMap()}
         navbar={<Navbar className="docs-container" logo={<span className="brand"><Image src={logo} width={32} height={32} alt="" className="rounded-full" priority /><span>Next Hat <span className="brand-divider">/</span> <span className="brand-docs">Docs</span></span></span>}
           projectLink="https://github.com/next-hat/documentation">
@@ -47,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         nextThemes={{ defaultTheme: 'system', storageKey: 'next-hat-docs-theme' }}>
         {children}
       </Layout>
+      </RedocStyleRegistry>
     </body>
   </html>
 }

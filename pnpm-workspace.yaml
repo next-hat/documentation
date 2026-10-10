@@ -6,6 +6,8 @@ allowBuilds:
   '@tailwindcss/oxide': true
   sharp: true
   esbuild: true
+  # core-js's postinstall only prints a funding notice.
+  core-js: false
   unrs-resolver: false
 
 overrides:

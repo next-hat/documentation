@@ -1,43 +1,15 @@
 {
-  "name": "docs-next-hat-com",
+  "name": "next-hat-documentation",
   "version": "0.18.2",
   "private": true,
+  "packageManager": "pnpm@12.9.1",
   "scripts": {
-    "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "clear": "docusaurus clear"
+    "dev": "pnpm --filter @next-hat/documentation dev",
+    "start": "pnpm dev",
+    "build": "pnpm --filter @next-hat/documentation build",
+    "preview": "pnpm --filter @next-hat/documentation preview",
+    "typecheck": "pnpm --filter @next-hat/documentation typecheck",
+    "check": "node scripts/check-content.mjs"
   },
-  "dependencies": {
-    "@docusaurus/core": "^3.9.2",
-    "@docusaurus/plugin-google-analytics": "^3.9.2",
-    "@docusaurus/preset-classic": "^3.9.2",
-    "@mdx-js/react": "^3.1.1",
-    "clsx": "^2.1.1",
-    "docusaurus-lunr-search": "^3.6.0",
-    "prism-react-renderer": "^2.4.1",
-    "raw-loader": "^4.0.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "redocusaurus": "^2.5.0"
-  },
-  "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.9.2"
-  },
-  "browserslist": {
-    "production": [
-      ">0.5%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "engines": {
-    "node": ">=16.14"
-  }
+  "engines": { "node": ">=24" }
 }

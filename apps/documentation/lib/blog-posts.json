@@ -1,0 +1,184 @@
+[
+  {
+    "slug": "nanocl-0.18",
+    "route": "/blog/nanocl-0.18",
+    "title": "Introducing Nanocl 0.18",
+    "description": "Nanocl 0.18 introduces multi-container Cargoes, health-aware rollouts, process-scoped operations, and simpler proxy and DNS services.",
+    "excerpt": "Nanocl 0.18 makes a Cargo a real multi-container workload. Named application containers, ordered init containers, durable replicas, shared networking, and health-aware updates now form one consistent runtime model. The release also makes day-to-day operations process-scoped and simplifies the proxy and DNS stack.",
+    "date": "2026-07-12",
+    "image": "/img/cloud.webp",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "nanocl",
+      "release",
+      "0.18"
+    ],
+    "sourcePath": "content/blog/nanocl-0.18.mdx"
+  },
+  {
+    "slug": "nanocl-0.17",
+    "route": "/blog/nanocl-0.17",
+    "title": "Introducing Nanocl 0.17",
+    "description": "Nanocl 0.17 lands with powerful CLI improvements, distributed locks, and experimental HTTP/3 support in ncproxy - plus better Statefile tooling and docs.",
+    "excerpt": "We're excited to announce the release of Nanocl 0.17! This version focuses on developer productivity and modern networking: new CLI commands and enhancements, distributed coordination in the daemon, and experimental HTTP/3 support in ncproxy. It also brings significant improvements to Statefile authoring with better argument parsing, metadata, and a built-in manual renderer.",
+    "date": "2025-09-12",
+    "image": "/img/cloud.webp",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "nanocl",
+      "release",
+      "0.17"
+    ],
+    "sourcePath": "content/blog/nanocl-0.17.mdx"
+  },
+  {
+    "slug": "your-own-private-internet-with-nanocl-and-wireguard",
+    "route": "/blog/your-own-private-internet-with-nanocl-and-wireguard",
+    "title": "Your Own Private Internet with Nanocl and WireGuard",
+    "description": "Set up your own self-hosted WireGuard VPN with Nanocl and Docker deploy in minutes, manage peers, and securely access internal services via Nanocl DNS and proxy.",
+    "excerpt": "Want blazing-fast, ultra-secure access to your private network from anywhere in the world? Tired of relying on third-party VPNs? With WireGuard and Nanocl, you can launch your own VPN server in minutes no advanced sysadmin skills required!",
+    "date": "2025-09-08",
+    "image": "/img/vpn_diagram.png",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "wireguard",
+      "vpn",
+      "security",
+      "self-hosted",
+      "nanocl",
+      "docker",
+      "networking",
+      "privacy",
+      "devops",
+      "cloud"
+    ],
+    "sourcePath": "content/blog/your-own-private-internet-with-nanocl-and-wireguard.mdx"
+  },
+  {
+    "slug": "automating-deployment-with-github-actions-and-nanocl",
+    "route": "/blog/automating-deployment-with-github-actions-and-nanocl",
+    "title": "Automating deployment with GitHub Actions and Nanocl",
+    "description": "Learn how to automate your deployment with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort and zero downtime. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using powerful open-source tools.",
+    "excerpt": "Learn how to automate your deployment with GitHub Actions and Nanocl. This guide walks you through setting up seamless deployments, making it easier to deploy your applications with minimal effort and zero downtime. Whether you're new to CI/CD or an experienced developer, this post will show you how to streamline your workflow using powerful open-source tools.",
+    "date": "2024-11-22",
+    "image": "/img/cloud.webp",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "ci/cd",
+      "github actions",
+      "devops",
+      "automation",
+      "nanocl",
+      "deployment",
+      "open source",
+      "cloud infrastructure",
+      "docker",
+      "software development"
+    ],
+    "sourcePath": "content/blog/automating-deployment-with-github-actions-and-nanocl.mdx"
+  },
+  {
+    "slug": "nanocl-0.16",
+    "route": "/blog/nanocl-0.16",
+    "title": "Introducing Nanocl 0.16",
+    "description": "Nanocl 0.16 is here with a range of changes and improvements across the Nanocl ecosystem. Dive into the details!",
+    "excerpt": "We're excited to announce the release of Nanocl 0.16! This update brings a range of changes and improvements across the Nanocl ecosystem. Although this update may seem small, it lays the foundation for future scalability, especially around network meshing, with crucial enhancements in security and network binding. Let’s dive into what’s new and improved across our core components.",
+    "date": "2024-11-01",
+    "image": "/img/cloud.webp",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "nanocl",
+      "release",
+      "0.16"
+    ],
+    "sourcePath": "content/blog/nanocl-0.16.mdx"
+  },
+  {
+    "slug": "nanocl-0.15",
+    "route": "/blog/nanocl-0.15",
+    "title": "Introducing Nanocl 0.15",
+    "description": "Nanocl 0.15.0 is packed with exciting new features, significant enhancements, and important fixes to streamline your container orchestration and virtualization management. Dive into the details!",
+    "excerpt": "We are thrilled to announce the release of Nanocl 0.15.0, packed with exciting new features, significant enhancements, and important fixes to streamline your container orchestration and virtualization management. This release, effective from June 11, 2024, brings you the tools and improvements you’ve been waiting for. Let’s dive into the details!",
+    "date": "2024-06-11",
+    "image": "/img/logo3.png",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "nanocl",
+      "release",
+      "0.15"
+    ],
+    "sourcePath": "content/blog/nanocl-0.15.mdx"
+  },
+  {
+    "slug": "nanocl-0.14",
+    "route": "/blog/nanocl-0.14",
+    "title": "Introducing Nanocl 0.14",
+    "description": "Nanocl 0.14 is here with a host of new features and enhancements to streamline your deployment workflows. Dive into the details!",
+    "excerpt": "In the rapidly evolving landscape of container and virtual machine (VM) orchestration, staying ahead means constantly innovating and adapting to the needs of developers and operators. With that commitment in mind, we're thrilled to unveil Nanocl 0.14 – the latest iteration of our cutting-edge orchestrator that brings a plethora of enhancements and features to streamline your deployment workflows.",
+    "date": "2024-05-07",
+    "image": "/img/logo3.png",
+    "authors": [
+      {
+        "id": "leone",
+        "name": "leone",
+        "title": "Core Team",
+        "url": "https://github.com/0xle0ne",
+        "imageUrl": "https://github.com/0xle0ne.png"
+      }
+    ],
+    "tags": [
+      "nanocl",
+      "release",
+      "0.14"
+    ],
+    "sourcePath": "content/blog/nanocl-0.14.mdx"
+  }
+]

@@ -1,35 +1,28 @@
 server {
   listen       80;
   listen  [::]:80;
-  
-
   gzip on;
   gzip_vary on;
   gzip_proxied any;
   gzip_comp_level 8;
   gunzip on;
-  gzip_types application/javascript image/* text/css;
+  gzip_types application/javascript application/json image/svg+xml text/css text/plain;
   gzip_disable "MSIE [1-6]\.";
 
   root /home/node/app;
+  index index.html;
   error_page 404 /404.html;
-  rewrite ^/(.*)/$ /$1 permanent;
-  try_files $uri $uri.html $uri/index.html =404;
+  rewrite ^/(.+)/$ /$1 permanent;
 
-  ## All static files will be cached.
-  location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+  location / {
+    try_files $uri $uri.html $uri/index.html =404;
+    add_header Cache-Control "no-cache" always;
+  }
+
+  # Next.js fingerprints these assets, so cached copies remain valid.
+  location ^~ /_next/static/ {
+    try_files $uri =404;
     access_log off;
-    expires 1y;
-    add_header Cache-Control max-age=31536000;
-
-    ## No need to bleed constant updates. Send the all shebang in one
-    ## fell swoop.
-    tcp_nodelay off;
-
-    ## Set the OS file cache.
-    open_file_cache max=3000 inactive=120s;
-    open_file_cache_valid 45s;
-    open_file_cache_min_uses 2;
-    open_file_cache_errors off;
+    add_header Cache-Control "public, max-age=31536000, immutable";
   }
 }

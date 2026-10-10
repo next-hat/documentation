@@ -1,0 +1,35 @@
+---
+title: Overview - Manuals - Nanocl
+description: Overview of the Nanocl Manual
+keywords:
+- documentation
+- setups
+- summary
+- nanocl
+- manual
+- overview
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import License from '@/components/license';
+
+# Nanocl overview
+
+Nanocl is a open-source platform for managing workloads.
+It acts as a client-server application with:
+
+* A server with a long-running daemon process [nanocld](/references/nanocl/daemon/overview).
+* APIs which specify interfaces that programs can use to talk to and instruct the Nanocl daemon.
+* A command-line interface (CLI) [nanocl](/references/nanocl/cli/overview) that communicates with the daemon process.
+
+The CLI uses Nanocl APIs to control or interact with the Nanocl daemon through scripting or direct CLI commands. Many other Nanocl applications use the underlying API and CLI. The daemon creates and manage Nanocl objects, such as images, jobs, cargoes and virtual machines.
+
+Nanocl 0.18 is primarily operated on a single node. The daemon exposes some
+experimental node APIs, but this release does not provide automatic multi-node
+scheduling, autoscaling, or cluster-wide high availability. Nanocl integrates
+with [metrs](https://github.com/next-hat/metrs) to collect host metrics.
+
+For more details, see [Nanocl Architecture](/guides/nanocl/overview#nanocl-architecture).
+
+<License />

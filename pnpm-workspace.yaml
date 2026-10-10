@@ -1,0 +1,16 @@
+packages:
+  - apps/*
+  - packages/*
+
+allowBuilds:
+  '@tailwindcss/oxide': true
+  sharp: true
+  esbuild: true
+  unrs-resolver: false
+
+overrides:
+  eslint: ^9.39.1
+  typescript: 5.9.3
+  # Nextra 4.6.1's Layout drops children before validation (upstream #5008).
+  'nextra@4.6.1>zod': 4.1.13
+  'nextra-theme-docs@4.6.1>zod': 4.1.13

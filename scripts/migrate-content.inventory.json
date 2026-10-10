@@ -1,0 +1,2100 @@
+{
+  "documents": 127,
+  "blogPosts": 7,
+  "categories": {
+    "guides/infrastructure": {
+      "label": "Infrastructure",
+      "position": 9
+    },
+    "guides/nanocl": {
+      "label": "Nanocl",
+      "position": 1
+    },
+    "guides/nanocl/advanced-usage": {
+      "label": "Advanced Usage",
+      "position": 3
+    },
+    "guides/nanocl/get-started": {
+      "label": "Get Started",
+      "position": 2
+    },
+    "guides/infrastructure/from_locahost_to_vps": {
+      "label": "From localhost to VPS",
+      "position": 5
+    },
+    "manuals/nanocl": {
+      "label": "Nanocl",
+      "position": 1
+    },
+    "manuals/nanocl/install": {
+      "label": "Install",
+      "position": 2
+    },
+    "references/c2ncl": {
+      "label": "C2ncl",
+      "position": 2
+    },
+    "references/nanocl": {
+      "label": "Nanocl",
+      "position": 1
+    },
+    "references/nanocl/daemon": {
+      "label": "Daemon",
+      "position": 2
+    },
+    "references/nanocl/objects": {
+      "label": "Objects",
+      "position": 2
+    },
+    "references/nanocl/cli": {
+      "label": "CLI"
+    }
+  },
+  "pages": [
+    {
+      "source": "docs/guides/infrastructure/from_locahost_to_vps/containerization.md",
+      "target": "apps/documentation/content/guides/infrastructure/from_locahost_to_vps/containerization.mdx",
+      "route": "/guides/infrastructure/from_locahost_to_vps/containerization",
+      "sourceSha256": "388fb1e4a83c9c76ebe77a40474c4cf1bcc56568dcd89d3c54f3607e4bd26c92",
+      "headings": [
+        "## Project Structure",
+        "## Setting up a Simple Frontend",
+        "### Creating the Project",
+        "### Create your container image",
+        "# stage 1 - Build our application",
+        "# From the latest nodejs lts version",
+        "# Create our app folder",
+        "# Set is as cwd",
+        "# Install app dependencies",
+        "# A wildcard is used to ensure both package.json AND package-lock.json are copied",
+        "# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified",
+        "# Install dependencies",
+        "# Bundle app source code",
+        "# stage 2 - Create app image",
+        "# From latest nginx version on alpine to have a small image",
+        "# Copy our build directory",
+        "# Copy our default nginx config",
+        "### Test your container image",
+        "## Setup a simple API",
+        "### Create the project",
+        "### Create your container image",
+        "# From the latest nodejs lts version",
+        "# Create our app folder",
+        "# Set is as cwd",
+        "# Install app dependencies",
+        "# A wildcard is used to ensure both package.json AND package-lock.json are copied",
+        "# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified",
+        "# Install dependencies",
+        "# Set host to 0.0.0.0 to bind on all container network interfaces",
+        "# This is usefull because we will create a docker network and bind the container to it",
+        "# Set the port of the our app to 80 (default http port)",
+        "# Expose the port so we can see it during inspection",
+        "### Test your container image"
+      ],
+      "codeBlockHashes": [
+        "3271b9b67ef775171bdca8e59e016f012341870b43131bc04eaafae8f656533a",
+        "b1416c2e80d80a6c2466e5ef24e514d1f0343917ae76d9f8e2a550aa27b90b1a",
+        "abd2e9863ecac764f24a6c4f15d1e53ec7ed1b4eb5ea08864bde8f8c3c679ae4",
+        "6a0089530fdd4fb6940c3ec562a6e9d6d934dee5f9e8febcddc8f269c2a9f3dd",
+        "378946b3aa08aac4dd5592863b3b78196945e6ea772f2ae68c74629728643ffe",
+        "b8160b6ac222944b3f56fdda2eaf975622248f30a2ed88b3836146a03c98ede2",
+        "749e2c035052b7ce7b15d2ce81b876416376f935a64e18217e1cc0e2dda64ecd",
+        "0e3916f33f601b46701896373e52902ac535bbe32583d5b2dd532f71c6e95c65",
+        "b6db220444086c67b156bdaf98f9b88ff05c0f518e1283bdac6a1cafb944aa25",
+        "6787391090bbe3f21825d586229b4e5c8f70bc9af41a15020c6fc148b91a8adc",
+        "54fc18ff85211d1c569e3fec1887240b3d8e2a00903f9bd8784c0f909cba9a40",
+        "e7727ea3503a866db5c0a6d899f9c1ac00dc90364b5b4681b9b1280d9ec0bad6",
+        "4161e3cf875383d21b67af57e4bfb1e07f4bd65ad49b17295061d315b1b0a1aa",
+        "16d30e4462189fb14dd611bdb708c510630c576a1f35b9383e89a4352da36c97",
+        "83109d8b2c80686bbf676f176facbac35e226456aae8b6c745158acc79bfdcb8",
+        "451a50e672c51f2b2aa25bd67a596b175d585f3f6a1cf9a0423087330322e658"
+      ]
+    },
+    {
+      "source": "docs/guides/infrastructure/from_locahost_to_vps/expose_your_container.md",
+      "target": "apps/documentation/content/guides/infrastructure/from_locahost_to_vps/expose_your_container.mdx",
+      "route": "/guides/infrastructure/from_locahost_to_vps/expose_your_container",
+      "sourceSha256": "de92002d09441530a7950c699236da926704ad2584b75cd47f8c17b59dcb4f21",
+      "headings": [
+        "## Uploading our Images to the Server",
+        "## Start your images",
+        "## Setting up Nginx",
+        "## Enabling HTTPS with Certbot"
+      ],
+      "codeBlockHashes": [
+        "391bb18341ab870030a7f40bc75e06f51360a36ed5a688a06b6f0ecd13c55370",
+        "a5432ff9f3f35a5f62b27c0787c27287c98adeb978b552a7260b120be8df8dde",
+        "1a9200e874084b7df5cf424f2b1fa02efbd14d86ca024a978f03ccb296303eda",
+        "33a3b65c0e2e3423175719b37a080307d51606a2ed39e02a15e5d4f221f38c91",
+        "25742df2db253a1d97b7bf39b3d127cd01c974e8723192d67765a83d7048991e",
+        "73d9f9dea698f39c45fc2cb5d6b85903ee23d38d54082da66a72401f1c2dbbf3",
+        "04ec1a4daf687781a59ef40436c21ea469acd4b74f7938d362f25032882fa21f",
+        "c1dd52f0cd714647fa53379978e0d11ee4ffbb90fd1869b497efca67714676b9",
+        "8aebd935a7031542ad4f7c4fd1922f1fe2d24a6346ff5c46ef5d2954a35639b6",
+        "a7151cb5cd4a7feaefaeb7d0b978a138d362e6fcad44dd20df3504b946ab4f4e",
+        "ebcf97837869bd300765d0f51d5bc44d9c7cf02594f3c9b5ee3f5ec4997c1957",
+        "40de439a41b01290c335f6964cb0bbf09c9dda2a6c61e185ba0a6696e7564e86",
+        "5436f9b177843f5bdff898bafa84130b6094a520d320300c02d515f195612898",
+        "e686e32890b228e5fcf18078f0c952b73444ee05f468f05d72fe50019ab75a3f",
+        "8dbd2c614ed95b5218800b3dfffa1c1fd1a39fc22a2bf4c4e1fd8f801d3496b9",
+        "5d1c122c4500278b9176b8ca6be17907aae89226b4ada3588ac035b1f1afc9a2",
+        "40de439a41b01290c335f6964cb0bbf09c9dda2a6c61e185ba0a6696e7564e86"
+      ]
+    },
+    {
+      "source": "docs/guides/infrastructure/from_locahost_to_vps/introduction.md",
+      "target": "apps/documentation/content/guides/infrastructure/from_locahost_to_vps/introduction.mdx",
+      "route": "/guides/infrastructure/from_locahost_to_vps/introduction",
+      "sourceSha256": "2ba19a7af9f087493adf8c455aedd7e75e8bc9970bf0f830b0798cc2e8163873",
+      "headings": [
+        "## Introduction",
+        "## Architecture"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/guides/infrastructure/secure-your-server.md",
+      "target": "apps/documentation/content/guides/infrastructure/secure-your-server.mdx",
+      "route": "/guides/infrastructure/secure-your-server",
+      "sourceSha256": "c9a23d3173e34f1649a74a991d1b7e83ddaa9b7cf7644b2a3ffd86488f3f9a4e",
+      "headings": [
+        "## Create a dedicated user",
+        "## Set up SSH key authentication"
+      ],
+      "codeBlockHashes": [
+        "c6cc6302ebaae0ad245ca76dfe33d174028a55bfac6169e6517f0914c1e93ea6",
+        "fe74502a258f6b2a55e76f65a654b5f363afd490a2bf8787f71aa88f1229ed6a",
+        "221339fd081d03d69345c78c28adda3ee20bc195f0436f778e2a8f60787a7c8a",
+        "86e3babbdb547c3779871b8f3e79ddfdb21be306b1dd47f22609ec4789f1b11d",
+        "9aa29ee02ca903a40c109ac8be102afc5779b53576e8d04b0e061287b6c5f814",
+        "cbf35513a85056efdbac1d1d611339276d773827db41a36ec0e6e09f2eff7eff",
+        "c9e966ffe64a36a3da1133cd09b84f4d93e38123a56d3569725782a40e27449b",
+        "016f15471e2723d897b52735a25dac4795028c2fa80470a8cd459295c99f94fd"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/cargo-networking.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/cargo-networking.mdx",
+      "route": "/guides/nanocl/advanced-usage/cargo-networking",
+      "sourceSha256": "44304f20f71ad97e2e96ace5e12c71220424b0edcadb100c0632b28e8bae19e9",
+      "headings": [
+        "# Cargo networking",
+        "## Internal gateway"
+      ],
+      "codeBlockHashes": [
+        "db34936b7a90b8a84377c590a135189107b1ed0d163a8fea54587c57725d8603"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/contexts.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/contexts.mdx",
+      "route": "/guides/nanocl/advanced-usage/contexts",
+      "sourceSha256": "ed606e5de2e6bf0198b7af2c21105920ad44fb4019653063815bcff817888cf7",
+      "headings": [
+        "# Contexts",
+        "## Automatic setup",
+        "## Manual setup",
+        "### Generate the certificates",
+        "### Apply the ProxyRule",
+        "## Create the Context"
+      ],
+      "codeBlockHashes": [
+        "19dba447837719118a3b4878bc2396326cf252421e1e8f421724bfc89a4bda7c",
+        "2d0b471d77ea31d95a8eea847f21bb6269d60b05d66c9f6e27731d24fa0df794",
+        "d525db8d4f40146caa411c626aab0f2496dfd35e9408da20eae198ad816e36a5",
+        "c03c4f5b2e956c80042959dc6cd718170ba4a1f5e0a2f2717ec7d39a08fec7c3",
+        "d8c46be7ea6205438713a8ad80cd7c079896a64464563e61f68490167c7e610d",
+        "da99617a3ea7d94c851c2ddd91d647dd6ac7860b4864605e345a327bfd8f5682",
+        "3e7688f2c821a60c33c6b73c871e13c2be057f27601fa2c58b9aace6442f948c",
+        "adf2dfbcd48d71fb31b6f3135513a99b87a93ea872de3a3bf57d71a549db8464",
+        "c4713eb203ac44adc66550d4a4352b70969105365691fdea863c9cabb3bbd154"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/health-checks.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/health-checks.mdx",
+      "route": "/guides/nanocl/advanced-usage/health-checks",
+      "sourceSha256": "9f5f6e46309e651abbd8b2de3bb1c78232012f96c98a1c68e61eb861d67cc940",
+      "headings": [
+        "# Health checks and rolling updates",
+        "## Rolling updates"
+      ],
+      "codeBlockHashes": [
+        "1d4b369abc238282a1d01c8ad29a5710a688c228497e984e79101412f49b05e9"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/multi-container-cargoes.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/multi-container-cargoes.mdx",
+      "route": "/guides/nanocl/advanced-usage/multi-container-cargoes",
+      "sourceSha256": "4079a4e72707ffb2880ea7fbbf0b5d5d95a9a0229182b053c3470d654e1415a4",
+      "headings": [
+        "# Multi-container Cargoes",
+        "## Replicas and the sandbox",
+        "## Shared and per-container settings",
+        "## Runtime identity and failures"
+      ],
+      "codeBlockHashes": [
+        "eabadf991701170e2d961e8a9679c1912a456e7a863267bc676ca3516e8a8d91"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/process-operations.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/process-operations.mdx",
+      "route": "/guides/nanocl/advanced-usage/process-operations",
+      "sourceSha256": "40a9d2943180d6a5e807cf41b584e43562ad20a69f7df5f2758352ba7cd75467",
+      "headings": [
+        "# Process operations"
+      ],
+      "codeBlockHashes": [
+        "8fd6510911aa1aaaa65f84e1239f65c2fadd9914a88c700ccab16f0c2e4b3638",
+        "74dedb3fa6e776a9a93a19a9cf260f67a66152d9449157a23de7612a77bf7e0a"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/secret_env.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/secret_env.mdx",
+      "route": "/guides/nanocl/advanced-usage/secret_env",
+      "sourceSha256": "2519d98d173c931af35eed45dd507ed4bc22e1b9bd89dcd3f8733d0af0c988f1",
+      "headings": [
+        "# Secret Env"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/secret_tls.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/secret_tls.mdx",
+      "route": "/guides/nanocl/advanced-usage/secret_tls",
+      "sourceSha256": "69c8cdd1be5f006e66fd337792890ad73de39826c6a87395d5e978ae21d3dc60",
+      "headings": [
+        "# Secret TLS",
+        "## Manual Setup",
+        "## Automatic with Let's Encrypt"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/state-args.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/state-args.mdx",
+      "route": "/guides/nanocl/advanced-usage/state-args",
+      "sourceSha256": "32a8450569ca4064bb69f6d30c7dcf96c5959c5bcc10034a6a92673a8f7a6739",
+      "headings": [
+        "# Statefile Arguments"
+      ],
+      "codeBlockHashes": [
+        "1dd073f49838125d33970e0c905a009d86387480092816a74145bd7295719469",
+        "0a9790878fe8228e0561d643318de13b8b961af3296b8dc0cabdb0a94fecdbab",
+        "bd915dabbf770b613b035948e3cf214a343d3b847338a363b77059b549e47299"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/substate.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/substate.mdx",
+      "route": "/guides/nanocl/advanced-usage/substate",
+      "sourceSha256": "02e55b17aada04e03d6d988efdf78c1dd29e85a5c5080e3ebd0d755219355bcf",
+      "headings": [
+        "# SubState"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/virtual-machine.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/virtual-machine.mdx",
+      "route": "/guides/nanocl/advanced-usage/virtual-machine",
+      "sourceSha256": "031f58d97f52398fff1de34c11f35c1b69b1cb26faa6ee02f3b87b465f9a9395",
+      "headings": [
+        "# Create a VM",
+        "## Install the default VM runtime",
+        "## Download Ubuntu and create a VM disk with an init container",
+        "## Run a VM",
+        "## Patch a VM",
+        "## SSH connection",
+        "## Statefile",
+        "## Expose your VM"
+      ],
+      "codeBlockHashes": [
+        "d4b50baa9bf1d1be3925db9933e34d163900dffcd75bad60165d745bb2e824cf",
+        "69c89d5dd11d975bff2c951a4a794dbf12b2e3a8c277b912d8e96275c8f1c178",
+        "4959c8ed2385b51ab9d87b3c433a6ce5597ec17e8b4c65e01e0f536038b5c9aa",
+        "a7d027387cfb5744aeb447055886a41aca7c18730e1baf5aea0b1225ec4ddce7",
+        "8bbc27342a89d847a8667bf5627a1254a3ee002bf9d0db408c330f620728c669",
+        "835cecbd2efbab81d823eab60414f4a4e77ec310b92ca187db1f1e3afeae8297",
+        "268491a88b4062304accfb3cf269389ccba0e75f7b881b0d1d5c0526f41db0c6"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/advanced-usage/vpn.md",
+      "target": "apps/documentation/content/guides/nanocl/advanced-usage/vpn.mdx",
+      "route": "/guides/nanocl/advanced-usage/vpn",
+      "sourceSha256": "1f6e8fe87957632359951ff77017e29d9597fc932ee50f062db8da4c34f9244a",
+      "headings": [
+        "# Your own VPN"
+      ],
+      "codeBlockHashes": [
+        "0ed07acab8af65d6891d8b1b3dfc8271062801709f937ed128ec6a536adb6a3a",
+        "4590c69aab6668066a1a73958b44590a1b3748e8f2c039c37df76f6b21d01b25"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/get-started/configure-your-proxy.md",
+      "target": "apps/documentation/content/guides/nanocl/get-started/configure-your-proxy.mdx",
+      "route": "/guides/nanocl/get-started/configure-your-proxy",
+      "sourceSha256": "0bcb884181a407aa0ad5f45b6fcaeeb90aaf28eff0a5715c3855e540ffe2af07",
+      "headings": [
+        "# Configure your proxy",
+        "## Add proxy rules"
+      ],
+      "codeBlockHashes": [
+        "979e30c9cbc5c50e500294f6a24957e8432db40286deda2787bf24e83c39c280",
+        "8e52427a1920ff93b16a79dac03a3a5ddfb6028c3502fe3c588b3f8e61204b3b",
+        "47a9015f1b31b0eb335144b78be927c5e4fc626a8245e57120eb741ae8f0c5f6",
+        "0b88a0bb46a181bea67cebba97b0944bc3822d6605091c7ec53137531491f9b5"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/get-started/orientation-and-setup.md",
+      "target": "apps/documentation/content/guides/nanocl/get-started/orientation-and-setup.mdx",
+      "route": "/guides/nanocl/get-started/orientation-and-setup",
+      "sourceSha256": "e11ad00a92aa8a825558cdb9879ecc067a3ffb69d8083b4de22aebb87ea77096",
+      "headings": [
+        "# Orientation and Setup",
+        "#### Welcome! We are excited that you want to learn Nanocl.",
+        "## Start the tutorial",
+        "## What is a Cargo ?",
+        "## What is a cargo instance ?",
+        "## What is a container image ?",
+        "## What is a namespace ?"
+      ],
+      "codeBlockHashes": [
+        "712f34d86ead99c648110dceb8548d6af7b69e82e45ded5ccd1ce08e51c023e9",
+        "6ca127b33811a5d0970c3cbcd2a36f16a52f3571ceb5693c4a33d9c503e2edb4",
+        "72e28f3351db912845dd6a8294aac46651076be6bede8d7045979a29d2b64251",
+        "fb5686deaf69b4da3f1d24af9fd8909bcca4a209376d1914f8e73331abf65273",
+        "7a9974f57fe342f2d08a297ee4f6441de6f8f096d941e889fc0c704013677f3c",
+        "4ab476a0da4d23b8f7dda3e917c0afb6ffa74e3e5c3f50f8e49a2cf08b2a8644",
+        "1a9b51e3880e1c90a4fa6cffb0d6f2a95eda0ce6c9d06b9a14364ebe70e1ae3e",
+        "e20fd3e3984e479073ff73f633517e407503ac1b2d9592b9f42cfa2d2ea6fc77"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/get-started/patch-a-cargo.md",
+      "target": "apps/documentation/content/guides/nanocl/get-started/patch-a-cargo.mdx",
+      "route": "/guides/nanocl/get-started/patch-a-cargo",
+      "sourceSha256": "07e057ab0eada4c0a2c9d076264ecc3ed53cf55acc9909dbf84227e795423dab",
+      "headings": [
+        "# Patch a cargo",
+        "## Update cargo image",
+        "## Update cargo environnement"
+      ],
+      "codeBlockHashes": [
+        "63506184fc663efe1816c0fb0310d5ba9af988d3b84ecc2b9463357f4346d56f",
+        "6ca127b33811a5d0970c3cbcd2a36f16a52f3571ceb5693c4a33d9c503e2edb4",
+        "2d873d3ef858b321d91a0330d28f9f8dd517855a5b9ed9cebff120570f9a9033",
+        "6894f6fb94b59af650234a404a0744d4b51cf13027f499f8c94720bb9a925393",
+        "64208b1433e46fff246778136bcc79c63c435592d99ee2677bb8e900badffee1",
+        "6ca127b33811a5d0970c3cbcd2a36f16a52f3571ceb5693c4a33d9c503e2edb4",
+        "647a5cd3e604beec3334e44c92b5f1aa2eead85cb607cea6efda0594a3ac895d",
+        "b2320a87cbbeec3ffefbf2eb3879d0559c1b19a84e36b567270a72f1caccda69"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/get-started/statefile.md",
+      "target": "apps/documentation/content/guides/nanocl/get-started/statefile.mdx",
+      "route": "/guides/nanocl/get-started/statefile",
+      "sourceSha256": "106f6b60e0389707d2fb7d93bb6ac6b5ca9745cb6b510990982c36b4ea64f8f6",
+      "headings": [
+        "# Statefile"
+      ],
+      "codeBlockHashes": [
+        "02165d3bcadeec7ddb5c4cfacf4c831d0a4949a8f9c56cbd0d9fea29d0ac4686",
+        "47a9015f1b31b0eb335144b78be927c5e4fc626a8245e57120eb741ae8f0c5f6"
+      ]
+    },
+    {
+      "source": "docs/guides/nanocl/overview.md",
+      "target": "apps/documentation/content/guides/nanocl/overview.mdx",
+      "route": "/guides/nanocl/overview",
+      "sourceSha256": "9a01f410b4f16653e30fdcdcb0a8e9b2f7b5d6fca64aaadc31f75c90405757db",
+      "headings": [
+        "# Nanocl overview",
+        "## What Nanocl provides",
+        "## Nanocl architecture",
+        "## Core objects",
+        "### Cargo",
+        "### Virtual machine",
+        "### Job",
+        "### Resource",
+        "### Secret"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/guides/summary.md",
+      "target": "apps/documentation/content/guides/summary.mdx",
+      "route": "/guides/summary",
+      "sourceSha256": "12be0ff41fe7bbb06d861257ece51daa9faf87bbd75cadb256a38123ec569161",
+      "headings": [
+        "# Guides"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/install/linux.md",
+      "target": "apps/documentation/content/manuals/nanocl/install/linux.mdx",
+      "route": "/manuals/nanocl/install/linux",
+      "sourceSha256": "1ae15ccda7afed6e55f9d9f0a52f0b6a2c55f8ce2f0b791804effdf18997d978",
+      "headings": [
+        "# Install on Linux",
+        "## Manual install",
+        "### Get the CLI tarball",
+        "### Debian/Ubuntu",
+        "## Compile from source",
+        "## Verify installation"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/install/macos.md",
+      "target": "apps/documentation/content/manuals/nanocl/install/macos.mdx",
+      "route": "/manuals/nanocl/install/macos",
+      "sourceSha256": "5487a991f2d0a349a667b3c5aad47fe62882af6d8881a5e2b7678db46508e2da",
+      "headings": [
+        "# Install Nanocl on MacOS",
+        "## Manual install",
+        "### Get the CLI tarball",
+        "## Compile from source",
+        "## Verify installation"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/install/overview.md",
+      "target": "apps/documentation/content/manuals/nanocl/install/overview.mdx",
+      "route": "/manuals/nanocl/install/overview",
+      "sourceSha256": "8d3e50f2ed91bb31e01f6de6c5e107dddff4c72e7e081b29f8d3038fa6e8a2f5",
+      "headings": [
+        "# Install Nanocl",
+        "## Prerequisites",
+        "### Docker",
+        "### Podman",
+        "## Supported platforms",
+        "## Installation guides",
+        "## Release channels",
+        "## Support"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/install/post-installation.md",
+      "target": "apps/documentation/content/manuals/nanocl/install/post-installation.mdx",
+      "route": "/manuals/nanocl/install/post-installation",
+      "sourceSha256": "32ca522aab196b57624bb11e13f074eb624890ea390fe7b77f6f119d9584a122",
+      "headings": [
+        "# Nanocl post installation instruction",
+        "## Create a Unix group for Nanocl",
+        "## Install Nanocl Components",
+        "## Test if everything is good"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/install/windows.md",
+      "target": "apps/documentation/content/manuals/nanocl/install/windows.mdx",
+      "route": "/manuals/nanocl/install/windows",
+      "sourceSha256": "00ca3103eb9e1e6b26493f8915e3cb95638cf79c1c8025432701060b34d2be07",
+      "headings": [
+        "# Install on Windows",
+        "## Manual install",
+        "### Get the CLI tarball",
+        "# The binary is under bin\\\\nanocl.exe",
+        "# Add to PATH (current session):",
+        "# Or copy to a directory already in PATH (requires admin):",
+        "# Copy-Item (Join-Path $bin 'nanocl.exe') \"$env:ProgramFiles\\\\nanocl\\\\nanocl.exe\" -Force`}</Terminal>",
+        "## Compile from source"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/overview.md",
+      "target": "apps/documentation/content/manuals/nanocl/overview.mdx",
+      "route": "/manuals/nanocl/overview",
+      "sourceSha256": "f7a6becf35cfa79204cc6ca782fc29cd43ccf01653967df25aa98d28f0482188",
+      "headings": [
+        "# Nanocl overview"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/manuals/nanocl/upgrade.md",
+      "target": "apps/documentation/content/manuals/nanocl/upgrade.mdx",
+      "route": "/manuals/nanocl/upgrade",
+      "sourceSha256": "398c5e3818bf006c0a907199f7ebb4b84269519920f69ee5ed1d0880dc292609",
+      "headings": [
+        "# Upgrading Nanocl",
+        "## Export the current state",
+        "## Migrating 0.17 Statefiles to 0.18",
+        "## Upgrade sequence"
+      ],
+      "codeBlockHashes": [
+        "6ef5684a4d7f8093d6c993bb62ec662edbaaaf3239d42697a3a5b56f347651a8",
+        "87768d47cd34faf4a321b72d5b22f537b2e6e8cc34cc82b6591101ccff41764b"
+      ]
+    },
+    {
+      "source": "docs/manuals/summary.md",
+      "target": "apps/documentation/content/manuals/summary.mdx",
+      "route": "/manuals/summary",
+      "sourceSha256": "0d1dcd21c40ada6e014a8f804b48b5a07760f2d33c70534a89004536956597b8",
+      "headings": [
+        "# Manuals"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/c2ncl/cli.md",
+      "target": "apps/documentation/content/references/c2ncl/cli.mdx",
+      "route": "/references/c2ncl/cli",
+      "sourceSha256": "73960d29fee630c8a0b9716a01903c0c1946dc43bbd8f32f9c05ba92db4f2259",
+      "headings": [
+        "# Docker Compose To Nanocl Statefile",
+        "## C2ncl",
+        "## Description",
+        "## Example"
+      ],
+      "codeBlockHashes": [
+        "27157e458e60204438a3f0efb82d31f58a2805c5d8c2002c6ec71e95446f23ec",
+        "68b1b759b6e30f4ebfbda8794b1d92872165b1f46fdb37754a71172b1af0b908",
+        "5c9023dd4c4081ed093ebbe6b13c688019d6ab7c523dbb393a835457fda095b2"
+      ]
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-backup.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-backup.mdx",
+      "route": "/references/nanocl/cli/nanocl-backup",
+      "sourceSha256": "051976daa26e62dde9c7e157b60eff4c9a0d12722efc01b37589254ed80160e0",
+      "headings": [
+        "# Backup",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-create.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-create.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-create",
+      "sourceSha256": "54a230582f4c4bcdb7c5744e7c31d05c1eac9cf6024118637f8548d24338158f",
+      "headings": [
+        "# Cargo create",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-history.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-history.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-history",
+      "sourceSha256": "c0ffeaa88790de4cf94c4d34a72a806a2bf020dc4e720e422c289bdbbf1e454e",
+      "headings": [
+        "# Cargo history",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-inspect",
+      "sourceSha256": "8ce9a3852467213748ca4062764d309483ff2ed16c53b60c3a293abaf2210535",
+      "headings": [
+        "# Cargo inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-list",
+      "sourceSha256": "4e7a4c329ef6d453ce84d7ee4e57370d4a513e75d381cb9fad2c5c4cec7f9c4b",
+      "headings": [
+        "# Cargo list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-logs.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-logs.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-logs",
+      "sourceSha256": "497600f0d63621096fed8f664ad3ee2c007f125fe5b6c9174c7fcd21d347e597",
+      "headings": [
+        "# Cargo logs",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-patch.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-patch.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-patch",
+      "sourceSha256": "a99f2b918172e61b11db9bca00712cabacce00726bc88c4bde6eda405d87f896",
+      "headings": [
+        "# Cargo patch",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-remove",
+      "sourceSha256": "9d9a91409d03c599a41fb5ab9e20b06e1d1cd91436fb3fa7c60468c61d5bd955",
+      "headings": [
+        "# Cargo remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-restart.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-restart.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-restart",
+      "sourceSha256": "0329a46a17a0b19c87c6a6aef22be1c4021bae19227b07873c4b186bd993ce3c",
+      "headings": [
+        "# Cargo restart",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-revert.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-revert.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-revert",
+      "sourceSha256": "706924c931b020d56bd515509f5d5f4dd9fd0c2d1388f0d71860d442b5ff215c",
+      "headings": [
+        "# Cargo revert",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-run.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-run.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-run",
+      "sourceSha256": "5c046a4680b7e36e7f69401a4730423bdc439878009d3704b301bd2f6561f6bb",
+      "headings": [
+        "# Cargo run",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-start.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-start.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-start",
+      "sourceSha256": "1f7202c81cef97c60b518708614e045381feb2135f3409d3a95c6d43188cedec",
+      "headings": [
+        "# Cargo start",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-stats.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-stats.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-stats",
+      "sourceSha256": "6ca508c8e19098be07b05e748df6adf0f62027259a897b24b81138f70d13c0e3",
+      "headings": [
+        "# Cargo stats",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo-stop.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo-stop.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo-stop",
+      "sourceSha256": "06d4ebaae511bb5bf2b7bf5e3dce572a5f0ec26f2acdfbea0915f3a236f150ed",
+      "headings": [
+        "# Cargo stop",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-cargo.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-cargo.mdx",
+      "route": "/references/nanocl/cli/nanocl-cargo",
+      "sourceSha256": "1d6a7e70de8a13132690207fab014b6c626534dc8b1c65b584dc229a004f89d0",
+      "headings": [
+        "# Cargo",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-context-from.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-context-from.mdx",
+      "route": "/references/nanocl/cli/nanocl-context-from",
+      "sourceSha256": "155e2df50d1c5899beb0aa6dcc056a1185e708804b6210673c49da19cc50232b",
+      "headings": [
+        "# Context from",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-context-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-context-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-context-list",
+      "sourceSha256": "897f8fe242c2e47a6e4452689be008b8000dbbbb185d703ce77733ea819f8dc1",
+      "headings": [
+        "# Context list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-context-use.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-context-use.mdx",
+      "route": "/references/nanocl/cli/nanocl-context-use",
+      "sourceSha256": "0e5220fcdae6c57c9c83349279d3593fe811298f7d6c9850014679b68dc53391",
+      "headings": [
+        "# Context use",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-context.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-context.mdx",
+      "route": "/references/nanocl/cli/nanocl-context",
+      "sourceSha256": "1d751d76eb7f49277fd9ff9f955358493452f4ba5e13dbb709ac332c43e303e8",
+      "headings": [
+        "# Context",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-event-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-event-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-event-inspect",
+      "sourceSha256": "d1dc7f90c16430ae433704813d3b9a7491e6fa7a038a897250e4613d93a7f371",
+      "headings": [
+        "# Event inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-event-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-event-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-event-list",
+      "sourceSha256": "2d2aade096e9ea4b3562adafec27a92a78c08f3221fec1a768c2181517445ba8",
+      "headings": [
+        "# Event list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-event-watch.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-event-watch.mdx",
+      "route": "/references/nanocl/cli/nanocl-event-watch",
+      "sourceSha256": "4cfd5a4eada65130943aa648b6ba26810a1b1817a22e38d4005700036f92d16c",
+      "headings": [
+        "# Event watch",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-event.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-event.mdx",
+      "route": "/references/nanocl/cli/nanocl-event",
+      "sourceSha256": "1ac46e020d327b2afbcf959114680a6e7ceb1021b616239aa6bd0beb164bfb3a",
+      "headings": [
+        "# Event",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-exec.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-exec.mdx",
+      "route": "/references/nanocl/cli/nanocl-exec",
+      "sourceSha256": "62bc5978159ae29250d17ced19cb02f2d05200193240faab64b2ca7d10d39586",
+      "headings": [
+        "# Exec",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-info.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-info.mdx",
+      "route": "/references/nanocl/cli/nanocl-info",
+      "sourceSha256": "69145ed55e11a71018546ccb352b4054cf4f9cea054638fe1c70bf02e574ceb8",
+      "headings": [
+        "# Info",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-inspect",
+      "sourceSha256": "1ec7c2994b6da7bfaad60b36faeb08bb4f7dd34faac301c6a26a6207abf7b503",
+      "headings": [
+        "# Inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-install.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-install.mdx",
+      "route": "/references/nanocl/cli/nanocl-install",
+      "sourceSha256": "deb62c9b00e5ed31f1d4c75c963272214c87c06d385999e1a36985ba2d928306",
+      "headings": [
+        "# Install",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-inspect",
+      "sourceSha256": "dccae6a45769d1b8156c1bc335de4fda6a2a9eb22cc84f9abe1edb7e2dfa7cf6",
+      "headings": [
+        "# Job inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-list",
+      "sourceSha256": "e4fe98dfacec055bd06ec18e53098913f7cb9580dc6880dbfbb435f2c76ac4b4",
+      "headings": [
+        "# Job list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-logs.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-logs.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-logs",
+      "sourceSha256": "37f9d3173cf04a4ab3ff0410e6b0fea768a265c5786e5fbd3e0a25eb0c16b932",
+      "headings": [
+        "# Job logs",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-remove",
+      "sourceSha256": "05b961534740a7542d7d1c0849ff7c8937170c35c58f9e49723d7429adfbaec6",
+      "headings": [
+        "# Job remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-start.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-start.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-start",
+      "sourceSha256": "cb1ae0418b869045ecfc413c2fa928a994c8d8698373d5f8a20f6e2fc6af7747",
+      "headings": [
+        "# Job start",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job-wait.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job-wait.mdx",
+      "route": "/references/nanocl/cli/nanocl-job-wait",
+      "sourceSha256": "007e55053c71bd8729fc0cf14b7217af929b737164101819ab3d1c46abe80409",
+      "headings": [
+        "# Job wait",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-job.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-job.mdx",
+      "route": "/references/nanocl/cli/nanocl-job",
+      "sourceSha256": "cb33f7e58d487fd35e2b5082d484dee42676df6e172db2f1e0aab28377db78e2",
+      "headings": [
+        "# Job",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-kill.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-kill.mdx",
+      "route": "/references/nanocl/cli/nanocl-kill",
+      "sourceSha256": "a4f0e2f6ed6d1dd5a6a43c853b26dc20abcea4ee2b61227a8e1550def43fe38a",
+      "headings": [
+        "# Kill",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-logs.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-logs.mdx",
+      "route": "/references/nanocl/cli/nanocl-logs",
+      "sourceSha256": "fb2d7153182fc1c3f285e1073e87660be8b90abb5d80f733f340c475db2a175c",
+      "headings": [
+        "# Logs",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-metric-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-metric-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-metric-inspect",
+      "sourceSha256": "72110e2bda2c4668f9115b5281b9ff7c8e9b36b5d17426fe617e16e40dd127c7",
+      "headings": [
+        "# Metric inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-metric-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-metric-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-metric-list",
+      "sourceSha256": "b20d1140683b3687e50e7c93baf447e68ccde0c51d24ebffb7c3cc89a2768461",
+      "headings": [
+        "# Metric list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-metric.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-metric.mdx",
+      "route": "/references/nanocl/cli/nanocl-metric",
+      "sourceSha256": "afc7cdd6398769b9ba544241d61ea86a6cef4aa98d484bcd24022742c4e330ba",
+      "headings": [
+        "# Metric",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-namespace-create.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-namespace-create.mdx",
+      "route": "/references/nanocl/cli/nanocl-namespace-create",
+      "sourceSha256": "e192b0a278c37b6e1d42f2663e4497ce36350c6a6e47fb2065777d4bfab4849d",
+      "headings": [
+        "# Namespace create",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-namespace-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-namespace-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-namespace-inspect",
+      "sourceSha256": "49566bbbb6b26c474b4fca1ed20a1eb9424549c6b2f7524cb627d922b5f28a15",
+      "headings": [
+        "# Namespace inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-namespace-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-namespace-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-namespace-list",
+      "sourceSha256": "6d443aeddbdf4435be234f012fbbbff6ea608b4720f100624b5d09a44ee4b6e9",
+      "headings": [
+        "# Namespace list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-namespace-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-namespace-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-namespace-remove",
+      "sourceSha256": "d16d2016a7dcf8a7a59d0bb985413867b2c56c607cd5982cf37ae866976c337d",
+      "headings": [
+        "# Namespace remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-namespace.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-namespace.mdx",
+      "route": "/references/nanocl/cli/nanocl-namespace",
+      "sourceSha256": "318aec99b32681e89a288af8f9d687ee4e877f0eb90d889dec845f1380941bd8",
+      "headings": [
+        "# Namespace",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-node-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-node-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-node-list",
+      "sourceSha256": "dc887a891dfe343fbadd2f908e62484dec1c0b44fca08a4a91a082a7545e3b03",
+      "headings": [
+        "# Node list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-node.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-node.mdx",
+      "route": "/references/nanocl/cli/nanocl-node",
+      "sourceSha256": "6ac8df8664acf2c0770221b5d347d7f7ff3b3461f0e27235c62b8943796bebd1",
+      "headings": [
+        "# Node",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-ps.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-ps.mdx",
+      "route": "/references/nanocl/cli/nanocl-ps",
+      "sourceSha256": "94d7e1f894591e619f29ced9794c8741f0b66242442a942697bdc26b250cf0ea",
+      "headings": [
+        "# Ps",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource-history.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource-history.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource-history",
+      "sourceSha256": "7c53589dbf660d92df1f7f54aca0e6ded46a965dcc3bdd0480c449ee0dc487d2",
+      "headings": [
+        "# Resource history",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource-inspect",
+      "sourceSha256": "a8bbf933280d79db40851e2fd72135ebd6143320043b6585c994d60e2062c441",
+      "headings": [
+        "# Resource inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource-list",
+      "sourceSha256": "2aef5c0ed6ff0e04ca5989df1db111fc03e9e189733d87a25e7752836413e359",
+      "headings": [
+        "# Resource list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource-remove",
+      "sourceSha256": "c9c4c64ad67287d97354a8626340d928d78824653b5c8dedea714feb72db2269",
+      "headings": [
+        "# Resource remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource-revert.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource-revert.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource-revert",
+      "sourceSha256": "70b2c37521e013d7f4c06a72957b17adf937914cf37d53dc95ac892e6bfce3cf",
+      "headings": [
+        "# Resource revert",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-resource.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-resource.mdx",
+      "route": "/references/nanocl/cli/nanocl-resource",
+      "sourceSha256": "0b4942cf88e17add297ea0f0fd65f1b0f4f84f68abe7ebb32a6447de0b9abf0e",
+      "headings": [
+        "# Resource",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-create-container-registry.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-create-container-registry.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-create-container-registry",
+      "sourceSha256": "4afd22fdce32e7a697b524aa22eee4e4487af975d47db136345b442c55e5cff3",
+      "headings": [
+        "# Secret create container registry",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-create-env.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-create-env.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-create-env",
+      "sourceSha256": "8fe4d28496147b553c9645c43ad296ed4646c2c6860456d6c54f7966a808ca3d",
+      "headings": [
+        "# Secret create env",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-create-tls.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-create-tls.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-create-tls",
+      "sourceSha256": "7b94c55ce7e6c32c0f6656bb82a313c2b6ae4df8ab22ef61a3caa45be1430639",
+      "headings": [
+        "# Secret create tls",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-create.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-create.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-create",
+      "sourceSha256": "481ee4b494a9e42eb92a04074edc7e3ad95905eaffd4ac8325734b969f3ecbbe",
+      "headings": [
+        "# Secret create",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-inspect",
+      "sourceSha256": "1e6a9d9a0be06f5dd57de0844b43d837e763745ac417b2d92163131d0d107d59",
+      "headings": [
+        "# Secret inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-list",
+      "sourceSha256": "ca5ad28ca7b700aff9e4fc4f527bcba132c5814ebee39faa89d2b3806fc06cc6",
+      "headings": [
+        "# Secret list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-patch-container-registry.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-patch-container-registry.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-patch-container-registry",
+      "sourceSha256": "95dc8e3b34f28eb500da85ea7f43d3747a8aace943f9247a3176fa3b978b8825",
+      "headings": [
+        "# Secret patch container registry",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-patch-env.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-patch-env.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-patch-env",
+      "sourceSha256": "a8747dd90c5f9cffbe3925e4309b48f1b899b5437dafaeb41d287d8427701033",
+      "headings": [
+        "# Secret patch env",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-patch-tls.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-patch-tls.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-patch-tls",
+      "sourceSha256": "1f0be0ba6115884ec7126173c88846fcb6c22f8ba80b4901206f53200951d030",
+      "headings": [
+        "# Secret patch tls",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-patch.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-patch.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-patch",
+      "sourceSha256": "4e4198dc98b43c934d47220d606c6d8710483ea5c564d526760b8159a83d995a",
+      "headings": [
+        "# Secret patch",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret-remove",
+      "sourceSha256": "2ccc41c91722ebe71e73d1a2c1ebebab672abd43a8d84794b407f5cec3ba5909",
+      "headings": [
+        "# Secret remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-secret.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-secret.mdx",
+      "route": "/references/nanocl/cli/nanocl-secret",
+      "sourceSha256": "302b26719b273ad8fdc524fd1ddcf9c90847b42cc542421e7f9ccc867c1dddb7",
+      "headings": [
+        "# Secret",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state-apply.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state-apply.mdx",
+      "route": "/references/nanocl/cli/nanocl-state-apply",
+      "sourceSha256": "e5c12e61cecd047b4d68d8a30befba400955b5877e4547947e2c06cc838487b9",
+      "headings": [
+        "# State apply",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state-logs.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state-logs.mdx",
+      "route": "/references/nanocl/cli/nanocl-state-logs",
+      "sourceSha256": "6705cc78822829becccdf2e7b1fea7b0ba67b57a36683587463c5da6226f2d4e",
+      "headings": [
+        "# State logs",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state-man.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state-man.mdx",
+      "route": "/references/nanocl/cli/nanocl-state-man",
+      "sourceSha256": "a3d69f2b187ceacd91410adf58b3c8ff1b5039ebbd63fb625f807f16a3c6d3c9",
+      "headings": [
+        "# State man",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-state-remove",
+      "sourceSha256": "fd4f8310617d1e8a2aec51c13cae23dbee494abb2dbe7363d1e47afb238cea67",
+      "headings": [
+        "# State remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state-render.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state-render.mdx",
+      "route": "/references/nanocl/cli/nanocl-state-render",
+      "sourceSha256": "e64a7e0a4cd722cfe68307bab08980b503d39bca5265bc50cbcf3ce2c61513f8",
+      "headings": [
+        "# State render",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-state.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-state.mdx",
+      "route": "/references/nanocl/cli/nanocl-state",
+      "sourceSha256": "84fb084a8b86ca3da8654b3e36cb4b7b2420d6dac0c84a33386b739dfdccbbfe",
+      "headings": [
+        "# State",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-stats.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-stats.mdx",
+      "route": "/references/nanocl/cli/nanocl-stats",
+      "sourceSha256": "dc37dfcf5f759e24e771dc280869dcb6d8fd764e983826336c082dc14e583aea",
+      "headings": [
+        "# Stats",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-uninstall.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-uninstall.mdx",
+      "route": "/references/nanocl/cli/nanocl-uninstall",
+      "sourceSha256": "a735df81cdfae31f011431a821a61594c840675ed1831a9f9d560a9520ba2c02",
+      "headings": [
+        "# Uninstall",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-version.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-version.mdx",
+      "route": "/references/nanocl/cli/nanocl-version",
+      "sourceSha256": "ca4fad47336856d2c10298fa054f8970c95ed4a6621f09a3ebb6085bf06d7c4d",
+      "headings": [
+        "# Version",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-attach.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-attach.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-attach",
+      "sourceSha256": "4820c5577d98daea597eee820ae122644b6c8b1a720a9ef7a5c44a4d5191d240",
+      "headings": [
+        "# Vm attach",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-create.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-create.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-create",
+      "sourceSha256": "67996f7ddac8c0df8106f88c98456a88f7632310308233e9c14c319b9391f483",
+      "headings": [
+        "# Vm create",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-inspect.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-inspect.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-inspect",
+      "sourceSha256": "42d2f0f97a3b86c1f8e03300277d16179c1d875804865cfb9024db70d50654cf",
+      "headings": [
+        "# Vm inspect",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-list.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-list.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-list",
+      "sourceSha256": "cdfd94ff8771b1f11fb2446b3c16dffcda46b9d15f0abf5e20debd885d0e6ef8",
+      "headings": [
+        "# Vm list",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-patch.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-patch.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-patch",
+      "sourceSha256": "b0c17aa70be24d0f8457f4619a0adc063804fb4b7ed88c9ce5ad1621ea197560",
+      "headings": [
+        "# Vm patch",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-remove.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-remove.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-remove",
+      "sourceSha256": "28bf4842119215ce3b04c48c68ae9154ef1934728293c397e866b870d71368b6",
+      "headings": [
+        "# Vm remove",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-run.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-run.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-run",
+      "sourceSha256": "596f65562ffbdb485bf40431bd1e69adca4da85f8e2f2860d4bfc010ff210154",
+      "headings": [
+        "# Vm run",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-start.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-start.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-start",
+      "sourceSha256": "5c501ac88c63b0950e78db5ef0228c3bf180fbc915cc7b51d5b3d2ebaf56947e",
+      "headings": [
+        "# Vm start",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm-stop.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm-stop.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm-stop",
+      "sourceSha256": "78666723b565a6bf4e605390a3f3694871115e2008abfacf9ee2fa9998dec6bb",
+      "headings": [
+        "# Vm stop",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl-vm.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl-vm.mdx",
+      "route": "/references/nanocl/cli/nanocl-vm",
+      "sourceSha256": "45c182b38cd06075771ba8768218d0a1a838fb395fa2a395c0e31b2b807e40c8",
+      "headings": [
+        "# Vm",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocl.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocl.mdx",
+      "route": "/references/nanocl/cli/nanocl",
+      "sourceSha256": "4cf6f3a39ba424f65651eaa4ed2ebd4bfca52176af8274dfa64e5638580ff851",
+      "headings": [
+        "# Nanocl",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# SUBCOMMANDS",
+        "# VERSION"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/nanocld.md",
+      "target": "apps/documentation/content/references/nanocl/cli/nanocld.mdx",
+      "route": "/references/nanocl/cli/nanocld",
+      "sourceSha256": "459732f4ee3adfa3840d3408710953b0f5618397891de5b07ee9c6eca35d2305",
+      "headings": [
+        "# Nanocld",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS",
+        "# VERSION",
+        "# AUTHORS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/ncproxy.md",
+      "target": "apps/documentation/content/references/nanocl/cli/ncproxy.mdx",
+      "route": "/references/nanocl/cli/ncproxy",
+      "sourceSha256": "e0c1704a28e8f721644d4dda204252f5142ba44f15668a79c2ac69be9f521678",
+      "headings": [
+        "# Ncproxy",
+        "# NAME",
+        "## SYNOPSIS",
+        "## DESCRIPTION",
+        "## OPTIONS"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/cli/overview.md",
+      "target": "apps/documentation/content/references/nanocl/cli/overview.mdx",
+      "route": "/references/nanocl/cli/overview",
+      "sourceSha256": "847d258560ec3914e1989503091275ce7506b4cff604b0beac7a81bf17fe2219",
+      "headings": [
+        "# Use the Nanocl command line",
+        "## Workload keys and process names",
+        "## Help"
+      ],
+      "codeBlockHashes": [
+        "8b575f71fc5730401b350bdae7959e2e235348b81cc41002b1afa4c144f0cb2d",
+        "5a7db6bf17d0f529b9064dcd1ec92acaa7188283368c3e46389555e62754f73a",
+        "7aed67b1923caf552a2a216e9ab2a7406cb9d695adebdf764a38175a690ed990",
+        "910e8f5882e6fef87836f2dfae3707bd1b06b7d9c5c4e2f6b21fed4d34e8a09a"
+      ]
+    },
+    {
+      "source": "docs/references/nanocl/cli/readme.md",
+      "target": "apps/documentation/content/references/nanocl/cli/readme.mdx",
+      "route": "/references/nanocl/cli/readme",
+      "sourceSha256": "be1bc93642d9fee378bc9acb9a888055921c1a7b8c86493b5fec829a09e2fba2",
+      "headings": [
+        "# Man Page",
+        "## Summary"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/daemon/overview.md",
+      "target": "apps/documentation/content/references/nanocl/daemon/overview.mdx",
+      "route": "/references/nanocl/daemon/overview",
+      "sourceSha256": "3b64829ab6b035f2094c99c968a426f812b5975f8d6a1256022e629cd7fb043e",
+      "headings": [
+        "# Nanocl daemon"
+      ],
+      "codeBlockHashes": [
+        "4ae78cd118b82b39351bbe31328a11dbf6c356536db87a66ddecbf47c52bfbda"
+      ]
+    },
+    {
+      "source": "docs/references/nanocl/objects/cargo.md",
+      "target": "apps/documentation/content/references/nanocl/objects/cargo.mdx",
+      "route": "/references/nanocl/objects/cargo",
+      "sourceSha256": "a20444022751ddb2b8622f65c639aca4c642d8604883e7b1298c0ff2fd4faec4",
+      "headings": [
+        "# Cargo"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/objects/job.md",
+      "target": "apps/documentation/content/references/nanocl/objects/job.mdx",
+      "route": "/references/nanocl/objects/job",
+      "sourceSha256": "e1b2b76a9391c122925d9e142f783dcb47a2e0bd895708fe40fa68268aecc81f",
+      "headings": [
+        "# Job"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/objects/resource.md",
+      "target": "apps/documentation/content/references/nanocl/objects/resource.mdx",
+      "route": "/references/nanocl/objects/resource",
+      "sourceSha256": "069906dedb96b4324ce0e6f284f8df083bd4acd057d16621b309175f7031fba7",
+      "headings": [
+        "# Resource",
+        "## Proxy Rule",
+        "### Proxy Rule Network",
+        "## Dns Rule"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/objects/secret.md",
+      "target": "apps/documentation/content/references/nanocl/objects/secret.mdx",
+      "route": "/references/nanocl/objects/secret",
+      "sourceSha256": "6bf670ae6e2ce3d22aab4083d6977c4a6a7122eb361f9150f7086accb48da9b7",
+      "headings": [
+        "# Secret",
+        "## Uses for Secrets",
+        "## Kinds of secrets",
+        "### Env",
+        "### Tls"
+      ],
+      "codeBlockHashes": [
+        "f16f09da7d2cfc6ab889ab9ba405da56e7e98ad9ec98c5688fb7605b8e7e8461",
+        "9bd66ac183ab974eed62d4f0c57372984ff473944cfe3d36111daa196d4356d9"
+      ]
+    },
+    {
+      "source": "docs/references/nanocl/objects/virtual-machine.md",
+      "target": "apps/documentation/content/references/nanocl/objects/virtual-machine.mdx",
+      "route": "/references/nanocl/objects/virtual-machine",
+      "sourceSha256": "eb415cfaca740905d2fcce72733238062e2b0050e46680522514a72c9f782001",
+      "headings": [
+        "# Virtual Machine"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/nanocl/statefile.md",
+      "target": "apps/documentation/content/references/nanocl/statefile.mdx",
+      "route": "/references/nanocl/statefile",
+      "sourceSha256": "0f489c75a08cd72c51c383598c79a001e0513f0312958c7f41879b4dcd63861c",
+      "headings": [
+        "# Statefile"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "docs/references/summary.md",
+      "target": "apps/documentation/content/references/summary.mdx",
+      "route": "/references/summary",
+      "sourceSha256": "42bffa53fb91fcb9168cd409cac8ac90f30ebac723d6013ced6991fb2eb19691",
+      "headings": [
+        "# References"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "blog/2024-05-07-release-0.14/index.md",
+      "target": "apps/documentation/content/blog/nanocl-0.14.mdx",
+      "route": "/blog/nanocl-0.14",
+      "sourceSha256": "17e92783677c3ec46139ff928576faa4e15d01d13fb28b3aeb974a3281534a86",
+      "headings": [
+        "## Nanocld",
+        "### Changed",
+        "### Fixed",
+        "## Nanocl",
+        "### Changed",
+        "### Fixed",
+        "## Ncproxy",
+        "### Changed",
+        "### Added",
+        "### Fixed"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "blog/2024-06-11-release-0.15/index.md",
+      "target": "apps/documentation/content/blog/nanocl-0.15.mdx",
+      "route": "/blog/nanocl-0.15",
+      "sourceSha256": "628476611e4fa7989777d7576177813ca8219d3d5daff5d54102cdaa4ec09e27",
+      "headings": [
+        "## Key Highlights",
+        "### New Features",
+        "### Bug Fixes",
+        "### Changes",
+        "# Nanocld 0.15.0",
+        "### Key Enhancements",
+        "### Bug Fixes",
+        "### Changes",
+        "# Ncproxy 0.12.0",
+        "### Key Updates",
+        "### Changes"
+      ],
+      "codeBlockHashes": []
+    },
+    {
+      "source": "blog/2024-11-01-release-0.16/index.md",
+      "target": "apps/documentation/content/blog/nanocl-0.16.mdx",
+      "route": "/blog/nanocl-0.16",
+      "sourceSha256": "6f70e379d8578c31b3790ffdb3813c8a0cd914b0a0f2cee530a7842266b4d3b6",
+      "headings": [
+        "## Highlights of Nanocl 0.16",
+        "## Component Changes",
+        "### `ncproxy` 0.13.0",
+        "### `ncdns` 0.8.0",
+        "### `nanocld` 0.16.0",
+        "### `nanocl` 0.16.0 (CLI)",
+        "## Example End to End TLS Configuration",
+        "## What’s Next?"
+      ],
+      "codeBlockHashes": [
+        "6c5c927bfeee64ea1e49fda941cf574697a7d00b1a3d500157319366df842a12"
+      ]
+    },
+    {
+      "source": "blog/2024-11-22-automating-deployment-with-github-actions-and-nanocl/index.md",
+      "target": "apps/documentation/content/blog/automating-deployment-with-github-actions-and-nanocl.mdx",
+      "route": "/blog/automating-deployment-with-github-actions-and-nanocl",
+      "sourceSha256": "c97cd1a72632e626b1ea47d06c1b7e450656829a3fbeeb49d9d5bfdfecec4039",
+      "headings": [
+        "## Introduction",
+        "## Prerequisites",
+        "## Creating the container image",
+        "### Creating a Nginx Configuration File",
+        "### Creating a Dockerfile",
+        "# Create app directory (with user `node`)",
+        "# Set is as cwd",
+        "# Install app dependencies",
+        "# A wildcard is used to ensure both package.json AND package-lock.json are copied",
+        "# where available (npm@5+)",
+        "# Install dependencies",
+        "# Bundle app source code",
+        "### Building and Running the Docker Image Locally",
+        "## Setting up Nanocl",
+        "## Setting up Github Secrets",
+        "## Creating a Statefile Configuration",
+        "## Setting up GitHub Actions",
+        "### Building and Publishing the Docker Image",
+        "### Deploying the Application with Nanocl",
+        "## Enable public SSL/TLS with Let's Encrypt",
+        "## Conclusion"
+      ],
+      "codeBlockHashes": [
+        "3060d4027d87f7081d89445998a6a9c6581e02bca0984a5a96d20b425f117868",
+        "e643ce3efd01834f60d64df54f679d4eae94139361f83232a0d019170b53c6ee",
+        "81151bc02c055824c9424ffe4263d1732fa28df2c3132c74fc2f3298ba4b2343",
+        "07b813e5aad5510aed9829921a16d4d6fb9007ddc0858c8773f3719186a6ee05",
+        "ed81edc11b43bc7dc3ec4d4602c5bf92ad06b9d4e534243b6594f9694cc30a12",
+        "19dba447837719118a3b4878bc2396326cf252421e1e8f421724bfc89a4bda7c",
+        "a46435e70548ff9c6a47a63190885c4a58a69ad7b656990440b296ae2dc33f67",
+        "243aa9b9a7b2867251e23af134cd009d139ee3ab963f19b6d66433ebaf022600",
+        "ee06ffd01b645c79c731fbc7b2523e09674a33d681da124ac38589d9b1cc9de6",
+        "4dbf0c05fce0a0fdc475d18b94581565cb0486f72052dd4f823f46e897f3715e",
+        "ccc42cd76cc220b32dda22ad7f6ffb93b8e40e539d44f80dd92ba3fee79dd9ba"
+      ]
+    },
+    {
+      "source": "blog/2025-09-08-your-own-private-internet-with-nanocl-and-wireguard/index.md",
+      "target": "apps/documentation/content/blog/your-own-private-internet-with-nanocl-and-wireguard.mdx",
+      "route": "/blog/your-own-private-internet-with-nanocl-and-wireguard",
+      "sourceSha256": "12bc5ada8a3cf424fa3bde67ef572e353559f29c9be363c3f2f9ba0883b02135",
+      "headings": [
+        "## Prerequisites",
+        "## Install Docker",
+        "## Install Nanocl",
+        "## Deploy WireGuard (Your Private VPN)",
+        "## Deploy internal services",
+        "## Security Best Practices",
+        "## Troubleshooting Tips",
+        "## Visualize Your Setup",
+        "## Next Steps & Call to Action"
+      ],
+      "codeBlockHashes": [
+        "7472608009ec7e18c5f293bcaf4de44e191928e1dfd45ff47b5aa8658a8225e1",
+        "25878f796ef8a7fae8da2ae70ad6cb160622c53f48647eb7c93096f24e59d29c",
+        "9502819c115dc352e07a9cce400ae3f7bace61c7ad7b050adcdf3a4c0c5d6992",
+        "c5219db5e229edd552042e36e2bd3ceea92f2f86b13782467aa19a93ae603b09",
+        "7f4a3b214f9cbef3489ab0245546caa5ea233652fe06e9d8a388194a151219e9",
+        "9f8f773996d724fa8887e07e4ab927a1dfb1af1e542889ba1791bcada9018a6d",
+        "971603fa08fee84a4905bc250d701f0e8759e4c6df1c93d5c00f486f7701d29b",
+        "c930b2b15b069452fab4a1e6b85bd1b5954ff40de0a8883e7899dcf9d7312f47",
+        "f1cb0866e7f0ecc5c2745c4a6a2d9757c33badbd932838390ce5134ed6b61ec1",
+        "9280feb2650cced511ccbd28c9aea019631261499c19b498b548cffd97d6f81b",
+        "e77e524689bb6492ee8c5f0c2c2e48695feac72cbfb3ec6cdab0be6977bafe9e"
+      ]
+    },
+    {
+      "source": "blog/2025-09-12-release-0.17/index.md",
+      "target": "apps/documentation/content/blog/nanocl-0.17.mdx",
+      "route": "/blog/nanocl-0.17",
+      "sourceSha256": "dbdf50ad64c7c068792f679909ebf7f257d8bcebe7bb86ef28b40b85d0f8a4ee",
+      "headings": [
+        "## Highlights of Nanocl 0.17",
+        "## New: Official Nanocl Registry",
+        "## Component Changes",
+        "### nanocl 0.17.0",
+        "### nanocld 0.17.0",
+        "### ncproxy 0.14.0",
+        "## HTTP/3 and HSTS",
+        "## Statefile Manuals",
+        "## What’s Next?"
+      ],
+      "codeBlockHashes": [
+        "c414da3ec7083ea07d9b78c70bce0eab9496aeee7e523dbe740959ac7d0a7f12",
+        "3e5a7006db57c3da1ea410b93456321456a4ec72c16a797fa5bde254886fa05d"
+      ]
+    },
+    {
+      "source": "blog/2026-07-12-release-0.18/index.md",
+      "target": "apps/documentation/content/blog/nanocl-0.18.mdx",
+      "route": "/blog/nanocl-0.18",
+      "sourceSha256": "9fc6e8da8ef9a6d7575057a0ba871b9f57352d70e6dad19b188d90cddf30215a",
+      "headings": [
+        "## Watch the walkthrough",
+        "## A Cargo is now a multi-container workload",
+        "## Readiness is part of the rollout",
+        "## Operate the process you mean",
+        "## Deliberately small networking",
+        "## Fewer moving parts in the runtime",
+        "## Runtime reliability",
+        "## Component releases",
+        "## Breaking changes and migration",
+        "## What comes next"
+      ],
+      "codeBlockHashes": [
+        "a5516e1879144bedccef3ea6608ab606cc918ddef15246046febd3d0cef94286",
+        "7aed67b1923caf552a2a216e9ab2a7406cb9d695adebdf764a38175a690ed990",
+        "69186177932636554fbe703defe559fcbe84250a2aeb601b9f26e266e2a773c3"
+      ]
+    }
+  ]
+}

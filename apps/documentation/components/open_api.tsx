@@ -1,12 +1,13 @@
 import { daemonVersions, readDaemonSpec } from '../lib/openapi';
+import type { RedocSpec } from '../lib/redoc-options';
 import { prepareRedocSpec } from '../lib/redoc-spec';
 import RedocViewer from './redoc-viewer';
 import './open_api.css';
 
-const methods = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
+const methods = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'] as const;
 
-export default function OpenApi({ version }) {
-  const spec = readDaemonSpec(version);
+export default function OpenApi({ version }: { version: string }) {
+  const spec: RedocSpec = readDaemonSpec(version);
   const operationCount = Object.values(spec.paths).reduce((count, path) => count + methods.filter((method) => path[method]).length, 0);
   const specUrl = `/specs/nanocld/${version}.yaml`;
   return <div className="api-reference">

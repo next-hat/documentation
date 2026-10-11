@@ -1,12 +1,13 @@
 import { Code, Pre } from 'nextra/components';
-import { codeToTokens } from 'shiki';
+import type { ReactNode } from 'react';
+import { codeToTokens, type BundledLanguage, type SpecialLanguage } from 'shiki';
 
 /** Highlight interpolated examples on the server, using Nextra's copyable code block. */
-export default async function CodeBlock({ children, language = 'text', className = '' }) {
+export default async function CodeBlock({ children, language = 'text', className = '' }: { children?: ReactNode; language?: string; className?: string }) {
   const lang = className.match(/language-([\w-]+)/)?.[1] || language;
   const source = Array.isArray(children) ? children.join('') : String(children ?? '');
   const { tokens } = await codeToTokens(source.trimEnd(), {
-    lang,
+    lang: lang as BundledLanguage | SpecialLanguage,
     themes: { light: 'github-light', dark: 'github-dark' },
     defaultColor: false,
   });

@@ -1,7 +1,15 @@
+import type { ReactNode } from 'react';
 import CodeBlock from '../code_block';
 import './terminal.css';
 
-export default function Terminal({ filename, language = 'bash', children, className = '' }) {
+type TerminalProps = {
+  filename?: string;
+  language?: string;
+  children: ReactNode;
+  className?: string;
+};
+
+export default function Terminal({ filename, language = 'bash', children, className = '' }: TerminalProps) {
   return (
     <figure className={`terminal ${className}`}>
       <div className="terminal__bar" role="presentation">

@@ -5,6 +5,14 @@ import vars from '../lib/vars';
 
 const { h2: Heading, h3: Subheading, p: Paragraph, a: Link } = getMDXComponents();
 
+type InstallBlockProps = {
+  platform: 'linux' | 'macos' | 'windows';
+  debUrl?: string;
+  tarUrl: string;
+  checksumUrl?: string;
+  notes?: string;
+};
+
 /**
  * InstallBlock renders quick script install and manual tar/deb instructions.
  * Props:
@@ -14,11 +22,11 @@ const { h2: Heading, h3: Subheading, p: Paragraph, a: Link } = getMDXComponents(
  * - checksumUrl?: string (optional URL to SHA256SUMS or checksum file)
  * - notes?: string (optional HTML string for extra notes)
  */
-export default function InstallBlock({ platform, debUrl, tarUrl, checksumUrl, notes }) {
+export default function InstallBlock({ platform, debUrl, tarUrl, checksumUrl, notes }: InstallBlockProps) {
   const script = 'curl -fsSL https://download.next-hat.com/scripts/get-nanocl.sh | sh';
   const releaseTagUrl = `https://github.com/next-hat/nanocl/releases/tag/nanocl-${vars.nanoclLatestBinaryVersion}`;
 
-  const verify = (cmd) => (
+  const verify = (cmd: string) => (
     <CodeBlock language="bash">{cmd}</CodeBlock>
   );
 

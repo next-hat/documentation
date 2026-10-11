@@ -19,7 +19,7 @@ const examples = new Set([
   'get-started/proxy',
 ]);
 
-export default function StatefileBlock({ example }) {
+export default function StatefileBlock({ example }: { example: string }) {
   if (!examples.has(example)) {
     throw new Error(`Unknown Statefile example: ${example}`);
   }

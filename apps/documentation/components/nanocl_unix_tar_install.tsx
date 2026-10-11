@@ -5,7 +5,12 @@ import DirTree from './dir_tree';
 
 const { p: Paragraph, a: Link } = getMDXComponents();
 
-export default function UnixTarInstall({ tarballUrl, tarballName }) {
+type UnixTarInstallProps = {
+  tarballUrl: string;
+  tarballName: string;
+};
+
+export default function UnixTarInstall({ tarballUrl, tarballName }: UnixTarInstallProps) {
   return (
     <>
       <Paragraph>

@@ -1,6 +1,11 @@
 import CodeBlock from '../code_block';
 
-export default function Checksum({ platform, checksumUrl }) {
+type ChecksumProps = {
+  platform: 'linux' | 'macos' | 'windows';
+  checksumUrl?: string;
+};
+
+export default function Checksum({ platform, checksumUrl }: ChecksumProps) {
   if (platform === 'windows') {
     return (
       <CodeBlock language="powershell">{checksumUrl ? `$dst = "$env:USERPROFILE\\nanocl"

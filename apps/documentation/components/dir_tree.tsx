@@ -5,7 +5,7 @@ import Terminal from './terminal';
  * Props:
  * - variant: 'unix' | 'windows'
  */
-export default function DirTree({ variant = 'unix' }) {
+export default function DirTree({ variant = 'unix' }: { variant?: 'unix' | 'windows' }) {
   if (variant === 'windows') {
     return (
       <Terminal language="text">{`<extract-dir>

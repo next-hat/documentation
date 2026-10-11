@@ -45,7 +45,7 @@ for (const locale of locales) {
     assert.ok(metadata(translated).title, `Missing title: ${file}`)
     assert.deepEqual(fences(translated), fences(source), `Changed fenced example: ${file}`)
     assert.deepEqual(codeComponents(translated), codeComponents(source), `Changed code component: ${file}`)
-    for (const match of translated.matchAll(/<(?:DocsHome|BlogIndex|InstallBlock|License|CratesIoInstall|QuickInstall|UnixTarInstall|VerifyInstall|OpenApi|ApiSchema)\b[^>]*>/g)) {
+    for (const match of translated.matchAll(/<(?:DocsHome|BlogIndex|InstallBlock|License|CratesIoInstall|QuickInstall|UnixTarInstall|VerifyInstall|Verify|OpenApi|ApiSchema)\b[^>]*>/g)) {
       assert.ok(match[0].includes(`locale="${locale}"`), `Missing component locale: ${file}: ${match[0]}`)
     }
   }

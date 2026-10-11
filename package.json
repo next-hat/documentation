@@ -1,6 +1,6 @@
 {
   "name": "next-hat-documentation",
-  "version": "0.18.3",
+  "version": "0.18.5",
   "private": true,
   "packageManager": "pnpm@12.9.1",
   "scripts": {

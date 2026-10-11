@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import test from 'node:test';
 import { parse } from 'yaml';
 import { resolvePointer, schemaSpec } from './openapi.js';
 import { prepareRedocSpec } from './redoc-spec.ts';
+import { redocLabels } from './redoc-labels.ts';
 
 const specification = (schemas) => ({
   openapi: '3.0.3', info: { title: 'Schema test', version: '1' },
@@ -60,5 +62,18 @@ test('all current embedded schemas produce smaller payloads with resolvable refe
     const serialized = JSON.stringify(subset);
     assert.ok(Buffer.byteLength(serialized) < fullBytes / 2, `${name} should omit unrelated API content`);
     for (const reference of serialized.matchAll(/"\$ref":"([^"]+)"/g)) resolvePointer(subset, reference[1]);
+  }
+});
+
+test('Redoc separates localized array prefixes from item types', () => {
+  const { OpenAPIParser, RedocNormalizedOptions, SchemaModel } = createRequire(import.meta.url)('redoc');
+  for (const locale of ['en', 'fr', 'ru', 'ja', 'zh-Hans', 'en']) {
+    const options = new RedocNormalizedOptions({ labels: redocLabels(locale) });
+    const parser = new OpenAPIParser(specification({}), undefined, options);
+    for (const items of [{ type: 'string' }, { type: 'array', items: { type: 'string' } }]) {
+      const model = new SchemaModel(parser, { type: 'array', items }, '', options);
+      // Redoc renders these values adjacently without inserting whitespace.
+      assert.match(model.typePrefix + model.displayType, /\sstrings$/, `${locale} array item type must have a separator`);
+    }
   }
 });

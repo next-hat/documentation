@@ -21,6 +21,10 @@ const server = createServer((request, response) => handler(request, response, {
   cleanUrls: true,
   directoryListing: false,
   trailingSlash: false,
+  headers: ['blog/feed.json', 'fr/blog/feed.json', 'ru/blog/feed.json', 'ja/blog/feed.json', 'zh-Hans/blog/feed.json'].map((source) => ({
+    source,
+    headers: [{ key: 'Content-Type', value: 'application/feed+json; charset=utf-8' }],
+  })),
 }, {
   async lstat(filename) {
     const stats = await lstat(filename);

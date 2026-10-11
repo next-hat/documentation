@@ -9,7 +9,8 @@ const withNextra = nextra({
 })
 
 export default withNextra({
-  output: 'export',
+  // The dev server must also handle paths outside the exported page inventory.
+  output: process.env.NODE_ENV === 'development' ? undefined : 'export',
   trailingSlash: false,
   images: { unoptimized: true },
   compiler: { styledComponents: true },

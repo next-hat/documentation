@@ -35,6 +35,7 @@ export async function DocumentationLayout({ children, locale }: { children: Reac
   return <html lang={locale} dir="ltr" suppressHydrationWarning>
     <Head color={{ hue: { light: 17.5, dark: 24.6 }, saturation: { light: 88.3, dark: 95 }, lightness: { light: 40.4, dark: 53.1 } }} backgroundColor={{ light: "rgb(249, 250, 251)", dark: "rgb(0, 0, 0)" }} />
     <body>
+      <script defer src="https://analytics.next-hat.com/script.js" data-website-id="4573c95a-5bb4-48c8-aff5-a52ef0545de9" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(siteSchema(locale)) }} />
       <RedocStyleRegistry>
       <Layout pageMap={await getPageMap(localePath('/', locale))}

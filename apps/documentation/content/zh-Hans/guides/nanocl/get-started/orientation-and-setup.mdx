@@ -1,0 +1,163 @@
+---
+title: 入门与配置 - Nanocl
+description: 本页逐步介绍如何开始使用 Nanocl。
+keywords:
+- 文档
+- 指南
+- nanocl
+- 开始使用
+- 入门与配置
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# 入门与配置
+
+#### 欢迎学习 Nanocl！ [#welcome-we-are-excited-that-you-want-to-learn-nanocl]
+
+本页介绍 Nanocl 的入门步骤。<br/>
+你将学习：
+
+- `container image`、`namespace`、`cargo` 和 `cargo instance` 的基础概念。
+- 将 `container image` 作为 `cargo` 运行。
+- 更新 `cargo`。
+- 配置 `proxy rule`。
+- 使用状态配置文件快速部署。
+
+本教程假设机器上已安装当前版本的 Nanocl。<br/>
+如果没有，请先阅读[安装说明](/zh-Hans/manuals/nanocl/install/overview)。
+
+
+## 开始教程 [#start-the-tutorial]
+
+使用以下命令创建并运行 `cargo`：
+
+```sh
+nanocl cargo run my-cargo nginx:1.23
+```
+
+下载镜像并启动容器可能需要几分钟。
+
+这里使用的参数说明如下：
+
+- `my-cargo`：Cargo 名称。
+- `nginx:1.23`：使用的容器镜像名称。
+
+执行命令会创建并启动 *my-cargo* 的一个 `cargo instance`。
+
+> Nanocl 会为 `cargo instance` 选择 IPv4 地址。
+> 所有默认设置都遵循最佳实践。
+
+检查 Cargo，查看分配的 IP：
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+这里分配的 IPv4 地址是 `10.2.0.2`；使用 curl 访问它看看结果！
+
+```sh
+curl 10.2.0.2
+```
+
+现在 Nginx `cargo instance` 已在 IPv4 地址 `10.2.0.2` 上运行。
+
+## 什么是 Cargo？ [#what-is-a-cargo-]
+
+已经运行了 `cargo`，那么它是什么？<br/>
+Cargo 是持久化的工作负载配置，包含一个或多个命名应用容器、可选的有序初始化容器，以及固定副本数。每个副本包含 Cargo 声明的进程。
+
+<Callout type="info">
+
+如果熟悉 `Kubernetes`，可以将 Cargo 理解为类似 `pod` 的对象。<br/>
+
+</Callout>
+
+通过以下命令列出 Cargo：
+
+```sh
+nanocl cargo ls
+```
+
+输出类似：
+
+```console
+KEY                CONTAINERS             STATUS                   INSTANCES  VERSION  CREATED AT           UPDATED AT
+global.my-cargo    my-cargo=nginx:1.23    start/start (unknown)    1/1        v0.1.0   2026-08-28 21:24:27  2026-08-28 21:24:27
+```
+
+更通用的 Cargo 管理方式是：
+
+```sh
+nanocl cargo
+```
+
+查看可用命令：
+
+```sh
+nanocl cargo help
+```
+
+输出：
+
+```console
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+概括而言，`Cargo`：
+
+- 描述一个或多个命名应用容器。
+- 可声明有序初始化容器和持久化副本数。
+- 创建并管理各副本所属的进程。
+
+## 什么是 Cargo 实例？ [#what-is-a-cargo-instance-]
+
+已经了解 `Cargo`，那么 `Cargo instance` 是什么？Cargo 副本是 Cargo 规格的一次具体实现，可包含多个应用进程；在非主机网络上，还可包含内部共享网络沙箱。容器隔离使用 Docker 的 Linux 命名空间和 cgroup。
+
+概括而言，`Cargo instance`：
+
+- 包含所属 Cargo 声明的命名应用进程。
+- 具有通过 `NANOCL_CARGO_INSTANCE` 暴露的序号。
+- 与其他副本隔离，在本地 Docker 节点运行。
+
+## 什么是容器镜像？ [#what-is-a-container-image-]
+
+运行 `Cargo` 会创建使用隔离文件系统的 `Cargo Instance`。该文件系统来自 `Container image`，包含运行应用需要的一切，如依赖、配置、脚本和二进制文件。镜像也包含环境变量、默认执行命令和其他元数据等容器配置。
+
+容器和镜像涉及的内容很多，这里不深入展开，可以阅读 [Docker 文档](https://www.docker.com/resources/what-container/)。
+
+<Callout type="info">
+
+如果熟悉 `chroot`，可以将容器视为其扩展版本。<br/>
+文件系统来自镜像。<br/>
+但容器提供了单纯 chroot 不具备的额外隔离。
+
+</Callout>
+
+## 什么是命名空间？ [#what-is-a-namespace-]
+
+`namespace` 将 Cargo、虚拟机等具有命名空间的 Nanocl 对象分组。Docker 网络是节点本地资源，不属于命名空间。<br/>
+例如，有 *facebook.com*、*instagram.com* 等不同域名时，可用不同命名空间将它们分离。

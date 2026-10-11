@@ -1,0 +1,69 @@
+---
+title: Après l’installation - Nanocl
+description: Procédures nécessaires pour configurer Nanocl après son installation.
+keywords:
+- documentation
+- nanocl
+- configuration
+- installation
+- après installation
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import Terminal from '@/components/terminal';
+
+# Instructions après l’installation de Nanocl
+
+Cette section présente les procédures nécessaires pour configurer Nanocl après l’installation.
+
+## Créer un groupe Unix pour Nanocl [#create-a-unix-group-for-nanocl]
+
+Le démon Nanocl utilise un socket Unix plutôt qu’un port TCP.<br />
+Par défaut, il appartient à l’utilisateur `root` et au groupe `nanocl`. Les autres utilisateurs doivent utiliser sudo ou appartenir au groupe `nanocl`.<br />
+
+Pour éviter de préfixer la commande nanocl par sudo, créez un groupe Unix
+nommé nanocl et ajoutez-y les utilisateurs. Au démarrage, le démon crée un
+socket Unix accessible aux membres du groupe `nanocl`.
+
+<Terminal language="sh">
+{`sudo groupadd nanocl
+sudo usermod -aG nanocl $USER
+newgrp nanocl`}
+</Terminal>
+
+## Installer les composants Nanocl [#install-nanocl-components]
+
+La CLI est installée ; démarrons maintenant les composants Nanocl.
+Le modèle d’installation par défaut est disponible [ici][nanocl_installer].
+Nanocl prend très bien en charge Docker : il détecte automatiquement Docker ou Docker Desktop ainsi que le socket Unix à utiliser.
+Pour utiliser un socket personnalisé, passez `--docker-host` à la commande d’installation :
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/docker.sock`}
+</Terminal>
+
+Avec Podman, précisez `--docker-host` ainsi :
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/podman/podman.sock`}
+</Terminal>
+
+Choisissez aussi le groupe associé au socket Unix avec `--group` :
+
+<Terminal language="sh">
+{`nanocl install --group my-custom-group`}
+</Terminal>
+
+## Vérifier le fonctionnement [#test-if-everything-is-good]
+
+Après l’installation, vérifiez le fonctionnement avec les commandes suivantes :
+
+<Terminal language="sh">
+{`nanocl version
+nanocl cargo run my-cargo nginx:latest`}
+</Terminal>
+
+Félicitations, vous êtes prêt à utiliser Nanocl !<br />
+
+[nanocl_installer]: https://github.com/next-hat/nanocl/blob/nightly/installer.yml

@@ -1,0 +1,47 @@
+---
+title: 健康检查与滚动更新 - Nanocl
+description: 在 Nanocl 中配置容器健康检查和安全的 Cargo 滚动更新。
+keywords:
+- 文档
+- nanocl
+- 健康检查
+- 健康检查
+- 滚动更新
+- cargo
+- statefile
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# 健康检查与滚动更新
+
+Nanocl 使用 Docker 容器健康检查判断 Cargo 副本中的必要应用容器是否就绪。可以在命名应用容器中定义检查，也可以使用镜像已有的健康检查。
+
+```yaml
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.2.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+      StartPeriod: 10000000000
+```
+
+时长字段使用 Docker 的纳秒表示方式。镜像定义的检查无需重复声明。Docker 的 `NONE` 健康检查会禁用继承的检查。
+
+容器启动和 Cargo 就绪是不同状态。没有启用健康检查的必要应用，只要 Docker 报告正在运行，就视为就绪；有检查的应用必须报告 `healthy`。多容器共享副本的沙箱也必须运行。非必要应用容器不阻塞就绪状态。
+
+## 滚动更新 [#rolling-updates]
+
+Nanocl 依次准备替换副本，并最多等待五分钟，让每个候选副本所需的拓扑就绪。网络和主机端口允许时，旧版本继续运行和服务，直到候选版本就绪。`ncproxy` 仅在已提交的替换版本就绪后切换路由。
+
+候选版本切换前失败时，Nanocl 删除它并恢复旧版本。已提交的更新失败时，也会尝试恢复之前的映射和进程，并将 Cargo 记录为不健康或失败状态。
+
+这不是无条件的零停机保证。固定主机端口要求先删除旧版本，候选版本才能绑定相同端口。主机网络要求先停止旧版本；如果候选失败，Nanocl 可重启旧版本。没有健康检查的进程只要运行就视为就绪，所以应用层就绪判断需要 Docker 健康检查。
+
+重启 Cargo 也遵循相同规则：保留副本沙箱和已完成的初始化容器，重启应用容器，并等待必要应用就绪。

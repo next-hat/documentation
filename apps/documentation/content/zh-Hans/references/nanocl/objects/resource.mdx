@@ -1,0 +1,56 @@
+---
+title: 资源参考 - Nanocl
+description: 定义 Nanocl 资源，配置 ncproxy 代理规则和 ncdns DNS 规则。
+keywords:
+- 文档
+- 参考
+- nanocl
+- nanocld
+- 资源
+- 规范
+- 规范
+- 代理
+image: /img/logo.webp
+timestamp: 1730477712000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# 资源
+
+Nanocl 中，`Resource` 表示配置设置。<br/>
+它可以是用户定义的任意 `Kind` 配置，目前没有原生支持的资源 `Kind`。
+
+虽然 `Resource` 的类型可由用户定义，但基础安装后通常支持以下两种资源：
+
+| 插件类型 | 用途 |
+| ----------- | ----------- |
+| ncproxy.io/rule | 由代理控制器安装的代理配置数据 |
+| ncdns.io/rule | 由 DNS 控制器安装的 DNS 配置数据 |
+
+## 代理规则 [#proxy-rule]
+
+`ProxyRule` 用于决定如何通过代理访问 Cargo。<br/>
+配置代理规则，可以精细控制 Cargo 的访问方式。
+
+下面是创建代理 `ProxyRule` 的 OpenAPI 规范：
+
+<ApiSchema locale="zh-Hans" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceProxyRule" />
+
+### 代理规则网络 [#proxy-rule-network]
+
+| 网络 | 用途 |
+| ----------- | ----------- |
+| All | 绑定全部网络地址 |
+| Local | 仅绑定 127.0.0.1 |
+| Public | 仅绑定公网 IP 地址 |
+| Internal | 绑定 Nanocl 内部网关 |
+
+## DNS 规则 [#dns-rule]
+
+`DnsRule` 决定 DNS 服务器的配置。<br/>
+这样可以通过域名调整网络访问。
+
+下面是创建代理 `ProxyRule` 的 OpenAPI 规范：
+
+<ApiSchema locale="zh-Hans" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceDnsRule" />

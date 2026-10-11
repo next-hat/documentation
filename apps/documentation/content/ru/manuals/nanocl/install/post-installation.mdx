@@ -1,0 +1,67 @@
+---
+title: После установки — Nanocl
+description: Обязательные процедуры настройки Nanocl после установки.
+keywords:
+- документация
+- nanocl
+- настройка
+- установка
+- после установки
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import Terminal from '@/components/terminal';
+
+# Настройка Nanocl после установки
+
+Этот раздел описывает обязательные процедуры настройки Nanocl после установки.
+
+## Создание группы Unix для Nanocl [#create-a-unix-group-for-nanocl]
+
+Демон Nanocl использует сокет Unix вместо порта TCP.<br />
+По умолчанию сокет принадлежит `root` и группе `nanocl`; остальные пользователи получают доступ через sudo или членство в `nanocl`.<br />
+
+Чтобы не добавлять sudo перед командой nanocl, создайте группу Unix nanocl и включите пользователей в неё. При запуске демон создаёт сокет Unix, доступный членам `nanocl`.
+
+<Terminal language="sh">
+{`sudo groupadd nanocl
+sudo usermod -aG nanocl $USER
+newgrp nanocl`}
+</Terminal>
+
+## Установка компонентов Nanocl [#install-nanocl-components]
+
+CLI установлен; теперь запустим компоненты Nanocl.
+Стандартный шаблон установки находится [здесь][nanocl_installer].
+Nanocl автоматически определяет Docker или Docker Desktop и соответствующий сокет Unix.
+Для собственного сокета передайте установке `--docker-host`:
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/docker.sock`}
+</Terminal>
+
+Для Podman укажите `--docker-host` следующим образом:
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/podman/podman.sock`}
+</Terminal>
+
+Группу сокета Unix можно выбрать параметром `--group`:
+
+<Terminal language="sh">
+{`nanocl install --group my-custom-group`}
+</Terminal>
+
+## Проверка работы [#test-if-everything-is-good]
+
+После установки проверьте работу следующими командами:
+
+<Terminal language="sh">
+{`nanocl version
+nanocl cargo run my-cargo nginx:latest`}
+</Terminal>
+
+Поздравляем, всё готово к использованию Nanocl!<br />
+
+[nanocl_installer]: https://github.com/next-hat/nanocl/blob/nightly/installer.yml

@@ -1,0 +1,56 @@
+---
+title: リソースリファレンス - Nanocl
+description: Nanocl の Resource を定義し、ncproxy のプロキシルールと ncdns の DNS ルールを設定します。
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocld
+- リソース
+- 仕様
+- 仕様
+- プロキシ
+image: /img/logo.webp
+timestamp: 1730477712000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# リソース
+
+Nanocl の `Resource` は設定を表します。<br />
+`Resource` の `Kind` には、ユーザーが定義する任意の設定を利用できます。現在、ネイティブに対応する Resource の `Kind` はありません。
+
+`Resource` の Kind はユーザーが定義できますが、基本的なインストール後には、通常、次の 2 種類の `Resources` が利用できます。
+
+| プラグインの Kind | 用途 |
+| ----------- | ----------- |
+| ncproxy.io/rule | プロキシコントローラーがインストールするプロキシ設定のデータ |
+| ncdns.io/rule | DNS コントローラーがインストールする DNS 設定のデータ |
+
+## プロキシルール [#proxy-rule]
+
+`ProxyRule` は、その名のとおり、プロキシ経由で `cargoes` にアクセスする方法を決める設定です。<br />
+`ProxyRules` を設定すると、`cargoes` へのアクセスを細かく調整できます。
+
+プロキシの `ProxyRule` を作成するための OpenAPI 仕様は次のとおりです。
+
+<ApiSchema locale="ja" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceProxyRule" />
+
+### プロキシルールのネットワーク [#proxy-rule-network]
+
+| Network | 用途 |
+| ----------- | ----------- |
+| All | すべてのネットワークアドレスにバインドします |
+| Local | 127.0.0.1 にだけバインドします |
+| Public | パブリック IP アドレスにだけバインドします |
+| Internal | Nanocl の内部ゲートウェイにバインドします |
+
+## DNS ルール [#dns-rule]
+
+`DnsRule` は、その名のとおり、DNS サーバーの構成を決める設定です。<br/>
+ドメイン名を使ってネットワークアクセスを調整できます。
+
+プロキシの `ProxyRule` を作成するための OpenAPI 仕様は次のとおりです。
+
+<ApiSchema locale="ja" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceDnsRule" />

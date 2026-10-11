@@ -1,0 +1,29 @@
+---
+title: Référence Cargo - Nanocl
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- cargo
+- spécification
+- spec
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo
+
+Dans Nanocl 0.18, un `Cargo` est une charge persistante contenant des
+`Containers` applicatifs nommés, des `InitContainers` ordonnés facultatifs et un nombre entier
+de `Replicas`. Les paramètres réseau et ports du Cargo décrivent la frontière réseau
+partagée de chaque réplique ; la configuration Docker et les secrets spécifiques restent sur
+chaque conteneur nommé.
+
+Le schéma OpenAPI ci-dessous est la référence source de `CargoSpec`. Pour la
+topologie d’exécution et les exemples, consultez
+[Cargoes à plusieurs conteneurs](/fr/guides/nanocl/advanced-usage/multi-container-cargoes).
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpec" />

@@ -1,0 +1,43 @@
+---
+title: Statefile — Nanocl
+description: Опишите желаемое состояние пространства имён с Statefile.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- прокси
+- конфигурация
+- состояние
+- файл
+- настройки
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile
+
+Statefile описывает желаемое состояние определённого пространства имён.
+
+Он использует YAML; развёртывание Cargo можно описать так:
+
+<StatefileBlock example="get-started/deployment" />
+
+Сохраните файл как `my-cargo.yml` и примените:
+
+```sh
+nanocl state apply -s ./my-cargo.yml
+```
+
+Проверьте простым curl:
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+Готово.

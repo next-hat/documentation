@@ -1,0 +1,24 @@
+---
+title: Référence Job - Nanocl
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- job
+- spécification
+- spec
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+# Job
+
+Dans Nanocl, un `Job` est une liste de commandes à exécuter.<br />
+Contrairement à un [Cargo](/fr/references/nanocl/objects/cargo), il est destiné à se terminer.<br />
+
+Voici la spécification OpenAPI de `JobPartial` utilisée pour créer un `job` :
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/JobPartial" />

@@ -1,0 +1,189 @@
+---
+title: 公开访问容器
+description: 使用 Docker 和 Nginx，让容器化前端和后端通过不同域名对外提供服务。
+keywords:
+- 公开访问容器化应用
+- 部署容器镜像
+- Docker
+- Nginx
+- 创建 Docker 网络
+- 配置 Nginx
+- 通过不同域名访问容器
+- 前端
+- 后端
+timestamp: 1689000770000
+---
+
+# 公开访问容器
+
+要通过 `my-domain.com` 访问 `my-frontend:0.0.1`，通过 `api.my-domain.com` 访问 `my-api:0.0.1`，需要准备 VPS 或专用物理服务器，并让两个域名指向它。<br/>
+同时确保服务器已安装 Docker。
+
+## 上传镜像到服务器 [#uploading-our-images-to-the-server]
+
+用以下命令保存并导出容器镜像：
+```sh
+docker save my-frontend:0.0.1 | gzip > /tmp/my-frontend-0.0.1.tar.gz
+docker save my-api:0.0.1 | gzip > /tmp/my-api-0.0.1.tar.gz
+```
+
+如果 VPS 已配置 SSH，可通过 scp 上传镜像：
+```sh
+scp /tmp/my-frontend-0.0.1.tar.gz /tmp/my-api-0.0.1.tar.gz my-user@my-domain.com:~
+```
+
+然后通过 SSH 连接 VPS：
+```sh
+ssh my-user@my-domain.com
+```
+
+最后加载容器镜像：
+```sh
+cat ~/my-frontend-0.0.1.tar.gz | docker load
+cat ~/api-0.0.1.tar.gz | docker load
+```
+
+## 启动镜像 [#start-your-images]
+
+在服务器加载镜像后，启动前先创建 Docker 网络：
+```sh
+docker network create my-domain
+```
+
+然后用以下命令启动镜像：
+```sh
+docker run -d --network my-domain --name my-frontend my-frontend:0.0.1
+docker run -d --network my-domain --name my-api my-api:0.0.1
+```
+
+下面说明用到的参数：
+- `run`：从镜像创建并运行新容器。
+- `-d`：分离模式，在后台运行容器并输出新容器 ID。
+- `--network`：设置容器的网络模式。
+- `--name`：设置容器名称。
+- `my-frontend|my-api`：容器名称。
+- `my-frontend:0.0.1|my-api:0.0.1`：创建容器使用的镜像。
+
+## 配置 Nginx [#setting-up-nginx]
+
+[Nginx](https://www.nginx.com) 的安装方法因服务器操作系统而异。<br/>
+Ubuntu 可通过以下命令安装：
+```sh
+sudo apt install -y nginx
+```
+Nginx 配置目录通常位于 `/etc/nginx`。
+
+在 `/etc/nginx/sites-enabled/my-domain.com` 创建 `my-domain.com` 的 Nginx 配置。
+
+```nginx
+server {
+    listen 80;
+    server_name my-domain.com;
+
+    location / {
+        proxy_pass http://ip_of_frontend_container:80;
+    }
+}
+```
+
+使用下列任一命令获取前端容器的 IP 地址：
+```
+docker network inspecy my-domain
+docker container inspect my-frontend
+```
+
+在 `/etc/nginx/sites-enabled/api.my-domain.com` 创建 `api.my-domain.com` 的配置。
+```nginx
+server {
+    listen 80;
+    server_name api.my-domain.com;
+
+    ## To allow versioning
+    ## We can add a location /v1/ to the next version of our api and keep the old container running
+    ## note that the last / is important
+    location /v0/ {
+        proxy_pass http://ip_of_api_container:80/;
+    }
+}
+```
+
+使用下列任一命令获取 API 容器的 IP 地址：
+```
+docker network inspecy my-domain
+docker container inspect my-api
+```
+
+最后用以下命令重载 Nginx 配置：
+```sh
+sudo nginx -s reload
+```
+
+现在应该可以通过 `http://my-domain.com` 访问前端，通过 `http://api.my-domain.com/v0` 访问后端容器。
+
+## 使用 Certbot 启用 HTTPS [#enabling-https-with-certbot]
+
+与 Nginx 一样，[Certbot](https://certbot.eff.org) 的安装方法因操作系统而异。<br/>
+Ubuntu 可以执行以下命令安装：
+```sh
+sudo apt install -y certbot
+```
+
+Certbot 的 Nginx 插件可以用生成的 SSL 证书将 HTTP 配置转换为 HTTPS。<br/>
+运行：
+```sh
+certbot --nginx --email email@email.com --agree-tos -d your-domain.com
+certbot --nginx --email email@email.com --agree-tos -d api.your-domain.com
+```
+
+SSL 证书生成后，更新 Nginx 配置。
+
+将 `/etc/nginx/sites-enabled/my-domain.com` 更新为：
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location / {
+        proxy_pass http://ip_of_your_container:80;
+    }
+}
+```
+
+将 `/etc/nginx/sites-enabled/api.my-domain.com` 更新为：
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/api.my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/api.my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location /v0/ {
+        proxy_pass http://ip_of_your_container:80/;
+    }
+}
+```
+
+这里添加了 SSL 配置，并将非 HTTPS 请求重定向到 HTTPS。
+
+最后重载 Nginx 配置：
+```sh
+sudo nginx -s reload
+```
+
+现在可以通过 HTTPS 安全访问容器：`https://my-domain.com` 提供前端，`https://api.my-domain.com/v0` 提供后端。

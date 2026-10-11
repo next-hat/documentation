@@ -1,0 +1,42 @@
+---
+title: Journaux de la tâche
+timestamp: 1757712924000
+---
+
+# Journaux de la tâche
+
+# NOM
+
+logs - Afficher les journaux d’une tâche
+
+## SYNOPSIS [#synopsis]
+
+**logs** \[**-s **\] \[**-u **\] \[**-t **\] \[**--timestamps**\] \[**-f
+**\] \[**-h**\|**--help**\] \<*NAME*\>
+
+## DESCRIPTION [#description]
+
+Afficher les journaux d’une tâche
+
+## OPTIONS [#options]
+
+**-s** *\<SINCE\>*  
+Inclure uniquement les journaux après cet horodatage Unix
+
+**-u** *\<UNTIL\>*  
+Inclure uniquement les journaux avant cet horodatage Unix
+
+**-t** *\<TAIL\>*  
+Un entier renvoie les n dernières lignes ; "all" renvoie tous les journaux
+
+**--timestamps**  
+Booléen : inclure l’horodatage dans chaque ligne si activé
+
+**-f**  
+Booléen : ouvrir les journaux comme un flux si activé
+
+**-h**, **--help**  
+Afficher l’aide
+
+\<*NAME*\>  
+Nom de la tâche dont afficher les journaux

@@ -1,0 +1,56 @@
+---
+title: Référence Resource - Nanocl
+description: Définissez des Resources Nanocl et configurez les règles proxy ncproxy et DNS ncdns.
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- resource
+- spécification
+- spec
+- proxy
+image: /img/logo.webp
+timestamp: 1730477712000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# Resource
+
+Dans Nanocl, une `Resource` représente un paramètre de configuration.<br />
+Une `Resource` peut être tout `Kind` de configuration défini par l’utilisateur. Aucun `Kind` n’est actuellement pris en charge nativement :
+
+Le `Kind` d’une `Resource` peut être défini par l’utilisateur, mais deux types sont généralement pris en charge après une installation de base :
+
+| Kind du plugin    | Usage |
+| ----------- | ----------- |
+| ncproxy.io/rule | Données de configuration proxy installées par notre contrôleur proxy |
+| ncdns.io/rule   | Données de configuration DNS installées par notre contrôleur DNS |
+
+## Règle de proxy [#proxy-rule]
+
+Une `ProxyRule` détermine comment accéder à vos `cargoes` via le proxy.<br />
+Configurez les `ProxyRules` pour régler précisément leur accessibilité.
+
+Voici la spécification OpenAPI pour créer une `ProxyRule` :
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceProxyRule" />
+
+### Réseau de la règle de proxy [#proxy-rule-network]
+
+| Réseau    | Usage |
+| ----------- | ----------- |
+| All | Écouter sur toutes les adresses réseau |
+| Local | Écouter uniquement sur 127.0.0.1 |
+| Public   | Écouter uniquement sur l’IP publique |
+| Internal | Écouter sur la passerelle interne Nanocl |
+
+## Règle DNS [#dns-rule]
+
+Une `DnsRule` détermine la configuration d’un serveur DNS.<br/>
+Elle permet de régler l’accès réseau avec des noms de domaine.
+
+Voici la spécification OpenAPI pour créer une `ProxyRule` :
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceDnsRule" />

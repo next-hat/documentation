@@ -1,0 +1,308 @@
+---
+title: Контейнеризация
+description: Контейнеризация упаковывает приложение и его зависимости в единый лёгкий контейнер. Руководство показывает использование Docker и NGINX, включая настройку простого интерфейса и серверной части проекта.
+keywords:
+- контейнеризация
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- разработка ПО
+- развёртывание
+- клиентская часть
+- серверная часть
+- create-react-app
+- Next.js
+- Vite
+- рендеринг на сервере
+- генерация статических сайтов
+image: /img/logo.webp
+timestamp: 1689000770000
+---
+
+# Контейнеризация
+
+Контейнеризация — распространённая техника разработки и развёртывания ПО, упаковывающая приложение с зависимостями в единый лёгкий контейнер. Контейнер можно развернуть на любой машине с поддержкой соответствующей технологии, например [Docker](https://www.docker.com), [Kubernetes](https://kubernetes.io/) или [Nanocl](https://docs.next-hat.com/ru/guides/nanocl), без отдельной установки приложения и зависимостей.
+
+Контейнеризация повышает переносимость и масштабируемость, упрощает развёртывание и управление. Изоляция приложения и зависимостей в контейнере также повышает безопасность и снижает вероятность конфликтов между компонентами ПО.
+
+Контейнеризация стала важным инструментом современной разработки и развёртывания. Разработчикам, системным администраторам и ИТ-руководителям знание её основ помогает повышать эффективность и надёжность приложений.
+
+## Структура проекта [#project-structure]
+
+Перед началом установите [Docker](https://www.docker.com).<br/>
+Способов установки несколько; здесь мы их не рассматриваем.
+
+Если вы используете монорепозиторий, разместите файлы на GitHub или другой платформе хранения кода.<br/>
+В руководстве используется следующая структура:
+
+```sh
+my_project/
+├── my-app/     # Frontend app
+└── my-api/     # API
+```
+
+Файлы этого руководства находятся на [GitHub](https://github.com/leon3s/infrastruture_example).<br/>
+Если вы уже умеете собирать образы контейнеров, пропустите этот раздел и клонируйте репозиторий для следующих шагов.
+
+Создайте основной каталог проекта и перейдите в него:
+```
+mkdir my_project
+cd my_project
+```
+
+Такая структура разделяет интерфейс и серверную часть, позволяя разрабатывать их независимо. Это упрощает разработку, тестирование и развёртывание, повышает масштабируемость и удобство сопровождения приложения.
+
+Создадим структуру проекта и начнём работу над интерфейсом и серверной частью!
+
+## Настройка простого интерфейса [#setting-up-a-simple-frontend]
+
+Начнём с простого шаблона [create-react-app](https://create-react-app.dev).<br />
+Однако для React мы рекомендуем [Next.js](https://nextjs.org/) или [Vite](https://vitejs.dev/).
+
+Если вы используете другой фреймворк, соберите интерфейс в каталог статических файлов.
+
+Next.js и Vite упрощают разработку интерфейса, повышают производительность и масштабируемость. Рендеринг на сервере, генерация статических сайтов и другие возможности облегчают создание качественных современных веб-приложений.
+
+Настроим простой интерфейс приложения и начнём сборку!
+
+### Создание проекта [#creating-the-project]
+
+Создайте каталог приложения интерфейса my-app следующими командами:
+
+```sh
+npx create-react-app my-app
+cd my-app
+npm run build
+```
+
+Простое приложение будет собрано в каталог `my-app/build`.<br/>
+create-react-app выведет сообщение:
+```console
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+```
+
+Обслуживать интерфейс сервером Node, например `serve`, не рекомендуется из-за низкой производительности.<br />
+Вместо этого используем контейнер nginx.
+
+### Создание образа контейнера [#create-your-container-image]
+
+Перейдите в `my-app` и создайте файл `Dockerfile` со следующим содержимым:
+
+```docker
+# stage 1 - Build our application
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine AS BUILDER
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+RUN npm run build
+
+# stage 2 - Create app image
+# From latest nginx version on alpine to have a small image
+FROM nginx:1.23.3-alpine
+
+# Copy our build directory
+COPY --from=BUILDER /app/build /app
+
+# Copy our default nginx config
+COPY ./server.nginx /etc/nginx/conf.d/default.conf
+```
+
+Перед сборкой образа создайте `my-app/server.nginx` со следующим содержимым:
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+
+  ## Auto index file in /app
+  autoindex on;
+  root /app;
+  try_files $uri/index.html $uri.html $uri/ $uri =404;
+  error_page 404 /404.html;
+
+  ## Enable gzip compression
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_types image/webp image/png text/html text/plain text/css text/xml text/javascript application/x-javascript application/javascript application/xml font/eot font/otf font/ttf;
+
+  ## Disable gzip for internet explorer compatibility..
+  gzip_disable "MSIE [1-6]\.";
+
+  ## Cache all static files
+  location ~* ^.+\.(?:css|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 30d;
+    add_header Cache-Control public;
+
+    ## No need to bleed constant updates. Send the all shebang in one fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+Эта конфигурация nginx обслуживает статические файлы интерфейса для всех обрабатываемых запросов.
+
+Добавьте `.dockerignore` в `my-app`, чтобы исключить `node_modules` и `build` из сборки. Содержимое `my-app/.dockerignore`:
+```
+node_modules
+build
+```
+
+Это ускорит сборку.
+
+Создав `server.nginx` и `.dockerignore`, соберите образ Docker:
+
+```
+docker build -t my-frontend:0.0.1 -f ./Dockerfile .
+```
+
+Используются следующие команды и параметры Docker:
+  - `build`: сборка образа.
+  - `-t`: тег образа, обычно image_name:version.
+  - `my-frontend:0.0.1`: тег образа в этом руководстве.
+  - `-f`: путь Dockerfile.
+  - `./Dockerfile`: файл для сборки образа.
+  - `.`: контекст сборки.
+
+### Проверка образа контейнера [#test-your-container-image]
+
+Для проверки образа интерфейса выполните:
+```
+docker run -it --rm -p 8080:80 my-frontend:0.0.1
+```
+
+Контейнер запустится с сопоставлением порта 8080 хоста порту 80 контейнера.<br/>
+Откройте [http://localhost:8080](http://localhost:8080) в браузере, чтобы увидеть приложение React.
+
+Вы увидите страницу приложения React, как на изображении:
+
+<img src="/img/react-create-app-deploy.png" />
+
+## Настройка простого API [#setup-a-simple-api]
+
+Настроим простой проект [Node.js](https://nodejs.org/en) с [Express](https://expressjs.com).
+
+### Создание проекта [#create-the-project]
+
+Создайте каталог `my-api`:
+
+```sh
+mkdir my_project/my-api
+cd my-api
+npm init
+npm install --save express
+```
+
+Создайте точку входа API в `./main.js`:
+
+```js
+const express = require('express');
+
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello World' });
+});
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+Проверим запуском:
+
+```sh
+node main.js
+```
+
+### Создание образа контейнера [#create-your-container-image-1]
+
+Для простого API теперь можно создать образ контейнера.<br/>
+Вот `Dockerfile`:
+
+```docker
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+COPY . .
+
+# Set host to 0.0.0.0 to bind on all container network interfaces
+# This is usefull because we will create a docker network and bind the container to it
+ENV HOST=0.0.0.0
+# Set the port of the our app to 80 (default http port)
+ENV PORT=80
+# Expose the port so we can see it during inspection
+EXPOSE 80
+
+CMD ["node", "main.js"]
+```
+
+Не забудьте `.dockerignore`:
+
+```
+node_modules
+```
+
+Теперь соберём образ:
+
+```sh
+docker build -t my-api:0.0.1 -f ./Dockerfile .
+```
+
+### Проверка образа контейнера [#test-your-container-image-1]
+
+Проверим образ контейнера API:
+```
+docker run -it --name my-api --rm -p 8081:80 my-api:0.0.1
+```
+
+Откройте [http://localhost:8081](http://localhost:8081) в браузере, чтобы увидеть JSON-сообщение:
+
+Вы увидите наше JSON-сообщение:
+
+<img src="/img/nodejs-express-deploy.png" />
+
+Поздравляем! Приложения контейнеризированы.<br />
+Теперь развернём их на VPS!

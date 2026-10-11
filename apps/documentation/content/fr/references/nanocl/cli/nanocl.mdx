@@ -1,0 +1,112 @@
+---
+title: Nanocl
+timestamp: 1787952819000
+---
+
+# Nanocl
+
+# NOM
+
+nanocl - Orchestrateur de conteneurs et de machines virtuelles
+
+## SYNOPSIS [#synopsis]
+
+**nanocl** \[**-H**\|**--host**\] \[**-h**\|**--help**\]
+\[**-V**\|**--version**\] \<*subcommands*\>
+
+## DESCRIPTION [#description]
+
+Nanocl est un orchestrateur moderne et autonome pour les conteneurs et
+les machines virtuelles. Il propose un flux clair du développement à la production avec des
+Statefiles déclaratifs (YAML/TOML/JSON) et des paramètres par défaut prévisibles. Développé
+en Rust pour la performance et la sécurité, il réduit l’administration
+tout en restant puissant et extensible. Gérez Cargoes, ressources,
+tâches et VM avec routage dynamique, DNS et TLS de bout en bout. Commencez localement
+sur un seul nœud et évoluez lorsque vous êtes prêt : facile à apprendre,
+conçu pour la production.
+
+## OPTIONS [#options]
+
+**-H**, **--host** *\<HOST\>*  
+Hôte Nanocld par défaut : unix://run/nanocl/nanocl.sock
+
+**-h**, **--help**  
+Afficher l’aide (résumé avec -h)
+
+**-V**, **--version**  
+Afficher la version
+
+# SOUS-COMMANDES
+
+nanocl-namespace(1)  
+Gérer les espaces de noms
+
+nanocl-secret(1)  
+Gérer les secrets
+
+nanocl-job(1)  
+Gérer les tâches
+
+nanocl-cargo(1)  
+Gérer les Cargoes
+
+nanocl-vm(1)  
+Gérer les machines virtuelles
+
+nanocl-resource(1)  
+Gérer les ressources
+
+nanocl-metric(1)  
+Gérer les métriques
+
+nanocl-context(1)  
+Gérer les contextes
+
+nanocl-node(1)  
+Gérer les nœuds (expérimental)
+
+nanocl-state(1)  
+Appliquer ou supprimer un Statefile
+
+nanocl-event(1)  
+Afficher ou surveiller les événements
+
+nanocl-ps(1)  
+Afficher les processus
+
+nanocl-logs(1)  
+Obtenir les journaux d’un processus
+
+nanocl-inspect(1)  
+Inspecter un processus
+
+nanocl-exec(1)
+Exécuter une commande dans un processus
+
+nanocl-kill(1)
+Envoyer un signal à un processus
+
+nanocl-info(1)  
+Afficher les informations de l’hôte Nanocl
+
+nanocl-version(1)  
+Afficher la version Nanocl
+
+nanocl-install(1)  
+Installer les composants
+
+nanocl-uninstall(1)  
+Désinstaller les composants
+
+nanocl-backup(1)  
+Sauvegarder l’état courant
+
+nanocl-stats(1)  
+Statistiques du processus
+
+nanocl-help(1)  
+Afficher ce message ou l’aide des sous-commandes indiquées
+
+# VERSION
+
+v0.18.0

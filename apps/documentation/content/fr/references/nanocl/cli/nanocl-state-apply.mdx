@@ -1,0 +1,43 @@
+---
+title: Appliquer un Statefile
+timestamp: 1757712924000
+---
+
+# Appliquer un Statefile
+
+# NOM
+
+apply - Créer ou mettre à jour les éléments d’un Statefile
+
+## SYNOPSIS [#synopsis]
+
+**apply** \[**-s**\|**--source**\] \[**-f**\|**--follow**\]
+\[**-y**\|**--yes**\] \[**-r**\|**--reload**\] \[**--remove-orphans**\]
+\[**-h**\|**--help**\] \[*ARGS*\]
+
+## DESCRIPTION [#description]
+
+Créer ou mettre à jour les éléments d’un Statefile
+
+## OPTIONS [#options]
+
+**-s**, **--source** *\<SOURCE\>*  
+Chemin ou URL du Statefile
+
+**-f**, **--follow**  
+Suivre les journaux du Cargo déployé
+
+**-y**, **--yes**  
+Ignorer la demande de confirmation
+
+**-r**, **--reload**  
+Appliquer même si l’état n’a pas changé
+
+**--remove-orphans**  
+Supprimer les éléments orphelins
+
+**-h**, **--help**  
+Afficher l’aide
+
+\[*ARGS*\]  
+Arguments supplémentaires à transmettre au fichier

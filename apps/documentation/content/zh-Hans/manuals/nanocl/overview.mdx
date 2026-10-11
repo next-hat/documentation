@@ -1,0 +1,31 @@
+---
+title: 概览 - 操作手册 - Nanocl
+description: Nanocl 操作手册概览。
+keywords:
+- 文档
+- 配置
+- 概览
+- nanocl
+- 操作手册
+- 概览
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import License from '@/components/license';
+
+# Nanocl 概览
+
+Nanocl 是管理工作负载的开源平台，采用客户端—服务器结构：
+
+* 服务器运行长期驻留的守护进程 [nanocld](/zh-Hans/references/nanocl/daemon/overview)。
+* API 指定程序与守护进程通信并发送指令的接口。
+* 命令行工具（CLI）[nanocl](/zh-Hans/references/nanocl/cli/overview) 与守护进程通信。
+
+CLI 通过 Nanocl API 控制或操作守护进程，可以使用脚本或直接执行命令。其他 Nanocl 应用也使用底层 API 和 CLI。守护进程创建并管理镜像、任务、Cargo 和虚拟机等对象。
+
+Nanocl 0.18 主要在单节点运行。守护进程暴露部分实验性节点 API，但不提供自动多节点调度、自动扩缩容或集群级高可用。Nanocl 集成 [metrs](https://github.com/next-hat/metrs) 收集主机指标。
+
+详细说明见 [Nanocl 架构](/zh-Hans/guides/nanocl/overview#nanocl-architecture)。
+
+<License locale="zh-Hans" />

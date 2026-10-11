@@ -1,0 +1,165 @@
+---
+title: 基礎とセットアップ - Nanocl
+description: Nanocl を使い始めるための手順を、順番に説明します。
+keywords:
+- ドキュメント
+- ガイド
+- nanocl
+- 入門
+- 基礎とセットアップ
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# 基礎とセットアップ
+
+#### ようこそ！一緒に Nanocl を学びましょう。 [#welcome-we-are-excited-that-you-want-to-learn-nanocl]
+
+このページでは Nanocl を使い始める手順を説明します。<br />
+このチュートリアルで学ぶ内容は次のとおりです。
+
+- `container image`、`namespace`、`cargo`、`cargo instance` の基本。
+- `container image` を `cargo` として実行する。
+- `cargo` を更新する。
+- `proxy rule` を設定する。
+- `state configuration` ファイルで素早くデプロイする。
+
+このチュートリアルは、お使いのマシンに最新の Nanocl がインストールされていることを前提とします。<br />
+まだインストールしていない場合は、[インストール方法](/ja/manuals/nanocl/install/overview)を参照してください。
+
+## チュートリアルを始める [#start-the-tutorial]
+
+まず、次のコマンドで `cargo` を作成して実行しましょう。
+
+```sh
+nanocl cargo run my-cargo nginx:1.23
+```
+
+イメージのダウンロードとコンテナの起動には、数分かかる場合があります。
+
+指定している引数の意味は次のとおりです。
+
+- `my-cargo` は Cargo の名前です。
+- `nginx:1.23` は使用するコンテナイメージの名前です。
+
+このコマンドを実行すると、*my-cargo* の `cargo instance` が 1 つ作成され、起動します。
+
+> Nanocl は `cargo instance` の IPv4 アドレスを選びます。
+> デフォルトの設定は、ベストプラクティスに従っています。
+
+選ばれた IP アドレスは、次のコマンドで Cargo の詳細を表示して確認できます。
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+この例で割り当てられた IPv4 アドレスは `10.2.0.2` です。curl で動作を確認しましょう。
+
+```sh
+curl 10.2.0.2
+```
+
+Nginx の `cargo instance` が IPv4 アドレス `10.2.0.2` で動作していることが分かります。
+
+## Cargo とは？ [#what-is-a-cargo-]
+
+`cargo` を実行できました。では、`cargo` とは何でしょうか？<br />
+Cargo は永続的なワークロードの設定です。1 つ以上の名前付きアプリケーションコンテナ、任意の順序付き初期化コンテナ、固定のレプリカ数を含みます。各レプリカには、Cargo が定義するプロセスが含まれます。
+
+<Callout type="info">
+
+`Kubernetes` に慣れている場合は、Cargo を `pod` に似たものと考えると分かりやすいでしょう。<br />
+
+</Callout>
+
+Cargo の一覧は、次のコマンドで表示できます。
+
+```sh
+nanocl cargo ls
+```
+
+次のような結果が出力されます。
+
+```console
+KEY                CONTAINERS             STATUS                   INSTANCES  VERSION  CREATED AT           UPDATED AT
+global.my-cargo    my-cargo=nginx:1.23    start/start (unknown)    1/1        v0.1.0   2026-08-28 21:24:27  2026-08-28 21:24:27
+```
+
+より一般的な `cargoes` の管理には、次のコマンドを使います。
+
+```sh
+nanocl cargo
+```
+
+利用可能なコマンドは、次のように確認できます。
+
+```sh
+nanocl cargo help
+```
+
+次の内容が出力されます。
+
+```console
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+`Cargo` の特徴をまとめると、次のとおりです。
+
+- 1 つ以上の名前付きアプリケーションコンテナを定義します。
+- 順序付きの初期化コンテナと、永続的なレプリカ数を定義できます。
+- 各レプリカに属するプロセスを起動、管理します。
+
+## Cargo インスタンスとは？ [#what-is-a-cargo-instance-]
+
+`Cargo` について分かったところで、`Cargo instance` とは何でしょうか？
+Cargo のレプリカは、Cargo の仕様を実体化したものです。複数のアプリケーションプロセスを含められ、ホスト以外のネットワークでは、内部の共有ネットワークサンドボックスも含まれます。コンテナの分離には、Docker の Linux 名前空間と cgroup を使います。
+
+`Cargo instance` の特徴をまとめると、次のとおりです。
+
+- Cargo が定義する名前付きアプリケーションプロセスを含みます。
+- `NANOCL_CARGO_INSTANCE` を通じて序数が公開されます。
+- 他のレプリカから分離され、ローカルの Docker ノードで動作します。
+
+## コンテナイメージとは？ [#what-is-a-container-image-]
+
+`Cargo` を実行すると、分離されたファイルシステムを使う `Cargo Instance` が起動します。
+このファイルシステムは `Container image` と呼ばれ、コンテナインスタンスのファイルシステムを保持します。アプリケーションの実行に必要な依存関係、設定、スクリプト、バイナリーなど、すべての要素を含む必要があります。
+イメージには、環境変数、デフォルトで実行するコマンド、その他のメタデータなど、コンテナの設定も含まれます。
+
+ここではコンテナとイメージを深く掘り下げません。すべてを説明すると長くなるため、[Docker のドキュメント](https://www.docker.com/resources/what-container/)も確認してください。
+
+<Callout type="info">
+
+`chroot` に慣れている場合は、コンテナを `chroot` の拡張版として考えると分かりやすいでしょう。<br />
+ファイルシステムはイメージから提供されます。<br />
+ただし、コンテナには、単に chroot を使う場合にはない追加の分離機能があります。
+
+</Callout>
+
+## 名前空間とは？ [#what-is-a-namespace-]
+
+`namespace` は、Cargo や仮想マシンなど、名前空間に属する Nanocl オブジェクトをまとめます。Docker ネットワークはノードのローカルにあり、名前空間が所有するものではありません。<br />
+たとえば、*facebook.com* や *instagram.com* など複数のドメイン名がある場合、それぞれを別の名前空間に分けられます。

@@ -1,0 +1,42 @@
+---
+title: Journaux
+timestamp: 1757712924000
+---
+
+# Journaux
+
+# NOM
+
+logs - Obtenir les journaux d’un processus
+
+## SYNOPSIS [#synopsis]
+
+**logs** \[**-s **\] \[**-u **\] \[**-t **\] \[**--timestamps**\] \[**-f
+**\] \[**-h**\|**--help**\] \[*NAMES*\]
+
+## DESCRIPTION [#description]
+
+Obtenir les journaux d’un processus
+
+## OPTIONS [#options]
+
+**-s** *\<SINCE\>*  
+Inclure uniquement les journaux après cet horodatage Unix
+
+**-u** *\<UNTIL\>*  
+Inclure uniquement les journaux avant cet horodatage Unix
+
+**-t** *\<TAIL\>*  
+Un entier renvoie les n dernières lignes ; "all" renvoie tous les journaux
+
+**--timestamps**  
+Booléen : inclure l’horodatage dans chaque ligne si activé
+
+**-f**  
+Booléen : ouvrir les journaux comme un flux si activé
+
+**-h**, **--help**  
+Afficher l’aide
+
+\[*NAMES*\]  
+Noms des processus dont afficher les journaux

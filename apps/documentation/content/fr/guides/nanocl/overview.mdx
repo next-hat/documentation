@@ -1,0 +1,97 @@
+---
+title: Présentation - Nanocl
+description: Nanocl est une plateforme portable et open source pour exécuter des charges de conteneurs et de machines virtuelles à partir de Statefiles déclaratifs.
+keywords:
+- documentation
+- nanocl
+- guides
+- présentation
+- architecture
+- conteneurs
+- machines virtuelles
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Présentation de Nanocl
+
+Nanocl est une plateforme portable et open source pour exécuter des charges de conteneurs et de machines
+virtuelles sur votre infrastructure. Un Statefile déclaratif
+décrit les Cargoes, VM, tâches, secrets et ressources des contrôleurs ;
+le démon Nanocl réconcilie ces objets avec l’environnement local.
+
+Le nom abrège *nano cloud* : le projet fournit des primitives utiles de charges
+cloud sans exiger un plan de contrôle volumineux.
+
+## Ce que propose Nanocl [#what-nanocl-provides]
+
+- Conteneurs applicatifs nommés et répliqués regroupés en Cargoes, avec conteneurs
+  d’initialisation ordonnés et configuration compatible Docker.
+- Disponibilité, redémarrages, historique et mises à jour contrôlées tenant compte de la santé.
+- Gestion du cycle de vie des conteneurs et VM via une API HTTP et
+  la CLI `nanocl`.
+- Règles HTTP, de flux et DNS dynamiques via `ncproxy` et `ncdns`.
+- Secrets, tâches, métriques, modèles Statefile et sauvegarde d’état.
+
+Nanocl 0.18 est principalement un système d’exploitation à un seul nœud. Il ne fournit
+ni ordonnancement automatique sur plusieurs nœuds, ni mise à l’échelle automatique, ni haute disponibilité
+de cluster, ni maillage de services. Les réseaux Docker nommés sont locaux au nœud et n’appartiennent
+pas aux espaces de noms Nanocl.
+
+## Architecture Nanocl [#nanocl-architecture]
+
+Le client `nanocl` envoie des requêtes API à `nanocld`. Le démon conserve les états souhaités
+et observés dans `nstore`, gère les processus Docker et publie des événements
+consommés par les contrôleurs proxy et DNS.
+
+L’installation par défaut contient :
+
+- **nanocld / ndaemon** — contrôleur de l’API et des charges.
+- **nstore** — état persistant du plan de contrôle dans CockroachDB.
+- **nmetrics** — service de métriques hôte `metrsd`.
+- **ncproxy** — contrôleur proxy et plan de données Nginx intégrés dans le
+  même conteneur de service. Aucun service `nproxy` séparé.
+- **ncdns** — contrôleur DNS et plan de données dnsmasq intégrés dans le
+  même conteneur de service. Aucun service `ndns` séparé.
+- **ncvpnkit** — contrôleur réseau Docker Desktop, installé uniquement dans
+  cet environnement.
+
+Architecture simplifiée à un seul nœud :
+
+<div class="center">
+  <img src="/img/architecture.png" alt="Architecture Nanocl à un seul nœud" />
+</div>
+
+Le schéma représente chaque Cargo comme un groupe de processus. Dans 0.18, une réplique
+peut contenir plusieurs conteneurs applicatifs nommés et, si nécessaire,
+un bac à sable réseau interne.
+
+## Objets principaux [#core-objects]
+
+### Cargo [#cargo]
+
+Un Cargo est une charge conteneurisée persistante comprenant un ou plusieurs conteneurs
+applicatifs nommés, des conteneurs d’initialisation facultatifs et un nombre de répliques. Consultez
+[Cargoes à plusieurs conteneurs](/fr/guides/nanocl/advanced-usage/multi-container-cargoes).
+
+### Machine virtuelle [#virtual-machine]
+
+Une VM exécute QEMU dans un conteneur géré et utilise un chemin complet
+d’image de disque locale. Un conteneur d’initialisation facultatif peut préparer l’image avant
+le démarrage de l’environnement.
+
+### Job [#job]
+
+Un Job est une tâche conteneurisée finie. Contrairement aux applications Cargo, il doit
+se terminer après avoir accompli son travail.
+
+### Resource [#resource]
+
+Les Resources étendent Nanocl par des contrôleurs. Les contrôleurs `ncproxy` et `ncdns`
+par défaut consomment les ressources de règles proxy et DNS.
+
+### Secret [#secret]
+
+Les Secrets contiennent des données d’environnement, de registre ou TLS. Un secret au niveau du Cargo
+est hérité par tous ses conteneurs ; un secret au niveau du conteneur concerne uniquement
+le conteneur nommé.

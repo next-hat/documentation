@@ -20,5 +20,6 @@ export default withNextra({
     return config
   },
   transpilePackages: ['@next-hat/ui'],
-  experimental: { cpus: 4 }
+  // Redoc's labels are global within a worker; render one language at a time.
+  experimental: { cpus: 4, globalNotFound: true, staticGenerationMaxConcurrency: 1 }
 })

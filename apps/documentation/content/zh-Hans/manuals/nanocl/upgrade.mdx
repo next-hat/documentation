@@ -1,0 +1,91 @@
+---
+title: 升级 - Nanocl
+description: 备份并迁移 Nanocl 安装，在 v1 之前的版本之间升级。
+keywords:
+- 文档
+- nanocl
+- 升级
+- 迁移
+- 备份
+- 0.18
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import Terminal from '@/components/terminal';
+
+# 升级 Nanocl
+
+Nanocl 尚未达到 v1，Statefile 和存储格式可能在次要版本之间变化。替换安装前，请阅读对应版本的迁移说明。0.17 到 0.18 是不兼容迁移，可能需要停机。
+
+## 导出当前状态 [#export-the-current-state]
+
+卸载 0.17 前，将目标状态导出到空目录：
+
+<Terminal language="sh">
+{`nanocl backup -o ./nanocl-0.17-backup`}
+</Terminal>
+
+备份命令为每个命名空间写入一个 Statefile，并分别生成 `jobs.yml`、`secrets.yml` 和 `resources.yml`。请在 `/var/lib/nanocl` 之外保留副本。
+
+备份保留连接的 0.17 守护进程报告的模式，不会自动转换为 0.18。重新应用前，审查并改写每个导出文件。
+
+## 将 0.17 Statefile 迁移到 0.18 [#migrating-017-statefiles-to-018]
+
+Cargo 的主要结构从单个匿名容器及副本模式，改为命名容器列表和整数副本数：
+
+```yaml filename="0.17"
+ApiVersion: v0.17
+Cargoes:
+- Name: api
+  Container:
+    Image: ghcr.io/example/api:1.0.0
+  Replication:
+    Mode: Static
+    Replicas: 2
+```
+
+```yaml filename="0.18"
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  Replicas: 2
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+对每个 Cargo：
+
+- 将 `Container` 替换为一个或多个命名 `Containers`。
+- 将顺序启动任务移到命名 `InitContainers`。
+- 将旧副本对象或模式替换为整数 `Replicas`（最小为 1）。
+- 将网络模式、主机端口绑定、主机名和 DNS 配置移到 Cargo。容器级端口发布会被拒绝。
+- 将命名空间对象键和代理目标，从 `{name}.{namespace}` 改为规范的 `{namespace}.{name}` 顺序。
+
+VM Statefile 现在使用完整本地 `Image` 路径，可用 `InitContainer` 准备镜像。守护进程管理的 `nanocl vm image` 工作流程已移除。
+
+Cargo 级 `cargo exec` 和组级 kill 操作也已移除。先用 `nanocl ps` 选择具体进程，再运行 `nanocl exec PROCESS -- COMMAND...` 或 `nanocl kill PROCESS`。
+
+## 升级顺序 [#upgrade-sequence]
+
+1. 备份 Statefile 和应用数据。
+2. 根据 0.18 模式改写并审查导出的 Statefile。
+3. 按应用需求停止流量和工作负载。
+4. 卸载旧组件，保留外部备份，再按照[安装指南](/zh-Hans/manuals/nanocl/install/overview)安装 Nanocl 0.18。
+5. 应用前用 `nanocl state render` 验证改写文件，然后按依赖顺序应用：Secret、任务或资源，以及部署需要的命名空间工作负载。
+6. 恢复流量前，检查 Cargo 健康状态、代理和 DNS 规则，以及应用行为。
+
+安装程序不会自动完成这次不兼容 Statefile 迁移，也不保证零停机升级。
+
+<Callout type="info">
+
+**数据库 TLS Secret**
+
+升级后的 `nanocld` 首次启动时，将内部数据库 TLS Secret 中可读取的旧证书路径替换为 PEM 内容。首次启动时请保持这些证书文件可用。
+
+</Callout>
+
+更多信息见[多容器 Cargo](/zh-Hans/guides/nanocl/advanced-usage/multi-container-cargoes)、[Cargo 网络](/zh-Hans/guides/nanocl/advanced-usage/cargo-networking)和[进程操作](/zh-Hans/guides/nanocl/advanced-usage/process-operations)。

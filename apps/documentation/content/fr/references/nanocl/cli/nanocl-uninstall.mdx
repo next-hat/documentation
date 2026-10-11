@@ -1,0 +1,35 @@
+---
+title: Désinstallation
+timestamp: 1757712924000
+---
+
+# Désinstallation
+
+# NOM
+
+uninstall - Désinstaller les composants
+
+## SYNOPSIS [#synopsis]
+
+**uninstall** \[**--docker-host**\] \[**-t**\|**--template**\]
+\[**--docker-desktop**\] \[**-h**\|**--help**\]
+
+## DESCRIPTION [#description]
+
+Désinstaller les composants
+
+## OPTIONS [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+Hôte Docker où Nanocl est installé, par défaut
+unix:///var/run/docker.sock
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Modèle de désinstallation Nanocl, détecté par défaut
+
+**--docker-desktop**  
+Indiquer si l’hôte Docker est Docker Desktop, détecté si le contexte Docker
+est desktop-linux
+
+**-h**, **--help**  
+Afficher l’aide

@@ -1,0 +1,37 @@
+---
+title: デーモンリファレンス - Nanocl
+description: Nanocl デーモンのオプションと運用範囲。
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocld
+- デーモン
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Nanocl デーモン
+
+`nanocld` はローカルの Docker ノードを管理し、望ましい状態と観測した状態を永続化して、Nanocl API を公開します。0.18 のノード参加オプションは引き続き実験的な機能です。自動的な複数ノードのスケジューリングや高可用性構成として扱わないでください。
+
+```sh
+nanocld [OPTIONS]
+```
+
+| オプション | 用途 |
+| --- | --- |
+| `-H, --hosts HOSTS` | API の待ち受け先。インストール時のデフォルトは `unix:///run/nanocl.sock` |
+| `--docker-host DOCKER_HOST` | Docker デーモンの接続先。インストール時のデフォルトは `unix:///var/run/docker.sock` |
+| `--store-addr STORE_ADDR` | CockroachDB の接続アドレス |
+| `--state-dir STATE_DIR` | 実行時の状態ディレクトリ。インストール時のデフォルトは `/var/lib/nanocl` |
+| `--conf-dir CONF_DIR` | 設定ディレクトリ。デフォルトは `/etc/nanocl` |
+| `--gateway GATEWAY` | ホストのゲートウェイ。省略すると自動検出 |
+| `--hostname HOSTNAME` | ノード名。省略すると自動検出 |
+| `--node NODES` | 参加するノードの接続先（実験的機能） |
+| `--advertise-addr ADDRESS` | 他のノードに通知するアドレス |
+| `--gid GID` | Unix ソケットのグループ ID。デフォルトは `0` |
+| `--cert`, `--cert-key`, `--cert-ca` | 任意の API TLS 証明書と鍵 |
+| `--verify`, `--password` | 任意の API TLS 検証とパスワード設定 |
+
+インストールしたビルドの正確な書式は `nanocld --help` で確認してください。最新の 0.18 API は、サイドバーまたは[バージョン別の OpenAPI ページ](/ja/references/nanocl/daemon/v0.18)から確認できます。

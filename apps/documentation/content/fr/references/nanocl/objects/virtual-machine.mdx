@@ -1,0 +1,25 @@
+---
+title: Référence Machine virtuelle - Nanocl
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- machine virtuelle
+- vm
+- vms
+- spécification
+- spec
+image: /img/logo.webp
+timestamp: 1714742843000
+---
+
+# Machine virtuelle
+
+Dans Nanocl, une `Virtual Machine` désigne une configuration de machine virtuelle.<br />
+Après sa création, le système veille à ce qu’elle fonctionne toujours.<br />
+Voici la spécification OpenAPI de `VmSpecPartial` utilisée pour créer une `Virtual Machine` :
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/VmSpecPartial" />

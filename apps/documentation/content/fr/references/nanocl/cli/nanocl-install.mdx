@@ -1,0 +1,66 @@
+---
+title: Installation
+timestamp: 1757712924000
+---
+
+# Installation
+
+# NOM
+
+install - Installer les composants
+
+## SYNOPSIS [#synopsis]
+
+**install** \[**--docker-host**\] \[**--docker-desktop**\]
+\[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--advertise-addr**\] \[**--daemon-hosts**\] \[**--group**\]
+\[**--hostname**\] \[**-t**\|**--template**\]
+\[**-p**\|**--force-pull**\] \[**-f **\] \[**-h**\|**--help**\]
+
+## DESCRIPTION [#description]
+
+Installer les composants
+
+## OPTIONS [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+Hôte Docker où installer Nanocl, unix:///var/run/docker.sock par défaut
+
+**--docker-desktop**  
+Indiquer si l’hôte Docker est Docker Desktop, détecté si le contexte Docker
+est desktop-linux
+
+**--state-dir** *\<STATE_DIR\>*  
+Répertoire de stockage de l’état du démon Nanocl, par défaut
+/var/lib/nanocl
+
+**--conf-dir** *\<CONF_DIR\>*  
+Répertoire de stockage de la configuration du démon Nanocl,
+/etc/nanocl par défaut
+
+**--gateway** *\<GATEWAY\>*  
+Adresse de passerelle du démon Nanocl, détectée par défaut
+
+**--advertise-addr** *\<ADVERTISE_ADDR\>*  
+Hôtes du démon Nanocl, détectés par défaut
+
+**--daemon-hosts** *\<DAEMON_HOSTS\>*  
+Hôtes du démon Nanocl, détectés par défaut
+
+**--group** *\<GROUP\>*  
+Groupe du démon Nanocl, nanocl par défaut
+
+**--hostname** *\<HOSTNAME\>*  
+Nom d’hôte du démon Nanocl, détecté par défaut
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Modèle d’installation Nanocl, détecté par défaut
+
+**-p**, **--force-pull**  
+Forcer une nouvelle récupération des composants Nanocl
+
+**-f**  
+S’attacher aux journaux des conteneurs après installation
+
+**-h**, **--help**  
+Afficher l’aide

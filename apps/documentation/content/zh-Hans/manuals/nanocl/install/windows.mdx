@@ -1,0 +1,69 @@
+---
+title: 在 Windows 上安装 - Nanocl
+description: 使用脚本或 tar 压缩包在 Windows 上安装 Nanocl。
+keywords:
+- nanocl
+- 安装
+- windows
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import vars from '@/lib/vars';
+import Terminal from '@/components/terminal';
+import DirTree from '@/components/dir_tree';
+import InstallBlock from '@/components/install_block';
+
+# 在 Windows 上安装
+
+通过 PowerShell 下载并解压压缩包，然后将目录加入 PATH。
+
+<Callout type="warning">
+
+Windows 支持仍处于实验阶段，使用时自行评估风险。<br/>
+我们建议使用 Windows Subsystem for Linux（WSL）获得更稳定的体验。
+
+</Callout>
+
+## 手动安装 [#manual-install]
+
+### 下载 CLI 压缩包 [#get-the-cli-tarball]
+
+可以直接从 <a href={vars.nanoclReleaseTagUrl}>GitHub 发布页面</a>下载 Nanocl 压缩包。<br/>
+也可以用以下命令下载并解压：
+
+<Terminal language="powershell">{`$dst = "$env:USERPROFILE\\nanocl"
+New-Item -ItemType Directory -Force -Path $dst | Out-Null
+Invoke-WebRequest -Uri "${vars.nanoclWindowsTarballUrl}" -OutFile "$dst\\nanocl.tar.gz"`}</Terminal>
+
+解压后的目录结构：
+
+<DirTree variant="windows" />
+
+<Terminal language="powershell">{`# Windows 10+ includes tar
+& tar -xzf "$dst\\nanocl.tar.gz" -C $dst
+# The binary is under bin\\nanocl.exe
+$bin = Join-Path $dst 'bin'
+# Add to PATH (current session):
+$env:Path = "$env:Path;$bin"
+# Or copy to a directory already in PATH (requires admin):
+# Copy-Item (Join-Path $bin 'nanocl.exe') "$env:ProgramFiles\\nanocl\\nanocl.exe" -Force`}</Terminal>
+
+
+## 从源码编译 [#compile-from-source]
+
+如果使用其他架构，或希望从源码构建：
+
+前提条件：
+
+- 安装 Rust 工具链：https://www.rust-lang.org/tools/install
+- Visual Studio Build Tools（C++ 构建工具）或可用的 MSVC 工具链
+- 未内置时需要 OpenSSL 和 libpq 开发库；Windows 构建通常会在可用时静态链接这些库。
+
+<Terminal language="powershell">
+{`cargo install nanocl`}
+</Terminal>
+

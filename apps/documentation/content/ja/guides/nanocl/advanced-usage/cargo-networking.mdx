@@ -1,0 +1,52 @@
+---
+title: Cargo のネットワーク - Nanocl
+description: Cargo が管理する Docker ネットワーク、ポート、DNS、内部ゲートウェイを設定します。
+keywords:
+- ドキュメント
+- nanocl
+- cargo
+- docker
+- ネットワーク
+- ポートのバインド
+- 内部ゲートウェイ
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo のネットワーク
+
+Nanocl 0.18 では、ネットワーク設定を Cargo の境界に保持します。`NetworkMode`、`PortBindings`、`Hostname`、`Dns` は、個々のコンテナ内ではなく、`Containers` と同じ階層に設定してください。
+
+```yaml
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  NetworkMode: private-api
+  PortBindings:
+    8080/tcp:
+    - HostIp: 127.0.0.1
+      HostPort: "8080"
+  Dns:
+  - $$INTERNAL_GATEWAY
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+`NetworkMode` には、空でない Docker ネットワーク名、または対応する Docker の組み込み値 `default`、`bridge`、`host`、`none` を指定できます。省略すると Nanocl のデフォルトネットワークを使用します。複数コンテナのレプリカの共有ネットワーク名前空間は Nanocl が管理するため、ユーザーが記述する `container:...` は受け付けられません。
+
+`private-api` のような名前付きローカルネットワークでは、次のように動作します。
+
+- 既存の Docker ネットワークをそのまま使います。
+- 存在しない場合、接続可能なローカルのブリッジネットワークを作成します。
+- 調査したネットワーク情報を永続化し、`ncproxy` と `ncdns` が名前付きネットワークセレクターを解決できるようにします。
+- Cargo を削除しても、Docker ネットワークは自動削除されません。
+
+ネットワークはノードのローカルにある Docker リソースで、名前空間が所有する Nanocl オブジェクトではありません。Nanocl 0.18 は、ドライバーやサブネットを選ぶための Statefile API を公開していません。
+
+`NetworkMode: host` または `NetworkMode: none` では、Cargo レベルのホストポートバインドは利用できません。固定のホストポートでは、更新候補を開始する前に旧世代を停止する必要がある場合もあり、途切れのない引き継ぎは保証されません。
+
+## 内部ゲートウェイ [#internal-gateway]
+
+Nanocl はシリアライズされたコンテナ設定のどこにある `$$INTERNAL_GATEWAY` でも展開します。名前付きネットワークでは、そのネットワークのゲートウェイになります。Docker の組み込みモードでは、`nanoclbr0` のゲートウェイにフォールバックします。
+

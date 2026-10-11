@@ -1,0 +1,43 @@
+---
+title: Statefile - Nanocl
+description: 使用 Statefile 描述特定命名空间的目标状态。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 代理
+- 配置
+- 状态
+- 文件
+- 配置
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile
+
+Statefile 用于描述特定命名空间的目标状态。
+
+它使用 YAML 格式，可以将 Cargo 的部署描述为：
+
+<StatefileBlock example="get-started/deployment" />
+
+将文件保存为 `my-cargo.yml`，然后应用：
+
+```sh
+nanocl state apply -s ./my-cargo.yml
+```
+
+使用简单 curl 请求测试：
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+完成！

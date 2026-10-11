@@ -1,0 +1,130 @@
+---
+title: Modifier un Cargo - Nanocl
+description: Modifiez l’image ou les variables d’environnement d’un Cargo et redéployez-le immédiatement.
+keywords:
+- documentation
+- guides. nanocl
+- démarrage
+- cargo
+- patch
+- mise à jour
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# Modifier un Cargo
+
+Modifiez l’image ou les variables d’environnement d’un Cargo et redéployez-le immédiatement.
+
+## Mettre à jour l’image du Cargo [#update-cargo-image]
+
+Changeons l’image de notre `Cargo` *my-cargo* pour celle téléchargée auparavant :
+
+```sh
+nanocl cargo patch global.my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
+```
+
+Voici les options utilisées :
+
+- `global.my-cargo` est la clé canonique du Cargo à mettre à jour.
+- `--image` désigne le paramètre à changer : l’image du Cargo.
+- `ghcr.io/next-hat/nanocl-get-started:latest` est le nom de la nouvelle image.
+
+Vérifions les modifications en inspectant le `cargo` :
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+Le port par défaut de *get-started* est **9000** ; testons son accès.
+
+<Callout type="info">
+
+Modifier un Cargo change l’IP du conteneur correspondant,<br/>
+car un nouveau conteneur démarre avant la suppression de l’ancien.
+
+</Callout>
+
+```sh
+curl 10.2.0.3:9000
+```
+
+La sortie devrait ressembler à ceci :
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.3:9000",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "HOME": "/",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "TERM": "xterm",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-a1b2c3.c",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+Félicitations, vous avez mis à jour votre premier `cargo` avec une nouvelle image !
+
+## Mettre à jour l’environnement du Cargo [#update-cargo-environnement]
+
+Notre `cargo` utilise désormais une image renvoyant les `environment variables`.<br />
+Modifions certaines variables d’environnement.
+
+Changeons le port du `cargo` en modifiant la variable d’environnement **PORT** :
+
+```sh
+nanocl cargo patch global.my-cargo --env PORT=9001
+```
+
+Comme indiqué, l’IP change ; exécutons donc :
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+pour obtenir la nouvelle IP.
+
+Vérifions ensuite la mise à jour de la variable d’environnement avec :
+
+```sh
+curl 10.2.0.2:9001
+```
+
+Ce qui affiche :
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.2:9001",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "NANOCL_CARGO_INSTANCE": "0",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "HOME": "/",
+    "NANOCL_NODE": "behuman",
+    "TERM": "xterm",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "PORT": "9001",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global"
+  }
+}
+```
+
+Nous utilisons cette fois **9001** au lieu de 9000, car le service utilise la variable d’environnement **PORT**.

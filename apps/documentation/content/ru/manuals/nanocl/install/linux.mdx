@@ -1,0 +1,49 @@
+---
+title: Установка в Linux — Nanocl
+description: Установка Nanocl в Linux через скрипт, пакет .deb или архив tarball.
+keywords:
+- nanocl
+- установка
+- linux
+- deb
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# Установка в Linux
+
+<QuickInstall locale="ru" />
+
+## Ручная установка [#manual-install]
+
+### Получение архива CLI [#get-the-cli-tarball]
+
+<UnixTarInstall locale="ru" tarballUrl={vars.nanoclLinuxTarballUrl} tarballName={`${vars.nanoclLinuxTarballName}`} />
+
+### Debian/Ubuntu [#debianubuntu]
+
+Для Debian и Ubuntu также доступен пакет `.deb`.
+
+<Terminal language="sh" filename="sh">
+{`curl -LO ${vars.nanoclDebUrl}
+sudo dpkg -i ${vars.nanoclDebName}
+`}
+</Terminal>
+
+## Сборка из исходного кода [#compile-from-source]
+
+<CratesIoInstall locale="ru" />
+
+## Проверка установки [#verify-installation]
+
+<Verify />
+
+Следуйте [шагам после установки](/ru/manuals/nanocl/install/post-installation), чтобы установить компоненты Nanocl.

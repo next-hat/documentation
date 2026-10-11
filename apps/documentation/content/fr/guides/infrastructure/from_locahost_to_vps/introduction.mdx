@@ -1,0 +1,58 @@
+---
+title: De localhost au VPS
+description: Ce guide vous accompagne pas à pas pour déployer votre frontend et votre API sur un VPS ou serveur dédié/Baremetal avec Docker et Nginx. Créez vos conteneurs, configurez un réseau Docker, redirigez le trafic de votre domaine et sécurisez l’installation avec des certificats SSL gratuits grâce à Certbot.
+image: /img/logo.webp
+keywords:
+- déploiement
+- VPS
+- Baremetal
+- serveur dédié
+- Nginx
+- guide
+- application frontend
+- API
+- conteneurs Docker
+- configurer
+- créer
+- réseau Docker simple
+- rediriger le trafic
+- domaine
+- sécuriser
+- certificats SSL gratuits
+- Certbot
+- architecture
+- services
+- frontend
+- backend
+- performances
+- capacité de mise à l’échelle
+- fiabilité
+- séparation des responsabilités
+- développement
+- maintenance
+- réactivité
+timestamp: 1689000770000
+---
+
+# De localhost au VPS
+
+## Introduction [#introduction]
+
+Vous souhaitez déployer une application sur un VPS ou un serveur dédié/Baremetal et peinez à configurer Nginx ? Vous n’êtes pas seul ! La configuration Nginx pour déployer une application revient souvent sur Stack Overflow. Avec les bonnes indications, cette opération peut devenir simple et directe.
+
+Ce guide vous accompagne pas à pas pour déployer votre frontend et votre API sur un VPS avec Docker et Nginx. Vous apprendrez à créer et configurer les conteneurs, mettre en place un réseau Docker et rediriger le trafic de votre domaine vers eux. Nous sécuriserons aussi l’installation avec des certificats SSL gratuits grâce à Certbot.
+
+Débutant ou expérimenté avec Docker et Nginx, vous trouverez ici les outils et connaissances nécessaires à une infrastructure robuste et sécurisée. Commençons !
+
+
+## Architecture [#architecture]
+
+Nous créerons deux services, pour le `frontend` et le `backend`, et les déploierons selon cette architecture :
+
+<img src="/img/simple_architecture.jpg" />
+
+Pour suivre ce guide, achetez un nom de domaine et ajoutez un enregistrement A pointant vers votre serveur.
+
+Cette architecture offre de bonnes performances, une bonne capacité d’évolution et une bonne fiabilité. Le frontend traite les requêtes utilisateur et interagit avec le backend, qui traite les données et renvoie les résultats. Cette séparation facilite le développement et la maintenance de chaque service et améliore les performances et la réactivité de l’application.
+
+Créons donc une architecture simple et robuste pour nos services frontend et backend !

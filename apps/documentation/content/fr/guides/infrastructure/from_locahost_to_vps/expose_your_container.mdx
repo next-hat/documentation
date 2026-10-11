@@ -1,0 +1,189 @@
+---
+title: Exposer votre conteneur
+description: Rendez vos applications frontend et backend conteneurisées accessibles publiquement sur différents domaines avec Docker et Nginx.
+keywords:
+- exposer des applications conteneurisées
+- déployer des images de conteneurs
+- Docker
+- Nginx
+- créer un réseau Docker
+- configurer Nginx
+- accéder aux conteneurs sur différents domaines
+- frontend
+- backend
+timestamp: 1689000770000
+---
+
+# Exposer votre conteneur
+
+Pour rendre `my-frontend:0.0.1` accessible sur `my-domain.com` et `my-api:0.0.1` sur `api.my-domain.com`, disposez d’un VPS ou d’un serveur dédié/Baremetal, et faites pointer ces deux domaines vers lui.<br/>
+Vérifiez également que Docker est installé sur le serveur.
+
+## Transférer nos images sur le serveur [#uploading-our-images-to-the-server]
+
+Pour enregistrer et exporter les images des conteneurs, utilisez :
+```sh
+docker save my-frontend:0.0.1 | gzip > /tmp/my-frontend-0.0.1.tar.gz
+docker save my-api:0.0.1 | gzip > /tmp/my-api-0.0.1.tar.gz
+```
+
+Si SSH est configuré sur votre VPS, transférez les images avec scp :
+```sh
+scp /tmp/my-frontend-0.0.1.tar.gz /tmp/my-api-0.0.1.tar.gz my-user@my-domain.com:~
+```
+
+Connectez-vous ensuite au VPS par SSH :
+```sh
+ssh my-user@my-domain.com
+```
+
+Enfin, chargez les images des conteneurs :
+```sh
+cat ~/my-frontend-0.0.1.tar.gz | docker load
+cat ~/api-0.0.1.tar.gz | docker load
+```
+
+## Démarrer vos images [#start-your-images]
+
+Après leur chargement sur le serveur, créez un réseau Docker avant de les exécuter avec :
+```sh
+docker network create my-domain
+```
+
+Démarrez maintenant les images avec :
+```sh
+docker run -d --network my-domain --name my-frontend my-frontend:0.0.1
+docker run -d --network my-domain --name my-api my-api:0.0.1
+```
+
+Voici quelques informations sur les options utilisées :
+- `run` : crée et exécute un nouveau conteneur depuis une image.
+- `-d` : mode détaché, exécute le conteneur en arrière-plan et affiche son nouvel identifiant.
+- `--network` : définit le mode réseau du conteneur.
+- `--name` : définit le nom du conteneur.
+- `my-frontend|my-api` : nom du conteneur.
+- `my-frontend:0.0.1|my-api:0.0.1` : image utilisée pour créer le conteneur.
+
+## Configurer Nginx [#setting-up-nginx]
+
+Plusieurs méthodes d’installation de [Nginx](https://www.nginx.com) existent selon le système d’exploitation du serveur.<br />
+Sur Ubuntu, installez Nginx avec :
+```sh
+sudo apt install -y nginx
+```
+Son répertoire de configuration est généralement `/etc/nginx`.
+
+Créez le fichier de configuration de `my-domain.com` dans `/etc/nginx/sites-enabled/my-domain.com`.
+
+```nginx
+server {
+    listen 80;
+    server_name my-domain.com;
+
+    location / {
+        proxy_pass http://ip_of_frontend_container:80;
+    }
+}
+```
+
+Pour obtenir l’adresse IP du conteneur frontend, utilisez l’une de ces commandes :
+```
+docker network inspecy my-domain
+docker container inspect my-frontend
+```
+
+Créez ensuite la configuration de `api.my-domain.com` dans `/etc/nginx/sites-enabled/api.my-domain.com`.
+```nginx
+server {
+    listen 80;
+    server_name api.my-domain.com;
+
+    ## To allow versioning
+    ## We can add a location /v1/ to the next version of our api and keep the old container running
+    ## note that the last / is important
+    location /v0/ {
+        proxy_pass http://ip_of_api_container:80/;
+    }
+}
+```
+
+Pour obtenir l’adresse IP du conteneur API, utilisez l’une de ces commandes :
+```
+docker network inspecy my-domain
+docker container inspect my-api
+```
+
+Enfin, rechargez la configuration Nginx avec :
+```sh
+sudo nginx -s reload
+```
+
+Vous devriez maintenant accéder au frontend sur `http://my-domain.com` et au backend sur `http://api.my-domain.com/v0`.
+
+## Activer HTTPS avec Certbot [#enabling-https-with-certbot]
+
+Comme pour Nginx, plusieurs méthodes d’installation de [Certbot](https://certbot.eff.org) existent selon votre système.<br />
+Sur Ubuntu, installez Certbot avec :
+```sh
+sudo apt install -y certbot
+```
+
+Certbot possède un plugin Nginx qui transforme la configuration HTTP en HTTPS avec le certificat SSL qu’il génère.<br />
+Pour l’utiliser, exécutez :
+```sh
+certbot --nginx --email email@email.com --agree-tos -d your-domain.com
+certbot --nginx --email email@email.com --agree-tos -d api.your-domain.com
+```
+
+Après génération du certificat SSL, mettons à jour les configurations Nginx.
+
+Modifiez `/etc/nginx/sites-enabled/my-domain.com` ainsi :
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location / {
+        proxy_pass http://ip_of_your_container:80;
+    }
+}
+```
+
+Puis `/etc/nginx/sites-enabled/api.my-domain.com` ainsi :
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/api.my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/api.my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location /v0/ {
+        proxy_pass http://ip_of_your_container:80/;
+    }
+}
+```
+
+Nous avons ajouté les configurations SSL et une redirection vers HTTPS lorsque le protocole n’est pas déjà HTTPS.
+
+Enfin, rechargeons la configuration Nginx :
+```sh
+sudo nginx -s reload
+```
+
+Vos conteneurs sont désormais accessibles en HTTPS : frontend sur `https://my-domain.com`, backend sur `https://api.my-domain.com/v0`.

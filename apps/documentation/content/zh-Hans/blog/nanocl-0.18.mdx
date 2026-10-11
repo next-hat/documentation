@@ -1,0 +1,162 @@
+---
+slug: nanocl-0.18
+title: Nanocl 0.18 发布
+description: Nanocl 0.18 引入多容器 Cargo、感知健康状态的更新、按进程操作，以及更简洁的代理和 DNS 服务。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.18
+keywords:
+- 容器化
+- Nanocl
+- 多容器
+- 初始化容器
+- 副本
+- 健康检查
+- 滚动更新
+- 网络
+- 发布
+- 0.18
+date: '2026-07-12'
+timestamp: 1788620357000
+---
+
+Nanocl 0.18 将 Cargo 变为真正的多容器工作负载。命名的应用容器、按顺序运行的初始化容器、持久化副本、共享网络和感知健康状态的更新，共同组成一致的运行时模型。本次版本也让日常运维操作直接针对进程，并简化代理和 DNS 技术栈。
+
+{/* truncate */}
+
+## 观看操作演示 [#watch-the-walkthrough]
+
+用 Nanocl 0.18 部署多容器工作负载，探索新的进程命令，并执行感知健康状态的更新。
+
+<iframe
+  src="https://www.youtube.com/embed/Hg19pMC6SSs"
+  title="Nanocl 0.18：完整部署、初始化容器、执行、日志与统计"
+  width="560"
+  height="315"
+  style={{width: '100%', height: 'auto', aspectRatio: '16 / 9', border: 0, display: 'block'}}
+  loading="lazy"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
+
+[Watch on YouTube](https://www.youtube.com/watch?v=Hg19pMC6SSs).
+
+## Cargo 现在是多容器工作负载 [#a-cargo-is-now-a-multi-container-workload]
+
+`Containers` 替代旧的单数 `Container` 字段。每个应用容器都有名称；应用启动前，`InitContainers` 按声明顺序执行。`Replicas` 现在是简单整数，每个副本创建相同的已声明进程。
+
+下面是一个简短的 0.18 Statefile：API 和工作进程需要先执行数据库模式迁移。
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+```
+
+每个副本中，`migrate` 必须成功退出，`api` 和 `worker` 才会启动。这个 Cargo 有两个应用容器，且没有使用主机网络，因此 Nanocl 为每个副本创建内部沙箱。两个应用加入沙箱的网络命名空间，共用 IP 地址，并可通过 `localhost` 通信。
+
+Cargo 的网络、端口、主机名和 DNS 字段配置共享网络边界。镜像、命令、环境、健康检查、挂载、权限能力以及仅供容器使用的 Secret，仍配置在各命名容器上。单容器 Cargo 直接运行，不产生额外沙箱开销。
+
+详见完整的[多容器 Cargo 指南](/zh-Hans/guides/nanocl/advanced-usage/multi-container-cargoes)。
+
+## 就绪状态成为更新流程的一部分 [#readiness-is-part-of-the-rollout]
+
+启动 Docker 容器不再足以判断就绪状态。必要的应用容器如果配置了健康检查，必须达到 `healthy`；没有健康检查则视运行状态为就绪。共享沙箱也必须运行，而标记 `Essential: false` 的容器不会阻塞 Cargo 就绪。
+
+更新时，Nanocl 依次准备替换副本，并最多等待五分钟，让必要进程就绪。在网络和主机端口允许时，旧版本持续提供服务，直到候选版本就绪。如果候选版本在切换前失败，会将其删除并恢复旧版本。
+
+此行为并不保证零停机。固定主机端口可能要求先移除旧进程，候选版本才能绑定端口；主机网络则要求先停止旧版本。如果需要判断应用层就绪状态，请配置 Docker 健康检查。
+
+完整的就绪条件和回滚边界见[健康检查与滚动更新](/zh-Hans/guides/nanocl/advanced-usage/health-checks)。
+
+## 精确操作目标进程 [#operate-the-process-you-mean]
+
+拥有多个副本的多容器 Cargo 有多个运行时进程，因此 `exec` 和 `kill` 现在选择具体进程，不再通过 Cargo 解析目标。先用 `nanocl ps` 查找权威进程名称或完整 Docker ID，再直接操作：
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` 支持交互输入、TTY 分配、分离模式、环境变量文件和值、用户、工作目录及特权模式。在连接且不使用 TTY 的模式下，stdout 和 stderr 保持分离，执行命令的退出状态成为 CLI 的退出状态。`inspect`、`logs` 和 `stats` 也会在适用时接受进程标识。
+
+旧的 Cargo 级 exec 和组级 kill 已移除。详见[进程操作指南](/zh-Hans/guides/nanocl/advanced-usage/process-operations)。
+
+## 保持精简的网络功能 [#deliberately-small-networking]
+
+现在可以在 Cargo 层选择有名称的本地 Docker 网络。Nanocl 直接使用已有网络，或创建缺失的可连接桥接网络，再持久化检查到的详情，供代理和 DNS 选择器使用。没有引入网络驱动、子网、网格或自动清理 API；Docker 网络也不属于 Nanocl 命名空间。
+
+Docker 内置的 `default`、`bridge`、`host` 和 `none` 模式仍然可用；用户编写的 `container:...` 网络模式被保留。`$$INTERNAL_GATEWAY` 占位符会解析为所选自定义网络的网关；内置模式则使用 `nanoclbr0` 网关。
+
+详细说明见 [Cargo 网络](/zh-Hans/guides/nanocl/advanced-usage/cargo-networking)。
+
+## 更少的运行时组件 [#fewer-moving-parts-in-the-runtime]
+
+`ncproxy` 现在内嵌 Nginx 数据平面，`ncdns` 内嵌 dnsmasq，不再需要单独管理 `nproxy` 或 `ndns` 服务并通过 `docker exec` 协调。两个控制器在启动和事件流重连后，会同步已提交的规则。代理变更以事务方式验证并重载，DNS 规则保留为独立片段，避免一次资源变更清除其他规则。
+
+其余默认单节点架构保持熟悉的结构：`nanocld` 管理工作负载和 API，`nstore` 持久化控制平面状态，`nmetrics` 收集主机指标，`ncvpnkit` 集成 Docker Desktop 网络。Nanocl 0.18 不提供自动多节点调度、自动扩缩容、集群级高可用或服务网格。
+
+## 运行时可靠性 [#runtime-reliability]
+
+可靠性改进包括 Docker 守护进程健康监控、持久化 Cargo 副本记录、启动时状态同步、事务性代理和 DNS 更新，以及移除不健康或没有地址的代理路由。
+
+## 组件版本 [#component-releases]
+
+- **nanocl 0.18.0**：新的 Statefile 和 CLI 模型，针对进程的 `exec` 和 `kill`，规范资源键，VM 镜像完整路径，以及不包含守护进程注入的 Secret 绑定、可重新应用的备份。
+- **nanocld 0.18.0**：多容器编译和生命周期，持久化副本，感知就绪状态的更新，命名网络发现，VM 初始化容器，以及基于 PEM 的数据库 TLS 值。
+- **ncproxy 0.15.0**：内嵌 Nginx，命名网络目标解析，感知就绪状态的路由切换，启动时同步和事务性重载。
+- **ncdns 0.10.0**：内嵌 dnsmasq，命名网络选择器，独立规则片段，验证、回滚及重启同步。
+- **ncvpnkit 0.8.0**：兼容 Nanocl 0.18 客户端和控制器 API。
+
+之前独立发布的 `nproxy`（`1.28.0-n0.15.0`）和 `ndns`（`2.91.0-n0.10.0`）版本线，由内嵌在 `ncproxy` 和 `ncdns` 中的数据平面取代。
+
+VM 也加入可选的 `InitContainer`，在 QEMU 启动前准备完整本地镜像路径，替代已移除的 `nanocl vm image` 工作流程。TLS Secret 输入持久化为 PEM 内容，而不是节点本地路径；数据库证书 Secret 中仍可读取的旧路径，会在升级后的守护进程首次启动时转换。
+
+## 重大变更与迁移 [#breaking-changes-and-migration]
+
+Nanocl 尚未达到 v1，0.17 升级到 0.18 是不兼容升级，可能需要停机。替换安装之前，先执行：
+
+```sh
+nanocl backup -o ./nanocl-0.17-backup
+```
+
+导出内容包括每个命名空间的 Statefile，以及任务、Secret 和资源。这些文件仍使用 0.17 模式，重新应用前必须审查并改写：
+
+- 将 `Container` 改为命名的 `Containers`，按需添加顺序执行的 `InitContainers`。
+- 将旧副本对象改为整数 `Replicas`。
+- 将网络、主机端口、主机名和 DNS 移到 Cargo。
+- 规范键和代理目标使用 `{namespace}.{name}` 顺序。
+- 将 VM 的 `Disk.Image` 和守护进程管理的 VM 镜像改为完整本地 `Image` 路径，可由 `InitContainer` 准备。
+- 移除 `cargo exec`、Cargo 级 kill 和 `vm image` 命令。
+
+首次启动 0.18 守护进程时，保留旧数据库证书文件的可读性，以便迁移其内容。不要将 0.17 备份视为自动兼容或零停机恢复文件。
+
+升级前请阅读 [0.17 到 0.18 迁移指南](/zh-Hans/manuals/nanocl/upgrade)。
+
+## 后续计划 [#what-comes-next]
+
+0.18 建立了工作负载、就绪状态和进程标识的基础，以支持未来功能。目前支持的运维方式仍聚焦于使单个 Nanocl 节点行为可预测、可观测且易于恢复。后续能力实现并能够编写文档时，我们会继续介绍。

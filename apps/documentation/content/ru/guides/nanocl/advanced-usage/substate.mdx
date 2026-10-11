@@ -1,0 +1,32 @@
+---
+title: Вложенные состояния — Nanocl
+description: Подключайте вложенные состояния к Statefile.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- конфигурация
+- состояние
+- файл
+- настройки
+- yaml
+- yml
+- statefile
+- substate
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Вложенные состояния
+
+Подключайте другие Statefile через ключ `SubStates` своего Statefile.
+
+Это удобно для повторного использования Statefile в нескольких местах.<br />
+Или в монорепозитории, чтобы состояние имело единый источник истины.
+
+Пример использования:
+
+<StatefileBlock example="advanced/substate" />

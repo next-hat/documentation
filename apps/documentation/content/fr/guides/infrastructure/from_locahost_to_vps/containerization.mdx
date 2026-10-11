@@ -1,0 +1,308 @@
+---
+title: Conteneurisation
+description: La conteneurisation regroupe une application et ses dépendances dans un conteneur léger. Cette page présente un tutoriel avec Docker et NGINX, comprenant la configuration d’un frontend et d’un backend simples.
+keywords:
+- conteneurisation
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- développement logiciel
+- déploiement
+- frontend
+- backend
+- create-react-app
+- Next.js
+- Vite
+- rendu côté serveur
+- génération de sites statiques
+image: /img/logo.webp
+timestamp: 1689000770000
+---
+
+# Conteneurisation
+
+La conteneurisation est une technique courante de développement et de déploiement qui regroupe une application et ses dépendances dans un conteneur léger. Celui-ci peut être déployé sur toute machine prenant en charge une technologie comme [Docker](https://www.docker.com), [Kubernetes](https://kubernetes.io/) ou [Nanocl](https://docs.next-hat.com/fr/guides/nanocl), sans installer séparément l’application et ses dépendances.
+
+Elle apporte une meilleure portabilité, facilite la mise à l’échelle et simplifie le déploiement et l’administration. En isolant l’application et ses dépendances, elle renforce aussi la sécurité et réduit les conflits entre composants logiciels.
+
+De plus en plus répandue, la conteneurisation est devenue essentielle au développement et au déploiement modernes. Que vous soyez développeur, administrateur système ou responsable informatique, en comprendre les bases améliore l’efficacité et la fiabilité de vos applications.
+
+## Structure du projet [#project-structure]
+
+Avant de commencer, vérifiez que [Docker](https://www.docker.com) est installé sur votre système.<br/>
+Plusieurs méthodes d’installation existent ; nous ne les détaillerons pas ici.
+
+Si vous utilisez un monorepo, vous pouvez héberger vos fichiers sur GitHub ou une autre plateforme de code.<br/>
+Pour ce guide, nous utiliserons la structure suivante :
+
+```sh
+my_project/
+├── my-app/     # Frontend app
+└── my-api/     # API
+```
+
+Les fichiers de ce guide sont disponibles sur [GitHub](https://github.com/leon3s/infrastruture_example).<br/>
+Si vous savez déjà construire une image de conteneur, passez cette partie et clonez simplement le dépôt pour suivre les prochaines étapes.
+
+Créez d’abord un dossier principal pour le projet et ouvrez-le :
+```
+mkdir my_project
+cd my_project
+```
+
+Cette structure sépare les services frontend et backend afin de les développer indépendamment. Elle simplifie le développement, les tests et le déploiement, et améliore la capacité d’évolution et la maintenance de votre application.
+
+Créons donc la structure et commençons à développer nos services frontend et backend !
+
+## Configurer un frontend simple [#setting-up-a-simple-frontend]
+
+Nous allons commencer par un modèle simple [create-react-app](https://create-react-app.dev).<br />
+Pour un projet React, nous recommandons toutefois [Next.js](https://nextjs.org/) ou [Vite](https://vitejs.dev/).
+
+Si vous utilisez un autre framework, compilez votre frontend dans un répertoire statique.
+
+Next.js ou Vite simplifient le développement frontend et améliorent les performances et la capacité d’évolution. Ils proposent notamment le rendu côté serveur et la génération de sites statiques pour créer plus facilement des applications web modernes de qualité.
+
+Configurons un frontend simple et commençons !
+
+### Créer le projet [#creating-the-project]
+
+Créons un répertoire `my-app` pour notre frontend avec les commandes suivantes :
+
+```sh
+npx create-react-app my-app
+cd my-app
+npm run build
+```
+
+Cela compile une application frontend simple dans `my-app/build`.<br/>
+create-react-app affiche le message suivant :
+```console
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+```
+
+Servir le frontend avec un serveur Node tel que `serve` est déconseillé en raison des performances.<br />
+Nous utiliserons plutôt un conteneur Nginx.
+
+### Créer l’image du conteneur [#create-your-container-image]
+
+Dans le répertoire `my-app`, créez un fichier `Dockerfile` avec le contenu suivant :
+
+```docker
+# stage 1 - Build our application
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine AS BUILDER
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+RUN npm run build
+
+# stage 2 - Create app image
+# From latest nginx version on alpine to have a small image
+FROM nginx:1.23.3-alpine
+
+# Copy our build directory
+COPY --from=BUILDER /app/build /app
+
+# Copy our default nginx config
+COPY ./server.nginx /etc/nginx/conf.d/default.conf
+```
+
+Avant de construire l’image, créez `my-app/server.nginx` avec le contenu suivant :
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+
+  ## Auto index file in /app
+  autoindex on;
+  root /app;
+  try_files $uri/index.html $uri.html $uri/ $uri =404;
+  error_page 404 /404.html;
+
+  ## Enable gzip compression
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_types image/webp image/png text/html text/plain text/css text/xml text/javascript application/x-javascript application/javascript application/xml font/eot font/otf font/ttf;
+
+  ## Disable gzip for internet explorer compatibility..
+  gzip_disable "MSIE [1-6]\.";
+
+  ## Cache all static files
+  location ~* ^.+\.(?:css|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 30d;
+    add_header Cache-Control public;
+
+    ## No need to bleed constant updates. Send the all shebang in one fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+Cette configuration Nginx sert les fichiers statiques du frontend pour les requêtes reçues.
+
+Ajoutons aussi `.dockerignore` dans `my-app` pour exclure `node_modules` et `build` pendant la construction. Voici le contenu de `my-app/.dockerignore` :
+```
+node_modules
+build
+```
+
+Cela accélère la construction.
+
+Après avoir créé `server.nginx` et `.dockerignore`, construisez l’image Docker avec :
+
+```
+docker build -t my-frontend:0.0.1 -f ./Dockerfile .
+```
+
+Voici les options Docker utilisées :
+  - `build` : construit l’image.
+  - `-t` : définit son étiquette, généralement sous la forme image_name:version.
+  - `my-frontend:0.0.1` : étiquette choisie pour ce guide.
+  - `-f` : définit le chemin du Dockerfile.
+  - `./Dockerfile` : Dockerfile utilisé pour créer l’image.
+  - `.` : contexte de construction.
+
+### Tester l’image du conteneur [#test-your-container-image]
+
+Pour tester l’image frontend, exécutez :
+```
+docker run -it --rm -p 8080:80 my-frontend:0.0.1
+```
+
+Cela démarre un conteneur et relie le port 8080 de l’hôte au port 80 du conteneur.<br/>
+Ouvrez ensuite [http://localhost:8080](http://localhost:8080) dans votre navigateur pour afficher l’application React.
+
+La page React devrait apparaître comme sur l’image ci-dessous :
+
+<img src="/img/react-create-app-deploy.png" />
+
+## Configurer une API simple [#setup-a-simple-api]
+
+Nous allons créer un projet [Node.js](https://nodejs.org/en) simple avec [Express](https://expressjs.com).
+
+### Créer le projet [#create-the-project]
+
+Créons le répertoire `my-api` :
+
+```sh
+mkdir my_project/my-api
+cd my-api
+npm init
+npm install --save express
+```
+
+Créons ensuite le point d’entrée de l’API dans `./main.js` :
+
+```js
+const express = require('express');
+
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello World' });
+});
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+Testez-le avec :
+
+```sh
+node main.js
+```
+
+### Créer l’image du conteneur [#create-your-container-image-1]
+
+Notre API simple étant prête, créons son image de conteneur.<br/>
+Voici un `Dockerfile` :
+
+```docker
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+COPY . .
+
+# Set host to 0.0.0.0 to bind on all container network interfaces
+# This is usefull because we will create a docker network and bind the container to it
+ENV HOST=0.0.0.0
+# Set the port of the our app to 80 (default http port)
+ENV PORT=80
+# Expose the port so we can see it during inspection
+EXPOSE 80
+
+CMD ["node", "main.js"]
+```
+
+N’oubliez pas `.dockerignore` :
+
+```
+node_modules
+```
+
+Construisons maintenant l’image :
+
+```sh
+docker build -t my-api:0.0.1 -f ./Dockerfile .
+```
+
+### Tester l’image du conteneur [#test-your-container-image-1]
+
+Testons maintenant l’image du conteneur API :
+```
+docker run -it --name my-api --rm -p 8081:80 my-api:0.0.1
+```
+
+Ouvrez [http://localhost:8081](http://localhost:8081) dans votre navigateur pour voir le message JSON :
+
+Notre message JSON devrait apparaître :
+
+<img src="/img/nodejs-express-deploy.png" />
+
+Félicitations, vos applications sont conteneurisées !<br />
+Il est temps de les déployer sur votre VPS !

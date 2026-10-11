@@ -1,0 +1,417 @@
+---
+slug: automating-deployment-with-github-actions-and-nanocl
+title: GitHub Actions と Nanocl でデプロイを自動化する
+description: GitHub Actions と Nanocl を使ってデプロイを自動化する方法を学びます。手間と停止時間を抑えたデプロイの構築手順を説明し、CI/CD の初心者にも経験豊富な開発者にも、強力なオープンソースツールで作業を効率化する方法を紹介します。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- ci/cd
+- github actions
+- devops
+- automation
+- nanocl
+- deployment
+- open source
+- cloud infrastructure
+- docker
+- software development
+keywords:
+- CI/CD
+- GitHub Actions
+- 自動化
+- Nanocl
+- デプロイ
+- ソフトウェア開発
+- DevOps
+- 継続的インテグレーション
+- 継続的デリバリー
+- クラウドインフラ
+date: '2024-11-22'
+timestamp: 1787952819000
+---
+
+GitHub Actions と Nanocl を使ってデプロイを自動化する方法を学びます。このガイドでは、円滑なデプロイを構築し、最小限の手間で停止時間なくアプリケーションをデプロイする手順を説明します。CI/CD の初心者にも経験豊富な開発者にも、強力なオープンソースツールで作業を効率化する方法を紹介します。
+
+{/* truncate */}
+
+![Nanocl の DevOps ミーム](/img/nanocl-devops-meme.jpg)
+
+## はじめに [#introduction]
+
+継続的インテグレーションと継続的デプロイ（CI/CD）は、現代のソフトウェア開発で欠かせない取り組みです。アプリケーションのビルド、テスト、デプロイを自動化し、高品質なソフトウェアを素早く効率的に届けやすくします。GitHub Actions は、GitHub リポジトリから CI/CD パイプラインを直接自動化できる強力なツールです。Nanocl はコンテナと仮想マシンのオーケストレーターで、インフラ管理のインターフェースを統一し、デプロイを簡素化します。
+
+この記事では、Docusaurus を使った [Next Hat][docs.next-hat.com] と [ntex.rs][ntex.rs] のドキュメントをデプロイするために、GitHub Actions と Nanocl で CI/CD パイプラインを構築した方法を紹介します。
+
+## 前提条件 [#prerequisites]
+
+始める前に、次のものを用意してください。
+
+- GitHub アカウント（[github.com][github.com] で無料登録できます）。
+- デプロイするプロジェクト（静的サイト、Web アプリ、コンテナで動かせるものなど）。
+- 専用サーバーまたは VPS（私たちはサーバーに [OVH][ovh.com] を使っています）。
+- サーバーを指すドメイン名（私たちはドメイン名に [OVH][ovh.com] を使っています）。
+- ローカルマシンとサーバーにインストールした Docker（手順は[こちら][get-docker]）。
+- サーバーにインストールした Nanocl（手順は[こちら][get-nanocl]）。
+
+## コンテナイメージを作成する [#creating-the-container-image]
+
+Docusaurus を使った [Next Hat][docs.next-hat.com] と [ntex.rs][ntex.rs] のドキュメントをデプロイするコンテナイメージを作ります。Docker コンテナイメージの作り方をご存じの場合は、この節を省略できます。
+
+### Nginx の設定ファイルを作成する [#creating-a-nginx-configuration-file]
+
+Docusaurus が生成した静的ファイルを配信する Web サーバーに `nginx` を使います。`server.nginx` ファイルに Nginx サーバーの設定を記述します。用途に合わせて、自分の設定ファイルに置き換えられます。
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+  rewrite ^/(.*)/$ /$1 permanent;
+
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 8;
+  gunzip on;
+  gzip_types application/javascript image/* text/css;
+  gzip_disable "MSIE [1-6]\.";
+
+  root /home/node/app;
+  error_page 404 /404.html;
+  try_files $uri.html $uri/index.html =404;
+
+  ## All static files will be cached.
+  location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 1y;
+    add_header Cache-Control max-age=31536000;
+
+    ## No need to bleed constant updates. Send the all shebang in one
+    ## fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+
+`server.nginx` の設定を見ていきましょう。
+
+- `server { ... }`：Nginx サーバーの設定を定義するブロックです。
+- `listen 80;`：サーバーがポート 80 で待ち受けることを指定します。
+- `rewrite ^/(.*)/$ /$1 permanent;`：末尾にスラッシュがあるリクエストを、スラッシュのない同じ URL にリダイレクトします。
+- `gzip on;`：レスポンスの gzip 圧縮を有効にします。
+- `root /home/node/app;`：静的ファイルを配信するルートディレクトリを指定します。
+- `error_page 404 /404.html;`：404 エラーで使うエラーページを指定します。
+- `try_files $uri.html $uri/index.html =404;`：リクエスト時に試すファイルを指定します。
+- `location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ { ... }`：キャッシュを有効にして静的ファイルを配信する設定を指定します。
+
+この設定は、静的ファイルの配信に Nginx を最適化し、gzip 圧縮とキャッシュでパフォーマンスを向上します。
+
+### Dockerfile を作成する [#creating-a-dockerfile]
+
+[Dockerfile][dockerfile] は、Docker イメージのビルドに必要なコマンドを記述するテキストファイルです。ベースイメージ、実行するコマンド、イメージにコピーするファイルを指定します。このガイドでは Docusaurus サイト用の Dockerfile を作成します。コマンドは、プロジェクトに必要なものに置き換えられます。
+
+プロジェクトのディレクトリに [Dockerfile][dockerfile] という新しいファイルを作成し、Docker イメージの設定を記述してください。Docusaurus サイト用の例は次のとおりです。
+
+```dockerfile
+FROM node:22.11.0-alpine AS builder
+
+RUN apk add git
+
+USER node
+
+# Create app directory (with user `node`)
+RUN mkdir -p /home/node/app
+# Set is as cwd
+WORKDIR /home/node/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+COPY --chown=node ./.git ./.git
+
+RUN npm run build
+
+FROM nginx:1.27.0-alpine3.19-slim
+
+WORKDIR /etc/nginx/conf.d
+
+COPY --from=builder /home/node/app/build /home/node/app
+
+COPY ./server.nginx ./default.conf
+```
+
+Dockerfile の各行を見ていきましょう。
+
+- `FROM node:22.11.0-alpine AS builder`：ビルド段階のベースイメージを指定します。npm を含む軽量な Node.js の `node:22.11.0-alpine` イメージを使います。
+- `RUN apk add git`：リポジトリのクローンに必要な `git` パッケージをインストールします。
+- `USER node`：Node.js イメージが作成した、root ではない `node` ユーザーに切り替えます。
+- `RUN mkdir -p /home/node/app`：アプリケーションのコード用ディレクトリを作成します。
+- `WORKDIR /home/node/app`：作業ディレクトリをアプリケーションのディレクトリに設定します。
+- `COPY --chown=node package*.json .`：`package.json` と `package-lock.json` をイメージにコピーします。
+- `RUN npm install`：`package.json` に指定した依存関係をインストールします。
+- `COPY --chown=node . .`：アプリケーションのコードをイメージにコピーします。
+- `COPY --chown=node ./.git ./.git`：`.git` ディレクトリをイメージにコピーします。
+- `RUN npm run build`：`npm run build` コマンドでアプリケーションをビルドします。
+- `FROM nginx:1.27.0-alpine3.19-slim`：最終イメージのベースを指定します。軽量な Nginx の `nginx:1.27.0-alpine3.19-slim` イメージを使います。
+- `WORKDIR /etc/nginx/conf.d`：作業ディレクトリを Nginx の設定ディレクトリに設定します。
+- `COPY --from=builder /home/node/app/build /home/node/app`：ビルド段階で生成した静的ファイルを Nginx イメージにコピーします。
+- `COPY ./server.nginx ./default.conf`：`server.nginx` ファイルを Nginx の設定ディレクトリにコピーします。
+
+この Dockerfile は、最初に Node.js でアプリケーションをビルドし、その後、静的ファイルを Nginx イメージにコピーするマルチステージビルドを行います。ビルド時の依存関係と実行時の依存関係を分離することで、最終イメージを小さくし、パフォーマンスを向上できます。
+
+### Docker イメージをローカルでビルドして実行する [#building-and-running-the-docker-image-locally]
+
+サーバーへのデプロイ前に、Docker イメージをローカルでテストし、想定どおり動くことを確認してください。次のコマンドで、ローカルマシン上でビルドして実行できます。
+
+```bash
+docker build -t my-image .
+docker run -p 8080:80 my-image
+```
+
+`docker build` は、現在のディレクトリの `Dockerfile` を使ってイメージをビルドし、`my-image` という名前のタグを付けます。`docker run` はイメージをポート 8080 で実行し、コンテナ内のポート 80 に対応付けます。ブラウザーで `http://localhost:8080` を開くと、アプリケーションにアクセスできます。
+
+正しく動いていれば、Docusaurus サイトの本番用バージョンがブラウザーに表示されます。確認できたら、GitHub Actions と Nanocl でサーバーへのデプロイを進めます。
+
+## Nanocl を設定する [#setting-up-nanocl]
+
+Nanocl はインフラ管理のインターフェースを統一し、デプロイを簡素化する強力なツールです。最小限の手間でサーバーにアプリケーションをデプロイできます。このガイドでは、サーバーに Nanocl を構築し、シンプルな設定ファイルでアプリケーションをデプロイします。
+
+まず、サーバーに Nanocl をインストールしてください。手順は[こちら][nanocl-install]にあります。インストール後、アプリケーションの設定ファイルを作成できます。イメージ名、ポート番号、環境変数などを記述します。
+
+インストール直後の Nanocl には、デフォルトで `/run/nanocl/nanocl.sock` 経由でのみアクセスできます。プロキシルールでインターネットに公開できますが、自己署名の SSL/TLS 証明書なしで公開することは推奨しません。
+攻撃者にサーバーを制御されるおそれがあります。
+Nanocl デーモンを公開するために適用できる、設定済みのルールを用意しています。
+
+専用サーバーまたは VPS で、次のコマンドを実行してルールを適用します。
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/remote-nanocld
+```
+
+適用前に、次のコマンドでマニュアルを表示できます。
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/remote-nanocld
+```
+
+自己署名の SSL/TLS 証明書を使い、ポート 9943 で Nanocl デーモンをインターネットに公開します。
+
+## GitHub Secrets を設定する [#setting-up-github-secrets]
+
+GitHub Secrets は、GitHub リポジトリで機密情報を安全に保存、利用するための機能です。サーバーの認証情報、API キー、デプロイに必要なほかの機密情報を保存できます。このガイドでは、Nanocl でサーバーにアプリケーションをデプロイするための認証情報を保存します。
+
+GitHub リポジトリの `Settings` タブを開き、左側の `Secrets and variables` リンクを選択してから、`Actions` リンクをクリックしてください。<br/>
+次のようなページが表示されます。
+
+![GitHub Secrets](/img/github-secrets.png)
+
+`New repository secret` ボタンで新しいシークレットを作成します。次の値ごとにシークレットを作成できます。
+
+- `NANOCL_HOST`：サーバーのホスト名または IP アドレスとポート 9943。例：`https://example.com:9943`。
+- `NANOCL_CERT`：Nanocl デーモンへの接続を保護する自己署名の SSL/TLS 証明書の内容。
+- `NANOCL_CERT_KEY`：Nanocl デーモンへの接続を保護する秘密鍵の内容。
+
+サーバーで次のコマンドを実行すると、証明書と秘密鍵の内容を確認できます。
+
+```bash
+nanocl secret inspect cert.client.nanocl.io
+```
+
+証明書と秘密鍵の内容が出力されます。GitHub Secrets のページにコピーして貼り付けてください。
+
+## Statefile の設定を作成する [#creating-a-statefile-configuration]
+
+[Statefile][statefile] は、アプリケーションの設定を記述するファイルです。デプロイに必要なイメージ名、ポート番号、環境変数を指定します。アプリケーション用の Statefile を作成し、Nanocl でサーバーにデプロイできます。
+次は Next Hat のドキュメントをデプロイするために使っている [Statefile][statefile] です。
+
+```yaml
+ApiVersion: v0.18
+
+Args:
+- Name: version
+  Kind: String
+
+Cargoes:
+- Name: nh-doc
+  Containers:
+  - Name: docs
+    Image: ghcr.io/next-hat/documentation:${{ Args.version }}
+
+Resources:
+- Name: http.docs.next-hat.com
+  Kind: ncproxy.io/rule
+  Data:
+    Rules:
+    - Domain: docs.next-hat.com
+      Network: Public
+      # Secret created for the certbot job below
+      # You can remove this line if you don't want https
+      Ssl: cert.docs.next-hat.com
+      Locations:
+      - Path: /
+        Target:
+          Key: global.nh-doc.c
+          Port: 80
+    - Domain: docs.next-hat.com
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Url: https://docs.next-hat.com
+          Redirect: Temporary
+```
+
+この [Statefile][statefile] は、プロジェクトのルートディレクトリに置く必要があります。
+
+## GitHub Actions を設定する [#setting-up-github-actions]
+
+GitHub Actions は、GitHub リポジトリから作業を直接自動化できます。コードの push やプルリクエストの作成など、特定のイベントで実行する独自のワークフローを作成できます。このガイドでは、アプリケーションをビルドし、Nanocl でサーバーにデプロイするワークフローを作成します。
+完全なソースコードは[こちら](https://github.com/next-hat/documentation)で参照できます。
+
+### Docker イメージをビルドして公開する [#building-and-publishing-the-docker-image]
+
+リポジトリに `.github/workflows/build-and-publish.yml` というファイルを作成します。GitHub Actions ワークフローの設定を記述し、master ブランチへのマージ時にのみ Docker イメージをビルドして GitHub Container Registry に公開します。
+
+```yaml
+name: Build and publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build and publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from package.json
+        id: extract_version
+        run: |
+          version=$(jq -r '.version' package.json)
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+    
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          VERSION=${{ env.PACKAGE_VERSION }}
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-image
+          if docker manifest inspect $IMAGE_NAME:$VERSION > /dev/null 2>&1; then
+            echo "Version $VERSION already exists."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/documentation:latest
+            ghcr.io/${{ github.repository_owner }}/documentation:${{ env.PACKAGE_VERSION }}
+```
+
+このワークフローは、リポジトリの master ブランチにコードをマージするたびに実行します。コードから Docker イメージをビルドし、`package.json` の最新バージョンでタグを付け、GitHub Container Registry に push します。`documentation` は、自分のイメージ名に置き換えられます。
+
+### Nanocl でアプリケーションをデプロイする [#deploying-the-application-with-nanocl]
+
+続いて、リポジトリに `.github/workflows/deploy.yml` というファイルを作成します。GitHub Actions ワークフローの設定を記述し、Nanocl でアプリケーションをサーバーにデプロイします。
+
+```yaml
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build and publish Docker image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install nanocl cli
+      run: |
+        wget https://github.com/next-hat/nanocl/releases/download/nanocl-0.16.2/nanocl_0.16.2_amd64.deb
+        sudo dpkg -i nanocl_0.16.1_amd64.deb
+        rm nanocl_0.16.1_amd64.deb
+
+    - name: Deploy to production
+      run: |
+        VERSION=$(jq -r '.version' package.json)
+        nanocl version
+        echo $VERSION
+        nanocl state apply -ys Statefile.yml -- --version $VERSION
+      env:
+        HOST: ${{ secrets.NANOCL_HOST }}
+        CERT: ${{ secrets.NANOCL_CERT }}
+        CERT_KEY: ${{ secrets.NANOCL_CERT_KEY }}
+```
+
+このワークフローは、`Build and publish Docker image` ワークフローが完了するたびに実行します。Nanocl を使ってサーバーにアプリケーションをデプロイします。[Statefile][statefile] の名前や場所が異なる場合は、`Statefile.yml` をその設定ファイルのパスに置き換えてください。
+
+これで GitHub Actions と Nanocl による CI/CD パイプラインが構築できました。リポジトリにコードを push するたびに、GitHub Actions が Docker イメージをビルドして GitHub Container Registry に公開します。公開が完了するとデプロイ用のワークフローが起動し、Nanocl でサーバーにアプリケーションをデプロイします。
+
+## Let's Encrypt で公開用の SSL/TLS を有効にする [#enable-public-ssltls-with-lets-encrypt]
+
+Let's Encrypt を使った公開用の SSL/TLS も有効にできます。次のコマンドを実行してください。
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/certbot -- --email contact@next-hat.com --domain docs.next-hat.com
+```
+
+適用前に、次のコマンドでマニュアルを表示できます。
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/certbot
+```
+
+## おわりに [#conclusion]
+
+このガイドの手順を使うと、最小限の手間で停止時間なくアプリケーションのデプロイを自動化できます。高品質なソフトウェアを素早く効率的に届け、インフラの管理とアプリケーションのデプロイを安心して行いやすくなります。
+
+GitHub Actions と Nanocl による自動化の方法が分かったら、自分のプロジェクトでも試してみてください。結果や質問をぜひお知らせください。
+
+CI/CD パイプラインの構築で質問やサポートが必要な場合は、[Discord サーバー][discord]に参加してください。皆さんのソフトウェア開発をお手伝いします。
+
+[statefile]: /ja/references/nanocl/statefile
+[ntex.rs]: https://ntex.rs
+[docs.next-hat.com]: /ja 
+[github.com]: https://github.com
+[ovh.com]: https://www.ovh.com
+[get-docker]: https://docs.docker.com/get-docker
+[get-nanocl]: /ja/manuals/nanocl/install/overview
+[dockerfile]: https://docs.docker.com/reference/dockerfile/
+[discord]: https://discord.gg/WV4Aac8uZg
+[nanocl-install]: /ja/manuals/nanocl/install/overview

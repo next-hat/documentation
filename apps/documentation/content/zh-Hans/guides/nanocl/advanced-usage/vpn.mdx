@@ -1,0 +1,94 @@
+---
+title: VPN - Nanocl
+description: 在 Nanocl 中使用 VPN。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 配置
+- 状态
+- 文件
+- 配置
+- yaml
+- yml
+- statefile
+- vpn
+- 私有网络
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# 自己的 VPN
+
+为了简化操作，我们提供了预配置 VPN Statefile。<br/>
+它基于 [@Lin Song](https://github.com/hwdsl2) 的 [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server)，可从[官方 Nanocl 仓库](https://nr.next-hat.com)使用。
+
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+查看这个 Statefile 的手册：
+
+<CodeBlock className="language-sh">
+{`nanocl state man -s nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+如果需要超出 `Statefile Args` 的自定义能力，可以下载文件并按需求修改：
+
+
+<CodeBlock className="language-sh">
+{`wget nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+VPN `Statefile` 的内容如下：
+
+<StatefileBlock example="advanced/vpn" />
+
+使用方式：
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+</CodeBlock>
+
+上面的文件为 VPN 创建了自定义 DNS。<br/>
+这样可以创建或覆盖已有域名，并将其指向 Cargo。<br/>
+
+连接 VPN 前，可以用以下命令获取凭据：
+
+```sh
+nanocl cargo -n private logs vpn
+```
+
+你应该看到类似内容：
+
+```console
+================================================
+
+IPsec VPN server is now ready for use!
+
+Connect to your new VPN with these details:
+
+Server IP: server-public-ip
+IPsec PSK: secret-psk
+Username: vpnuser
+Password: secret-password
+```
+
+VPN 连接方法因系统而异，这里不再介绍。<br/>
+可以阅读镜像的[官方文档](https://github.com/hwdsl2/docker-ipsec-vpn-server)了解详情。<br/>
+
+现在可以在任意命名空间创建 Cargo，并让 VPN 访问，例如：
+
+<StatefileBlock example="advanced/vpn-cargo" />
+
+这里大量使用 `private.nsp`，它引用 `private` 命名空间的网关。如果使用其他命名空间，需要相应修改。
+
+应用这些设置后，即可访问 [http://my-domain.internal](http://my-domain.internal)。
+
+![my-domain.internal](/img/my-domain.png)

@@ -1,0 +1,65 @@
+---
+title: Exécuter une VM
+timestamp: 1787952819000
+---
+
+# Exécuter une VM
+
+# NOM
+
+run - Exécuter une VM
+
+## SYNOPSIS [#synopsis]
+
+**run** \[**-n**\|**--namespace**\] \[**--hostname**\] \[**--cpu**\] \[**--mem**\]
+\[**--net-iface**\] \[**--user**\] \[**--password**\] \[**--ssh-key**\]
+\[**--img-size**\] \[**--kvm**\] \[**-a**\|**--attach**\]
+\[**-h**\|**--help**\] \<*NAME*\> \<*IMAGE*\>
+
+## DESCRIPTION [#description]
+
+Exécuter une VM
+
+## OPTIONS [#options]
+
+**-n**, **--namespace** *\<NAMESPACE\>*
+Espace de noms de la nouvelle VM ; global par défaut
+
+**--hostname** *\<HOSTNAME\>*
+Nom d’hôte de la VM
+
+**--cpu** *\<CPU\>*
+Nombre de CPU de la VM, 1 par défaut
+
+**--mem** *\<MEMORY\>*
+Mémoire de la VM en MB, 512 par défaut
+
+**--net-iface** *\<NET_IFACE\>*
+Interface réseau de la VM
+
+**--user** *\<USER\>*
+Utilisateur par défaut de la VM
+
+**--password** *\<PASSWORD\>*
+Mot de passe par défaut de la VM
+
+**--ssh-key** *\<SSH_KEY\>*
+Clé SSH de l’utilisateur
+
+**--img-size** *\<IMAGE_SIZE\>*
+Taille du disque en GB
+
+**--kvm**
+Activer KVM
+
+**-a**, **--attach**
+S’attacher à la VM
+
+**-h**, **--help**
+Afficher l’aide
+
+\<*NAME*\>
+Nom de la VM
+
+\<*IMAGE*\>
+Chemin complet de l’image VM

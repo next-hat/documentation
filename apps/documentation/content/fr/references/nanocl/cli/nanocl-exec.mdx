@@ -1,0 +1,62 @@
+---
+title: Exécution
+timestamp: 1787952819000
+---
+
+# Exécution
+
+# NOM
+
+exec - Exécuter une commande dans un processus
+
+## SYNOPSIS [#synopsis]
+
+**exec** \[**-d**\|**--detach**\] \[**--detach-keys**\]
+\[**-e**\|**--env**\] \[**--env-file**\]
+\[**-i**\|**--interactive**\] \[**--privileged**\]
+\[**-t**\|**--tty**\] \[**-u**\|**--user**\]
+\[**-w**\|**--workdir**\] \[**-h**\|**--help**\]
+\<*PROCESS*\> \<*COMMAND*\>...
+
+## DESCRIPTION [#description]
+
+Exécuter une commande dans un processus
+
+## OPTIONS [#options]
+
+**-d**, **--detach**  
+Exécuter la commande en arrière-plan
+
+**--detach-keys** *\<DETACH_KEYS\>*  
+Remplacer la séquence de touches pour se détacher d’une exécution interactive
+
+**-e**, **--env** *\<ENV\>*  
+Définir une variable d’environnement
+
+**--env-file** *\<ENV_FILE\>*  
+Lire les variables d’environnement depuis un fichier
+
+**-i**, **--interactive**  
+Garder l’entrée standard ouverte
+
+**--privileged**  
+Accorder des privilèges étendus à la commande
+
+**-t**, **--tty**  
+Allouer un pseudo-TTY
+
+**-u**, **--user** *\<USER\>*  
+Utilisateur et groupe facultatif de la commande
+
+**-w**, **--workdir** *\<WORKDIR\>*  
+Répertoire de travail dans le processus
+
+**-h**, **--help**  
+Afficher l’aide
+
+*\<PROCESS\>*  
+Nom concret du processus ou identifiant Docker complet
+
+*\<COMMAND\>*...  
+Commande et arguments à exécuter
+

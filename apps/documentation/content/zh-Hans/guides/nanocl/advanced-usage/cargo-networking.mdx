@@ -1,0 +1,52 @@
+---
+title: Cargo 网络 - Nanocl
+description: 配置 Cargo 层的 Docker 网络、端口、DNS 和内部网关。
+keywords:
+- 文档
+- nanocl
+- cargo
+- docker
+- 网络
+- 端口绑定
+- 内部网关
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo 网络
+
+Nanocl 0.18 将网络配置放在 Cargo 边界。将 `NetworkMode`、`PortBindings`、`Hostname` 和 `Dns` 放在 `Containers` 旁边，而不是单个容器内部。
+
+```yaml
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  NetworkMode: private-api
+  PortBindings:
+    8080/tcp:
+    - HostIp: 127.0.0.1
+      HostPort: "8080"
+  Dns:
+  - $$INTERNAL_GATEWAY
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+`NetworkMode` 接受非空 Docker 网络名称，或受支持的内置模式 `default`、`bridge`、`host` 和 `none`。省略时使用 Nanocl 默认网络。用户编写的 `container:...` 值会被拒绝，因为多容器副本的共享网络命名空间由 Nanocl 管理。
+
+对于 `private-api` 等命名本地网络：
+
+- Nanocl 直接使用已有 Docker 网络。
+- 如果不存在，就创建可连接的本地桥接网络。
+- Nanocl 持久化检查到的网络信息，使 `ncproxy` 和 `ncdns` 能解析命名网络选择器。
+- 移除 Cargo 不会自动删除 Docker 网络。
+
+网络是节点本地 Docker 资源，不是命名空间拥有的 Nanocl 对象。Nanocl 0.18 没有提供选择网络驱动或子网的 Statefile API。
+
+`NetworkMode: host` 和 `NetworkMode: none` 不支持 Cargo 层的主机端口绑定。固定主机端口也可能要求先停止旧版本，再启动更新候选，因此无法保证无缝切换。
+
+## 内部网关 [#internal-gateway]
+
+Nanocl 在序列化容器配置的任意位置展开 `$$INTERNAL_GATEWAY`。命名网络使用该网络的网关；Docker 内置模式使用 `nanoclbr0` 的网关。
+

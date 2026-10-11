@@ -1,0 +1,148 @@
+---
+title: Contextes - Nanocl
+description: Utilisez les contextes pour basculer entre différents démons Nanocl.
+keywords:
+- documentation
+- nanocl
+- guides
+- démarrage
+- configuration
+- état
+- fichier
+- config
+- yaml
+- yml
+- statefile
+- ssl
+- tls
+- certificat
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# Contextes
+
+Les contextes permettent de communiquer avec différents [démons Nanocl](/fr/references/nanocl/daemon/overview).
+
+Vous pouvez, par exemple, avoir un démon Nanocl local et un autre sur un serveur distant. Les contextes permettent de passer de l’un à l’autre.
+
+Nous devons rendre le démon accessible depuis Internet.
+Plusieurs méthodes existent ; la plus simple utilise une [ProxyRule](/fr/references/nanocl/objects/resource).
+
+Générez d’abord votre propre certificat SSL/TLS.<br />
+Ce certificat garantit que seuls les clients disposant d’un certificat issu de l’autorité correspondante peuvent accéder au démon.<br />
+Cela répond à une nécessité évidente de sécurité.
+
+Pour vous simplifier la tâche, nous avons créé un `Statefile` qui génère les certificats nécessaires et configure la `ProxyRule`.
+
+
+## Configuration automatique [#automatic-setup]
+
+Appliquez le `Statefile` suivant pour générer les certificats et appliquer la `ProxyRule` :
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/remote-nanocld`}
+</CodeBlock>
+
+Une fois le `Statefile` appliqué, créez le contexte permettant de basculer entre les démons.
+Récupérez d’abord le certificat client généré par le `Statefile`.
+
+Pour cela, exécutez :
+
+```sh
+nanocl secret inspect cert.client.nanocl.io
+```
+
+Le certificat client et sa clé seront affichés.
+
+## Configuration manuelle [#manual-setup]
+
+### Générer les certificats [#generate-the-certificates]
+
+Utilisez les commandes suivantes pour générer les certificats :
+
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=NanoclCA"
+openssl req -newkey rsa:4096 -keyout server.key -out server.csr -nodes -subj "/CN=*"
+openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+openssl req -newkey rsa:4096 -keyout client.key -out client.csr -nodes -subj "/CN=NanoclClient"
+openssl x509 -req -in client.csr -out client.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+```
+
+Déplacez-les ensuite à l’emplacement approprié sur le serveur distant exécutant Nanocl :
+
+```sh
+sudo mkdir -p /var/lib/nanocl/proxy/certs
+sudo mv ca.crt /var/lib/nanocl/proxy/certs/nanocl_ca.crt
+sudo mv server.crt /var/lib/nanocl/proxy/certs/nanocl_server.crt
+sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
+```
+
+### Appliquer la ProxyRule [#apply-the-proxyrule]
+
+Appliquez ensuite une ProxyRule pour exposer le démon sur Internet.
+
+Créez un fichier `nanocld-proxy.yml` :
+
+<StatefileBlock example="advanced/context-resource" />
+
+Appliquez la ProxyRule avec :
+
+```sh
+nanocl apply -s nanocld-proxy.yml
+```
+
+## Créer le contexte [#create-the-context]
+
+Déplacez votre certificat client à l’emplacement approprié sur votre machine :
+
+```sh
+mkdir -p ~/.nanocl/certs
+mv client.crt ~/.nanocl/certs/nanocl_client.crt
+mv client.key ~/.nanocl/certs/nanocl_client.key
+```
+
+Créez enfin le contexte pour basculer entre les différents démons.
+
+Créons un fichier `my-secure-context.yml` :
+
+<StatefileBlock example="advanced/context" />
+
+<Callout type="info" emoji="📝">
+
+Remplacez `my-remote-server` par l’adresse IP ou le domaine réel du serveur distant.<br/>
+Remplacez aussi `my-user` par votre nom d’utilisateur.
+
+</Callout>
+
+Importez le contexte avec :
+
+```sh
+nanocl context from my-secure-context.yml
+```
+
+Pour basculer entre les contextes, utilisez :
+
+```sh
+nanocl context use my-secure-context
+```
+
+Vous pouvez également lister les contextes existants :
+
+```sh
+nanocl context list
+```
+
+Plus généralement, utilisez la commande suivante :
+
+```sh
+nanocl context --help
+```
+
+pour obtenir davantage d’informations sur la commande context.

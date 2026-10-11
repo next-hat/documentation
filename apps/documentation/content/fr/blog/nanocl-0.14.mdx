@@ -1,0 +1,78 @@
+---
+slug: nanocl-0.14
+title: Présentation de Nanocl 0.14
+authors:
+- leone
+tags:
+- nanocl
+- version
+- 0.14
+description: Nanocl 0.14 apporte de nombreuses fonctionnalités et améliorations pour simplifier vos déploiements. Découvrez-les en détail !
+image: /img/logo3.png
+keywords:
+- conteneurisation
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- développement logiciel
+- déploiement
+- version
+- 0.15
+date: '2024-05-07'
+timestamp: 1731914078000
+---
+
+L’orchestration des conteneurs et des machines virtuelles évolue rapidement. Pour suivre ce rythme, il faut innover sans cesse et s’adapter aux besoins des développeurs et des opérateurs. C’est dans cet esprit que nous présentons Nanocl 0.14, la dernière version de notre orchestrateur, riche en améliorations et en fonctionnalités pour simplifier vos déploiements.
+
+{/*truncate*/}
+
+Découvrons les changements et les nouveautés de nos composants :
+
+## Nanocld [#nanocld]
+
+### Modifications [#changed]
+
+- **Nouveau système d’événements** : une meilleure gestion des événements pour surveiller et administrer vos déploiements.
+- **Gestion améliorée des images** : choisissez de toujours récupérer les images ou uniquement lorsqu’elles sont absentes avec `ImagePullPolicy`. Récupérez aussi les images de registres privés avec `ImagePullSecrets`.
+- **Gestion efficace des processus** : téléchargez les images en arrière-plan, mettez les tâches de traitement des objets en file d’attente et suivez l’état de leurs processus.
+
+### Corrections [#fixed]
+
+- **Réplication améliorée** : correction des problèmes de réplication pour assurer une mise à l’échelle fluide et fiable.
+
+## Nanocl [#nanocl]
+
+### Modifications [#changed-1]
+
+- **Gestion des secrets** : nouvelles commandes `nanocl secret create` pour créer des secrets sans Statefile.
+- **Contextes** : possibilité de changer le point d’accès par défaut pour faciliter l’intégration dans différents environnements.
+Consultez notre guide des [contextes][contexts] pour en savoir plus.
+- **SubStates** : incluez facilement d’autres Statefiles dans votre configuration pour simplifier les déploiements complexes.
+Consultez notre guide des [sous-états][substates] pour en savoir plus.
+
+### Corrections [#fixed-1]
+
+**Journalisation améliorée** : correction des journaux d’état des tâches pour mieux suivre les opérations de déploiement.
+
+## Ncproxy [#ncproxy]
+
+### Modifications [#changed-2]
+
+- **Gestion améliorée des événements** : utilisation du nouveau système d’événements du démon pour améliorer la fiabilité et les performances.
+
+### Ajouts [#added]
+
+- **Contrôle d’accès** : indiquez les adresses IP autorisées à accéder aux services exposés avec `AllowedIps`, pour renforcer la sécurité et le contrôle du réseau.
+
+### Corrections [#fixed-2]
+
+- **Prise en charge des protocoles** : correction de TCP sur SSL et ajout de chemins spécifiques pour les cibles HTTP.
+
+Nanocl 0.14 corrige les difficultés existantes et propose des fonctionnalités pour faire évoluer et gérer votre infrastructure plus efficacement. Orchestration de conteneurs, gestion de machines virtuelles ou sécurisation de l’accès réseau : cette version répond à vos besoins en évolution.
+
+Mettez à niveau dès aujourd’hui avec notre guide de [mise à niveau][upgrading] et découvrez l’avenir de l’orchestration des conteneurs et des machines virtuelles avec Nanocl 0.14. D’autres améliorations suivront pour continuer à transformer l’automatisation des déploiements.
+
+[substates]: /fr/guides/nanocl/advanced-usage/substate
+[contexts]: /fr/guides/nanocl/advanced-usage/contexts
+[upgrading]: /fr/manuals/nanocl/upgrade

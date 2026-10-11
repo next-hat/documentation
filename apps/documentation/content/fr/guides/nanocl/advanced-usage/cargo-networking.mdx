@@ -1,0 +1,64 @@
+---
+title: Réseau des Cargoes - Nanocl
+description: Configurez les réseaux Docker, ports, DNS et la passerelle interne au niveau du Cargo.
+keywords:
+- documentation
+- nanocl
+- cargo
+- docker
+- réseau
+- liaisons de ports
+- passerelle interne
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Réseau des Cargoes
+
+Nanocl 0.18 place la configuration réseau à la frontière du Cargo. Définissez
+`NetworkMode`, `PortBindings`, `Hostname` et `Dns` à côté de `Containers`,
+pas à l’intérieur d’un conteneur individuel.
+
+```yaml
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  NetworkMode: private-api
+  PortBindings:
+    8080/tcp:
+    - HostIp: 127.0.0.1
+      HostPort: "8080"
+  Dns:
+  - $$INTERNAL_GATEWAY
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+`NetworkMode` accepte un nom de réseau Docker non vide ou les modes intégrés
+`default`, `bridge`, `host` et `none`. Son absence utilise le réseau
+par défaut de Nanocl. Les valeurs `container:...` définies par l’utilisateur sont refusées car
+Nanocl possède l’espace de noms réseau partagé d’une réplique à plusieurs conteneurs.
+
+Pour un réseau local nommé comme `private-api` :
+
+- Nanocl utilise tel quel un réseau Docker existant.
+- S’il n’existe pas, Nanocl crée un réseau bridge local attachable.
+- Nanocl conserve les informations inspectées du réseau pour que `ncproxy` et `ncdns`
+  résolvent les sélecteurs de réseaux nommés.
+- Supprimer un Cargo ne supprime pas automatiquement son réseau Docker.
+
+Les réseaux sont des ressources Docker locales au nœud, pas des objets Nanocl appartenant à un espace de noms.
+Nanocl 0.18 ne propose pas d’API Statefile pour choisir un pilote ou un sous-réseau.
+
+Les liaisons de ports hôtes du Cargo ne sont pas prises en charge avec `NetworkMode: host` ou
+`NetworkMode: none`. Les ports fixes peuvent aussi imposer l’arrêt de l’ancienne génération
+avant le démarrage de la candidate lors d’une mise à jour, sans garantir de transfert
+sans interruption.
+
+## Passerelle interne [#internal-gateway]
+
+Nanocl remplace `$$INTERNAL_GATEWAY` partout dans la configuration sérialisée
+du conteneur. Pour un réseau nommé, il s’agit de sa passerelle. Pour
+les modes Docker intégrés, Nanocl utilise la passerelle de `nanoclbr0`.
+

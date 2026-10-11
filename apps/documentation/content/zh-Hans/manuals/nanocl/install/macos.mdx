@@ -1,0 +1,46 @@
+---
+title: 在 macOS 上安装 - Nanocl
+description: 使用脚本或 tar 压缩包在 macOS 上安装 Nanocl。
+keywords:
+- nanocl
+- 安装
+- macos
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# 在 macOS 上安装 Nanocl
+
+<QuickInstall locale="zh-Hans" />
+
+## 手动安装 [#manual-install]
+
+### 下载 CLI 压缩包 [#get-the-cli-tarball]
+
+<UnixTarInstall locale="zh-Hans" tarballUrl={vars.nanoclMacOsTarballUrl} tarballName={`${vars.nanoclMacOsTarballName}`} />
+
+## 从源码编译 [#compile-from-source]
+
+首先通过 Homebrew 安装 PostgreSQL：
+
+<Terminal language="sh" filename="sh">
+{`brew install libpq
+brew link --force libpq
+`}
+</Terminal>
+
+<CratesIoInstall locale="zh-Hans" />
+
+## 验证安装 [#verify-installation]
+
+<Verify />
+
+接下来务必完成[安装后步骤](/zh-Hans/manuals/nanocl/install/post-installation)，安装 Nanocl 组件。

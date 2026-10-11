@@ -1,0 +1,415 @@
+---
+slug: automating-deployment-with-github-actions-and-nanocl
+title: 使用 GitHub Actions 和 Nanocl 自动部署
+description: 了解如何使用 GitHub Actions 和 Nanocl 自动部署应用。本指南介绍如何配置顺畅的部署流程，以更少的操作实现零停机部署。无论你刚接触 CI/CD，还是经验丰富的开发者，都可以借助强大的开源工具简化工作流程。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- ci/cd
+- github actions
+- devops
+- automation
+- nanocl
+- deployment
+- open source
+- cloud infrastructure
+- docker
+- software development
+keywords:
+- CI/CD
+- GitHub Actions
+- 自动化
+- Nanocl
+- 部署
+- 软件开发
+- DevOps
+- 持续集成
+- 持续交付
+- 云基础设施
+date: '2024-11-22'
+timestamp: 1787952819000
+---
+
+了解如何使用 GitHub Actions 和 Nanocl 自动部署应用。本指南介绍如何配置顺畅的部署流程，以更少的操作实现零停机部署。无论你刚接触 CI/CD，还是经验丰富的开发者，都可以借助强大的开源工具简化工作流程。
+
+{/* truncate */}
+
+![Nanocl 与 DevOps 的趣味图片](/img/nanocl-devops-meme.jpg)
+
+## 简介 [#introduction]
+
+持续集成和持续部署（CI/CD）是现代软件开发的重要实践。它们自动完成应用的构建、测试和部署，帮助你快速、高效地交付高质量软件。GitHub Actions 可以直接从 GitHub 仓库自动执行 CI/CD 流水线。Nanocl 是容器和虚拟机编排工具，通过统一的基础设施管理接口简化部署过程。
+
+本文介绍我们如何结合 GitHub Actions 和 Nanocl 配置 CI/CD 流水线，部署使用 Docusaurus 构建的 [next-hat][docs.next-hat.com] 和 [ntex.rs][ntex.rs] 文档。
+
+## 前提条件 [#prerequisites]
+
+开始之前，请准备以下内容：
+
+- GitHub 账号（可在 [github.com][github.com] 免费注册）
+- 需要部署的项目（静态网站、Web 应用或任何能够在容器中运行的项目）
+- 专用服务器或 VPS（我们使用 [OVH][ovh.com] 的服务器）
+- 指向服务器的域名（我们通过 [OVH][ovh.com] 购买域名）
+- 本地计算机和服务器上已安装 Docker（安装说明见[这里][get-docker]）
+- 服务器上已安装 Nanocl（安装说明见[这里][get-nanocl]）
+
+## 创建容器镜像 [#creating-the-container-image]
+
+下面介绍如何为使用 Docusaurus 的 [next-hat][docs.next-hat.com] 和 [ntex.rs][ntex.rs] 文档创建部署镜像。如果你已经熟悉 Docker 镜像的构建方法，可以跳过这一节。
+
+### 创建 Nginx 配置文件 [#creating-a-nginx-configuration-file]
+
+我们使用 `nginx` 作为 Web 服务器，提供 Docusaurus 生成的静态文件。`server.nginx` 文件包含 Nginx 服务器的配置。你可以根据自己的需求替换配置。
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+  rewrite ^/(.*)/$ /$1 permanent;
+
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 8;
+  gunzip on;
+  gzip_types application/javascript image/* text/css;
+  gzip_disable "MSIE [1-6]\.";
+
+  root /home/node/app;
+  error_page 404 /404.html;
+  try_files $uri.html $uri/index.html =404;
+
+  ## All static files will be cached.
+  location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 1y;
+    add_header Cache-Control max-age=31536000;
+
+    ## No need to bleed constant updates. Send the all shebang in one
+    ## fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+
+下面逐项说明 `server.nginx` 的配置：
+
+- `server { ... }`：定义 Nginx 服务器的配置。
+- `listen 80;`：让服务器监听 80 端口。
+- `rewrite ^/(.*)/$ /$1 permanent;`：将带有末尾斜杠的请求重定向到不带斜杠的相同 URL。
+- `gzip on;`：启用响应的 gzip 压缩。
+- `root /home/node/app;`：指定静态文件的根目录。
+- `error_page 404 /404.html;`：指定发生 404 错误时使用的页面。
+- `try_files $uri.html $uri/index.html =404;`：指定收到请求后依次尝试的文件。
+- `location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ { ... }`：配置静态文件服务并启用缓存。
+
+这份配置针对静态文件服务优化了 Nginx，并通过 gzip 压缩和缓存提高性能。
+
+### 创建 Dockerfile [#creating-a-dockerfile]
+
+[Dockerfile][dockerfile] 是包含构建 Docker 镜像所需命令的文本文件，用于指定基础镜像、执行的命令，以及复制到镜像中的文件。本指南为 Docusaurus 网站创建 Dockerfile；你可以将命令替换为自己项目需要的内容。
+
+在项目目录中新建名为 [Dockerfile][dockerfile] 的文件，写入 Docker 镜像配置。下面是 Docusaurus 网站的示例：
+
+```dockerfile
+FROM node:22.11.0-alpine AS builder
+
+RUN apk add git
+
+USER node
+
+# Create app directory (with user `node`)
+RUN mkdir -p /home/node/app
+# Set is as cwd
+WORKDIR /home/node/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+COPY --chown=node ./.git ./.git
+
+RUN npm run build
+
+FROM nginx:1.27.0-alpine3.19-slim
+
+WORKDIR /etc/nginx/conf.d
+
+COPY --from=builder /home/node/app/build /home/node/app
+
+COPY ./server.nginx ./default.conf
+```
+
+下面逐项说明 Dockerfile：
+
+- `FROM node:22.11.0-alpine AS builder`：指定构建阶段的基础镜像。`node:22.11.0-alpine` 是包含 npm 的轻量 Node.js 镜像。
+- `RUN apk add git`：安装克隆仓库所需的 `git` 软件包。
+- `USER node`：切换到 Node.js 镜像创建的非 root 用户 `node`。
+- `RUN mkdir -p /home/node/app`：创建应用代码目录。
+- `WORKDIR /home/node/app`：将工作目录设为应用目录。
+- `COPY --chown=node package*.json .`：将 `package.json` 和 `package-lock.json` 复制到镜像。
+- `RUN npm install`：安装 `package.json` 中列出的依赖。
+- `COPY --chown=node . .`：将应用代码复制到镜像。
+- `COPY --chown=node ./.git ./.git`：将 `.git` 目录复制到镜像。
+- `RUN npm run build`：通过 `npm run build` 构建应用。
+- `FROM nginx:1.27.0-alpine3.19-slim`：指定最终镜像的基础镜像，这里使用轻量 Nginx 镜像 `nginx:1.27.0-alpine3.19-slim`。
+- `WORKDIR /etc/nginx/conf.d`：将工作目录设为 Nginx 配置目录。
+- `COPY --from=builder /home/node/app/build /home/node/app`：将构建阶段生成的静态文件复制到 Nginx 配置目录。
+- `COPY ./server.nginx ./default.conf`：将 `server.nginx` 文件复制到 Nginx 配置目录。
+
+这个 Dockerfile 使用多阶段构建：先用 Node.js 构建应用，再将静态文件复制到 Nginx 镜像。这样将构建依赖与运行时依赖分离，减小最终镜像体积并提升性能。
+
+### 在本地构建和运行 Docker 镜像 [#building-and-running-the-docker-image-locally]
+
+部署到服务器之前，应先在本地测试 Docker 镜像，确保它能够正常运行。使用以下命令在本地构建并运行镜像：
+
+```bash
+docker build -t my-image .
+docker run -p 8080:80 my-image
+```
+
+`docker build` 使用当前目录下的 `Dockerfile` 构建镜像，并将其标记为 `my-image`。`docker run` 在 8080 端口运行镜像，将其映射到容器内的 80 端口。打开浏览器并访问 `http://localhost:8080` 即可查看应用。
+
+如果一切正常，你会在浏览器中看到 Docusaurus 网站的生产版本。接下来就可以用 GitHub Actions 和 Nanocl 将应用部署到服务器。
+
+## 配置 Nanocl [#setting-up-nanocl]
+
+Nanocl 提供统一的基础设施管理接口，简化部署过程，让你轻松将应用部署到服务器。下面介绍如何在服务器上配置 Nanocl，并使用简单的配置文件部署应用。
+
+首先在服务器上安装 Nanocl，安装说明见[这里][nanocl-install]。安装完成后，为应用创建配置文件，指定镜像名称、端口号和环境变量等设置。
+
+默认情况下，安装后的 Nanocl 只能通过 `/run/nanocl/nanocl.sock` 访问。你可以用代理规则将它公开到互联网，但不建议在没有自签名 SSL/TLS 证书的情况下公开访问，否则攻击者可能接管你的服务器。我们提供了一份可直接应用的预配置规则，用于公开 Nanocl 守护进程。
+
+在专用服务器或 VPS 上执行以下命令应用规则：
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/remote-nanocld
+```
+
+应用之前，可以使用以下命令查看说明：
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/remote-nanocld
+```
+
+该规则通过自签名 SSL/TLS 证书，在 9943 端口向公网提供 Nanocl 守护进程。
+
+## 配置 GitHub Secrets [#setting-up-github-secrets]
+
+GitHub Secrets 可以安全存储和使用 GitHub 仓库中的敏感信息，包括服务器凭据、API 密钥和部署所需的其他信息。这里用 GitHub Secrets 保存通过 Nanocl 部署应用到服务器所需的凭据。
+
+打开 GitHub 仓库并点击 `Settings` 标签，在左侧边栏点击 `Secrets and variables`，然后点击 `Actions`。<br/>
+你应该看到类似下面的页面：
+
+![GitHub Secrets 配置页面](/img/github-secrets.png)
+
+点击 `New repository secret` 创建 Secret。分别为以下值创建 Secret：
+
+- `NANOCL_HOST`：服务器的主机名或 IP 地址，包含 9943 端口，例如 `https://example.com:9943`。
+- `NANOCL_CERT`：保护 Nanocl 守护进程连接的自签名 SSL/TLS 证书内容。
+- `NANOCL_CERT_KEY`：保护该连接的私钥内容。
+
+在服务器上执行以下命令，查看证书和私钥内容：
+
+```bash
+nanocl secret inspect cert.client.nanocl.io
+```
+
+命令会输出证书和私钥的内容。将内容复制并粘贴到 GitHub Secrets 页面即可。
+
+## 创建 Statefile 配置 [#creating-a-statefile-configuration]
+
+[Statefile][statefile] 是应用配置文件，用于指定部署所需的镜像名称、端口号和环境变量。创建 Statefile 后，即可用 Nanocl 将应用部署到服务器。
+下面是我们部署 next-hat 文档时使用的 [Statefile][statefile]：
+
+```yaml
+ApiVersion: v0.18
+
+Args:
+- Name: version
+  Kind: String
+
+Cargoes:
+- Name: nh-doc
+  Containers:
+  - Name: docs
+    Image: ghcr.io/next-hat/documentation:${{ Args.version }}
+
+Resources:
+- Name: http.docs.next-hat.com
+  Kind: ncproxy.io/rule
+  Data:
+    Rules:
+    - Domain: docs.next-hat.com
+      Network: Public
+      # Secret created for the certbot job below
+      # You can remove this line if you don't want https
+      Ssl: cert.docs.next-hat.com
+      Locations:
+      - Path: /
+        Target:
+          Key: global.nh-doc.c
+          Port: 80
+    - Domain: docs.next-hat.com
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Url: https://docs.next-hat.com
+          Redirect: Temporary
+```
+
+将这个 [Statefile][statefile] 放在项目根目录。
+
+## 配置 GitHub Actions [#setting-up-github-actions]
+
+GitHub Actions 可以直接从 GitHub 仓库自动执行工作流程。你可以创建自定义工作流程，在推送代码或创建拉取请求等特定事件发生时运行。这里创建一个构建应用并用 Nanocl 部署到服务器的工作流程。
+完整源代码见[这里](https://github.com/next-hat/documentation)。
+
+### 构建并发布 Docker 镜像 [#building-and-publishing-the-docker-image]
+
+在仓库中新建 `.github/workflows/build-and-publish.yml` 文件，写入 GitHub Actions 工作流程配置。当代码合并到 master 分支时，该流程构建 Docker 镜像并发布到 GitHub 容器镜像仓库。
+
+```yaml
+name: Build and publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build and publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from package.json
+        id: extract_version
+        run: |
+          version=$(jq -r '.version' package.json)
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+    
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          VERSION=${{ env.PACKAGE_VERSION }}
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-image
+          if docker manifest inspect $IMAGE_NAME:$VERSION > /dev/null 2>&1; then
+            echo "Version $VERSION already exists."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/documentation:latest
+            ghcr.io/${{ github.repository_owner }}/documentation:${{ env.PACKAGE_VERSION }}
+```
+
+每次向仓库的 master 分支合并代码时，该工作流程都会运行：从代码构建 Docker 镜像，使用 `package.json` 中的最新版本添加标签，并推送到 GitHub Container Registry。可以将 `documentation` 替换为你的镜像名称。
+
+### 使用 Nanocl 部署应用 [#deploying-the-application-with-nanocl]
+
+接下来，在仓库中新建 `.github/workflows/deploy.yml` 文件，配置 GitHub Actions 工作流程，用 Nanocl 将应用部署到服务器。
+
+```yaml
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build and publish Docker image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install nanocl cli
+      run: |
+        wget https://github.com/next-hat/nanocl/releases/download/nanocl-0.16.2/nanocl_0.16.2_amd64.deb
+        sudo dpkg -i nanocl_0.16.1_amd64.deb
+        rm nanocl_0.16.1_amd64.deb
+
+    - name: Deploy to production
+      run: |
+        VERSION=$(jq -r '.version' package.json)
+        nanocl version
+        echo $VERSION
+        nanocl state apply -ys Statefile.yml -- --version $VERSION
+      env:
+        HOST: ${{ secrets.NANOCL_HOST }}
+        CERT: ${{ secrets.NANOCL_CERT }}
+        CERT_KEY: ${{ secrets.NANOCL_CERT_KEY }}
+```
+
+每当 `Build and publish Docker image` 工作流程完成时，这个工作流程就会运行，通过 Nanocl 部署应用。如果你的 [Statefile][statefile] 文件名称或位置不同，将 `Statefile.yml` 替换为相应路径。
+
+现在 GitHub Actions 和 Nanocl 的 CI/CD 流水线已经配置完成。每次推送代码后，GitHub Actions 都会构建 Docker 镜像并发布到 GitHub Container Registry。镜像发布完成后会触发部署工作流程，用 Nanocl 将应用部署到服务器。
+
+## 使用 Let's Encrypt 启用公开可信的 SSL/TLS [#enable-public-ssltls-with-lets-encrypt]
+
+你还可以使用 Let's Encrypt 启用公开可信的 SSL/TLS，执行以下命令即可：
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/certbot -- --email contact@next-hat.com --domain docs.next-hat.com
+```
+
+应用之前，可以使用以下命令查看说明：
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/certbot
+```
+
+## 总结 [#conclusion]
+
+按照本指南的步骤，可以以更少的操作实现应用的自动部署和零停机部署，更快、更高效地交付高质量软件，轻松管理基础设施并放心部署应用。
+
+既然已经了解如何用 GitHub Actions 和 Nanocl 自动部署，不妨在自己的项目中尝试。如果有问题，欢迎告诉我们！
+
+如果对 GitHub Actions 和 Nanocl 的 CI/CD 流水线配置有疑问或需要帮助，欢迎加入我们的 [Discord 服务器][discord]。我们愿意协助你的软件开发工作。
+
+[statefile]: /zh-Hans/references/nanocl/statefile
+[ntex.rs]: https://ntex.rs
+[docs.next-hat.com]: https://docs.next-hat.com/zh-Hans
+[github.com]: https://github.com
+[ovh.com]: https://www.ovh.com
+[get-docker]: https://docs.docker.com/get-docker
+[get-nanocl]: /zh-Hans/manuals/nanocl/install/overview
+[dockerfile]: https://docs.docker.com/reference/dockerfile/
+[discord]: https://discord.gg/WV4Aac8uZg
+[nanocl-install]: /zh-Hans/manuals/nanocl/install/overview

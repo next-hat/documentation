@@ -1,0 +1,23 @@
+---
+title: Cargo リファレンス - Nanocl
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocld
+- cargo
+- 仕様
+- 仕様
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo
+
+Nanocl 0.18 の `Cargo` は、名前付きのアプリケーション `Containers`、任意の順序付き `InitContainers`、整数の `Replicas` 数を含む永続的なワークロードです。Cargo が持つネットワークとポートの設定は、各レプリカの共有ネットワーク境界を定義します。Docker 設定とコンテナ専用のシークレットは、それぞれの名前付きコンテナに保持されます。
+
+以下の OpenAPI スキーマが `CargoSpec` の仕様リファレンスです。実行時の構成と例については、[複数コンテナの Cargo](/ja/guides/nanocl/advanced-usage/multi-container-cargoes) を参照してください。
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="ja" example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpec" />

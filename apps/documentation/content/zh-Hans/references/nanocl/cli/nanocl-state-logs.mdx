@@ -1,0 +1,45 @@
+---
+title: Statefile 日志
+timestamp: 1757712924000
+---
+
+# Statefile 日志
+
+# 名称
+
+logs - 显示 Statefile 对象的日志
+
+## 语法 [#synopsis]
+
+**logs** \[**-s**\|**--source**\] \[**--since**\] \[**-u **\] \[**-t
+**\] \[**--timestamps**\] \[**-f **\] \[**-h**\|**--help**\] \[*ARGS*\]
+
+## 说明 [#description]
+
+显示 Statefile 对象的日志
+
+## 选项 [#options]
+
+**-s**, **--source** *\<SOURCE\>*  
+Statefile 的路径或 URL
+
+**--since** *\<SINCE\>*  
+仅包含指定 Unix 时间戳之后的日志
+
+**-u** *\<UNTIL\>*  
+仅包含指定 Unix 时间戳之前的日志
+
+**-t** *\<TAIL\>*  
+整数表示返回最后 n 条日志，"all" 返回全部日志
+
+**--timestamps**  
+布尔值，启用后在每行日志中包含时间戳
+
+**-f**  
+布尔值，启用后以流形式打开日志
+
+**-h**, **--help**  
+显示帮助
+
+\[*ARGS*\]  
+传给文件的额外参数

@@ -1,0 +1,183 @@
+---
+title: 虚拟机 - Nanocl
+description: 使用 Nanocl 创建虚拟机。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 配置
+- 虚拟机
+- vm
+- 虚拟
+- 机器
+- statefile
+- 状态
+- 文件
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# 创建 VM
+
+通过 `Nanocl` 可以快速创建兼容 [cloud-init][cloud-init] 的虚拟机。<br/>
+多数 Linux 云镜像已包含 cloud-init，可用于设置网络、用户和 SSH 密钥。
+
+## 安装默认 VM 运行时 [#install-the-default-vm-runtime]
+
+为便于网络配置，Nanocl 在容器中启动虚拟机，使用默认运行时镜像 [nanocl-qemu][nanocl-qemu]。<br/>
+
+
+## 使用初始化容器下载 Ubuntu 并创建 VM 磁盘 [#download-ubuntu-and-create-a-vm-disk-with-an-init-container]
+
+Nanocl 直接使用 VM 镜像路径。Nanocl 0.18 中，用 VM 的 `InitContainer` 下载 Ubuntu 云镜像，并在 QEMU 运行时容器启动前通过 `qemu-img` 创建独立 qcow2 磁盘。下载和磁盘准备成为 VM 生命周期的一部分，无需在主机上手动准备。
+
+以下 Statefile 在 `/var/lib/nanocl/vm` 下创建 `web-01` 的磁盘。初始化容器下载 Ubuntu Server 24.04，再用 `qemu-img convert` 创建可写的 `web-01.qcow2` 副本。只有命令以 `0` 状态退出，VM 运行时才启动。
+
+```yaml
+ApiVersion: v0.18
+VirtualMachines:
+- Name: web-01
+  Image: /var/lib/nanocl/vm/web-01.qcow2
+  InitContainer:
+    # Omit Image to use Nanocl's default nanocl-qemu runtime image.
+    Entrypoint: ["sh", "-ec"]
+    Cmd:
+    - |
+      mkdir -p /images
+      test ! -e /images/web-01.qcow2 || {
+        echo "VM disk already exists: /images/web-01.qcow2" >&2
+        exit 1
+      }
+      curl -fL \
+        -o /images/ubuntu-24.04-base.img \
+        https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      qemu-img convert -p -O qcow2 \
+        /images/ubuntu-24.04-base.img \
+        /images/web-01.qcow2
+    HostConfig:
+      Binds:
+      - /var/lib/nanocl/vm:/images
+```
+
+`qemu-img convert` 创建完整、独立的 qcow2 副本；每个 VM 必须使用不同输出文件名。存在性检查防止重运行初始化容器时覆盖 VM 磁盘。Nanocl 守护进程和 VM 运行时必须具有 `/var/lib/nanocl/vm` 的写入权限。
+
+## 运行 VM [#run-a-vm]
+
+使用简单命令运行虚拟机：
+
+```sh
+nanocl vm run web-01 /var/lib/nanocl/vm/web-01.qcow2
+```
+
+这里用到了以下选项：
+
+* `web-01`：虚拟机名称。
+* `/var/lib/nanocl/vm/web-01.qcow2`：VM 可写磁盘副本的完整路径。
+
+没有提供选项时，虚拟机使用以下默认设置启动：
+
+* 1 个 CPU
+* 500 MB 内存
+
+默认配置的首次启动约需 90 秒。启用 KVM 并分配更多资源可以缩短时间。
+
+<Callout type="info">
+
+Nanocl 不会自动创建磁盘快照。VM 使用复制后的磁盘路径，下载的基础镜像仅作为未来创建 VM 副本的源文件保留。
+
+</Callout>
+
+使用以下命令连接虚拟机并监控状态：
+
+```sh
+nanocl vm attach web-01
+```
+
+这个命令连接运行中的虚拟机，便于执行命令或其他操作。
+
+你应该看到类似输出：
+
+```console
+[  OK  ] Finished Permit User Sessions.
+[  OK  ] Started Serial Getty on ttyS0.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Finished Record successful boot for GRUB.
+         Starting GRUB failed boot detection...
+[  OK  ] Started LSB: automatic crash report generation.
+[  OK  ] Finished GRUB failed boot detection.
+[  OK  ] Finished Pollinate to seed…seudo random number generator.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started User Login Management.
+[  OK  ] Started Unattended Upgrades Shutdown.
+[  OK  ] Started OpenBSD Secure Shell server.
+[  OK  ] Started Dispatcher daemon for systemd-networkd.
+cloud-init[494]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:config' at Tue, 04 Jul 2023 12:36:13 +0000. Up 78.27 seconds.
+cloud-init[517]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:final' at Tue, 04 Jul 2023 12:36:18 +0000. Up 83.19 seconds.
+cloud-init[515]: The system is finally up, after 93.54 seconds
+[  OK  ] Finished Execute cloud user/final scripts.
+[  OK  ] Reached target Cloud-init target.
+Ubuntu 22.04.2 LTS 91daefd21c1b ttyS0
+
+91daefd21c1b login: 
+```
+
+默认用户名和密码为 `cloud:cloud`。首次启动虚拟机时可以更改凭据。也可以配置 SSH 密钥增强安全性。请等待 [cloud-init][cloud-init] 完成后再登录。
+
+## 更新 VM [#patch-a-vm]
+
+可以修改内存、CPU 等资源，调整虚拟机性能。
+
+执行以下命令：
+
+```sh
+nanocl vm patch myvm --kvm --cpu 4 --mem 2048
+```
+
+上面的命令使用以下选项：
+
+* `myvm`：要更新的虚拟机名称。
+* `--kvm`：启用 KVM 加速。
+* `--cpu`：设置 CPU 数量。
+* `--mem`：设置分配的内存。
+
+如果系统没有启用 KVM，可以移除 --kvm 选项。更新后可以重新连接虚拟机。
+
+<Callout type="warning">
+
+更新虚拟机会导致它停止并重启。
+
+</Callout>
+
+## SSH 连接 [#ssh-connection]
+
+没有使用 Docker Desktop 时，可通过 IP 地址连接虚拟机。用以下命令获取 IP：
+
+```sh
+nanocl vm inspect myvm
+```
+
+这里的 `IPAddress` 是 `10.2.0.2`，然后用默认凭据 `cloud:cloud` 通过 SSH 连接。
+
+```sh
+ssh cloud@10.2.0.2
+```
+
+## Statefile [#statefile]
+
+可以用 `Statefile` 定义虚拟机。示例：
+
+<StatefileBlock example="advanced/vm" />
+
+## 对外开放 VM [#expose-your-vm]
+
+使用 `ProxyRule` 对外开放虚拟机的指定端口。下面是将 VM 的 SSH 22 端口映射到公网 5555 端口的完整示例：
+
+<StatefileBlock example="advanced/vm-proxy" />
+
+[cloud-init]: https://cloud-init.io
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

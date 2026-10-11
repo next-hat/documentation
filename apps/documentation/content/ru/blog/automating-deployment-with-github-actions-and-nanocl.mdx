@@ -1,0 +1,417 @@
+---
+slug: automating-deployment-with-github-actions-and-nanocl
+title: Автоматизация развёртывания с GitHub Actions и Nanocl
+description: Узнайте, как автоматизировать развёртывание с помощью GitHub Actions и Nanocl. Это руководство поможет настроить непрерывное развёртывание приложений с минимальными усилиями и без простоев. Независимо от вашего опыта работы с CI/CD, вы научитесь упрощать рабочий процесс с помощью мощных инструментов с открытым исходным кодом.
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- ci/cd
+- github actions
+- devops
+- automation
+- nanocl
+- deployment
+- open source
+- cloud infrastructure
+- docker
+- software development
+keywords:
+- CI/CD
+- GitHub Actions
+- автоматизация
+- Nanocl
+- развёртывание
+- разработка ПО
+- DevOps
+- непрерывная интеграция
+- непрерывная доставка
+- облачная инфраструктура
+date: '2024-11-22'
+timestamp: 1787952819000
+---
+
+Узнайте, как автоматизировать развёртывание с помощью GitHub Actions и Nanocl. Это руководство поможет настроить непрерывное развёртывание приложений с минимальными усилиями и без простоев. Независимо от вашего опыта работы с CI/CD, вы научитесь упрощать рабочий процесс с помощью мощных инструментов с открытым исходным кодом.
+
+{/* truncate */}
+
+![Мем о Nanocl и DevOps](/img/nanocl-devops-meme.jpg)
+
+## Введение [#introduction]
+
+Непрерывная интеграция и непрерывное развёртывание (CI/CD) — важные практики современной разработки. Они автоматизируют сборку, тестирование и развёртывание приложений, помогая быстро и эффективно доставлять качественное ПО. GitHub Actions позволяет автоматизировать конвейер CI/CD прямо в репозитории GitHub. Nanocl — оркестратор контейнеров и виртуальных машин, который упрощает развёртывание, предоставляя единый интерфейс управления инфраструктурой.
+
+В этой статье мы покажем, как настроили конвейер CI/CD с GitHub Actions и Nanocl для развёртывания документации [next-hat][docs.next-hat.com] и [ntex.rs][ntex.rs], использующей docusaurus.
+
+## Предварительные требования [#prerequisites]
+
+Перед началом вам понадобятся:
+
+- Учётная запись GitHub (бесплатная регистрация на [github.com][github.com])
+- Проект для развёртывания (статический сайт, веб-приложение или любой проект, запускаемый в контейнере)
+- Выделенный сервер или VPS (для серверов мы используем [ovh][ovh.com])
+- Доменное имя, указывающее на ваш сервер (домены мы покупаем у [ovh][ovh.com])
+- Docker на локальном компьютере и сервере (инструкции по установке — [здесь][get-docker])
+- Nanocl на сервере (инструкции по установке — [здесь][get-nanocl])
+
+## Создание образа контейнера [#creating-the-container-image]
+
+Рассмотрим создание образа контейнера для развёртывания документации [next-hat][docs.next-hat.com] и [ntex.rs][ntex.rs], использующей docusaurus. Если вы уже умеете настраивать образы Docker, этот раздел можно пропустить.
+
+### Создание конфигурационного файла Nginx [#creating-a-nginx-configuration-file]
+
+Мы используем `nginx` как веб-сервер для статических файлов, созданных docusaurus. Файл `server.nginx` содержит конфигурацию сервера nginx. Вы можете заменить её собственной в соответствии со своими задачами.
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+  rewrite ^/(.*)/$ /$1 permanent;
+
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 8;
+  gunzip on;
+  gzip_types application/javascript image/* text/css;
+  gzip_disable "MSIE [1-6]\.";
+
+  root /home/node/app;
+  error_page 404 /404.html;
+  try_files $uri.html $uri/index.html =404;
+
+  ## All static files will be cached.
+  location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 1y;
+    add_header Cache-Control max-age=31536000;
+
+    ## No need to bleed constant updates. Send the all shebang in one
+    ## fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+
+Разберём конфигурационный файл `server.nginx`:
+
+- `server { ... }`: блок конфигурации сервера Nginx.
+- `listen 80;`: сервер слушает порт 80.
+- `rewrite ^/(.*)/$ /$1 permanent;`: запросы с завершающим слешем перенаправляются на тот же URL без слеша.
+- `gzip on;`: включает сжатие ответов gzip.
+- `root /home/node/app;`: задаёт корневой каталог статических файлов.
+- `error_page 404 /404.html;`: задаёт страницу для ошибок 404.
+- `try_files $uri.html $uri/index.html =404;`: задаёт файлы, проверяемые при поступлении запроса.
+- `location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ { ... }`: настраивает обслуживание статических файлов с кешированием.
+
+Эта конфигурация оптимизирует Nginx для обслуживания статических файлов и повышает производительность за счёт сжатия gzip и кеширования.
+
+### Создание Dockerfile [#creating-a-dockerfile]
+
+[Dockerfile][dockerfile] — текстовый документ со всеми командами для сборки образа Docker. Он задаёт базовый образ, выполняемые команды и копируемые файлы. В этом руководстве мы создадим Dockerfile для сайта docusaurus. Замените команды на те, которые нужны вашему проекту.
+
+Создайте в каталоге проекта файл [Dockerfile][dockerfile]. Он будет содержать конфигурацию образа Docker. Вот пример Dockerfile для сайта docusaurus:
+
+```dockerfile
+FROM node:22.11.0-alpine AS builder
+
+RUN apk add git
+
+USER node
+
+# Create app directory (with user `node`)
+RUN mkdir -p /home/node/app
+# Set is as cwd
+WORKDIR /home/node/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+COPY --chown=node ./.git ./.git
+
+RUN npm run build
+
+FROM nginx:1.27.0-alpine3.19-slim
+
+WORKDIR /etc/nginx/conf.d
+
+COPY --from=builder /home/node/app/build /home/node/app
+
+COPY ./server.nginx ./default.conf
+```
+
+Разберём Dockerfile:
+
+- `FROM node:22.11.0-alpine AS builder`: задаёт базовый образ этапа сборки. `node:22.11.0-alpine` — облегчённая версия Node.js с npm.
+- `RUN apk add git`: устанавливает пакет `git`, необходимый для клонирования репозитория.
+- `USER node`: переключается на пользователя `node`, созданного образом Node.js и не имеющего прав root.
+- `RUN mkdir -p /home/node/app`: создаёт каталог для кода приложения.
+- `WORKDIR /home/node/app`: задаёт рабочий каталог приложения.
+- `COPY --chown=node package*.json .`: копирует в образ файлы `package.json` и `package-lock.json`.
+- `RUN npm install`: устанавливает зависимости из `package.json`.
+- `COPY --chown=node . .`: копирует код приложения в образ.
+- `COPY --chown=node ./.git ./.git`: копирует каталог `.git` в образ.
+- `RUN npm run build`: собирает приложение командой `npm run build`.
+- `FROM nginx:1.27.0-alpine3.19-slim`: задаёт базовый образ заключительного этапа. `nginx:1.27.0-alpine3.19-slim` — облегчённая версия Nginx.
+- `WORKDIR /etc/nginx/conf.d`: задаёт рабочим каталогом каталог конфигурации Nginx.
+- `COPY --from=builder /home/node/app/build /home/node/app`: копирует статические файлы, созданные на этапе сборки, в образ Nginx.
+- `COPY ./server.nginx ./default.conf`: копирует файл `server.nginx` в каталог конфигурации Nginx.
+
+Этот Dockerfile использует многоэтапную сборку: сначала собирает приложение с Node.js, затем копирует статические файлы в образ Nginx. Разделение зависимостей сборки и выполнения уменьшает итоговый образ и повышает производительность.
+
+### Локальная сборка и запуск образа Docker [#building-and-running-the-docker-image-locally]
+
+Перед развёртыванием на сервере проверьте образ Docker локально. Собрать и запустить его на своём компьютере можно следующими командами:
+
+```bash
+docker build -t my-image .
+docker run -p 8080:80 my-image
+```
+
+Команда `docker build` собирает образ по `Dockerfile` из текущего каталога и присваивает ему имя `my-image`. Команда `docker run` запускает образ на порту 8080, сопоставляя его с портом 80 контейнера. Откройте приложение в браузере по адресу `http://localhost:8080`.
+
+Если всё работает, в браузере появится производственная версия сайта docusaurus. Теперь можно переходить к развёртыванию на сервере с GitHub Actions и Nanocl.
+
+## Настройка Nanocl [#setting-up-nanocl]
+
+Nanocl упрощает развёртывание благодаря единому интерфейсу управления инфраструктурой. С ним можно развёртывать приложения на сервере с минимальными усилиями. Мы покажем, как настроить Nanocl и развернуть приложение с помощью простого конфигурационного файла.
+
+Сначала установите Nanocl на сервере. Инструкции находятся [здесь][nanocl-install]. После установки создайте конфигурационный файл приложения с такими параметрами, как имя образа, номер порта и переменные окружения.
+
+По умолчанию после установки Nanocl доступен только через `/run/nanocl/nanocl.sock`. Правило прокси позволяет открыть доступ из интернета, однако делать это без самоподписанного сертификата SSL/TLS не рекомендуется.
+Иначе злоумышленник может получить контроль над сервером.
+Для публикации Nanocl Daemon у нас есть готовое правило.
+
+На выделенном сервере или VPS выполните следующую команду, чтобы применить правило:
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/remote-nanocld
+```
+
+Перед применением можно просмотреть руководство следующей командой:
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/remote-nanocld
+```
+
+Nanocl Daemon станет доступен из интернета на порту 9943 с самоподписанным сертификатом SSL/TLS.
+
+## Настройка GitHub Secrets [#setting-up-github-secrets]
+
+GitHub Secrets позволяет безопасно хранить и использовать конфиденциальные данные в репозитории GitHub: учётные данные сервера, ключи API и другие сведения для развёртывания. Мы сохраним в GitHub Secrets данные, необходимые для развёртывания приложения на сервере с помощью Nanocl.
+
+Откройте репозиторий GitHub и вкладку `Settings`. Затем выберите `Secrets and variables` в левой панели и перейдите по ссылке `Actions`.<br/>
+Вы увидите такую страницу:
+
+![Секреты GitHub](/img/github-secrets.png)
+
+Нажмите `New repository secret`, чтобы создать секрет. Создайте отдельный секрет для каждого значения:
+
+- `NANOCL_HOST`: имя хоста или IP-адрес сервера с портом 9943. Пример: `https://example.com:9943`
+- `NANOCL_CERT`: содержимое самоподписанного сертификата SSL/TLS для защиты соединения с Nanocl Daemon.
+- `NANOCL_CERT_KEY`: содержимое закрытого ключа для защиты соединения с Nanocl Daemon.
+
+Чтобы получить содержимое сертификата и закрытого ключа, выполните на сервере следующие команды:
+
+```bash
+nanocl secret inspect cert.client.nanocl.io
+```
+
+Команда выведет содержимое сертификата и закрытого ключа. Скопируйте его на страницу GitHub Secrets.
+
+## Создание конфигурации Statefile [#creating-a-statefile-configuration]
+
+[Statefile][statefile] — конфигурационный файл с параметрами приложения: именем образа, номером порта и переменными окружения для развёртывания. Создайте Statefile и используйте его для развёртывания приложения на сервере с Nanocl.
+Вот [Statefile][statefile], который мы используем для документации next-hat:
+
+```yaml
+ApiVersion: v0.18
+
+Args:
+- Name: version
+  Kind: String
+
+Cargoes:
+- Name: nh-doc
+  Containers:
+  - Name: docs
+    Image: ghcr.io/next-hat/documentation:${{ Args.version }}
+
+Resources:
+- Name: http.docs.next-hat.com
+  Kind: ncproxy.io/rule
+  Data:
+    Rules:
+    - Domain: docs.next-hat.com
+      Network: Public
+      # Secret created for the certbot job below
+      # You can remove this line if you don't want https
+      Ssl: cert.docs.next-hat.com
+      Locations:
+      - Path: /
+        Target:
+          Key: global.nh-doc.c
+          Port: 80
+    - Domain: docs.next-hat.com
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Url: https://docs.next-hat.com
+          Redirect: Temporary
+```
+
+Этот [Statefile][statefile] нужно разместить в корневом каталоге проекта.
+
+## Настройка GitHub Actions [#setting-up-github-actions]
+
+GitHub Actions автоматизирует рабочие процессы прямо в репозитории GitHub. Можно создавать процессы, запускаемые при определённых событиях, например отправке кода или создании pull request. Мы создадим процесс сборки и развёртывания приложения на сервере с Nanocl.
+Полный исходный код находится [здесь](https://github.com/next-hat/documentation).
+
+### Сборка и публикация образа Docker [#building-and-publishing-the-docker-image]
+
+Создайте в репозитории файл `.github/workflows/build-and-publish.yml` с конфигурацией GitHub Actions. Он будет собирать образ Docker и публиковать его в GitHub Container Registry только при слиянии в ветку master.
+
+```yaml
+name: Build and publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build and publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from package.json
+        id: extract_version
+        run: |
+          version=$(jq -r '.version' package.json)
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+    
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          VERSION=${{ env.PACKAGE_VERSION }}
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-image
+          if docker manifest inspect $IMAGE_NAME:$VERSION > /dev/null 2>&1; then
+            echo "Version $VERSION already exists."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/documentation:latest
+            ghcr.io/${{ github.repository_owner }}/documentation:${{ env.PACKAGE_VERSION }}
+```
+
+Этот процесс запускается при каждом слиянии кода в ветку master. Он собирает образ Docker, помечает его последней версией из `package.json` и отправляет в GitHub Container Registry. Замените `documentation` именем своего образа.
+
+### Развёртывание приложения с Nanocl [#deploying-the-application-with-nanocl]
+
+Создайте в репозитории файл `.github/workflows/deploy.yml` с конфигурацией GitHub Actions для развёртывания приложения на сервере с Nanocl.
+
+```yaml
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build and publish Docker image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install nanocl cli
+      run: |
+        wget https://github.com/next-hat/nanocl/releases/download/nanocl-0.16.2/nanocl_0.16.2_amd64.deb
+        sudo dpkg -i nanocl_0.16.1_amd64.deb
+        rm nanocl_0.16.1_amd64.deb
+
+    - name: Deploy to production
+      run: |
+        VERSION=$(jq -r '.version' package.json)
+        nanocl version
+        echo $VERSION
+        nanocl state apply -ys Statefile.yml -- --version $VERSION
+      env:
+        HOST: ${{ secrets.NANOCL_HOST }}
+        CERT: ${{ secrets.NANOCL_CERT }}
+        CERT_KEY: ${{ secrets.NANOCL_CERT_KEY }}
+```
+
+Этот процесс запускается после завершения процесса `Build and publish Docker image` и развёртывает приложение с Nanocl. Если ваш [Statefile][statefile] имеет другое имя или путь, замените `Statefile.yml` соответствующим путём.
+
+Теперь конвейер CI/CD с GitHub Actions и Nanocl настроен. При отправке кода GitHub Actions собирает и публикует образ Docker в GitHub Container Registry. Публикация образа запускает процесс развёртывания приложения на сервере с Nanocl.
+
+## Публичный SSL/TLS с Let's Encrypt [#enable-public-ssltls-with-lets-encrypt]
+
+Дополнительно можно включить публичный SSL/TLS с Let's Encrypt следующей командой:
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/certbot -- --email contact@next-hat.com --domain docs.next-hat.com
+```
+
+Перед применением можно просмотреть руководство следующей командой:
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/certbot
+```
+
+## Заключение [#conclusion]
+
+Следуя этому руководству, вы сможете автоматизировать развёртывание приложений с минимальными усилиями и без простоев. Это поможет быстро доставлять качественное ПО, управлять инфраструктурой и уверенно развёртывать приложения.
+
+Теперь попробуйте автоматизацию с GitHub Actions и Nanocl на своём проекте. Расскажите о результатах и задавайте вопросы!
+
+Если нужна помощь с настройкой конвейера CI/CD с GitHub Actions и Nanocl, присоединяйтесь к нашему [серверу Discord][discord]. Мы поможем вам в разработке ПО.
+
+[statefile]: /ru/references/nanocl/statefile
+[ntex.rs]: https://ntex.rs
+[docs.next-hat.com]: https://docs.next-hat.com/ru
+[github.com]: https://github.com
+[ovh.com]: https://www.ovh.com
+[get-docker]: https://docs.docker.com/get-docker
+[get-nanocl]: /ru/manuals/nanocl/install/overview
+[dockerfile]: https://docs.docker.com/reference/dockerfile/
+[discord]: https://discord.gg/WV4Aac8uZg
+[nanocl-install]: /ru/manuals/nanocl/install/overview

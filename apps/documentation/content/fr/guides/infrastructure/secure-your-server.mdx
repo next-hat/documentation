@@ -1,0 +1,81 @@
+---
+title: Sécuriser votre serveur
+description: Guide complet de sécurisation de votre serveur Next Hat.
+tags:
+- sécurité
+- serveur
+- infrastructure
+- guide
+timestamp: 1764696944000
+---
+
+# Sécuriser votre serveur
+
+import { Callout } from "nextra/components";
+
+Ce guide présente les étapes essentielles pour sécuriser votre serveur Next Hat.
+
+## Créer un utilisateur dédié [#create-a-dedicated-user]
+
+Évitez le compte root pour les opérations quotidiennes. Créez plutôt un utilisateur dédié disposant des droits sudo et nanocl.
+
+1. Créez un utilisateur avec son répertoire personnel :
+
+```bash
+adduser your_username
+```
+
+2. Ajoutez-le au groupe sudo :
+
+```bash
+usermod -aG sudo your_username
+```
+
+3. Ajoutez-le au groupe nanocl :
+
+```bash
+usermod -aG nanocl your_username
+```
+
+Remplacez `your_username` par le nom d’utilisateur souhaité.
+
+## Configurer l’authentification SSH par clé [#set-up-ssh-key-authentication]
+
+Pour renforcer la sécurité, désactivez l’authentification par mot de passe et utilisez des clés SSH.
+
+1. Générez une paire de clés SSH sur votre **machine locale** si nécessaire :
+
+```bash
+ssh-keygen -t ed25519
+```
+
+<Callout type="warning" emoji="⚠️">
+
+N’utilisez jamais une phrase secrète vide pour votre clé SSH. Si votre clé privée est compromise, des attaquants pourraient accéder à votre serveur.
+
+</Callout>
+
+2. Copiez la clé publique sur le serveur :
+
+```bash
+ssh-copy-id -i ~/.ssh/<your_key>.pub your_username@your_server
+```
+
+3. Modifiez le fichier de configuration SSH du serveur :
+
+```bash
+sudo vim /etc/ssh/sshd_config
+```
+
+4. Recherchez et modifiez les lignes suivantes :
+
+```plaintext
+PasswordAuthentication no
+PermitRootLogin no
+```
+
+5. Redémarrez le service SSH pour appliquer les modifications :
+
+```bash
+sudo systemctl restart ssh
+```

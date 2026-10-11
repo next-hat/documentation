@@ -1,0 +1,105 @@
+---
+title: Nanocl
+timestamp: 1787952819000
+---
+
+# Nanocl
+
+# 名称
+
+nanocl - 容器和虚拟机编排工具
+
+## 语法 [#synopsis]
+
+**nanocl** \[**-H**\|**--host**\] \[**-h**\|**--help**\]
+\[**-V**\|**--version**\] \<*subcommands*\>
+
+## 说明 [#description]
+
+Nanocl 是现代、独立的容器和虚拟机编排工具。声明式 Statefile（YAML/TOML/JSON）以及明确、可预测的默认值，提供清晰的开发到生产流程。采用 Rust 构建以保证性能和安全，在保持强大功能与扩展性的同时降低运维开销。通过动态路由、DNS 和端到端 TLS，管理 Cargo、资源、任务和 VM。从本地单节点开始，准备好后再扩展；易于学习，面向生产。
+
+## 选项 [#options]
+
+**-H**, **--host** *\<HOST\>*  
+Nanocld 主机默认值：unix://run/nanocl/nanocl.sock
+
+**-h**, **--help**  
+显示帮助（-h 显示摘要）
+
+**-V**, **--version**  
+显示版本
+
+# 子命令
+
+nanocl-namespace(1)  
+管理命名空间
+
+nanocl-secret(1)  
+管理 Secret
+
+nanocl-job(1)  
+管理任务
+
+nanocl-cargo(1)  
+管理 Cargo
+
+nanocl-vm(1)  
+管理虚拟机
+
+nanocl-resource(1)  
+管理资源
+
+nanocl-metric(1)  
+管理指标
+
+nanocl-context(1)  
+管理上下文
+
+nanocl-node(1)  
+管理节点（实验性）
+
+nanocl-state(1)  
+应用或移除 Statefile
+
+nanocl-event(1)  
+显示或监听事件
+
+nanocl-ps(1)  
+显示进程
+
+nanocl-logs(1)  
+获取进程日志
+
+nanocl-inspect(1)  
+检查进程
+
+nanocl-exec(1)
+在进程中执行命令
+
+nanocl-kill(1)
+向进程发送信号
+
+nanocl-info(1)  
+显示 Nanocl 主机信息
+
+nanocl-version(1)  
+显示 Nanocl 版本信息
+
+nanocl-install(1)  
+安装组件
+
+nanocl-uninstall(1)  
+卸载组件
+
+nanocl-backup(1)  
+备份当前状态
+
+nanocl-stats(1)  
+进程统计信息
+
+nanocl-help(1)  
+显示此消息或指定子命令的帮助
+
+# 版本
+
+v0.18.0

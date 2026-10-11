@@ -1,0 +1,308 @@
+---
+title: コンテナ化
+description: コンテナ化は、アプリケーションと依存関係を 1 つの軽量なコンテナにまとめる、ソフトウェア開発とデプロイで広く使われる技術です。このページでは、簡単なフロントエンドとバックエンドの構築を含め、Docker と NGINX によるコンテナ化を説明します。
+keywords:
+- コンテナ化
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- ソフトウェア開発
+- デプロイ
+- フロントエンド
+- バックエンド
+- create-react-app
+- Next.js
+- Vite
+- サーバー側のレンダリング
+- 静的サイト生成
+image: /img/logo.webp
+timestamp: 1689000770000
+---
+
+# コンテナ化
+
+コンテナ化は、アプリケーションと依存関係を 1 つの軽量なコンテナにまとめる、ソフトウェア開発とデプロイで広く使われる技術です。コンテナは、[Docker](https://www.docker.com)、[Kubernetes](https://kubernetes.io/)、[Nanocl](/ja/guides/nanocl) などの技術に対応する任意のマシンにデプロイできます。アプリケーションや依存関係を個別にインストールする必要はありません。
+
+コンテナ化には、移植性と拡張性の向上、デプロイと管理の簡略化などの利点があります。アプリケーションと依存関係をコンテナ内に分離することで、セキュリティーを高め、異なるソフトウェア要素間の競合リスクも減らせます。
+
+コンテナ化が普及するにつれ、現代のソフトウェア開発とデプロイに欠かせない手段になりました。開発者、システム管理者、IT マネージャーのいずれであっても、その基本を理解することは、技術の変化に対応し、アプリケーションの効率と信頼性を高める助けになります。
+
+## プロジェクト構成 [#project-structure]
+
+始める前に、お使いのシステムに [Docker](https://www.docker.com) がインストールされていることを確認してください。<br/>
+Docker のインストール方法はいくつかあるため、ここでは説明しません。
+
+モノレポを使うことを想定し、ファイルは GitHub などのコードホスティングサービスに保存できます。<br/>
+このガイドでは、次のプロジェクト構成を使います。
+
+```sh
+my_project/
+├── my-app/     # Frontend app
+└── my-api/     # API
+```
+
+このガイドのファイルは [GitHub](https://github.com/leon3s/infrastruture_example) に公開しています。<br/>
+コンテナイメージのビルド方法をすでに知っている場合は、この部分を飛ばし、リポジトリをクローンして次の手順に進めます。
+
+まず、プロジェクトの親フォルダーを作成して移動します。
+```
+mkdir my_project
+cd my_project
+```
+
+この構成では、フロントエンドとバックエンドを分離し、独立して開発できます。開発、テスト、デプロイを簡単にし、アプリケーション全体の拡張性と保守性を高められます。
+
+プロジェクト構成を作成して、フロントエンドとバックエンドの開発を始めましょう。
+
+## 簡単なフロントエンドを構築する [#setting-up-a-simple-frontend]
+
+まず、簡単な [create-react-app](https://create-react-app.dev) のテンプレートでフロントエンドを構築します。<br />
+ただし、React を利用するなら [Next.js](https://nextjs.org/) または [Vite](https://vitejs.dev/) を推奨します。
+
+別のフレームワークを利用する場合は、フロントエンドを静的ファイルのディレクトリにビルドする必要があります。
+
+Next.js や Vite などのツールは、フロントエンド開発を簡単にし、アプリケーションの性能と拡張性を高めます。サーバーサイドレンダリングや静的サイト生成などの高度な機能を備え、品質の高いモダンな Web アプリケーションを作りやすくします。
+
+それでは、アプリケーションの簡単なフロントエンドを構築しましょう。
+
+### プロジェクトを作成する [#creating-the-project]
+
+次のコマンドで、フロントエンド用の my-app ディレクトリを作成します。
+
+```sh
+npx create-react-app my-app
+cd my-app
+npm run build
+```
+
+`my-app/build` フォルダーに簡単なフロントエンドアプリがビルドされます。<br/>
+create-react-app から次のメッセージが表示されます。
+```console
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+```
+
+性能の面から、`serve` などの Node サーバーでフロントエンドを配信することは推奨しません。<br />
+ここでは Nginx コンテナを使って配信します。
+
+### コンテナイメージを作成する [#create-your-container-image]
+
+`my-app` ディレクトリに移動し、次の内容を持つ `Dockerfile` を作成します。
+
+```docker
+# stage 1 - Build our application
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine AS BUILDER
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+RUN npm run build
+
+# stage 2 - Create app image
+# From latest nginx version on alpine to have a small image
+FROM nginx:1.23.3-alpine
+
+# Copy our build directory
+COPY --from=BUILDER /app/build /app
+
+# Copy our default nginx config
+COPY ./server.nginx /etc/nginx/conf.d/default.conf
+```
+
+イメージをビルドする前に、次の内容で `my-app/server.nginx` を作成します。
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+
+  ## Auto index file in /app
+  autoindex on;
+  root /app;
+  try_files $uri/index.html $uri.html $uri/ $uri =404;
+  error_page 404 /404.html;
+
+  ## Enable gzip compression
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_types image/webp image/png text/html text/plain text/css text/xml text/javascript application/x-javascript application/javascript application/xml font/eot font/otf font/ttf;
+
+  ## Disable gzip for internet explorer compatibility..
+  gzip_disable "MSIE [1-6]\.";
+
+  ## Cache all static files
+  location ~* ^.+\.(?:css|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 30d;
+    add_header Cache-Control public;
+
+    ## No need to bleed constant updates. Send the all shebang in one fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+この Nginx 設定は、受け付けるすべてのリクエストに対して、フロントエンドの静的ファイルを配信します。 
+
+ビルド時に `node_modules` と `build` ディレクトリを除外するため、`my-app` に `.dockerignore` を追加します。`my-app/.dockerignore` の内容は次のとおりです。
+```
+node_modules
+build
+```
+
+これによりビルドを高速化できます。
+
+`server.nginx` と `.dockerignore` を作成したら、次のコマンドで Docker イメージをビルドできます。
+
+```
+docker build -t my-frontend:0.0.1 -f ./Dockerfile .
+```
+
+使っている Docker の引数とフラグは次のとおりです。
+  - `build`: イメージをビルドします。
+  - `-t`: イメージのタグを設定します。通常は image_name:version の形式です。
+  - `my-frontend:0.0.1`: このガイドでイメージに付けるタグです。
+  - `-f`: Dockerfile のパスを指定します。
+  - `./Dockerfile`: イメージ作成に使う Dockerfile です。
+  - `.`: ビルドに使うコンテキストです。
+
+### コンテナイメージをテストする [#test-your-container-image]
+
+フロントエンドのイメージをテストするには、次のコマンドを実行します。
+```
+docker run -it --rm -p 8080:80 my-frontend:0.0.1
+```
+
+コンテナが起動し、ホストのポート 8080 がコンテナのポート 80 にマッピングされます。<br/>
+ブラウザーで [http://localhost:8080](http://localhost:8080) を開くと、React アプリを表示できます。
+
+以下の画像のような React アプリのページが表示されます。
+
+<img src="/img/react-create-app-deploy.png" />
+
+## 簡単な API を構築する [#setup-a-simple-api]
+
+このガイドでは、[Express](https://expressjs.com) を使う簡単な [Node.js](https://nodejs.org/en) プロジェクトを構築します。
+
+### プロジェクトを作成する [#create-the-project]
+
+`my-api` ディレクトリを作成しましょう。
+
+```sh
+mkdir my_project/my-api
+cd my-api
+npm init
+npm install --save express
+```
+
+API のエントリーポイントを `./main.js` に作成します。
+
+```js
+const express = require('express');
+
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello World' });
+});
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+次のコマンドでテストできます。
+
+```sh
+node main.js
+```
+
+### コンテナイメージを作成する [#create-your-container-image-1]
+
+簡単な API ができたので、コンテナイメージを作成します。<br/>
+`Dockerfile` は次のとおりです。
+
+```docker
+# From the latest nodejs lts version
+FROM node:18.14.2-alpine
+
+# Create our app folder
+RUN mkdir /app
+# Set is as cwd
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+) doing this will cache this action untill package.json or package-lock.json is modified
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+COPY . .
+
+# Set host to 0.0.0.0 to bind on all container network interfaces
+# This is usefull because we will create a docker network and bind the container to it
+ENV HOST=0.0.0.0
+# Set the port of the our app to 80 (default http port)
+ENV PORT=80
+# Expose the port so we can see it during inspection
+EXPOSE 80
+
+CMD ["node", "main.js"]
+```
+
+`.dockerignore` も忘れずに作成してください。
+
+```
+node_modules
+```
+
+イメージをビルドできます。
+
+```sh
+docker build -t my-api:0.0.1 -f ./Dockerfile .
+```
+
+### コンテナイメージをテストする [#test-your-container-image-1]
+
+API のコンテナイメージをテストしましょう。
+```
+docker run -it --name my-api --rm -p 8081:80 my-api:0.0.1
+```
+
+ブラウザーで [http://localhost:8081](http://localhost:8081) を開き、JSON メッセージを確認します。
+
+JSON メッセージが表示されます。
+
+<img src="/img/nodejs-express-deploy.png" />
+
+これでアプリケーションをコンテナ化できました。<br />
+次は VPS にデプロイしましょう。

@@ -1,0 +1,32 @@
+---
+title: Sous-états - Nanocl
+description: Utilisez les sous-états dans votre Statefile.
+keywords:
+- documentation
+- nanocl
+- guides
+- démarrage
+- configuration
+- état
+- fichier
+- config
+- yaml
+- yml
+- statefile
+- substate
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Sous-états
+
+Vous pouvez inclure d’autres Statefiles dans le vôtre avec la clé `SubStates`.
+
+C’est utile pour réutiliser un Statefile à plusieurs endroits.<br />
+Ou, dans un monorepo, pour disposer d’une seule source de vérité pour votre état.
+
+Voici un exemple :
+
+<StatefileBlock example="advanced/substate" />

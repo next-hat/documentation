@@ -1,0 +1,68 @@
+---
+title: Contrôles de santé et mises à jour progressives - Nanocl
+description: Configurez les contrôles de santé des conteneurs et les mises à jour progressives sûres des Cargoes dans Nanocl.
+keywords:
+- documentation
+- nanocl
+- contrôle de santé
+- contrôle de santé
+- mise à jour progressive
+- cargo
+- statefile
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Contrôles de santé et mises à jour progressives
+
+Nanocl utilise les contrôles de santé Docker pour décider de la disponibilité des conteneurs
+applicatifs essentiels d’une réplique de Cargo. Définissez un contrôle sur
+un conteneur applicatif nommé ou utilisez celui fourni par son image.
+
+```yaml
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.2.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+      StartPeriod: 10000000000
+```
+
+Les durées utilisent la représentation Docker en nanosecondes. Un contrôle défini par
+l’image n’a pas besoin d’être répété. Le contrôle `NONE` de Docker
+désactive un contrôle hérité.
+
+Démarrage du conteneur et disponibilité du Cargo sont distincts. Une application essentielle
+sans contrôle activé est prête lorsque Docker la signale
+en cours d’exécution. Avec un contrôle, elle doit être `healthy`.
+Pour une réplique partagée à plusieurs conteneurs, le bac à sable doit aussi être actif.
+Les conteneurs non essentiels ne conditionnent pas la disponibilité.
+
+## Mises à jour progressives [#rolling-updates]
+
+Nanocl prépare les répliques de remplacement successivement et attend jusqu’à cinq minutes que
+la topologie requise de chaque candidate soit prête. Lorsque le réseau et les ports
+hôtes le permettent, la génération conservée reste active et continue de servir
+jusqu’à ce que la candidate soit prête. `ncproxy` transfère les routes uniquement après
+la disponibilité du remplacement validé.
+
+Si une candidate échoue avant sa promotion, Nanocl la supprime et restaure
+la génération conservée. Une mise à jour validée qui échoue tente aussi de restaurer
+les anciens processus et associations, et enregistre un état de Cargo en échec ou en mauvaise santé.
+
+Il ne s’agit pas d’une garantie inconditionnelle d’absence d’interruption. Les ports hôtes fixes
+imposent de supprimer la génération conservée avant que la candidate puisse utiliser
+les mêmes ports. Le réseau hôte impose son arrêt préalable,
+même si Nanocl peut la redémarrer en cas d’échec de la candidate. Un processus sans
+contrôle de santé est prêt dès qu’il s’exécute ; la disponibilité réelle de l’application
+nécessite donc un contrôle de santé Docker.
+
+Les mêmes règles s’appliquent au redémarrage d’un Cargo. Celui-ci conserve le
+bac à sable de la réplique et les conteneurs d’initialisation terminés, redémarre les conteneurs
+applicatifs et attend que les applications essentielles soient prêtes.

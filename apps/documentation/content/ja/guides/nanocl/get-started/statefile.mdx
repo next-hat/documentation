@@ -1,0 +1,43 @@
+---
+title: Statefile - Nanocl
+description: Statefile で、特定の名前空間の望ましい状態を記述します。
+keywords:
+- ドキュメント
+- nanocl
+- ガイド
+- 入門
+- プロキシ
+- 設定
+- 状態
+- ファイル
+- 設定
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile
+
+Statefile は、特定の名前空間の望ましい状態を記述するためのファイルです。
+
+YAML 形式で、Cargo のデプロイを次のようにまとめられます。
+
+<StatefileBlock example="get-started/deployment" />
+
+このファイルを `my-cargo.yml` として保存し、次のコマンドで適用します。
+
+```sh
+nanocl state apply -s ./my-cargo.yml
+```
+
+簡単な curl コマンドで確認しましょう。
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+これで完了です。

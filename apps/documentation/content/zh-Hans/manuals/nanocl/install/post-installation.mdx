@@ -1,0 +1,64 @@
+---
+title: 安装后配置 - Nanocl
+description: 本节介绍 Nanocl 安装后必须执行的配置步骤。
+keywords:
+- 文档
+- nanocl
+- 配置
+- 安装
+- 安装后配置
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import Terminal from '@/components/terminal';
+
+# Nanocl 安装后配置
+
+本节介绍 Nanocl 安装后必须执行的配置步骤。
+
+## 创建 Nanocl 的 Unix 用户组 [#create-a-unix-group-for-nanocl]
+
+Nanocl 守护进程绑定 Unix 套接字而非 TCP 端口。<br/>
+默认套接字属于 `root` 用户和 `nanocl` 组，其他用户只能通过 sudo 或加入 `nanocl` 组访问。<br/>
+
+如果不想在 nanocl 命令前添加 sudo，请创建名为 nanocl 的 Unix 组并将用户加入。守护进程启动时创建允许 `nanocl` 组成员访问的 Unix 套接字。
+
+<Terminal language="sh">
+{`sudo groupadd nanocl
+sudo usermod -aG nanocl $USER
+newgrp nanocl`}
+</Terminal>
+
+## 安装 Nanocl 组件 [#install-nanocl-components]
+
+CLI 已安装，现在需要启动 Nanocl 组件。默认安装模板见[这里][nanocl_installer]。Nanocl 对 Docker 提供完善支持，会自动检测 Docker 或 Docker Desktop，并选择 Unix 套接字。如果需要自定义套接字，在安装命令中传入 `--docker-host`，例如：
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/docker.sock`}
+</Terminal>
+
+使用 Podman 时，需要如下指定 `--docker-host`：
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/podman/podman.sock`}
+</Terminal>
+
+也可以通过 `--group` 指定套接字所属用户组：
+
+<Terminal language="sh">
+{`nanocl install --group my-custom-group`}
+</Terminal>
+
+## 检查运行状态 [#test-if-everything-is-good]
+
+安装完成后，运行以下命令检查各项功能是否正常：
+
+<Terminal language="sh">
+{`nanocl version
+nanocl cargo run my-cargo nginx:latest`}
+</Terminal>
+
+现在可以开始使用 Nanocl 了！<br/>
+
+[nanocl_installer]: https://github.com/next-hat/nanocl/blob/nightly/installer.yml

@@ -1,0 +1,46 @@
+---
+title: macOS へのインストール - Nanocl
+description: スクリプトまたは tarball で macOS に Nanocl をインストールします。
+keywords:
+- nanocl
+- インストール
+- macos
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# macOS に Nanocl をインストールする
+
+<QuickInstall locale="ja" />
+
+## 手動インストール [#manual-install]
+
+### CLI の tarball を取得する [#get-the-cli-tarball]
+
+<UnixTarInstall locale="ja" tarballUrl={vars.nanoclMacOsTarballUrl} tarballName={`${vars.nanoclMacOsTarballName}`} />
+
+## ソースからビルドする [#compile-from-source]
+
+まず Homebrew で PostgreSQL をインストールする必要があります。
+
+<Terminal language="sh" filename="sh">
+{`brew install libpq
+brew link --force libpq
+`}
+</Terminal>
+
+<CratesIoInstall locale="ja" />
+
+## インストールを確認する [#verify-installation]
+
+<Verify locale="ja" />
+
+続いて[インストール後の手順](/ja/manuals/nanocl/install/post-installation)に従い、Nanocl のコンポーネントをインストールしてください。

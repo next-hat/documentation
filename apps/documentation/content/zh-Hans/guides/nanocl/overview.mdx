@@ -1,0 +1,73 @@
+---
+title: 概览 - Nanocl
+description: Nanocl 是可移植的开源平台，通过声明式 Statefile 运行容器和虚拟机工作负载。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 概览
+- 架构
+- 容器
+- 虚拟机
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Nanocl 概览
+
+Nanocl 是可移植的开源平台，在自己的基础设施上运行容器和虚拟机工作负载。声明式 Statefile 描述 Cargo、虚拟机、任务、Secret 和控制器资源；Nanocl 守护进程将这些对象与本地运行时同步。
+
+名称来自 *nano cloud*，目标是在无需大型控制平面的情况下提供实用的云工作负载基础能力。
+
+## Nanocl 提供的能力 [#what-nanocl-provides]
+
+- 将有名称且可复制的应用容器组织为 Cargo，支持有序初始化容器和 Docker 兼容配置。
+- 感知健康状态的工作负载就绪、重启、历史记录和受控更新。
+- 通过 HTTP API 和 `nanocl` CLI 管理容器与虚拟机生命周期。
+- 通过 `ncproxy` 和 `ncdns` 配置动态 HTTP、流和 DNS 规则。
+- Secret、任务、指标、Statefile 模板和状态备份。
+
+Nanocl 0.18 主要用于单节点运维，不提供自动多节点调度、自动扩缩容、集群级高可用或服务网格。命名 Docker 网络属于本地节点，不属于 Nanocl 命名空间。
+
+## Nanocl 架构 [#nanocl-architecture]
+
+`nanocl` 客户端将 API 请求发送到 `nanocld`。守护进程在 `nstore` 保存目标和已观察状态，管理 Docker 进程，并发布供代理和 DNS 控制器消费的事件。
+
+默认安装包含：
+
+- **nanocld / ndaemon**：API 和工作负载控制器。
+- **nstore**：基于 CockroachDB 持久化的控制平面状态。
+- **nmetrics**：`metrsd` 主机指标服务。
+- **ncproxy**：代理控制器，Nginx 数据平面内嵌在同一服务容器中，不再单独管理 `nproxy`。
+- **ncdns**：DNS 控制器，dnsmasq 数据平面内嵌在同一服务容器中，不再单独管理 `ndns`。
+- **ncvpnkit**：Docker Desktop 网络控制器，仅在该环境安装。
+
+简化的单节点架构：
+
+<div class="center">
+  <img src="/img/architecture.png" alt="Nanocl 单节点架构" />
+</div>
+
+图中每个 Cargo 都是一组进程。在 0.18 中，一个 Cargo 副本可以包含多个命名应用容器，以及按需创建的内部网络沙箱。
+
+## 核心对象 [#core-objects]
+
+### Cargo [#cargo]
+
+Cargo 是持久化的容器工作负载，包含一个或多个命名应用容器、可选初始化容器和副本数。详见[多容器 Cargo](/zh-Hans/guides/nanocl/advanced-usage/multi-container-cargoes)。
+
+### 虚拟机 [#virtual-machine]
+
+虚拟机在受管理的运行时容器中运行 QEMU，使用完整本地磁盘镜像路径。可选初始化容器可在运行时启动前准备镜像。
+
+### 任务 [#job]
+
+Job 是有限时长的容器任务，与 Cargo 应用容器不同，预期在完成工作后退出。
+
+### 资源 [#resource]
+
+资源通过控制器扩展 Nanocl。默认的 `ncproxy` 和 `ncdns` 控制器处理代理和 DNS 规则资源。
+
+### Secret [#secret]
+
+Secret 保存环境变量、镜像仓库或 TLS 数据。Cargo 层 Secret 被其所有容器继承；容器层 Secret 仅供该命名容器使用。

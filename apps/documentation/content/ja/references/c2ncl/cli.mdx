@@ -1,0 +1,49 @@
+---
+title: C2ncl CLI リファレンス
+description: 利用可能なコマンドは、引数なしで c2ncl を実行するか、c2ncl --help を実行して確認できます。
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocl CLI
+- CLI
+- C2ncl
+- Docker Compose から Nanocl への変換
+- Docker Compose
+- statefile
+image: /img/logo.webp
+timestamp: 1689000770000
+---
+
+# Docker Compose から Nanocl Statefile への変換
+
+## C2ncl [#c2ncl]
+
+```sh
+c2ncl [OPTIONS]
+```
+
+利用可能なコマンドは、引数なしで `c2ncl` を実行するか、`c2ncl --help` を実行して確認できます。
+
+```console
+$ c2ncl --help
+Converts docker-compose.yml to nanocl Statefile.yml
+
+Usage: c2ncl --in-file <IN_FILE> --out-file <OUT_FILE>
+
+Options:
+  -i, --in-file <IN_FILE>    Path to docker-compose file
+  -o, --out-file <OUT_FILE>  Output filepath
+  -h, --help                 Print help
+  -V, --version              Print version
+```
+
+## 説明 [#description]
+
+C2ncl は `docker-compose.yml` を Nanocl の `Statefile` に変換するユーティリティーです。これにより、すぐに Nanocl を使い始められます。
+
+## 例 [#example]
+
+```sh
+c2ncl -i docker-compose.yml -o Statefile.yml
+```

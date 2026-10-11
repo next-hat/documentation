@@ -1,0 +1,49 @@
+---
+title: Linux へのインストール - Nanocl
+description: スクリプト、.deb、tarball で Linux に Nanocl をインストールします。
+keywords:
+- nanocl
+- インストール
+- linux
+- deb
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# Linux にインストールする
+
+<QuickInstall locale="ja" />
+
+## 手動インストール [#manual-install]
+
+### CLI の tarball を取得する [#get-the-cli-tarball]
+
+<UnixTarInstall locale="ja" tarballUrl={vars.nanoclLinuxTarballUrl} tarballName={`${vars.nanoclLinuxTarballName}`} />
+
+### Debian/Ubuntu [#debianubuntu]
+
+Debian や Ubuntu などの Debian 系ディストリビューション向けには、`.deb` パッケージも利用できます。
+
+<Terminal language="sh" filename="sh">
+{`curl -LO ${vars.nanoclDebUrl}
+sudo dpkg -i ${vars.nanoclDebName}
+`}
+</Terminal>
+
+## ソースからビルドする [#compile-from-source]
+
+<CratesIoInstall locale="ja" />
+
+## インストールを確認する [#verify-installation]
+
+<Verify locale="ja" />
+
+続いて[インストール後の手順](/ja/manuals/nanocl/install/post-installation)に従い、Nanocl のコンポーネントをインストールしてください。

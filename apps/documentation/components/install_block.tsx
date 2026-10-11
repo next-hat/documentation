@@ -1,3 +1,5 @@
+import { translate } from '@/lib/translate'
+import { localePath, type Locale } from '@/lib/locales'
 import { useMDXComponents as getMDXComponents } from 'nextra-theme-docs';
 import CodeBlock from './code_block';
 import DirTree from './dir_tree';
@@ -6,6 +8,7 @@ import vars from '../lib/vars';
 const { h2: Heading, h3: Subheading, p: Paragraph, a: Link } = getMDXComponents();
 
 type InstallBlockProps = {
+  locale?: Locale;
   platform: 'linux' | 'macos' | 'windows';
   debUrl?: string;
   tarUrl: string;
@@ -22,7 +25,8 @@ type InstallBlockProps = {
  * - checksumUrl?: string (optional URL to SHA256SUMS or checksum file)
  * - notes?: string (optional HTML string for extra notes)
  */
-export default function InstallBlock({ platform, debUrl, tarUrl, checksumUrl, notes }: InstallBlockProps) {
+export default function InstallBlock({ platform, debUrl, tarUrl, checksumUrl, notes, locale = 'en' }: InstallBlockProps) {
+  const t = (text: string) => translate(locale, text);
   const script = 'curl -fsSL https://download.next-hat.com/scripts/get-nanocl.sh | sh';
   const releaseTagUrl = `https://github.com/next-hat/nanocl/releases/tag/nanocl-${vars.nanoclLatestBinaryVersion}`;
 
@@ -32,7 +36,7 @@ export default function InstallBlock({ platform, debUrl, tarUrl, checksumUrl, no
 
   const linuxDeb = debUrl ? (
     <>
-      <Subheading>Debian/Ubuntu (.deb)</Subheading>
+      <Subheading>{t("Debian/Ubuntu (.deb)")}</Subheading>
       <CodeBlock language="bash">{`curl -L -o nanocl_amd64.deb ${debUrl}
 sudo dpkg -i nanocl_amd64.deb || sudo apt-get -f install -y`}</CodeBlock>
     </>
@@ -40,19 +44,15 @@ sudo dpkg -i nanocl_amd64.deb || sudo apt-get -f install -y`}</CodeBlock>
 
   const linuxSteps = (
     <>
-      <Subheading>Step 1 — Get the CLI tarball</Subheading>
-      <Paragraph>
-        Open the release page for version <code>{vars.nanoclLatestBinaryVersion}</code> in your browser:
-        {' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>
-        , or download directly with curl:
-      </Paragraph>
+      <Subheading>{t("Step 1 — Get the CLI tarball")}</Subheading>
+      <Paragraph>{t("Open the release page for version")}{' '}<code>{vars.nanoclLatestBinaryVersion}</code>{' '}{t("in your browser:")}{' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>{t(", or download directly with curl:")}{' '}</Paragraph>
       <CodeBlock language="bash">{`curl -L ${tarUrl} -o nanocl.tar.gz`}</CodeBlock>
 
-      <Subheading>Step 2 — Extract and install</Subheading>
+      <Subheading>{t("Step 2 — Extract and install")}</Subheading>
   <CodeBlock language="bash">{`tar -xzf nanocl.tar.gz`}</CodeBlock>
-  <Paragraph>Extracted directory layout:</Paragraph>
+  <Paragraph>{t("Extracted directory layout:")}</Paragraph>
   <DirTree variant="unix" />
-  <Paragraph>Install the binary (and optional man pages):</Paragraph>
+  <Paragraph>{t("Install the binary (and optional man pages):")}</Paragraph>
   <CodeBlock language="bash">{`sudo install -m 0755 bin/nanocl /usr/local/bin/nanocl
 if [ -d share/man/man1 ]; then
   sudo install -m 0644 share/man/man1/*.1 /usr/local/share/man/man1/
@@ -63,19 +63,15 @@ fi`}</CodeBlock>
 
   const macSteps = (
     <>
-      <Subheading>Step 1 — Get the CLI tarball</Subheading>
-      <Paragraph>
-        Open the release page for version <code>{vars.nanoclLatestBinaryVersion}</code> in your browser:
-        {' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>
-        , or download directly with curl:
-      </Paragraph>
+      <Subheading>{t("Step 1 — Get the CLI tarball")}</Subheading>
+      <Paragraph>{t("Open the release page for version")}{' '}<code>{vars.nanoclLatestBinaryVersion}</code>{' '}{t("in your browser:")}{' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>{t(", or download directly with curl:")}{' '}</Paragraph>
       <CodeBlock language="bash">{`curl -L ${tarUrl} -o nanocl.tar.gz`}</CodeBlock>
 
-      <Subheading>Step 2 — Extract and install</Subheading>
+      <Subheading>{t("Step 2 — Extract and install")}</Subheading>
   <CodeBlock language="bash">{`tar -xzf nanocl.tar.gz`}</CodeBlock>
-  <Paragraph>Extracted directory layout:</Paragraph>
+  <Paragraph>{t("Extracted directory layout:")}</Paragraph>
   <DirTree variant="unix" />
-  <Paragraph>Install the binary (and optional man pages):</Paragraph>
+  <Paragraph>{t("Install the binary (and optional man pages):")}</Paragraph>
   <CodeBlock language="bash">{`sudo install -m 0755 bin/nanocl /usr/local/bin/nanocl
 if [ -d share/man/man1 ]; then
   sudo install -m 0644 share/man/man1/*.1 /usr/local/share/man/man1/
@@ -85,17 +81,13 @@ fi`}</CodeBlock>
 
   const winSteps = (
     <>
-      <Subheading>Step 1 — Get the CLI tarball</Subheading>
-      <Paragraph>
-        Open the release page for version <code>{vars.nanoclLatestBinaryVersion}</code> in your browser:
-        {' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>
-        , or download directly with PowerShell:
-      </Paragraph>
+      <Subheading>{t("Step 1 — Get the CLI tarball")}</Subheading>
+      <Paragraph>{t("Open the release page for version")}{' '}<code>{vars.nanoclLatestBinaryVersion}</code>{' '}{t("in your browser:")}{' '}<Link href={releaseTagUrl} target="_blank" rel="noreferrer">{releaseTagUrl}</Link>{t(", or download directly with PowerShell:")}{' '}</Paragraph>
       <CodeBlock language="powershell">{`$dst = "$env:USERPROFILE\\nanocl"
 New-Item -ItemType Directory -Force -Path $dst | Out-Null
 Invoke-WebRequest -Uri "${tarUrl}" -OutFile "$dst\\nanocl.tar.gz"`}</CodeBlock>
 
-      <Subheading>Step 2 — Extract and install</Subheading>
+      <Subheading>{t("Step 2 — Extract and install")}</Subheading>
       <CodeBlock language="powershell">{`# Windows 10+ includes tar
 & tar -xzf "$dst\\nanocl.tar.gz" -C $dst
 # The binary is under bin\\nanocl.exe
@@ -104,14 +96,14 @@ $bin = Join-Path $dst 'bin'
 $env:Path = "$env:Path;$bin"
 # Or copy to a directory already in PATH (requires admin):
 # Copy-Item (Join-Path $bin 'nanocl.exe') "$env:ProgramFiles\\nanocl\\nanocl.exe" -Force`}</CodeBlock>
-    <Paragraph>Extracted directory layout:</Paragraph>
+    <Paragraph>{t("Extracted directory layout:")}</Paragraph>
     <DirTree variant="windows" />
     </>
   );
 
   const checksum = (
     <>
-      <Subheading>Verify checksum (optional)</Subheading>
+      <Subheading>{t("Verify checksum (optional)")}</Subheading>
       {checksumUrl && platform === 'linux' && (
         <CodeBlock language="bash">{`curl -L ${checksumUrl} -o SHA256SUMS
 sha256sum -c SHA256SUMS | grep nanocl`}</CodeBlock>
@@ -145,19 +137,19 @@ Get-FileHash $bin -Algorithm SHA256`}</CodeBlock>
     <div>
       {platform !== "windows" && (
           <>
-            <Subheading>Quick install (script)</Subheading>
+            <Subheading>{t("Quick install (script)")}</Subheading>
             {verify(script)}
-            <Paragraph>The script falls back to building from source if needed.</Paragraph>
+            <Paragraph>{t("The script falls back to building from source if needed.")}</Paragraph>
           </>
         )
       }
-      <Heading id="manual-install">Manual install</Heading>
+      <Heading id="manual-install">{t("Manual install")}</Heading>
       {platform === 'linux' && (
         <>
           {linuxSteps}
           {linuxDeb && (
             <>
-              <Subheading>Alternative — Debian/Ubuntu (.deb)</Subheading>
+              <Subheading>{t("Alternative — Debian/Ubuntu (.deb)")}</Subheading>
               {linuxDeb}
             </>
           )}
@@ -166,11 +158,11 @@ Get-FileHash $bin -Algorithm SHA256`}</CodeBlock>
       {platform === 'macos' && macSteps}
       {platform === 'windows' && winSteps}
       {/* {checksum} */}
-      <Subheading>Verify installation</Subheading>
+      <Subheading>{t("Verify installation")}</Subheading>
       {verify('nanocl --version')}
       {notes ? <div dangerouslySetInnerHTML={{ __html: notes }} /> : null}
       {/* Tarball layout details removed per request; described inline above */}
-      <Paragraph>Next: <Link href="/manuals/nanocl/install/post-installation">Post-installation steps</Link></Paragraph>
+      <Paragraph>{t("Next:")}{' '}<Link href={localePath("/manuals/nanocl/install/post-installation", locale)}>{t("Post-installation steps")}</Link></Paragraph>
     </div>
   );
 }

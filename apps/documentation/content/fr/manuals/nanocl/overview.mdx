@@ -1,0 +1,35 @@
+---
+title: Présentation - Manuels - Nanocl
+description: Présentation du manuel Nanocl.
+keywords:
+- documentation
+- configurations
+- sommaire
+- nanocl
+- manuel
+- présentation
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import License from '@/components/license';
+
+# Présentation de Nanocl
+
+Nanocl est une plateforme open source de gestion des charges de travail.
+C’est une application client-serveur composée de :
+
+* Un serveur avec un démon permanent [nanocld](/fr/references/nanocl/daemon/overview).
+* Des API définissant les interfaces utilisées par les programmes pour communiquer avec le démon et lui donner des instructions.
+* Une interface en ligne de commande [nanocl](/fr/references/nanocl/cli/overview) qui communique avec le démon.
+
+La CLI utilise les API Nanocl pour contrôler le démon par des scripts ou des commandes directes. De nombreuses autres applications utilisent cette API et cette CLI. Le démon crée et gère les objets Nanocl : images, tâches, Cargoes et machines virtuelles.
+
+Nanocl 0.18 fonctionne principalement sur un seul nœud. Le démon expose certaines
+API expérimentales de nœuds, mais cette version ne fournit pas d’ordonnancement automatique
+multi-nœud, de mise à l’échelle automatique ou de haute disponibilité de cluster. Nanocl intègre
+[metrs](https://github.com/next-hat/metrs) pour collecter les métriques hôte.
+
+Pour plus de détails, consultez [Architecture Nanocl](/fr/guides/nanocl/overview#nanocl-architecture).
+
+<License locale="fr" />

@@ -1,0 +1,31 @@
+---
+title: 概要 - マニュアル - Nanocl
+description: Nanocl マニュアルの概要
+keywords:
+- ドキュメント
+- 設定
+- 概要
+- nanocl
+- マニュアル
+- 概要
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import License from '@/components/license';
+
+# Nanocl の概要
+
+Nanocl はワークロードを管理するオープンソースのプラットフォームです。次の要素を持つクライアント・サーバー型のアプリケーションとして動作します。
+
+* 常駐デーモンプロセス [nanocld] を持つサーバー(/ja/references/nanocl/daemon/overview).
+* プログラムから Nanocl デーモンと通信し、指示を送るためのインターフェースを定義する API
+* デーモンプロセスと通信するコマンドラインインターフェース（CLI）の [nanocl](/ja/references/nanocl/cli/overview)
+
+CLI は Nanocl API を利用し、スクリプトや直接の CLI コマンドを通じて Nanocl デーモンを操作します。他の多くの Nanocl アプリケーションも、この API と CLI を利用します。デーモンはイメージ、ジョブ、Cargo、仮想マシンなどの Nanocl オブジェクトを作成、管理します。
+
+Nanocl 0.18 は主に単一ノードで運用します。デーモンはいくつかの実験的なノード API を公開しますが、このリリースには、自動的な複数ノードのスケジューリング、自動スケーリング、クラスター全体の高可用性はありません。Nanocl は [metrs](https://github.com/next-hat/metrs) と連携してホストのメトリクスを収集します。
+
+詳細は [Nanocl のアーキテクチャ](/ja/guides/nanocl/overview#nanocl-architecture)を参照してください。
+
+<License locale="ja" />

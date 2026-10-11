@@ -1,0 +1,248 @@
+---
+slug: nanocl-0.17
+title: Nanocl 0.17 发布
+description: Nanocl 0.17 加强 CLI，加入分布式锁和 ncproxy 的实验性 HTTP/3 支持，并改进 Statefile 工具和文档。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.17
+keywords:
+- 容器化
+- Nanocl
+- NGINX
+- HTTP3
+- DevOps
+- statefile
+- 发布
+- 0.17
+date: '2025-09-12'
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+我们正式发布 **Nanocl 0.17**！本次版本聚焦开发效率和现代网络：增强 CLI 并加入新命令，在守护进程中实现分布式协调，向 `ncproxy` 添加实验性 HTTP/3 支持。同时改进 Statefile 编写体验，包括参数解析、元数据和内置手册渲染器。
+
+{/* truncate */}
+
+## Nanocl 0.17 亮点 [#highlights-of-nanocl-017]
+
+- CLI 增强：支持多目标的 `nanocl logs`，新增 `nanocl stats`，改进 Statefile 命令，包括 `state man`、`state render` 和更智能的参数解析。
+- 平台可靠性：`nanocld` 引入分布式互斥锁，防止节点重复执行任务，并通过 Secret 安全同步数据库证书。
+- 现代边缘网络：`ncproxy` 支持在规则中配置 HSTS，以及可调选项的实验性 HTTP/3 支持。
+
+---
+
+## 新增：官方 Nanocl Registry [#new-official-nanocl-registry]
+
+我们上线了官方 [Nanocl Registry](https://nr.next-hat.com)。<br/>
+这里提供精选的预配置 Statefile，可快速部署常见技术栈。
+
+![Nanocl Registry 页面](/img/nanocl-registry.png)
+
+- 浏览目录：https://nr.next-hat.com
+- 贡献 Statefile（欢迎提交 PR）：https://github.com/next-hat/nanocl-registry
+
+<Callout type="default" emoji="💡">
+
+在终端查看任意 Statefile 的手册：nanocl man -s `<statefile-source>`
+
+</Callout>
+
+---
+
+## 组件变更 [#component-changes]
+
+### nanocl 0.17.0 [#nanocl-0170]
+- 新增：
+  - `nanocl stats` 根据名称获取多个进程的统计信息（感谢 [n0tank3sh](https://github.com/n0tank3sh)）。
+  - `nanocl state man` 查看 Statefile 手册。
+  - `nanocl state render` 使用当前上下文变量渲染 Statefile。
+  - `nanocl logs` 现在接受多个名称。
+  - 改进 Statefile 参数解析，支持必填、多值和描述字段。
+  - 通过 Statefile 元数据增强手册。
+  - 用 `nanocl secret patch` 更新 Secret，无需先删除。
+
+### nanocld 0.17.0 [#nanocld-0170]
+- 新增：
+  - `GET /process/{name}/stats` 根据名称获取进程统计信息，由 [n0tank3sh](https://github.com/n0tank3sh) 贡献。
+  - 将数据库证书保存为 Secret，便于多节点交换和同步。
+  - 使用分布式互斥锁，避免节点同时运行相同任务。
+
+### ncproxy 0.14.0 [#ncproxy-0140]
+- 新增：
+  - 通过代理规则配置 HSTS，由 [n0tank3sh](https://github.com/n0tank3sh) 贡献。
+  - 实验性 HTTP/3 支持。
+
+---
+
+## HTTP/3 与 HSTS [#http3-and-hsts]
+
+Nginx 已支持 HTTP/3，因此我们在代理规则中加入了实验性 HTTP/3 支持，可以按域名启用。还添加了 HSTS（HTTP 严格传输安全）选项，通过强制 HTTPS 连接增强安全性。
+
+下面的 Statefile 部署一个支持 HTTP/3 的简单 Cargo：
+
+```yaml
+ApiVersion: v0.17
+
+Secrets:
+- Name: tls.secret
+  Kind: nanocl.io/tls
+  Data:
+    Certificate: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfkCFFOJVQs8PxWlcJQDn/AQpSopkhISMA0GCSqGSIb3DQEBCwUAMEUx
+      CzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRl
+      cm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMjMwNTI5MDM0MDQwWhcNMjQwNTI4MDM0
+      MDQwWjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UE
+      CgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOC
+      AQ8AMIIBCgKCAQEAyH+TAzIAxxrMKh88p1emIxsttpjqCHdlQuboves+0vI6ORwU
+      BI3HP7gTMQpgK+QnEZw1XIs6/Zdg2VfUiNgQXyh72/0cdurIIqRbF2fLAMSaYElA
+      RRT9F60eHqQ12bXf6ITWB/0ZSnacbLIsic1HcVwr0Awx+xu1YsB9ojssXyIIU/yx
+      d6FjPtiqJTPT9RhVb6Vmfpclse21qGek8tg88U+TrrJZ/Eg5cZojnQTyxhMGHeQf
+      F71nb7no1v5hdki3p50Ik//9lvY/5onWrBUCuAsHi8OkSSyElTQ/JYzuMBjqOaMw
+      PYLZf3d2eRqpiEC/5WI8OJDAk3/y83nG3zy3+QIDAQABMA0GCSqGSIb3DQEBCwUA
+      A4IBAQAz8b7U0jbgBVEen1vd15V6DAxTmg768OkMRoNqK/y0oSK0qHn3IYSADK6M
+      fl6qPnTY3xts+j8ohvNRGR5rJiv25b8koQs6K/ACzMgVlvXeSBVgjBArxgyp3K3q
+      Tpeqg11R5YuJLaMKjWTzOzSq6shLO5/TscLGpkDbZ12HElc5hXyLrEZmsdCb1Wg7
+      RCaMqsmgD/bYTOgP41DN6MVaSmxCshCGcL78enStPDheCmkk7eLMetMrJZLkf5Ch
+      YWs3OUPos4v9GN40VyNWtbrz9g8TzmD4QOfuhuj9nUg9Psa2c22rgr3XaJEU8nyp
+      rSHTKorbCvimz1/m0crjE91CP9JE
+      -----END CERTIFICATE-----
+    CertificateKey: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIf5MDMgDHGswq
+      HzynV6YjGy22mOoId2VC5ui96z7S8jo5HBQEjcc/uBMxCmAr5CcRnDVcizr9l2DZ
+      V9SI2BBfKHvb/Rx26sgipFsXZ8sAxJpgSUBFFP0XrR4epDXZtd/ohNYH/RlKdpxs
+      siyJzUdxXCvQDDH7G7ViwH2iOyxfIghT/LF3oWM+2KolM9P1GFVvpWZ+lyWx7bWo
+      Z6Ty2DzxT5Ousln8SDlxmiOdBPLGEwYd5B8XvWdvuejW/mF2SLennQiT//2W9j/m
+      idasFQK4CweLw6RJLISVND8ljO4wGOo5ozA9gtl/d3Z5GqmIQL/lYjw4kMCTf/Lz
+      ecbfPLf5AgMBAAECggEAHK2Su5xFXDVLCqNZK55v1wmmKj4JC5j4VO9uTuv9GnMn
+      PM/1VQlqfIS5ygPv6ZdCt1QeldQcZfVnFu9nKQOuo83ImZjEn4XJhpr3pItmEAAP
+      DMKtfLQZ128dpchbI37OPhXx/0aGfY4lpa5+jF9eXqqOYb280GwQL8XUsoXAPQMC
+      MwAOHbgHH5lYxD9fizjrWIFIC9jfHjVM3qjOfmz+NujKs+nmVI5AQRCd6C66hbgr
+      2EJe/8ZlDaZX3bfDnRPxhQN8T3VZcwHGj3zqGPnfkr8Ut9nqDhOcqGuTjNdqGEIi
+      meDmKzPsssZg5+sPjgzMsPVf/XQ+v4dLQ2GSYuehOQKBgQDTfzD+K5/rR382HWHX
+      VnL+KXD7cTA7DQq4ma/7UlJMaxhuA11w/4wF/lRiXKNUTfpUSyIybT8IP23fgFDV
+      zLq2G36+mpUXbxPjlFaJfxNOlcr35xvsIC3HMBqOKYm74B9rJbLIwsMZcPi/BuJS
+      ve7pj9blvjf8ZUXw8erhFFoGUwKBgQDyr+u7OQyIhqhCOpy9Is/DtYBg3MQSDLTO
+      TfmqaaUcDvRNy4pgJ2B5Kbs20yAqgBtGDEP+MdtBo3NgIHOA7xjU5biNSz8R12WR
+      UmDrdxIvAo2iixN8TDvIs0EEmE5hrRgPRaf6WP3o1okaWnYuq2VC7HSJJFCtWx9V
+      Aj7VEOgnAwKBgGAXWdshVvc+9L1RfDKqRHTVv09+jbtGoahdq2c0b8/omKDjRoEg
+      mi3e79gA3vReuW2y9UaT/B9zMihp1FBPREWZGGzhLvwGq7Kqoua1pb/+rskTZ8xQ
+      knv9jxMoLDwACEZWSnSMiLf2bA3ewtV1FidoAus/EZDLMovWXjEFXiGhAoGBAIGb
+      YhGCzia7g3CbTMnVpY+nhwAz5qKdFpJ3IjbYZM0vT1mcsjHX1bXfi5Qj/LG16Nro
+      AgfnKGlNmXhk3EqnZmOMq5sJ7Izis+OAUzJtTNC+VFXSYH2pWOQ+lyKVFIclogvF
+      74fLrw6CRIZGeYdDEblD/pifRFbQq1MC9/tiJBlxAoGAAo/XDJSTRlcrJuutk5jG
+      CZPG5LBlxvdUbsuu2vZ7XIoWp3BvuK+yM8m9kEQgl3x8F3bqRjoQmMN6cImMYC2W
+      F02Hw2EcWWx4w+liGjDy8/rcb9KfYTht3Q3W9RYYPZwn+hg4pmGVb4+yOqd183QQ
+      Ug0MvH79P7CUpecFPJliDME=
+      -----END PRIVATE KEY-----
+
+Resources:
+- Name: secret-tls.com
+  Kind: ncproxy.io/rule
+  Metadata:
+    Cert: certbot
+  Data:
+    Rules:
+    - Domain: secret-tls.com
+      Network: All
+      Ssl: tls.secret
+      Hsts: Recommended
+      Http3: true
+      Locations:
+      - Path: /
+        Target:
+          Key: secret-tls.global.c
+          Port: 9000
+
+Cargoes:
+- Name: secret-tls
+  Container:
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+    Env:
+      - APP=SECRET_TLS
+```
+
+<Callout type="info">
+
+完整的 HTTP/3 和 HSTS 选项见[代理规则文档][proxy-rule]。
+
+</Callout>
+
+---
+
+## Statefile 手册 [#statefile-manuals]
+
+现在可以直接在终端查看 Statefile 手册。使用新增的 `nanocl state man` 命令，可以查看包含元数据、参数说明和使用示例的完整手册。
+
+![Statefile 手册](/img/statefile-man.png)
+
+下面是一个使用 `nanocl state man` 显示完整手册的 Statefile 示例：
+
+```yaml
+ApiVersion: v0.17
+
+Metadata:
+  Name: Nginx with Certbot SSL
+  Tags:
+  - cargo
+  - nginx
+  - certbot
+  - ssl
+  - proxy
+  About: Example of an Nginx cargo with Certbot managed SSL certificates.
+  LongAbout: |
+    This example demonstrates how to create an Nginx cargo with SSL certificates
+    managed by Certbot. The cargo is configured to always pull the latest Nginx image
+    and automatically handle SSL certificate issuance and renewal.
+
+Args:
+- Name: name
+  Kind: String
+  Required: true
+  Description: Name of the cargo to create.
+- Name: testtt
+  Kind: String
+  Description: sample test
+- Name: multiple
+  Kind: String
+  Multiple: true
+  Description: sample multiple
+- Name: boolean
+  Kind: Boolean
+  Description: sample boolean
+
+Namespace: cargo-example
+
+Cargoes:
+- Name: ${{ Args.name }}
+  ImagePullPolicy: Always
+  Metadata:
+    Certbot: managed
+  Container:
+    Image: nginx:latest
+```
+
+<Callout type="info">
+
+所有元数据和参数选项见 [Statefile 文档][statefile-doc]。
+
+</Callout>
+
+---
+
+## 后续计划 [#whats-next]
+
+我们会继续改进多节点操作，扩展 Statefile 工具，并推进 HTTP/3 支持，逐步结束实验阶段。欢迎反馈，或[在 GitHub 上参与讨论](https://github.com/next-hat/nanocl)。
+
+祝部署顺利！
+
+Nanocl 团队
+
+[proxy-rule]: /zh-Hans/references/nanocl/objects/resource#proxy-rule
+[statefile-doc]: /zh-Hans/references/nanocl/statefile

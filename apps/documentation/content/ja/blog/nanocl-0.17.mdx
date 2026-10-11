@@ -1,0 +1,248 @@
+---
+slug: nanocl-0.17
+title: Nanocl 0.17 の紹介
+description: Nanocl 0.17 では CLI の強化、分散ロック、ncproxy の実験的な HTTP/3 対応に加え、Statefile のツールとドキュメントを改善しました。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.17
+keywords:
+- コンテナ化
+- Nanocl
+- NGINX
+- HTTP3
+- DevOps
+- statefile
+- リリース
+- 0.17
+date: '2025-09-12'
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+**Nanocl 0.17** を公開しました！今回は開発者の生産性と最新のネットワーク機能に重点を置き、CLI コマンドの追加と改善、デーモンでの分散協調、`ncproxy` の実験的な HTTP/3 対応を進めました。引数解析、メタデータ、組み込みのマニュアル表示も改善し、Statefile の作成をより便利にしました。
+
+{/* truncate */}
+
+## Nanocl 0.17 の主な変更点 [#highlights-of-nanocl-017]
+
+- CLI の強化：複数のターゲットに対応する `nanocl logs`、新しい `nanocl stats`、`state man`、`state render`、より柔軟な引数解析など、Statefile 関連コマンドを改善しました。
+- プラットフォームの耐障害性：`nanocld` に分散ミューテックスを導入してノード間のタスク重複を防ぎ、シークレットを通じて DB 証明書を安全に同期します。
+- 最新のエッジ機能：`ncproxy` ではルールによる HSTS 設定と、調整可能なオプションを持つ実験的な HTTP/3 対応を追加しました。
+
+---
+
+## 新しい公式 Nanocl Registry [#new-official-nanocl-registry]
+
+公式の [Nanocl Registry](https://nr.next-hat.com) を公開しました。<br/>
+一般的な構成を素早くデプロイできる、事前に用意した Statefile のカタログを提供します。
+
+![Nanocl Registry](/img/nanocl-registry.png)
+
+- カタログを閲覧：https://nr.next-hat.com
+- Statefile を提供（PR を歓迎します）：https://github.com/next-hat/nanocl-registry
+
+<Callout type="default" emoji="💡">
+
+ターミナルから任意の Statefile のマニュアルを表示できます：nanocl man -s `<statefile-source>`
+
+</Callout>
+
+---
+
+## コンポーネントの変更 [#component-changes]
+
+### nanocl 0.17.0 [#nanocl-0170]
+- 追加：
+  - 名前で複数プロセスの統計情報を取得する `nanocl stats` を追加しました（[n0tank3sh](https://github.com/n0tank3sh) さん、ありがとうございます）。
+  - Statefile のマニュアルを取得する `nanocl state man` を追加しました。
+  - 現在のコンテキスト変数を使って Statefile を描画する `nanocl state render` を追加しました。
+  - `nanocl logs` が複数の名前を受け取れるようになりました。
+  - Statefile の引数解析を改善し、必須、複数値、説明の各フィールドに対応しました。
+  - Statefile のマニュアルを充実させるメタデータを追加しました。
+  - シークレットを削除せずに更新する `nanocl secret patch` を追加しました。
+
+### nanocld 0.17.0 [#nanocld-0170]
+- 追加：
+  - 名前でプロセスの統計情報を取得する `GET /process/{name}/stats` エンドポイントを追加しました（[n0tank3sh](https://github.com/n0tank3sh) さんによる貢献）。
+  - データベース証明書をシークレットに保存し、複数ノード間で交換、同期できるようにしました。
+  - 複数のノードが同じタスクを同時に実行するのを防ぐ分散ミューテックスロックを追加しました。
+
+### ncproxy 0.14.0 [#ncproxy-0140]
+- 追加：
+  - プロキシルールによる HSTS 設定を追加しました（[n0tank3sh](https://github.com/n0tank3sh) さんによる貢献）。
+  - 実験的な HTTP/3 対応を追加しました。
+
+---
+
+## HTTP/3 と HSTS [#http3-and-hsts]
+
+Nginx が HTTP/3 に対応したことを受けて、プロキシルールにも実験的な HTTP/3 対応を加えました。ドメインごとに HTTP/3 を有効にするオプションを提供します。また、HTTPS 接続を強制してセキュリティを高める HSTS（HTTP Strict Transport Security）の設定オプションも追加しました。
+
+HTTP/3 に対応するシンプルな Cargo をデプロイする Statefile の例です。
+
+```yaml
+ApiVersion: v0.17
+
+Secrets:
+- Name: tls.secret
+  Kind: nanocl.io/tls
+  Data:
+    Certificate: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfkCFFOJVQs8PxWlcJQDn/AQpSopkhISMA0GCSqGSIb3DQEBCwUAMEUx
+      CzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRl
+      cm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMjMwNTI5MDM0MDQwWhcNMjQwNTI4MDM0
+      MDQwWjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UE
+      CgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOC
+      AQ8AMIIBCgKCAQEAyH+TAzIAxxrMKh88p1emIxsttpjqCHdlQuboves+0vI6ORwU
+      BI3HP7gTMQpgK+QnEZw1XIs6/Zdg2VfUiNgQXyh72/0cdurIIqRbF2fLAMSaYElA
+      RRT9F60eHqQ12bXf6ITWB/0ZSnacbLIsic1HcVwr0Awx+xu1YsB9ojssXyIIU/yx
+      d6FjPtiqJTPT9RhVb6Vmfpclse21qGek8tg88U+TrrJZ/Eg5cZojnQTyxhMGHeQf
+      F71nb7no1v5hdki3p50Ik//9lvY/5onWrBUCuAsHi8OkSSyElTQ/JYzuMBjqOaMw
+      PYLZf3d2eRqpiEC/5WI8OJDAk3/y83nG3zy3+QIDAQABMA0GCSqGSIb3DQEBCwUA
+      A4IBAQAz8b7U0jbgBVEen1vd15V6DAxTmg768OkMRoNqK/y0oSK0qHn3IYSADK6M
+      fl6qPnTY3xts+j8ohvNRGR5rJiv25b8koQs6K/ACzMgVlvXeSBVgjBArxgyp3K3q
+      Tpeqg11R5YuJLaMKjWTzOzSq6shLO5/TscLGpkDbZ12HElc5hXyLrEZmsdCb1Wg7
+      RCaMqsmgD/bYTOgP41DN6MVaSmxCshCGcL78enStPDheCmkk7eLMetMrJZLkf5Ch
+      YWs3OUPos4v9GN40VyNWtbrz9g8TzmD4QOfuhuj9nUg9Psa2c22rgr3XaJEU8nyp
+      rSHTKorbCvimz1/m0crjE91CP9JE
+      -----END CERTIFICATE-----
+    CertificateKey: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIf5MDMgDHGswq
+      HzynV6YjGy22mOoId2VC5ui96z7S8jo5HBQEjcc/uBMxCmAr5CcRnDVcizr9l2DZ
+      V9SI2BBfKHvb/Rx26sgipFsXZ8sAxJpgSUBFFP0XrR4epDXZtd/ohNYH/RlKdpxs
+      siyJzUdxXCvQDDH7G7ViwH2iOyxfIghT/LF3oWM+2KolM9P1GFVvpWZ+lyWx7bWo
+      Z6Ty2DzxT5Ousln8SDlxmiOdBPLGEwYd5B8XvWdvuejW/mF2SLennQiT//2W9j/m
+      idasFQK4CweLw6RJLISVND8ljO4wGOo5ozA9gtl/d3Z5GqmIQL/lYjw4kMCTf/Lz
+      ecbfPLf5AgMBAAECggEAHK2Su5xFXDVLCqNZK55v1wmmKj4JC5j4VO9uTuv9GnMn
+      PM/1VQlqfIS5ygPv6ZdCt1QeldQcZfVnFu9nKQOuo83ImZjEn4XJhpr3pItmEAAP
+      DMKtfLQZ128dpchbI37OPhXx/0aGfY4lpa5+jF9eXqqOYb280GwQL8XUsoXAPQMC
+      MwAOHbgHH5lYxD9fizjrWIFIC9jfHjVM3qjOfmz+NujKs+nmVI5AQRCd6C66hbgr
+      2EJe/8ZlDaZX3bfDnRPxhQN8T3VZcwHGj3zqGPnfkr8Ut9nqDhOcqGuTjNdqGEIi
+      meDmKzPsssZg5+sPjgzMsPVf/XQ+v4dLQ2GSYuehOQKBgQDTfzD+K5/rR382HWHX
+      VnL+KXD7cTA7DQq4ma/7UlJMaxhuA11w/4wF/lRiXKNUTfpUSyIybT8IP23fgFDV
+      zLq2G36+mpUXbxPjlFaJfxNOlcr35xvsIC3HMBqOKYm74B9rJbLIwsMZcPi/BuJS
+      ve7pj9blvjf8ZUXw8erhFFoGUwKBgQDyr+u7OQyIhqhCOpy9Is/DtYBg3MQSDLTO
+      TfmqaaUcDvRNy4pgJ2B5Kbs20yAqgBtGDEP+MdtBo3NgIHOA7xjU5biNSz8R12WR
+      UmDrdxIvAo2iixN8TDvIs0EEmE5hrRgPRaf6WP3o1okaWnYuq2VC7HSJJFCtWx9V
+      Aj7VEOgnAwKBgGAXWdshVvc+9L1RfDKqRHTVv09+jbtGoahdq2c0b8/omKDjRoEg
+      mi3e79gA3vReuW2y9UaT/B9zMihp1FBPREWZGGzhLvwGq7Kqoua1pb/+rskTZ8xQ
+      knv9jxMoLDwACEZWSnSMiLf2bA3ewtV1FidoAus/EZDLMovWXjEFXiGhAoGBAIGb
+      YhGCzia7g3CbTMnVpY+nhwAz5qKdFpJ3IjbYZM0vT1mcsjHX1bXfi5Qj/LG16Nro
+      AgfnKGlNmXhk3EqnZmOMq5sJ7Izis+OAUzJtTNC+VFXSYH2pWOQ+lyKVFIclogvF
+      74fLrw6CRIZGeYdDEblD/pifRFbQq1MC9/tiJBlxAoGAAo/XDJSTRlcrJuutk5jG
+      CZPG5LBlxvdUbsuu2vZ7XIoWp3BvuK+yM8m9kEQgl3x8F3bqRjoQmMN6cImMYC2W
+      F02Hw2EcWWx4w+liGjDy8/rcb9KfYTht3Q3W9RYYPZwn+hg4pmGVb4+yOqd183QQ
+      Ug0MvH79P7CUpecFPJliDME=
+      -----END PRIVATE KEY-----
+
+Resources:
+- Name: secret-tls.com
+  Kind: ncproxy.io/rule
+  Metadata:
+    Cert: certbot
+  Data:
+    Rules:
+    - Domain: secret-tls.com
+      Network: All
+      Ssl: tls.secret
+      Hsts: Recommended
+      Http3: true
+      Locations:
+      - Path: /
+        Target:
+          Key: secret-tls.global.c
+          Port: 9000
+
+Cargoes:
+- Name: secret-tls
+  Container:
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+    Env:
+      - APP=SECRET_TLS
+```
+
+<Callout type="info">
+
+HTTP/3 と HSTS のすべてのオプションは、[プロキシルール][proxy-rule]のドキュメントを参照してください。
+
+</Callout>
+
+---
+
+## Statefile のマニュアル [#statefile-manuals]
+
+Statefile のマニュアルをターミナルに直接表示できるようになりました。新しい `nanocl state man` コマンドを使うと、メタデータ、引数の説明、使用例を含む詳しいマニュアルを表示できます。
+
+![Statefile のマニュアル](/img/statefile-man.png)
+
+`nanocl state man` コマンドで見やすいマニュアルを表示する Statefile の例です。
+
+```yaml
+ApiVersion: v0.17
+
+Metadata:
+  Name: Nginx with Certbot SSL
+  Tags:
+  - cargo
+  - nginx
+  - certbot
+  - ssl
+  - proxy
+  About: Example of an Nginx cargo with Certbot managed SSL certificates.
+  LongAbout: |
+    This example demonstrates how to create an Nginx cargo with SSL certificates
+    managed by Certbot. The cargo is configured to always pull the latest Nginx image
+    and automatically handle SSL certificate issuance and renewal.
+
+Args:
+- Name: name
+  Kind: String
+  Required: true
+  Description: Name of the cargo to create.
+- Name: testtt
+  Kind: String
+  Description: sample test
+- Name: multiple
+  Kind: String
+  Multiple: true
+  Description: sample multiple
+- Name: boolean
+  Kind: Boolean
+  Description: sample boolean
+
+Namespace: cargo-example
+
+Cargoes:
+- Name: ${{ Args.name }}
+  ImagePullPolicy: Always
+  Metadata:
+    Certbot: managed
+  Container:
+    Image: nginx:latest
+```
+
+<Callout type="info">
+
+利用可能なメタデータと引数のすべてのオプションは、[Statefile][statefile-doc] のドキュメントを参照してください。
+
+</Callout>
+
+---
+
+## 今後の予定 [#whats-next]
+
+複数ノードでの操作をさらに改善し、Statefile のツールを拡充し、HTTP/3 を実験段階から進めるための開発を続けます。ぜひフィードバックをお寄せください。[GitHub の議論に参加](https://github.com/next-hat/nanocl)できます。
+
+快適なデプロイを！
+
+Nanocl チーム
+
+[proxy-rule]: /ja/references/nanocl/objects/resource#proxy-rule
+[statefile-doc]: /ja/references/nanocl/statefile

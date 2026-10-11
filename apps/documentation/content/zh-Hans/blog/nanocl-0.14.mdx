@@ -1,0 +1,76 @@
+---
+slug: nanocl-0.14
+title: Nanocl 0.14 发布
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.14
+description: Nanocl 0.14 带来多项新功能和增强，简化部署流程。了解详细变化！
+image: /img/logo3.png
+keywords:
+- 容器化
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- 软件开发
+- 部署
+- 发布
+- 0.15
+date: '2024-05-07'
+timestamp: 1731914078000
+---
+
+容器和虚拟机（VM）编排发展迅速，需要持续创新并适应开发者和运维人员的需求。基于这一目标，我们推出 Nanocl 0.14，为编排工具加入众多增强和新功能，简化部署流程。
+
+{/*truncate*/}
+
+下面介绍各个组件的新功能和改进：
+
+## Nanocld [#nanocld]
+
+### 变更 [#changed]
+
+- **新事件系统**：改进事件处理，更好地监控和管理部署。
+- **增强的镜像控制**：用 `ImagePullPolicy` 选择始终拉取镜像或仅在镜像不存在时拉取；`ImagePullSecrets` 支持从私有仓库拉取镜像。
+- **高效的进程处理**：在后台下载镜像，为对象处理任务排队，并方便地监控对象进程状态。
+
+### 修复 [#fixed]
+
+- **改进副本机制**：修复副本功能的问题，提升扩展能力和可靠性。
+
+## Nanocl [#nanocl]
+
+### 变更 [#changed-1]
+
+- **Secret 管理**：新增 `nanocl secret create` 命令，无需 Statefile 即可创建 Secret。
+- **上下文**：允许更改默认端点，便于与不同环境集成。详见[上下文指南][contexts]。
+- **SubState**：在配置中包含其他 Statefile，简化复杂部署。详见 [SubState 指南][substates]。
+
+### 修复 [#fixed-1]
+
+**改进日志**：修复任务状态日志的问题，更清晰地展示部署活动。
+
+## Ncproxy [#ncproxy]
+
+### 变更 [#changed-2]
+
+- **改进事件处理**：使用守护进程的新事件系统，提高可靠性和性能。
+
+### 新增 [#added]
+
+- **访问控制**：通过 `AllowedIps` 指定可以访问公开服务的 IP 地址，加强网络安全和控制。
+
+### 修复 [#fixed-2]
+
+- **协议支持**：修复 TCP over SSL 的问题，并支持为 HTTP 目标设置具体路径。
+
+Nanocl 0.14 既修复了现有问题，也提供了更高效扩展和管理基础设施的能力。无论编排容器、管理 VM，还是保护网络访问，都能适应你的需求。
+
+立即参考[升级指南][upgrading]升级，体验 Nanocl 0.14 的容器和 VM 编排功能。我们将持续改进部署自动化，敬请关注后续更新。
+
+[substates]: /zh-Hans/guides/nanocl/advanced-usage/substate
+[contexts]: /zh-Hans/guides/nanocl/advanced-usage/contexts
+[upgrading]: /zh-Hans/manuals/nanocl/upgrade

@@ -1,0 +1,85 @@
+---
+title: Настройка прокси — Nanocl
+description: Настройте прокси для публикации Cargo.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- прокси
+- конфигурация
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Настройка прокси
+
+Создайте `proxy rules` через `proxy controller`, чтобы опубликовать Cargo.<br/>
+Правило прокси направляет определённый IP-адрес, порт или доменное имя к upstream Cargo.
+
+
+## Добавление правил прокси [#add-proxy-rules]
+
+<Callout type="info">
+
+Для продолжения нужен работающий Cargo my-cargo с HTTP на порту **9001**.
+
+</Callout>
+
+Создайте `proxy.deploy-example.yml` и скопируйте содержимое:
+
+<StatefileBlock example="get-started/proxy" />
+
+Создайте правило прокси командой:
+
+```sh
+nanocl state apply -s proxy.deploy-example.yml
+```
+
+Посмотрите существующие ресурсы:
+
+```sh
+nanocl resource ls
+```
+
+Проверим работу правила прокси:
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+Ожидаемый вывод:
+
+```json
+{
+  "headers": {
+    "x-forwarded-proto": "http",
+    "x-forwarded-for": "127.0.0.1",
+    "accept": "*/*",
+    "x-real-ip": "127.0.0.1",
+    "connection": "close",
+    "x-forwarded-scheme": "http",
+    "host": "deploy-example.com",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "   ": "/bin/nanocl-get-started",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "HOME": "/",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TERM": "xterm",
+    "PORT": "9001",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+Теперь вы умеете настраивать правило прокси для Cargo. Удачных развёртываний с Nanocl!

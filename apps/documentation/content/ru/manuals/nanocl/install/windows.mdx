@@ -1,0 +1,69 @@
+---
+title: Установка в Windows — Nanocl
+description: Установка Nanocl в Windows через скрипт или архив tarball.
+keywords:
+- nanocl
+- установка
+- windows
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import vars from '@/lib/vars';
+import Terminal from '@/components/terminal';
+import DirTree from '@/components/dir_tree';
+import InstallBlock from '@/components/install_block';
+
+# Установка в Windows
+
+В PowerShell скачайте и распакуйте архив, затем добавьте каталог в PATH.
+
+<Callout type="warning">
+
+Поддержка Windows экспериментальна. Используйте на свой риск.<br/>
+Для большей стабильности рекомендуем Windows Subsystem for Linux (WSL).
+
+</Callout>
+
+## Ручная установка [#manual-install]
+
+### Получение архива CLI [#get-the-cli-tarball]
+
+Архив nanocl доступен на <a href={vars.nanoclReleaseTagUrl}>странице выпусков GitHub</a>.<br/>
+Также его можно скачать и распаковать командами:
+
+<Terminal language="powershell">{`$dst = "$env:USERPROFILE\\nanocl"
+New-Item -ItemType Directory -Force -Path $dst | Out-Null
+Invoke-WebRequest -Uri "${vars.nanoclWindowsTarballUrl}" -OutFile "$dst\\nanocl.tar.gz"`}</Terminal>
+
+Структура распакованного каталога:
+
+<DirTree variant="windows" />
+
+<Terminal language="powershell">{`# Windows 10+ includes tar
+& tar -xzf "$dst\\nanocl.tar.gz" -C $dst
+# The binary is under bin\\nanocl.exe
+$bin = Join-Path $dst 'bin'
+# Add to PATH (current session):
+$env:Path = "$env:Path;$bin"
+# Or copy to a directory already in PATH (requires admin):
+# Copy-Item (Join-Path $bin 'nanocl.exe') "$env:ProgramFiles\\nanocl\\nanocl.exe" -Force`}</Terminal>
+
+
+## Сборка из исходного кода [#compile-from-source]
+
+Если у вас другая архитектура или вы предпочитаете сборку из исходного кода.
+
+Предварительные требования:
+
+- Установите инструменты Rust: https://www.rust-lang.org/tools/install
+- Visual Studio Build Tools (инструменты C++) или работающий набор MSVC
+- Библиотеки разработки OpenSSL и libpq, если они не включены; в Windows при наличии они обычно связываются статически при сборке
+
+<Terminal language="powershell">
+{`cargo install nanocl`}
+</Terminal>
+

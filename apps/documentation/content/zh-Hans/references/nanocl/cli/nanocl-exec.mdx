@@ -1,0 +1,62 @@
+---
+title: 执行
+timestamp: 1787952819000
+---
+
+# 执行
+
+# 名称
+
+exec - 在进程中执行命令
+
+## 语法 [#synopsis]
+
+**exec** \[**-d**\|**--detach**\] \[**--detach-keys**\]
+\[**-e**\|**--env**\] \[**--env-file**\]
+\[**-i**\|**--interactive**\] \[**--privileged**\]
+\[**-t**\|**--tty**\] \[**-u**\|**--user**\]
+\[**-w**\|**--workdir**\] \[**-h**\|**--help**\]
+\<*PROCESS*\> \<*COMMAND*\>...
+
+## 说明 [#description]
+
+在进程中执行命令
+
+## 选项 [#options]
+
+**-d**, **--detach**  
+在后台运行命令
+
+**--detach-keys** *\<DETACH_KEYS\>*  
+覆盖退出交互式 exec 的按键序列
+
+**-e**, **--env** *\<ENV\>*  
+设置环境变量
+
+**--env-file** *\<ENV_FILE\>*  
+从文件读取环境变量
+
+**-i**, **--interactive**  
+保持标准输入开放
+
+**--privileged**  
+赋予命令扩展权限
+
+**-t**, **--tty**  
+Allocate a pseudo-TTY
+
+**-u**, **--user** *\<USER\>*  
+命令使用的用户及可选用户组
+
+**-w**, **--workdir** *\<WORKDIR\>*  
+进程内的工作目录
+
+**-h**, **--help**  
+显示帮助
+
+*\<PROCESS\>*  
+具体进程名称或完整 Docker ID
+
+*\<COMMAND\>*...  
+要执行的命令及参数
+

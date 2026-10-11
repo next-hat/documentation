@@ -1,7 +1,7 @@
 import type { RedocSpec } from './redoc-options'
 
 /** Adapt generated Rustdoc links without changing the published OpenAPI source. */
-export function prepareRedocSpec(spec: RedocSpec, schemaBase = ''): RedocSpec {
+export function prepareRedocSpec(spec: RedocSpec, schemaBase = '', discriminatorLabel = 'Discriminator field:'): RedocSpec {
   const prepared = structuredClone(spec)
   const schemas = prepared.components?.schemas || {}
 
@@ -37,7 +37,7 @@ export function prepareRedocSpec(spec: RedocSpec, schemaBase = ''): RedocSpec {
       || branches.some((branch) => '$ref' in branch)) continue
     const values = branches.map((branch) => discriminatorValue(branch, discriminator.propertyName))
     if (values.some((value) => value === undefined)) continue
-    schema.description = `${schema.description || ''}\n\nDiscriminator field: \`${discriminator.propertyName}\`.`
+    schema.description = `${schema.description || ''}\n\n${discriminatorLabel} \`${discriminator.propertyName}\`.`
     branches.forEach((branch, index) => { if (!branch.title) branch.title = values[index] })
     delete schema.discriminator
   }

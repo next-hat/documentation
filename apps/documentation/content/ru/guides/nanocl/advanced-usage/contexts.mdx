@@ -1,0 +1,147 @@
+---
+title: Контексты — Nanocl
+description: Переключайтесь между демонами Nanocl с помощью контекстов.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- конфигурация
+- состояние
+- файл
+- настройки
+- yaml
+- yml
+- statefile
+- ssl
+- tls
+- сертификат
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# Контексты
+
+Контексты позволяют взаимодействовать с разными [демонами Nanocl](/ru/references/nanocl/daemon/overview).
+
+Например, один демон работает на локальном компьютере, а другой — на удалённом сервере. Контексты позволяют переключаться между ними.
+
+Нужно обеспечить доступ к демону из интернета.
+Есть несколько способов; самый простой — [ProxyRule](/ru/references/nanocl/objects/resource).
+
+Сначала создайте собственный сертификат SSL/TLS.<br />
+Для безопасности доступ к демону получат только клиенты с определённым сертификатом, выданным вашим CA.<br />
+
+Для удобства мы подготовили `Statefile`, создающий необходимые сертификаты и настраивающий `ProxyRule`.
+
+
+## Автоматическая настройка [#automatic-setup]
+
+Примените следующий `Statefile`, чтобы создать сертификаты и настроить `ProxyRule`:
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/remote-nanocld`}
+</CodeBlock>
+
+После применения `Statefile` создайте контекст для переключения между демонами.
+Сначала получите созданный `Statefile` клиентский сертификат.
+
+Получите клиентский сертификат командой:
+
+```sh
+nanocl secret inspect cert.client.nanocl.io
+```
+
+Будут выведены клиентский сертификат и ключ.
+
+## Ручная настройка [#manual-setup]
+
+### Создание сертификатов [#generate-the-certificates]
+
+Создайте сертификаты следующими командами:
+
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=NanoclCA"
+openssl req -newkey rsa:4096 -keyout server.key -out server.csr -nodes -subj "/CN=*"
+openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+openssl req -newkey rsa:4096 -keyout client.key -out client.csr -nodes -subj "/CN=NanoclClient"
+openssl x509 -req -in client.csr -out client.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+```
+
+Переместите сертификаты в нужное место на удалённом сервере с Nanocl:
+
+```sh
+sudo mkdir -p /var/lib/nanocl/proxy/certs
+sudo mv ca.crt /var/lib/nanocl/proxy/certs/nanocl_ca.crt
+sudo mv server.crt /var/lib/nanocl/proxy/certs/nanocl_server.crt
+sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
+```
+
+### Применение ProxyRule [#apply-the-proxyrule]
+
+Примените ProxyRule для доступа к демону из интернета.
+
+Создайте файл `nanocld-proxy.yml`:
+
+<StatefileBlock example="advanced/context-resource" />
+
+Примените ProxyRule командой:
+
+```sh
+nanocl apply -s nanocld-proxy.yml
+```
+
+## Создание контекста [#create-the-context]
+
+Переместите клиентский сертификат в нужное место на локальном компьютере:
+
+```sh
+mkdir -p ~/.nanocl/certs
+mv client.crt ~/.nanocl/certs/nanocl_client.crt
+mv client.key ~/.nanocl/certs/nanocl_client.key
+```
+
+Теперь создайте контекст для переключения между демонами.
+
+Создайте файл `my-secure-context.yml`:
+
+<StatefileBlock example="advanced/context" />
+
+<Callout type="info" emoji="📝">
+
+Замените `my-remote-server` реальным IP-адресом или доменным именем удалённого сервера.<br/>
+Замените `my-user` своим именем пользователя.
+
+</Callout>
+
+Импортируйте контекст командой:
+
+```sh
+nanocl context from my-secure-context.yml
+```
+
+Переключайтесь между контекстами командой:
+
+```sh
+nanocl context use my-secure-context
+```
+
+Также можно посмотреть список контекстов:
+
+```sh
+nanocl context list
+```
+
+Для общих сведений выполните:
+
+```sh
+nanocl context --help
+```
+
+Команда покажет подробности работы с контекстами.

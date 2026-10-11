@@ -1,0 +1,40 @@
+---
+title: 进程操作 - Nanocl
+description: 识别并操作一个具体的 Cargo、Job 或 VM 进程。
+keywords:
+- 文档
+- nanocl
+- 进程
+- ps
+- exec
+- kill
+- logs
+- stats
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# 进程操作
+
+Cargo 名称标识工作负载，进程名称标识具体运行时容器。因此，具有副本的多容器 Cargo 包含多个进程名称。操作目标前先列出进程：
+
+```sh
+nanocl ps --namespace global --kind cargo
+```
+
+应用进程名称包含命名空间、Cargo 键、副本序号和声明的容器名称。`nanocl ps` 也能区分初始化、沙箱和临时更新进程。将返回的进程名称或完整 Docker ID 作为权威标识，不要在脚本中自行拼接名称。
+
+将这个精确值用于按进程操作的命令：
+
+```sh
+nanocl inspect PROCESS
+nanocl logs -f PROCESS
+nanocl stats PROCESS
+nanocl exec PROCESS -- env
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` 操作一个运行中的进程。`--interactive` 保持标准输入开放，`--tty` 分配伪终端，`--detach` 在后台启动命令。也接受可重复的 `--env`、`--env-file`，以及 `--user`、`--workdir`、`--privileged` 和 `--detach-keys`。在连接模式且不使用 TTY 时，标准输出和标准错误保持分离，CLI 使用执行命令的状态退出。
+
+`nanocl kill` 同样操作一个进程，默认信号为 `SIGKILL`；需要优雅终止时传入 `--signal`。0.18 没有 Cargo 级 `cargo kill`，此前的 `cargo exec` 命令也已移除。
+

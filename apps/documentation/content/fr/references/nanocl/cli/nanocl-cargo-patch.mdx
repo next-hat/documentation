@@ -1,0 +1,40 @@
+---
+title: Modifier un Cargo
+timestamp: 1787952819000
+---
+
+# Modifier un Cargo
+
+# NOM
+
+patch - Mettre à jour un Cargo par sa clé canonique
+
+## SYNOPSIS [#synopsis]
+
+**patch** \[**--container**\] \[**-i**\|**--image**\]
+\[**-e**\|**--env**\] \[**-v**\|**--volume**\] \[**-h**\|**--help**\]
+\<*KEY*\>
+
+## DESCRIPTION [#description]
+
+Mettre à jour un Cargo par sa clé canonique
+
+## OPTIONS [#options]
+
+**--container** *\<CONTAINER\>*
+Nom du conteneur applicatif à mettre à jour
+
+**-i**, **--image** *\<IMAGE\>*  
+Nouvelle image du Cargo
+
+**-e**, **--env** *\<ENV\>*  
+Nouvelles variables d’environnement du Cargo
+
+**-v**, **--volume** *\<VOLUMES\>*  
+Nouveaux volumes du Cargo
+
+**-h**, **--help**  
+Afficher l’aide
+
+\<*KEY*\>
+Clé canonique du Cargo à mettre à jour

@@ -1,0 +1,45 @@
+---
+title: Journaux du Statefile
+timestamp: 1757712924000
+---
+
+# Journaux du Statefile
+
+# NOM
+
+logs - Afficher les journaux des éléments d’un Statefile
+
+## SYNOPSIS [#synopsis]
+
+**logs** \[**-s**\|**--source**\] \[**--since**\] \[**-u **\] \[**-t
+**\] \[**--timestamps**\] \[**-f **\] \[**-h**\|**--help**\] \[*ARGS*\]
+
+## DESCRIPTION [#description]
+
+Afficher les journaux des éléments d’un Statefile
+
+## OPTIONS [#options]
+
+**-s**, **--source** *\<SOURCE\>*  
+Chemin ou URL du Statefile
+
+**--since** *\<SINCE\>*  
+Inclure uniquement les journaux après cet horodatage Unix
+
+**-u** *\<UNTIL\>*  
+Inclure uniquement les journaux avant cet horodatage Unix
+
+**-t** *\<TAIL\>*  
+Un entier renvoie les n dernières lignes ; "all" renvoie tous les journaux
+
+**--timestamps**  
+Booléen : inclure l’horodatage dans chaque ligne si activé
+
+**-f**  
+Booléen : ouvrir les journaux comme un flux si activé
+
+**-h**, **--help**  
+Afficher l’aide
+
+\[*ARGS*\]  
+Arguments supplémentaires à transmettre au fichier

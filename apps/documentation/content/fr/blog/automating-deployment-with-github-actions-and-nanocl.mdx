@@ -1,0 +1,417 @@
+---
+slug: automating-deployment-with-github-actions-and-nanocl
+title: Automatiser le déploiement avec GitHub Actions et Nanocl
+description: Découvrez comment automatiser vos déploiements avec GitHub Actions et Nanocl. Ce guide vous accompagne dans la mise en place de déploiements fluides, avec un minimum d’effort et sans interruption de service. Que vous découvriez la CI/CD ou soyez déjà expérimenté, cet article vous montre comment simplifier votre flux de travail grâce à de puissants outils open source.
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- ci/cd
+- github actions
+- devops
+- automatisation
+- nanocl
+- déploiement
+- open source
+- infrastructure cloud
+- docker
+- développement logiciel
+keywords:
+- CI/CD
+- GitHub Actions
+- automatisation
+- Nanocl
+- déploiement
+- développement logiciel
+- DevOps
+- intégration continue
+- livraison continue
+- infrastructure cloud
+date: '2024-11-22'
+timestamp: 1787952819000
+---
+
+Découvrez comment automatiser vos déploiements avec GitHub Actions et Nanocl. Ce guide vous accompagne dans la mise en place de déploiements fluides, avec un minimum d’effort et sans interruption de service. Que vous découvriez la CI/CD ou soyez déjà expérimenté, cet article vous montre comment simplifier votre flux de travail grâce à de puissants outils open source.
+
+{/* truncate */}
+
+![Mème DevOps Nanocl](/img/nanocl-devops-meme.jpg)
+
+## Introduction [#introduction]
+
+L’intégration continue et le déploiement continu (CI/CD) sont des pratiques essentielles du développement logiciel moderne. Elles automatisent la compilation, les tests et le déploiement des applications pour livrer rapidement et efficacement des logiciels de qualité. GitHub Actions permet d’automatiser votre pipeline de CI/CD directement depuis votre dépôt GitHub. Nanocl est un orchestrateur de conteneurs et de machines virtuelles qui simplifie le déploiement grâce à une interface unifiée de gestion de votre infrastructure.
+
+Dans cet article, nous présentons la mise en place de notre pipeline de CI/CD avec GitHub Actions et Nanocl pour déployer les documentations de [next-hat][docs.next-hat.com] et de [ntex.rs][ntex.rs], qui utilisent Docusaurus.
+
+## Prérequis [#prerequisites]
+
+Avant de commencer, vous devez disposer des éléments suivants :
+
+- Un compte GitHub (inscription gratuite sur [github.com][github.com])
+- Un projet à déployer (site statique, application web ou tout autre programme pouvant s’exécuter dans un conteneur)
+- Un serveur dédié ou un VPS (nous utilisons [ovh][ovh.com] pour nos serveurs)
+- Un nom de domaine pointant vers votre serveur (nous utilisons [ovh][ovh.com] pour nos noms de domaine)
+- Docker installé sur votre machine locale et votre serveur (instructions d’installation [ici][get-docker])
+- Nanocl installé sur votre serveur (instructions d’installation [ici][get-nanocl])
+
+## Créer l’image du conteneur [#creating-the-container-image]
+
+Voyons comment créer l’image du conteneur pour déployer les documentations de [next-hat][docs.next-hat.com] et de [ntex.rs][ntex.rs], qui utilisent Docusaurus. Si vous savez déjà créer une image Docker, vous pouvez passer cette section.
+
+### Créer un fichier de configuration Nginx [#creating-a-nginx-configuration-file]
+
+Nous utilisons `nginx` comme serveur web pour servir les fichiers statiques générés par Docusaurus. Le fichier `server.nginx` contient sa configuration. Vous pouvez le remplacer par votre propre fichier adapté à vos besoins.
+
+```nginx
+server {
+  listen       80;
+  listen  [::]:80;
+  rewrite ^/(.*)/$ /$1 permanent;
+
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 8;
+  gunzip on;
+  gzip_types application/javascript image/* text/css;
+  gzip_disable "MSIE [1-6]\.";
+
+  root /home/node/app;
+  error_page 404 /404.html;
+  try_files $uri.html $uri/index.html =404;
+
+  ## All static files will be cached.
+  location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ {
+    access_log off;
+    expires 1y;
+    add_header Cache-Control max-age=31536000;
+
+    ## No need to bleed constant updates. Send the all shebang in one
+    ## fell swoop.
+    tcp_nodelay off;
+
+    ## Set the OS file cache.
+    open_file_cache max=3000 inactive=120s;
+    open_file_cache_valid 45s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors off;
+  }
+}
+```
+
+Détaillons la configuration de `server.nginx` :
+
+- `server { ... }` : ce bloc définit la configuration du serveur Nginx.
+- `listen 80;` : cette ligne indique que le serveur doit écouter sur le port 80.
+- `rewrite ^/(.*)/$ /$1 permanent;` : cette ligne redirige les requêtes dont l’URL se termine par une barre oblique vers la même URL sans cette barre.
+- `gzip on;` : cette ligne active la compression gzip des réponses.
+- `root /home/node/app;` : cette ligne définit le répertoire racine des fichiers statiques.
+- `error_page 404 /404.html;` : cette ligne définit la page à afficher pour les erreurs 404.
+- `try_files $uri.html $uri/index.html =404;` : cette ligne précise les fichiers à essayer lors d’une requête.
+- `location ~* ^.+\.(?:css|webp|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|woff2|svg)$ { ... }` : ce bloc configure le service des fichiers statiques avec mise en cache.
+
+Ce fichier optimise Nginx pour servir des fichiers statiques et améliore les performances grâce à la compression gzip et à la mise en cache.
+
+### Créer un Dockerfile [#creating-a-dockerfile]
+
+Un [Dockerfile][dockerfile] est un document texte contenant toutes les commandes nécessaires pour construire une image Docker. Il précise l’image de base, les commandes à exécuter et les fichiers à copier. Dans ce guide, nous créons un Dockerfile pour un site Docusaurus. Adaptez les commandes à votre projet.
+
+Créez un fichier nommé [Dockerfile][dockerfile] dans le répertoire de votre projet. Il contiendra la configuration de votre image Docker. Voici un exemple pour un site Docusaurus :
+
+```dockerfile
+FROM node:22.11.0-alpine AS builder
+
+RUN apk add git
+
+USER node
+
+# Create app directory (with user `node`)
+RUN mkdir -p /home/node/app
+# Set is as cwd
+WORKDIR /home/node/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY --chown=node package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Bundle app source code
+COPY --chown=node . .
+COPY --chown=node ./.git ./.git
+
+RUN npm run build
+
+FROM nginx:1.27.0-alpine3.19-slim
+
+WORKDIR /etc/nginx/conf.d
+
+COPY --from=builder /home/node/app/build /home/node/app
+
+COPY ./server.nginx ./default.conf
+```
+
+Détaillons le Dockerfile :
+
+- `FROM node:22.11.0-alpine AS builder` : définit l’image de base de l’étape de compilation. Nous utilisons `node:22.11.0-alpine`, une version légère de Node.js qui inclut npm.
+- `RUN apk add git` : installe le paquet `git`, nécessaire pour cloner le dépôt.
+- `USER node` : passe à l’utilisateur `node`, un utilisateur sans privilèges root créé par l’image Node.js.
+- `RUN mkdir -p /home/node/app` : crée un répertoire pour le code de l’application.
+- `WORKDIR /home/node/app` : définit le répertoire de l’application comme répertoire de travail.
+- `COPY --chown=node package*.json .` : copie les fichiers `package.json` et `package-lock.json` dans l’image.
+- `RUN npm install` : installe les dépendances indiquées dans `package.json`.
+- `COPY --chown=node . .` : copie le code de l’application dans l’image.
+- `COPY --chown=node ./.git ./.git` : copie le répertoire `.git` dans l’image.
+- `RUN npm run build` : compile l’application avec la commande `npm run build`.
+- `FROM nginx:1.27.0-alpine3.19-slim` : définit l’image de base de l’image finale. Nous utilisons `nginx:1.27.0-alpine3.19-slim`, une version légère de Nginx.
+- `WORKDIR /etc/nginx/conf.d` : définit le répertoire de configuration Nginx comme répertoire de travail.
+- `COPY --from=builder /home/node/app/build /home/node/app` : copie les fichiers statiques générés lors de la compilation dans le répertoire de l’image Nginx.
+- `COPY ./server.nginx ./default.conf` : copie le fichier `server.nginx` dans le répertoire de configuration Nginx.
+
+Ce Dockerfile réalise une compilation en plusieurs étapes : il compile d’abord l’application avec Node.js, puis copie les fichiers statiques dans une image Nginx. Cette approche réduit la taille de l’image finale et améliore les performances en séparant les dépendances de compilation de celles d’exécution.
+
+### Construire et exécuter l’image Docker localement [#building-and-running-the-docker-image-locally]
+
+Avant de déployer votre application sur le serveur, testez l’image Docker localement pour vérifier son bon fonctionnement. Vous pouvez la construire et l’exécuter sur votre machine avec les commandes suivantes :
+
+```bash
+docker build -t my-image .
+docker run -p 8080:80 my-image
+```
+
+La commande `docker build` construit l’image à partir du `Dockerfile` du répertoire courant et lui attribue le nom `my-image`. La commande `docker run` l’exécute sur le port 8080, relié au port 80 du conteneur. Ouvrez `http://localhost:8080` dans un navigateur pour accéder à l’application.
+
+Si tout fonctionne, la version de production de votre site Docusaurus apparaît dans le navigateur. Vous pouvez maintenant déployer l’application sur votre serveur avec GitHub Actions et Nanocl.
+
+## Configurer Nanocl [#setting-up-nanocl]
+
+Nanocl simplifie le déploiement grâce à une interface unifiée de gestion de votre infrastructure. Vous pouvez déployer vos applications sur votre serveur avec un minimum d’effort. Nous allons configurer Nanocl sur votre serveur et déployer votre application à l’aide d’un simple fichier de configuration.
+
+Installez d’abord Nanocl sur votre serveur en suivant les instructions [ici][nanocl-install]. Vous pourrez ensuite créer un fichier de configuration contenant les paramètres de l’application, comme le nom de l’image, le port et les variables d’environnement.
+
+Par défaut, après son installation, Nanocl est accessible uniquement via `/run/nanocl/nanocl.sock`. Une règle de proxy peut l’exposer sur Internet, mais il est déconseillé de l’exposer publiquement sans certificat SSL/TLS autosigné.
+Cela pourrait permettre à un attaquant de prendre le contrôle de votre serveur.
+Nous fournissons heureusement une règle préconfigurée que vous pouvez appliquer pour exposer le démon Nanocl.
+
+Sur votre serveur dédié ou VPS, exécutez la commande suivante pour appliquer la règle :
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/remote-nanocld
+```
+
+Avant de l’appliquer, vous pouvez afficher son manuel avec la commande suivante :
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/remote-nanocld
+```
+
+Elle expose le démon Nanocl sur Internet avec un certificat SSL/TLS autosigné sur le port 9943.
+
+## Configurer GitHub Secrets [#setting-up-github-secrets]
+
+GitHub Secrets permet de stocker et d’utiliser en toute sécurité des informations sensibles dans votre dépôt GitHub : identifiants du serveur, clés d’API et autres données nécessaires au déploiement. Nous l’utiliserons pour enregistrer les identifiants permettant de déployer l’application sur votre serveur avec Nanocl.
+
+Ouvrez votre dépôt GitHub et cliquez sur l’onglet `Settings`, puis sur `Secrets and variables` dans la barre latérale gauche, et enfin sur `Actions`.<br/>
+Vous devriez voir une page semblable à celle-ci :
+
+![Secrets GitHub](/img/github-secrets.png)
+
+Cliquez sur `New repository secret` pour créer un secret. Créez un secret pour chacune des valeurs suivantes :
+
+- `NANOCL_HOST` : nom d’hôte ou adresse IP de votre serveur, avec le port 9943. Exemple : `https://example.com:9943`
+- `NANOCL_CERT` : contenu du certificat SSL/TLS autosigné utilisé pour sécuriser la connexion au démon Nanocl.
+- `NANOCL_CERT_KEY` : contenu de la clé privée utilisée pour sécuriser la connexion au démon Nanocl.
+
+Affichez le contenu du certificat et de la clé privée avec les commandes suivantes sur votre serveur :
+
+```bash
+nanocl secret inspect cert.client.nanocl.io
+```
+
+Cette commande affiche le contenu du certificat et de la clé privée. Copiez-le dans la page GitHub Secrets.
+
+## Créer une configuration Statefile [#creating-a-statefile-configuration]
+
+Un [Statefile][statefile] est un fichier contenant les paramètres de votre application. Il précise le nom de l’image, le port et les variables d’environnement nécessaires au déploiement. Créez-en un pour votre application et utilisez-le pour la déployer sur votre serveur avec Nanocl.
+Voici le [Statefile][statefile] utilisé pour déployer la documentation next-hat :
+
+```yaml
+ApiVersion: v0.18
+
+Args:
+- Name: version
+  Kind: String
+
+Cargoes:
+- Name: nh-doc
+  Containers:
+  - Name: docs
+    Image: ghcr.io/next-hat/documentation:${{ Args.version }}
+
+Resources:
+- Name: http.docs.next-hat.com
+  Kind: ncproxy.io/rule
+  Data:
+    Rules:
+    - Domain: docs.next-hat.com
+      Network: Public
+      # Secret created for the certbot job below
+      # You can remove this line if you don't want https
+      Ssl: cert.docs.next-hat.com
+      Locations:
+      - Path: /
+        Target:
+          Key: global.nh-doc.c
+          Port: 80
+    - Domain: docs.next-hat.com
+      Network: Public
+      Locations:
+      - Path: /
+        Target:
+          Url: https://docs.next-hat.com
+          Redirect: Temporary
+```
+
+Placez ce [Statefile][statefile] à la racine du répertoire de votre projet.
+
+## Configurer GitHub Actions [#setting-up-github-actions]
+
+GitHub Actions automatise votre flux de travail directement depuis votre dépôt. Vous pouvez créer des workflows déclenchés par des événements précis, comme un envoi de code ou la création d’une pull request. Nous allons créer un workflow qui construit et déploie votre application sur le serveur avec Nanocl.
+Le code source complet est disponible [ici](https://github.com/next-hat/documentation).
+
+### Construire et publier l’image Docker [#building-and-publishing-the-docker-image]
+
+Créez un fichier `.github/workflows/build-and-publish.yml` dans votre dépôt. Il contiendra la configuration du workflow GitHub Actions qui construit votre image Docker et la publie dans GitHub Container Registry, uniquement lors d’une fusion dans la branche master.
+
+```yaml
+name: Build and publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build and publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from package.json
+        id: extract_version
+        run: |
+          version=$(jq -r '.version' package.json)
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+    
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          VERSION=${{ env.PACKAGE_VERSION }}
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-image
+          if docker manifest inspect $IMAGE_NAME:$VERSION > /dev/null 2>&1; then
+            echo "Version $VERSION already exists."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/documentation:latest
+            ghcr.io/${{ github.repository_owner }}/documentation:${{ env.PACKAGE_VERSION }}
+```
+
+Ce workflow s’exécute chaque fois que vous fusionnez du code dans la branche master. Il construit une image Docker, la marque avec la dernière version de votre fichier `package.json`, puis la publie dans GitHub Container Registry. Remplacez `documentation` par le nom de votre image.
+
+### Déployer l’application avec Nanocl [#deploying-the-application-with-nanocl]
+
+Créez ensuite un fichier `.github/workflows/deploy.yml` dans votre dépôt. Il contiendra la configuration du workflow GitHub Actions qui déploie votre application sur le serveur avec Nanocl.
+
+```yaml
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build and publish Docker image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install nanocl cli
+      run: |
+        wget https://github.com/next-hat/nanocl/releases/download/nanocl-0.16.2/nanocl_0.16.2_amd64.deb
+        sudo dpkg -i nanocl_0.16.1_amd64.deb
+        rm nanocl_0.16.1_amd64.deb
+
+    - name: Deploy to production
+      run: |
+        VERSION=$(jq -r '.version' package.json)
+        nanocl version
+        echo $VERSION
+        nanocl state apply -ys Statefile.yml -- --version $VERSION
+      env:
+        HOST: ${{ secrets.NANOCL_HOST }}
+        CERT: ${{ secrets.NANOCL_CERT }}
+        CERT_KEY: ${{ secrets.NANOCL_CERT_KEY }}
+```
+
+Ce workflow s’exécute à la fin du workflow `Build and publish Docker image`. Il déploie l’application sur votre serveur avec Nanocl. Si votre fichier porte un autre nom ou se trouve ailleurs, remplacez `Statefile.yml` par le chemin de votre configuration [Statefile][statefile].
+
+Votre pipeline de CI/CD avec GitHub Actions et Nanocl est désormais configuré. À chaque envoi de code, GitHub Actions construit et publie votre image dans GitHub Container Registry. La publication déclenche ensuite le workflow de déploiement, qui déploie l’application sur votre serveur avec Nanocl.
+
+## Activer SSL/TLS public avec Let’s Encrypt [#enable-public-ssltls-with-lets-encrypt]
+
+Vous pouvez aussi activer SSL/TLS public avec Let’s Encrypt à l’aide de la commande suivante :
+
+```bash
+nanocl state apply -fs nr.next-hat.com/v0.17/certbot -- --email contact@next-hat.com --domain docs.next-hat.com
+```
+
+Avant de l’appliquer, vous pouvez afficher son manuel avec la commande suivante :
+
+```bash
+nanocl state man -s nr.next-hat.com/v0.17/certbot
+```
+
+## Conclusion [#conclusion]
+
+En suivant ce guide, vous pouvez automatiser le déploiement de vos applications sur votre serveur avec un minimum d’effort et sans interruption de service. Vous livrerez rapidement des logiciels de qualité tout en simplifiant la gestion de l’infrastructure et les déploiements.
+
+Vous savez désormais automatiser les déploiements avec GitHub Actions et Nanocl : essayez sur votre propre projet et faites-nous part de vos résultats ou de vos questions !
+
+Rejoignez notre [serveur Discord][discord] pour toute question ou pour obtenir de l’aide dans la configuration de votre pipeline de CI/CD. Nous vous accompagnons dans votre parcours de développement logiciel.
+
+[statefile]: /fr/references/nanocl/statefile
+[ntex.rs]: https://ntex.rs
+[docs.next-hat.com]: https://docs.next-hat.com/fr
+[github.com]: https://github.com
+[ovh.com]: https://www.ovh.com
+[get-docker]: https://docs.docker.com/get-docker
+[get-nanocl]: /fr/manuals/nanocl/install/overview
+[dockerfile]: https://docs.docker.com/reference/dockerfile/
+[discord]: https://discord.gg/WV4Aac8uZg
+[nanocl-install]: /fr/manuals/nanocl/install/overview

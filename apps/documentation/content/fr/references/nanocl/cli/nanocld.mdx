@@ -1,0 +1,83 @@
+---
+title: Nanocld
+timestamp: 1787952819000
+---
+
+# Nanocld
+
+# NOM
+
+Nanocl - Démon Nanocl - Orchestrateur autonome
+
+## SYNOPSIS [#synopsis]
+
+**Nanocl** \[**-H**\|**--hosts**\] \[**--docker-host**\]
+\[**--store-addr**\] \[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--hostname**\] \[**--node**\] \[**--advertise-addr**\] \[**--gid**\]
+\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\] \[**--verify**\]
+\[**--password**\]
+\[**-h**\|**--help**\] \[**-V**\|**--version**\]
+
+## DESCRIPTION [#description]
+
+Démon Nanocl - Orchestrateur autonome
+
+## OPTIONS [#options]
+
+**-H**, **--hosts**=*HOSTS*  
+Hôtes d’écoute, utiliser tcp:// et unix:// \[par défaut :
+unix:///run/nanocl.sock\]
+
+**--docker-host**=*DOCKER_HOST*  
+Socket du démon Docker à connecter \[par défaut : unix:///var/run/docker.sock\]
+
+**--store-addr**=*STORE_ADDR*
+Adresse du stockage à connecter
+
+**--state-dir**=*STATE_DIR*  
+Répertoire d’état \[par défaut : /var/lib/nanocl\]
+
+**--conf-dir**=*CONF_DIR* \[default: /etc/nanocl\]  
+Répertoire de configuration
+
+**--gateway**=*GATEWAY*  
+Passerelle détectée automatiquement depuis la passerelle IP source par défaut de l’hôte si non
+set
+
+**--hostname**=*HOSTNAME*  
+Nom d’hôte du nœud, détecté automatiquement si absent
+
+**--node**=*NODES*  
+Joindre le nœud courant à un cluster
+
+**--advertise-addr**=*ADVERTISE_ADDR*  
+Adresse annoncée aux autres nœuds
+
+**--gid**=*GID* \[default: 0\]  
+Identifiant de groupe
+
+**--cert**=*CERT*  
+
+**--cert-key**=*CERT_KEY*  
+
+**--cert-ca**=*CERT_CA*  
+
+**--verify**
+Vérifier l’autorité de certification
+
+**--password**=*PASSWORD*
+Mot de passe du certificat, le cas échéant
+
+**-h**, **--help**  
+Afficher l’aide
+
+**-V**, **--version**  
+Afficher la version
+
+# VERSION
+
+v0.18.0
+
+# AUTEURS
+
+Équipe Next Hat \<team@next-hat.com\>

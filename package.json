@@ -9,7 +9,7 @@
     "build": "pnpm --filter @next-hat/documentation build",
     "preview": "pnpm --filter @next-hat/documentation preview",
     "typecheck": "pnpm --filter @next-hat/documentation typecheck",
-    "check": "node --test --test-isolation=none apps/documentation/lib/openapi.test.mjs && node scripts/check-content.mjs"
+    "check": "node --test --test-isolation=none apps/documentation/lib/openapi.test.mjs apps/documentation/lib/locales.test.mjs && node scripts/check-content.mjs && node scripts/check-translations.mjs"
   },
   "engines": { "node": ">=24" }
 }

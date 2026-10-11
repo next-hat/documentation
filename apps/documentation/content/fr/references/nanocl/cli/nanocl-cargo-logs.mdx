@@ -1,0 +1,42 @@
+---
+title: Journaux Cargo
+timestamp: 1787952819000
+---
+
+# Journaux Cargo
+
+# NOM
+
+logs - Afficher les journaux
+
+## SYNOPSIS [#synopsis]
+
+**logs** \[**-s **\] \[**-u **\] \[**-t **\] \[**--timestamps**\] \[**-f
+**\] \[**-h**\|**--help**\] \<*KEY*\>
+
+## DESCRIPTION [#description]
+
+Afficher les journaux
+
+## OPTIONS [#options]
+
+**-s** *\<SINCE\>*  
+Inclure uniquement les journaux après cet horodatage Unix
+
+**-u** *\<UNTIL\>*  
+Inclure uniquement les journaux avant cet horodatage Unix
+
+**-t** *\<TAIL\>*  
+Un entier renvoie les n dernières lignes ; "all" renvoie tous les journaux
+
+**--timestamps**  
+Booléen : inclure l’horodatage dans chaque ligne si activé
+
+**-f**  
+Booléen : ouvrir les journaux comme un flux si activé
+
+**-h**, **--help**  
+Afficher l’aide
+
+\<*KEY*\>
+Clé canonique du Cargo dont afficher les journaux

@@ -1,0 +1,20 @@
+---
+title: Statefile リファレンス - Nanocl
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocld
+- Statefile
+- 仕様
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# Statefile
+
+Statefile は、Cargo、仮想マシン、Resource、Job、Secret の望ましい状態を記述します。Nanocl 0.18 では `ApiVersion: v0.18` を使用します。Cargo には名前付きの `Containers` と、任意の `InitContainers` を設定します。
+
+<ApiSchema locale="ja" example={false} id="nanocld-latest" pointer="#/components/schemas/Statefile" />

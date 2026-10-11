@@ -1,10 +1,13 @@
+import { translate } from '@/lib/translate'
+import type { Locale } from '@/lib/locales'
 import { ArrowDown, Box, FileCode2, Globe, Server } from "lucide-react"
 
 // An illustrative workflow, not a live console or a deployment status display.
-export function DeploymentVisual() {
+export function DeploymentVisual({ locale = 'en' }: { locale?: Locale }) {
+  const t = (text: string) => translate(locale, text)
   return (
     <figure
-      aria-label="A Statefile describes workloads that Nanocl runs on your server"
+      aria-label={t("A Statefile describes workloads that Nanocl runs on your server")}
       className="relative min-w-0"
     >
       <div
@@ -14,10 +17,8 @@ export function DeploymentVisual() {
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-lg shadow-foreground/5">
         <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 text-xs">
           <span className="flex items-center gap-2 font-medium">
-            <FileCode2 className="size-4" aria-hidden="true" />
-            Statefile.yml
-          </span>
-          <span className="text-muted-foreground">01 / Describe</span>
+            <FileCode2 className="size-4" aria-hidden="true" />Statefile.yml{' '}</span>
+          <span className="text-muted-foreground">{t("01 / Describe")}</span>
         </div>
         <pre
           className="overflow-x-auto p-5 text-[13px] leading-7 sm:p-7"
@@ -47,19 +48,15 @@ export function DeploymentVisual() {
       </div>
       <div className="flex items-center justify-center gap-3 py-5 text-xs text-muted-foreground">
         <ArrowDown className="size-4" aria-hidden="true" />
-        <span>02 / Apply with Nanocl</span>
+        <span>{t("02 / Apply with Nanocl")}</span>
       </div>
       <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
         <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-secondary">
           <Server className="size-5" aria-hidden="true" />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="text-sm font-semibold">
-            Your server. Your workloads.
-          </span>
-          <span className="text-xs leading-5 text-muted-foreground">
-            03 / Run on your infrastructure
-          </span>
+          <span className="text-sm font-semibold">{t("Your server. Your workloads.")}{' '}</span>
+          <span className="text-xs leading-5 text-muted-foreground">{t("03 / Run on your infrastructure")}{' '}</span>
         </div>
         <Box
           className="hidden size-5 shrink-0 text-muted-foreground sm:block"
@@ -70,9 +67,7 @@ export function DeploymentVisual() {
           aria-hidden="true"
         />
       </div>
-      <figcaption className="mt-4 text-center text-xs leading-5 text-muted-foreground">
-        A simple container example. Your next deployment starts here.
-      </figcaption>
+      <figcaption className="mt-4 text-center text-xs leading-5 text-muted-foreground">{t("A simple container example. Your next deployment starts here.")}{' '}</figcaption>
     </figure>
   )
 }

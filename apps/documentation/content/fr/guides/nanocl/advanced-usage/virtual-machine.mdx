@@ -1,0 +1,200 @@
+---
+title: Machine virtuelle - Nanocl
+description: Créez des machines virtuelles avec Nanocl.
+keywords:
+- documentation
+- nanocl
+- guides
+- démarrage
+- configuration
+- machines virtuelles
+- vm
+- virtuel
+- machine
+- statefile
+- état
+- fichier
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Créer une VM
+
+Avec `Nanocl`, démarrez rapidement des machines virtuelles compatibles avec [cloud-init][cloud-init].<br/>
+La plupart des images cloud Linux l’intègrent, ce qui permet de configurer le réseau, les utilisateurs et les clés SSH dans la VM.
+
+## Installer l’environnement d’exécution VM par défaut [#install-the-default-vm-runtime]
+
+Pour faciliter le réseau, Nanocl démarre une VM dans un conteneur avec l’image par défaut [nanocl-qemu][nanocl-qemu].<br/>
+
+
+## Télécharger Ubuntu et créer un disque VM avec un conteneur d’initialisation [#download-ubuntu-and-create-a-vm-disk-with-an-init-container]
+
+Nanocl utilise directement le chemin de l’image VM. Dans Nanocl 0.18, utilisez le
+`InitContainer` de la VM pour télécharger l’image cloud Ubuntu et créer un disque
+qcow2 indépendant avec `qemu-img` avant le démarrage du conteneur QEMU. Le téléchargement
+et la préparation du disque restent ainsi dans le cycle de vie de la VM, sans étape
+manuelle de préparation sur l’hôte.
+
+Le Statefile suivant crée le disque de `web-01` dans
+`/var/lib/nanocl/vm`. Le conteneur d’initialisation télécharge Ubuntu Server 24.04, puis
+utilise `qemu-img convert` pour créer la copie inscriptible `web-01.qcow2`. L’environnement VM
+démarre uniquement après la fin de cette commande avec le code `0`.
+
+```yaml
+ApiVersion: v0.18
+VirtualMachines:
+- Name: web-01
+  Image: /var/lib/nanocl/vm/web-01.qcow2
+  InitContainer:
+    # Omit Image to use Nanocl's default nanocl-qemu runtime image.
+    Entrypoint: ["sh", "-ec"]
+    Cmd:
+    - |
+      mkdir -p /images
+      test ! -e /images/web-01.qcow2 || {
+        echo "VM disk already exists: /images/web-01.qcow2" >&2
+        exit 1
+      }
+      curl -fL \
+        -o /images/ubuntu-24.04-base.img \
+        https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      qemu-img convert -p -O qcow2 \
+        /images/ubuntu-24.04-base.img \
+        /images/web-01.qcow2
+    HostConfig:
+      Binds:
+      - /var/lib/nanocl/vm:/images
+```
+
+`qemu-img convert` crée une copie qcow2 complète et indépendante ; utilisez
+un nom de fichier de sortie différent pour chaque VM. Le contrôle d’existence empêche une
+nouvelle exécution du conteneur d’initialisation d’écraser le disque. Le démon et l’environnement VM
+doivent avoir le droit d’écrire dans `/var/lib/nanocl/vm`.
+
+## Exécuter une VM [#run-a-vm]
+
+Pour exécuter une VM, utilisez cette commande simple :
+
+```sh
+nanocl vm run web-01 /var/lib/nanocl/vm/web-01.qcow2
+```
+
+Voici les options employées :
+
+* `web-01` - nom de la machine virtuelle.
+* `/var/lib/nanocl/vm/web-01.qcow2` - chemin complet de la copie inscriptible de son disque.
+
+Sans options, la VM démarre avec les paramètres suivants :
+
+* 1 CPU
+* 500 MB de RAM
+
+Le premier démarrage prend environ 90 secondes avec les paramètres par défaut. Activez KVM et allouez davantage de ressources pour l’accélérer.
+
+<Callout type="info">
+
+Nanocl ne crée pas automatiquement de snapshot du disque. Utilisez le chemin de la copie
+pour la VM et conservez l’image de base téléchargée uniquement comme source de futures
+copies.
+
+</Callout>
+
+Suivez son état en vous y attachant avec :
+
+```sh
+nanocl vm attach web-01
+```
+
+Cette commande vous attache à la VM active pour y exécuter des commandes et d’autres opérations.
+
+Vous devriez voir une sortie semblable à ceci :
+
+```console
+[  OK  ] Finished Permit User Sessions.
+[  OK  ] Started Serial Getty on ttyS0.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Finished Record successful boot for GRUB.
+         Starting GRUB failed boot detection...
+[  OK  ] Started LSB: automatic crash report generation.
+[  OK  ] Finished GRUB failed boot detection.
+[  OK  ] Finished Pollinate to seed…seudo random number generator.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started User Login Management.
+[  OK  ] Started Unattended Upgrades Shutdown.
+[  OK  ] Started OpenBSD Secure Shell server.
+[  OK  ] Started Dispatcher daemon for systemd-networkd.
+cloud-init[494]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:config' at Tue, 04 Jul 2023 12:36:13 +0000. Up 78.27 seconds.
+cloud-init[517]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:final' at Tue, 04 Jul 2023 12:36:18 +0000. Up 83.19 seconds.
+cloud-init[515]: The system is finally up, after 93.54 seconds
+[  OK  ] Finished Execute cloud user/final scripts.
+[  OK  ] Reached target Cloud-init target.
+Ubuntu 22.04.2 LTS 91daefd21c1b ttyS0
+
+91daefd21c1b login: 
+```
+
+Par défaut, le nom d’utilisateur et le mot de passe sont `cloud:cloud`.
+Vous pouvez définir ces identifiants au premier démarrage de la VM.
+Pour renforcer la sécurité, vous pouvez aussi configurer des clés SSH.
+Attendez la fin de [cloud-init][cloud-init] avant de pouvoir vous connecter.
+
+## Modifier une VM [#patch-a-vm]
+
+Ajustez les performances d’une VM en modifiant ses ressources, comme la mémoire et les CPU.
+
+Pour cela, utilisez :
+
+```sh
+nanocl vm patch myvm --kvm --cpu 4 --mem 2048
+```
+
+Voici les options utilisées dans cette commande :
+
+* `myvm` - nom de la VM à modifier.
+* `--kvm` - active l’accélération KVM.
+* `--cpu` - définit le nombre de CPU.
+* `--mem` - définit la quantité de mémoire allouée.
+
+Si KVM n’est pas activé sur votre système, retirez --kvm. Après la modification, vous pouvez vous rattacher à la VM.
+
+<Callout type="warning">
+
+Modifier une VM provoque son arrêt et son redémarrage.
+
+</Callout>
+
+## Connexion SSH [#ssh-connection]
+
+Sans Docker Desktop, connectez-vous à la VM par son adresse IP. Obtenez-la avec :
+
+```sh
+nanocl vm inspect myvm
+```
+
+Récupérez `IPAddress`, ici `10.2.0.2`.
+Connectez-vous ensuite par SSH avec les identifiants par défaut `cloud:cloud`.
+
+```sh
+ssh cloud@10.2.0.2
+```
+
+## Statefile [#statefile]
+
+Vous pouvez définir une VM dans un ``Statefile``. Voici un exemple :
+
+<StatefileBlock example="advanced/vm" />
+
+## Exposer votre VM [#expose-your-vm]
+
+Utilisez une `ProxyRule` pour exposer un port précis de la VM.
+Voici un exemple complet exposant le port SSH 22 de la VM sur le port public 5555 :
+
+<StatefileBlock example="advanced/vm-proxy" />
+
+[cloud-init]: https://cloud-init.io
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

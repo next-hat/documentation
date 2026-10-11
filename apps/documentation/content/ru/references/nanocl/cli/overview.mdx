@@ -1,0 +1,78 @@
+---
+title: Справочник CLI — Nanocl
+description: Управляйте нагрузками и конкретными процессами через командную строку Nanocl 0.18.
+keywords:
+- документация
+- справочники
+- nanocl
+- nanocl CLI
+- CLI
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Командная строка Nanocl
+
+```sh
+nanocl [OPTIONS] <COMMAND>
+```
+
+Выполните `nanocl --help` для списка команд или добавьте `--help` к подкоманде. Nanocl 0.18 предоставляет следующие группы и операции:
+
+| Команда | Назначение |
+| --- | --- |
+| `namespace`, `secret`, `job`, `cargo`, `vm`, `resource` | Управление объектами Nanocl |
+| `metric`, `context`, `node`, `event`, `state` | Управление вспомогательными API и Statefile |
+| `ps` | Список конкретных процессов выполнения |
+| `inspect`, `logs`, `stats` | Просмотр одного или нескольких процессов согласно возможностям команды |
+| `exec`, `kill` | Выполнение команды или отправка сигнала точному имени процесса/полному Docker ID |
+| `info`, `version` | Сведения о хосте и версии |
+| `install`, `uninstall`, `backup` | Управление локальной установкой и экспорт желаемого состояния |
+
+Глобальный параметр `--host` выбирает конечную точку `nanocld`; по умолчанию — `unix://run/nanocl/nanocl.sock`.
+
+## Ключи нагрузок и имена процессов [#workload-keys-and-process-names]
+
+Команды Cargo и VM используют канонические ключи `{namespace}.{name}`, например:
+
+```sh
+nanocl cargo inspect global.storefront
+nanocl vm inspect global.build-runner
+```
+
+Команды отдельных процессов не принимают имя Cargo и селектор реплики. Сначала найдите процесс и используйте возвращённое точное имя или полный Docker ID:
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+Процесс для нескольких контейнеров описан в разделе [Операции с процессами](/ru/guides/nanocl/advanced-usage/process-operations).
+
+## Справка [#help]
+
+```console
+$ nanocl cargo --help
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+```
+
+В зависимости от прав локального сокета Unix может потребоваться пользователь группы `nanocl`. См. [инструкции установки](/ru/manuals/nanocl/install/overview).

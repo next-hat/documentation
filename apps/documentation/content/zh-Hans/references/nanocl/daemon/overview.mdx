@@ -1,0 +1,37 @@
+---
+title: 守护进程参考 - Nanocl
+description: Nanocl 守护进程的选项和运维范围。
+keywords:
+- 文档
+- 参考
+- nanocl
+- nanocld
+- 守护进程
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Nanocl 守护进程
+
+`nanocld` 管理本地 Docker 节点，持久化目标和已观察状态，并提供 Nanocl API。0.18 的节点加入选项仍处于实验阶段，不应视为自动多节点调度或高可用配置。
+
+```sh
+nanocld [OPTIONS]
+```
+
+| 选项 | 用途 |
+| --- | --- |
+| `-H, --hosts HOSTS` | API 监听地址；安装默认值为 `unix:///run/nanocl.sock` |
+| `--docker-host DOCKER_HOST` | Docker 守护进程端点；安装默认值为 `unix:///var/run/docker.sock` |
+| `--store-addr STORE_ADDR` | CockroachDB 连接地址 |
+| `--state-dir STATE_DIR` | 运行时状态目录；安装默认值为 `/var/lib/nanocl` |
+| `--conf-dir CONF_DIR` | 配置目录；默认为 `/etc/nanocl` |
+| `--gateway GATEWAY` | 主机网关；省略时自动检测 |
+| `--hostname HOSTNAME` | 节点名称；省略时自动检测 |
+| `--node NODES` | 要加入的实验性节点端点 |
+| `--advertise-addr ADDRESS` | 向其他节点公布的地址 |
+| `--gid GID` | Unix 套接字组 ID；默认为 `0` |
+| `--cert`、`--cert-key`、`--cert-ca` | 可选 API TLS 材料 |
+| `--verify`、`--password` | 可选 API TLS 验证和密码设置 |
+
+执行 `nanocld --help` 查看已安装构建的精确语法。最新 0.18 API 可从侧边栏或[版本化 OpenAPI 页面](/zh-Hans/references/nanocl/daemon/v0.18)访问。

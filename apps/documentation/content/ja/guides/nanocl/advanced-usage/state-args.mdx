@@ -1,0 +1,61 @@
+---
+title: Statefile の引数 - Nanocl
+description: Statefile の引数で Nanocl の設定をカスタマイズします。
+keywords:
+- ドキュメント
+- nanocl
+- ガイド
+- 入門
+- 設定
+- 状態
+- ファイル
+- 設定
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile の引数
+
+Statefile の引数は、`Liquid` テンプレートを利用して `Statefile` を再利用するための仕組みです。<br />
+例として、`my-deployment.yml` という新しいファイルを作成し、次の内容を追加してください。
+
+<StatefileBlock example="advanced/args" />
+
+これを次のように適用すると、
+
+```sh
+nanocl state apply -s my-deployment.yml
+```
+
+次のエラーメッセージが表示されます。
+
+```console
+error: the following required arguments were not provided:
+  --name <name>
+  --domain <domain>
+  --image <image>
+  --port <port>
+
+Usage: nanocl state args -- --name <name> --domain <domain> --image <image> --port <port>
+
+For more information, try '--help'.
+```
+
+この `Statefile` は、レンダリングに使う引数を必要とします。
+
+正しいコマンドは次のとおりです。
+
+```sh
+state apply -s my-deployment.yml -- --name deploy-example \
+  --domain deploy-example.com \
+  --image ghcr.io/next-hat/nanocl-get-started:latest \
+  --port 9000
+```
+
+このように、任意の HTTP サービスを簡単に素早くデプロイできます。<br />
+これで、便利な `Statefile` を作るための基本が身に付きました。

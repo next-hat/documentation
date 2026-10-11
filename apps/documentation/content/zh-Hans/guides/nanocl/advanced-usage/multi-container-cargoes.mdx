@@ -1,0 +1,70 @@
+---
+title: 多容器 Cargo - Nanocl
+description: 将命名的应用容器和初始化容器作为一个具有副本的 Cargo 工作负载运行。
+keywords:
+- 文档
+- nanocl
+- cargo
+- 容器
+- 初始化容器
+- 副本
+- 沙箱
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# 多容器 Cargo
+
+Cargo 描述一个工作负载。在 Nanocl 0.18 中，每个 Cargo 声明一个或多个命名应用 `Containers`、可选的有序 `InitContainers`，以及持久化的 `Replicas` 数量。
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  Secrets:
+  - shared-env
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+    Secrets:
+    - worker-env
+```
+
+两个列表中的容器名称必须唯一。`_sandbox` 由 Nanocl 保留。Cargo 至少有一个应用容器和一个必要应用容器。应用默认是必要容器，除非设置 `Essential: false`；初始化容器始终是必要容器。
+
+## 副本与沙箱 [#replicas-and-the-sandbox]
+
+每个副本都有独立的应用进程和初始化容器执行。在非主机网络上，有两个以上应用容器时，Nanocl 还为该副本创建内部沙箱进程。应用容器加入沙箱网络命名空间，共享 IP 地址，并能通过 `localhost` 相互访问。
+
+单应用 Cargo 直接运行应用，即使有初始化容器也是如此。使用 `NetworkMode: host` 的 Cargo 也直接运行应用。沙箱是运行时实现细节，不要在 Statefile 中声明，也不要把它作为应用容器操作。
+
+每个副本的初始化容器按声明顺序依次运行。只有全部初始化容器以 `0` 状态退出，Nanocl 才启动应用容器。非零退出会阻止该副本继续启动应用。
+
+## 共享配置与容器专属配置 [#shared-and-per-container-settings]
+
+Cargo 层的 `NetworkMode`、`PortBindings`、`Hostname` 和 `Dns` 配置副本的网络所有者。Cargo 层 `Secrets` 被所有初始化和应用容器继承。`Placement` 和 `ResourceRequirement` 也属于 Cargo。
+
+各命名容器保留独立 Docker 配置，包括镜像、命令、环境、健康检查、权限能力、设备、绑定、挂载及容器专属 Secret。文件系统、IPC、PID、UTS、用户和 cgroup 命名空间不会隐式共享。如果需要共享持久化数据，为相关容器配置相同 Docker 卷或绑定挂载。
+
+Nanocl 保留网络所有权和生命周期字段。容器级 `HostConfig.PortBindings`、`PublishAllPorts`、`AutoRemove`、`NetworkingConfig` 和 `NetworkDisabled` 会被拒绝。容器的 `HostConfig.NetworkMode` 可省略或设为 `host`、`none`；网络、IPC、PID、UTS、用户或 cgroup 设置中的原始 `container:...` 引用会被拒绝。
+
+## 运行时标识与故障 [#runtime-identity-and-failures]
+
+Cargo 键仍为 `namespace.name`，各运行时进程具有包含副本序号和逻辑容器名称的具体名称。执行按进程操作的命令前，使用 `nanocl ps` 获取真实名称或完整 Docker ID。详见[进程操作](/zh-Hans/guides/nanocl/advanced-usage/process-operations)。
+
+应用进程默认使用 Docker 的 `always` 重启策略。必要应用或必需沙箱未就绪时，Nanocl 将 Cargo 报告为不健康。非必要应用仍由系统管理，但其健康状态不阻塞 Cargo 就绪。

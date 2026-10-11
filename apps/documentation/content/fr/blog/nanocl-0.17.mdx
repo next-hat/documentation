@@ -1,0 +1,248 @@
+---
+slug: nanocl-0.17
+title: Présentation de Nanocl 0.17
+description: Nanocl 0.17 apporte une CLI améliorée, des verrous distribués et une prise en charge expérimentale de HTTP/3 dans ncproxy, ainsi que de meilleurs outils et une documentation enrichie pour les Statefiles.
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- version
+- 0.17
+keywords:
+- conteneurisation
+- Nanocl
+- NGINX
+- HTTP3
+- DevOps
+- statefile
+- version
+- 0.17
+date: '2025-09-12'
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+Nous annonçons la sortie de **Nanocl 0.17** ! Cette version privilégie la productivité des développeurs et les réseaux modernes : nouvelles commandes CLI, coordination distribuée dans le démon et prise en charge expérimentale de HTTP/3 dans `ncproxy`. La rédaction des Statefiles progresse également avec une meilleure analyse des arguments, des métadonnées et un moteur de rendu de manuel intégré.
+
+{/* truncate */}
+
+## Points forts de Nanocl 0.17 [#highlights-of-nanocl-017]
+
+- CLI enrichie : `nanocl logs` accepte plusieurs cibles, `nanocl stats` fait son apparition, et les commandes Statefile s’améliorent avec `state man`, `state render` et une analyse plus intelligente des arguments.
+- Résilience de la plateforme : `nanocld` introduit un mutex distribué pour éviter les tâches dupliquées entre nœuds et synchronise les certificats de base de données par des secrets.
+- Proxy modernisé : `ncproxy` ajoute la configuration HSTS depuis les règles et une prise en charge expérimentale de HTTP/3 avec des options réglables.
+
+---
+
+## Nouveau : registre officiel Nanocl [#new-official-nanocl-registry]
+
+Nous avons lancé le [registre officiel Nanocl](https://nr.next-hat.com).<br/>
+Il propose un catalogue sélectionné de Statefiles prêts à l’emploi pour déployer rapidement les piles courantes.
+
+![Registre Nanocl](/img/nanocl-registry.png)
+
+- Parcourir le catalogue : https://nr.next-hat.com
+- Contribuer des Statefiles (pull requests bienvenues) : https://github.com/next-hat/nanocl-registry
+
+<Callout type="default" emoji="💡">
+
+Consultez le manuel d’un Statefile depuis le terminal : nanocl man -s `<statefile-source>`
+
+</Callout>
+
+---
+
+## Changements des composants [#component-changes]
+
+### nanocl 0.17.0 [#nanocl-0170]
+- Ajouts :
+  - `nanocl stats` affiche les statistiques de plusieurs processus par leur nom (merci [n0tank3sh](https://github.com/n0tank3sh)).
+  - `nanocl state man` affiche le manuel du Statefile.
+  - `nanocl state render` produit un Statefile avec les variables du contexte courant.
+  - `nanocl logs` accepte désormais plusieurs noms.
+  - Meilleure analyse des arguments Statefile avec les champs obligatoire, multiple et description.
+  - Métadonnées Statefile pour enrichir son manuel.
+  - `nanocl secret patch` met à jour un secret sans le supprimer.
+
+### nanocld 0.17.0 [#nanocld-0170]
+- Ajouts :
+  - Point d’accès `GET /process/{name}/stats` pour les statistiques d’un processus par son nom, par [n0tank3sh](https://github.com/n0tank3sh).
+  - Enregistrement du certificat de base de données dans un secret pour l’échange et la synchronisation entre nœuds.
+  - Mutex distribué pour empêcher les nœuds d’exécuter la même tâche simultanément.
+
+### ncproxy 0.14.0 [#ncproxy-0140]
+- Ajouts :
+  - Configuration HSTS depuis la règle de proxy, par [n0tank3sh](https://github.com/n0tank3sh).
+  - Prise en charge expérimentale de HTTP/3.
+
+---
+
+## HTTP/3 et HSTS [#http3-and-hsts]
+
+Nginx prenant désormais en charge HTTP/3, nous avons ajouté son support expérimental dans les règles de proxy, avec des options d’activation par domaine. Des options HSTS (HTTP Strict Transport Security) renforcent aussi la sécurité en imposant les connexions HTTPS.
+
+Exemple de Statefile pour déployer un Cargo simple avec HTTP/3 :
+
+```yaml
+ApiVersion: v0.17
+
+Secrets:
+- Name: tls.secret
+  Kind: nanocl.io/tls
+  Data:
+    Certificate: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfkCFFOJVQs8PxWlcJQDn/AQpSopkhISMA0GCSqGSIb3DQEBCwUAMEUx
+      CzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRl
+      cm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMjMwNTI5MDM0MDQwWhcNMjQwNTI4MDM0
+      MDQwWjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UE
+      CgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOC
+      AQ8AMIIBCgKCAQEAyH+TAzIAxxrMKh88p1emIxsttpjqCHdlQuboves+0vI6ORwU
+      BI3HP7gTMQpgK+QnEZw1XIs6/Zdg2VfUiNgQXyh72/0cdurIIqRbF2fLAMSaYElA
+      RRT9F60eHqQ12bXf6ITWB/0ZSnacbLIsic1HcVwr0Awx+xu1YsB9ojssXyIIU/yx
+      d6FjPtiqJTPT9RhVb6Vmfpclse21qGek8tg88U+TrrJZ/Eg5cZojnQTyxhMGHeQf
+      F71nb7no1v5hdki3p50Ik//9lvY/5onWrBUCuAsHi8OkSSyElTQ/JYzuMBjqOaMw
+      PYLZf3d2eRqpiEC/5WI8OJDAk3/y83nG3zy3+QIDAQABMA0GCSqGSIb3DQEBCwUA
+      A4IBAQAz8b7U0jbgBVEen1vd15V6DAxTmg768OkMRoNqK/y0oSK0qHn3IYSADK6M
+      fl6qPnTY3xts+j8ohvNRGR5rJiv25b8koQs6K/ACzMgVlvXeSBVgjBArxgyp3K3q
+      Tpeqg11R5YuJLaMKjWTzOzSq6shLO5/TscLGpkDbZ12HElc5hXyLrEZmsdCb1Wg7
+      RCaMqsmgD/bYTOgP41DN6MVaSmxCshCGcL78enStPDheCmkk7eLMetMrJZLkf5Ch
+      YWs3OUPos4v9GN40VyNWtbrz9g8TzmD4QOfuhuj9nUg9Psa2c22rgr3XaJEU8nyp
+      rSHTKorbCvimz1/m0crjE91CP9JE
+      -----END CERTIFICATE-----
+    CertificateKey: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIf5MDMgDHGswq
+      HzynV6YjGy22mOoId2VC5ui96z7S8jo5HBQEjcc/uBMxCmAr5CcRnDVcizr9l2DZ
+      V9SI2BBfKHvb/Rx26sgipFsXZ8sAxJpgSUBFFP0XrR4epDXZtd/ohNYH/RlKdpxs
+      siyJzUdxXCvQDDH7G7ViwH2iOyxfIghT/LF3oWM+2KolM9P1GFVvpWZ+lyWx7bWo
+      Z6Ty2DzxT5Ousln8SDlxmiOdBPLGEwYd5B8XvWdvuejW/mF2SLennQiT//2W9j/m
+      idasFQK4CweLw6RJLISVND8ljO4wGOo5ozA9gtl/d3Z5GqmIQL/lYjw4kMCTf/Lz
+      ecbfPLf5AgMBAAECggEAHK2Su5xFXDVLCqNZK55v1wmmKj4JC5j4VO9uTuv9GnMn
+      PM/1VQlqfIS5ygPv6ZdCt1QeldQcZfVnFu9nKQOuo83ImZjEn4XJhpr3pItmEAAP
+      DMKtfLQZ128dpchbI37OPhXx/0aGfY4lpa5+jF9eXqqOYb280GwQL8XUsoXAPQMC
+      MwAOHbgHH5lYxD9fizjrWIFIC9jfHjVM3qjOfmz+NujKs+nmVI5AQRCd6C66hbgr
+      2EJe/8ZlDaZX3bfDnRPxhQN8T3VZcwHGj3zqGPnfkr8Ut9nqDhOcqGuTjNdqGEIi
+      meDmKzPsssZg5+sPjgzMsPVf/XQ+v4dLQ2GSYuehOQKBgQDTfzD+K5/rR382HWHX
+      VnL+KXD7cTA7DQq4ma/7UlJMaxhuA11w/4wF/lRiXKNUTfpUSyIybT8IP23fgFDV
+      zLq2G36+mpUXbxPjlFaJfxNOlcr35xvsIC3HMBqOKYm74B9rJbLIwsMZcPi/BuJS
+      ve7pj9blvjf8ZUXw8erhFFoGUwKBgQDyr+u7OQyIhqhCOpy9Is/DtYBg3MQSDLTO
+      TfmqaaUcDvRNy4pgJ2B5Kbs20yAqgBtGDEP+MdtBo3NgIHOA7xjU5biNSz8R12WR
+      UmDrdxIvAo2iixN8TDvIs0EEmE5hrRgPRaf6WP3o1okaWnYuq2VC7HSJJFCtWx9V
+      Aj7VEOgnAwKBgGAXWdshVvc+9L1RfDKqRHTVv09+jbtGoahdq2c0b8/omKDjRoEg
+      mi3e79gA3vReuW2y9UaT/B9zMihp1FBPREWZGGzhLvwGq7Kqoua1pb/+rskTZ8xQ
+      knv9jxMoLDwACEZWSnSMiLf2bA3ewtV1FidoAus/EZDLMovWXjEFXiGhAoGBAIGb
+      YhGCzia7g3CbTMnVpY+nhwAz5qKdFpJ3IjbYZM0vT1mcsjHX1bXfi5Qj/LG16Nro
+      AgfnKGlNmXhk3EqnZmOMq5sJ7Izis+OAUzJtTNC+VFXSYH2pWOQ+lyKVFIclogvF
+      74fLrw6CRIZGeYdDEblD/pifRFbQq1MC9/tiJBlxAoGAAo/XDJSTRlcrJuutk5jG
+      CZPG5LBlxvdUbsuu2vZ7XIoWp3BvuK+yM8m9kEQgl3x8F3bqRjoQmMN6cImMYC2W
+      F02Hw2EcWWx4w+liGjDy8/rcb9KfYTht3Q3W9RYYPZwn+hg4pmGVb4+yOqd183QQ
+      Ug0MvH79P7CUpecFPJliDME=
+      -----END PRIVATE KEY-----
+
+Resources:
+- Name: secret-tls.com
+  Kind: ncproxy.io/rule
+  Metadata:
+    Cert: certbot
+  Data:
+    Rules:
+    - Domain: secret-tls.com
+      Network: All
+      Ssl: tls.secret
+      Hsts: Recommended
+      Http3: true
+      Locations:
+      - Path: /
+        Target:
+          Key: secret-tls.global.c
+          Port: 9000
+
+Cargoes:
+- Name: secret-tls
+  Container:
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+    Env:
+      - APP=SECRET_TLS
+```
+
+<Callout type="info">
+
+Consultez la documentation des [règles de proxy][proxy-rule] pour toutes les options HTTP/3 et HSTS.
+
+</Callout>
+
+---
+
+## Manuels des Statefiles [#statefile-manuals]
+
+Vous pouvez maintenant consulter le manuel de votre Statefile directement dans le terminal. La nouvelle commande `nanocl state man` affiche un manuel complet avec les métadonnées, les descriptions des arguments et les exemples d’utilisation.
+
+![Manuel Statefile](/img/statefile-man.png)
+
+Exemple de Statefile affichant un manuel soigné avec `nanocl state man` :
+
+```yaml
+ApiVersion: v0.17
+
+Metadata:
+  Name: Nginx with Certbot SSL
+  Tags:
+  - cargo
+  - nginx
+  - certbot
+  - ssl
+  - proxy
+  About: Example of an Nginx cargo with Certbot managed SSL certificates.
+  LongAbout: |
+    This example demonstrates how to create an Nginx cargo with SSL certificates
+    managed by Certbot. The cargo is configured to always pull the latest Nginx image
+    and automatically handle SSL certificate issuance and renewal.
+
+Args:
+- Name: name
+  Kind: String
+  Required: true
+  Description: Name of the cargo to create.
+- Name: testtt
+  Kind: String
+  Description: sample test
+- Name: multiple
+  Kind: String
+  Multiple: true
+  Description: sample multiple
+- Name: boolean
+  Kind: Boolean
+  Description: sample boolean
+
+Namespace: cargo-example
+
+Cargoes:
+- Name: ${{ Args.name }}
+  ImagePullPolicy: Always
+  Metadata:
+    Certbot: managed
+  Container:
+    Image: nginx:latest
+```
+
+<Callout type="info">
+
+Consultez la documentation du [Statefile][statefile-doc] pour toutes les options de métadonnées et d’arguments.
+
+</Callout>
+
+---
+
+## Et ensuite ? [#whats-next]
+
+Nous continuerons d’améliorer les opérations sur plusieurs nœuds, d’enrichir les outils Statefile et de faire progresser HTTP/3 au-delà du stade expérimental. Vos retours sont bienvenus : [participez à la discussion sur GitHub](https://github.com/next-hat/nanocl).
+
+Bons déploiements !
+
+L’équipe Nanocl
+
+[proxy-rule]: /fr/references/nanocl/objects/resource#proxy-rule
+[statefile-doc]: /fr/references/nanocl/statefile

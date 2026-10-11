@@ -1,0 +1,52 @@
+---
+title: Opérations sur les processus - Nanocl
+description: Identifiez et manipulez un processus concret de Cargo, Job ou VM.
+keywords:
+- documentation
+- nanocl
+- processus
+- ps
+- exec
+- kill
+- journaux
+- statistiques
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Opérations sur les processus
+
+Les noms de Cargo identifient les charges, ceux des processus leurs conteneurs
+concrets d’exécution. Un Cargo répliqué à plusieurs conteneurs possède donc plusieurs noms
+de processus. Listez-les avant d’en cibler un :
+
+```sh
+nanocl ps --namespace global --kind cargo
+```
+
+Les noms applicatifs indiquent l’espace de noms et la clé du Cargo, l’ordinal de la réplique
+et le nom déclaré du conteneur. Initialisation, bac à sable et processus temporaires de déploiement
+se distinguent aussi dans `nanocl ps`. Considérez le nom retourné ou
+l’identifiant Docker complet comme faisant autorité au lieu de construire le nom dans vos scripts.
+
+Utilisez cette valeur exacte avec les commandes de processus :
+
+```sh
+nanocl inspect PROCESS
+nanocl logs -f PROCESS
+nanocl stats PROCESS
+nanocl exec PROCESS -- env
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` cible un processus actif. `--interactive` garde l’entrée standard
+ouverte, `--tty` alloue un pseudo-TTY et `--detach` lance la commande en
+arrière-plan. Les options répétables `--env` et `--env-file`, ainsi que
+`--user`, `--workdir`, `--privileged` et `--detach-keys` sont aussi disponibles. En mode attaché,
+la sortie standard et la sortie d’erreur restent séparées sans TTY,
+et la CLI se termine avec le code de la commande exécutée.
+
+`nanocl kill` cible également un processus. Le signal par défaut est `SIGKILL` ; utilisez
+`--signal` pour un arrêt propre. La version 0.18 ne propose plus de `cargo kill`
+couvrant tout un Cargo, et l’ancienne commande `cargo exec` a été supprimée.
+

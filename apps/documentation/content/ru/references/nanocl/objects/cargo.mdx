@@ -1,0 +1,23 @@
+---
+title: Справочник Cargo — Nanocl
+keywords:
+- документация
+- справочники
+- nanocl
+- nanocld
+- cargo
+- спецификация
+- спецификация
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo
+
+В Nanocl 0.18 `Cargo` — сохраняемая нагрузка с именованными приложениями `Containers`, необязательными упорядоченными `InitContainers` и целым числом `Replicas`. Сеть и порты Cargo описывают общую сетевую границу каждой реплики; конфигурация Docker и секреты контейнеров остаются у каждого именованного контейнера.
+
+Схема OpenAPI ниже — справочник `CargoSpec`. Топология выполнения и примеры описаны в [Cargo с несколькими контейнерами](/ru/guides/nanocl/advanced-usage/multi-container-cargoes).
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="ru" example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpec" />

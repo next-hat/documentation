@@ -1,0 +1,87 @@
+---
+title: 安装 Nanocl
+description: Nanocl 的安装方法，支持 Windows、macOS 和 Linux 上的 Docker Desktop。
+keywords:
+- 文档
+- nanocl
+- 配置
+- 安装
+- ubuntu
+- debian
+- linux
+- macOS
+- windows
+- docker
+- podman
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import License from '@/components/license';
+
+# 安装 Nanocl
+
+本页概述 Nanocl 的安装方式。<br/>
+
+## 前提条件 [#prerequisites]
+
+Nanocl 组件在容器中运行，因此需要容器引擎。<br/>
+Nanocl 官方支持 [Docker][docker]，也可与 [Podman][podman] 配合使用。
+
+### Docker [#docker]
+
+按照对应系统的 [Docker 官方安装指南][docker_install]操作。<br/>
+Windows 和 macOS 使用 [Docker Desktop][docker_desktop]。
+
+### Podman [#podman]
+
+Podman 提供兼容 Docker 的 API，因此也能运行 Nanocl。<br/>
+如果偏好 Podman，按照[官方文档][podman_install]安装。
+
+## 支持的平台 [#supported-platforms]
+
+只有 CLI（[nanocl][nanocl]）为部分平台提供预编译版本：<br/>
+
+- Linux：amd64
+- macOS：aarch64（Apple Silicon）
+- Windows：amd64
+
+其他平台和架构可通过 [crates.io][crates.io] 从源码安装。运行 Cargo 前请检查该页的前提条件。
+
+## 安装指南 [#installation-guides]
+
+- [在 Linux 上安装](/zh-Hans/manuals/nanocl/install/linux)
+- [在 macOS 上安装](/zh-Hans/manuals/nanocl/install/macos)
+- [在 Windows 上安装](/zh-Hans/manuals/nanocl/install/windows)
+
+## 发布通道 [#release-channels]
+
+Nanocl 提供两个更新通道：**stable** 和 **nightly**。
+
+* **Stable**：面向一般使用的最新正式版本。
+* **Nightly**：用于测试新功能的预发布构建。
+
+<Callout type="warning" emoji="⚠️">
+
+Nightly 构建具有实验性，可能包含不兼容变更。
+
+</Callout>
+
+## 支持 [#support]
+
+Nanocl 是由 [Next Hat][next_hat] 和社区支持的开源项目。<br/>
+详情和贡献方式见 [GitHub 仓库][git_nanocl]。
+
+<License locale="zh-Hans" />
+
+[next_hat]: https://next-hat.com
+[nanocl]: /zh-Hans/references/nanocl/cli/overview
+[git_nanocl]: https://github.com/next-hat/nanocl
+[docker]: https://www.docker.com/
+[docker_install]: https://docs.docker.com/engine/install/
+[docker_desktop]: https://docs.docker.com/desktop/
+[crates.io]: https://crates.io/crates/nanocl
+[podman]: https://podman.io/
+[podman_install]: https://podman.io/getting-started/installation

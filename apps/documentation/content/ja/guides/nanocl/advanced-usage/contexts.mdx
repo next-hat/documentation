@@ -1,0 +1,147 @@
+---
+title: コンテキスト - Nanocl
+description: コンテキストで複数の Nanocl デーモンを切り替えます。
+keywords:
+- ドキュメント
+- nanocl
+- ガイド
+- 入門
+- 設定
+- 状態
+- ファイル
+- 設定
+- yaml
+- yml
+- statefile
+- ssl
+- tls
+- 証明書
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# コンテキスト
+
+コンテキストは、複数の [Nanocl デーモン](/ja/references/nanocl/daemon/overview)と通信するための仕組みです。
+
+たとえば、ローカルのマシンとリモートサーバーのそれぞれで Nanocl デーモンを実行している場合、コンテキストを使って切り替えられます。
+
+デーモンをインターネットから利用できるようにする必要があります。
+方法はいくつかありますが、[ProxyRule](/ja/references/nanocl/objects/resource) を使うのが最も簡単です。
+
+まず、独自の SSL/TLS 証明書を生成する必要があります。<br />
+セキュリティーを確保するため、この認証局から生成した特定の証明書を持つクライアントだけがデーモンにアクセスできるようにします。<br />
+
+必要な証明書の生成と `ProxyRule` の設定を行う、便利な `Statefile` を用意しました。
+
+
+## 自動設定 [#automatic-setup]
+
+次の `Statefile` を適用すると、証明書の生成と `ProxyRule` の適用ができます。
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/remote-nanocld`}
+</CodeBlock>
+
+`Statefile` を適用したら、デーモンを切り替えるためのコンテキストを作成できます。
+まず、`Statefile` が生成したクライアント証明書を取得する必要があります。
+
+次のコマンドでクライアント証明書を取得できます。
+
+```sh
+nanocl secret inspect cert.client.nanocl.io
+```
+
+クライアント証明書と秘密鍵が出力されます。
+
+## 手動設定 [#manual-setup]
+
+### 証明書を生成する [#generate-the-certificates]
+
+次のコマンドで証明書を生成できます。
+
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=NanoclCA"
+openssl req -newkey rsa:4096 -keyout server.key -out server.csr -nodes -subj "/CN=*"
+openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+openssl req -newkey rsa:4096 -keyout client.key -out client.csr -nodes -subj "/CN=NanoclClient"
+openssl x509 -req -in client.csr -out client.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+```
+
+続いて、Nanocl が稼働しているリモートサーバーの適切な場所に証明書を移動します。
+
+```sh
+sudo mkdir -p /var/lib/nanocl/proxy/certs
+sudo mv ca.crt /var/lib/nanocl/proxy/certs/nanocl_ca.crt
+sudo mv server.crt /var/lib/nanocl/proxy/certs/nanocl_server.crt
+sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
+```
+
+### ProxyRule を適用する [#apply-the-proxyrule]
+
+次に ProxyRule を適用し、デーモンをインターネットに公開します。
+
+`nanocld-proxy.yml` を作成します。
+
+<StatefileBlock example="advanced/context-resource" />
+
+次のコマンドで ProxyRule を適用します。
+
+```sh
+nanocl apply -s nanocld-proxy.yml
+```
+
+## コンテキストを作成する [#create-the-context]
+
+ホストマシンの適切な場所にクライアント証明書を移動します。
+
+```sh
+mkdir -p ~/.nanocl/certs
+mv client.crt ~/.nanocl/certs/nanocl_client.crt
+mv client.key ~/.nanocl/certs/nanocl_client.key
+```
+
+最後に、複数のデーモンを切り替えるコンテキストを作成します。
+
+`my-secure-context.yml` を作成しましょう。
+
+<StatefileBlock example="advanced/context" />
+
+<Callout type="info" emoji="📝">
+
+`my-remote-server` は、リモートサーバーの実際の IP アドレスまたはドメイン名に置き換えてください。<br/>
+`my-user` も実際のユーザー名に置き換えてください。
+
+</Callout>
+
+次のコマンドでコンテキストをインポートできます。
+
+```sh
+nanocl context from my-secure-context.yml
+```
+
+コンテキストの切り替えには、次のコマンドを使います。
+
+```sh
+nanocl context use my-secure-context
+```
+
+既存のコンテキストの一覧も表示できます。
+
+```sh
+nanocl context list
+```
+
+コンテキストコマンドの詳細は、次のコマンドで確認できます。
+
+```sh
+nanocl context --help
+```
+
+コンテキストに関する詳しい情報が表示されます。

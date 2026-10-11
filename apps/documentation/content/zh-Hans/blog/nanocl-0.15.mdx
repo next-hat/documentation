@@ -1,0 +1,127 @@
+---
+slug: nanocl-0.15
+title: Nanocl 0.15 发布
+description: Nanocl 0.15.0 带来新功能、显著增强和重要修复，简化容器编排与虚拟化管理。了解详细变化！
+image: /img/logo3.png
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.15
+keywords:
+- 容器化
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- 软件开发
+- 部署
+- 发布
+- 0.15
+date: '2024-06-11'
+timestamp: 1731914078000
+---
+
+我们正式发布 **Nanocl 0.15.0**，加入新功能、显著增强和重要修复，简化容器编排和虚拟化管理。此次版本于 **2024 年 6 月 11 日**发布，带来了你期待的工具和改进。下面介绍详细变化。
+
+{/* truncate */}
+
+## 主要亮点 [#key-highlights]
+
+### 新功能 [#new-features]
+
+1. **增强命令输出：**
+   - `cargo ls`、`vm ls` 和 `job ls` 的表格现在显示状态信息，帮助你立即了解资源情况。
+
+2. **详细检查：**
+   - 新增 `nanocl metric inspect` 和 `nanocl event inspect` 命令，查看具体指标和事件的详细信息。
+
+3. **状态备份：**
+   - 新增 `nanocl backup` 命令，将当前状态备份到多个 Statefile，确保配置安全且可恢复。
+
+4. **环境变量覆盖：**
+   - 使用 `HOST` 环境变量覆盖默认主机。
+   - 客户端操作可通过 `CERT` 和 `CERT_KEY` 环境变量传递证书和密钥。
+
+5. **移除孤立对象：**
+   - `nanocl state apply --remove-orphans` 可以清理孤立对象，保持环境整洁。
+
+6. **创建 TLS Secret：**
+   - `nanocl secret create tls` 现在支持证书和密钥的路径，简化 TLS Secret 创建。
+
+7. **生成 man 手册：**
+   - 所有命令都有相应的 man 手册，可以[在这里][manpages]查看 Markdown 版本，也可以执行例如 `man nanocl-cargo-create` 的命令。
+
+
+### 错误修复 [#bug-fixes]
+
+- **提高命令可靠性：**
+  - `nanocl cargo run`、`nanocl vm run`、`nanocl cargo start`、`nanocl cargo stop`、`nanocl cargo patch`、`nanocl job start`、`nanocl vm start` 和 `nanocl vm stop` 等命令会正确等待相应操作完成后再返回。
+
+- **准确比较状态：**
+  - 应用 Statefile 时的差异检测现在准确比较当前状态与新状态，确保一致性。
+
+### 变更 [#changes]
+
+- **统一接口：**
+  - `inspect`、`rm`、`stop` 和 `start` 等命令重构为统一接口，让不同对象的操作保持一致。
+
+- **简洁输出：**
+  - `cargo ls` 和 `vm ls` 表格移除了命名空间字段，输出更清晰。
+
+- **改进加载提示：**
+  - 应用和移除 Statefile 时的加载提示更简洁，操作更直观。
+
+# Nanocld 0.15.0
+
+Nanocld 0.15.0 于 **2024 年 5 月 16 日**发布，主要更新依赖、增加端点和选项，并修复数项关键问题。
+
+### 主要增强 [#key-enhancements]
+
+- **命令行改进：**
+  - 新增 `--store-addr` 选项，可直接从命令行指定存储地址。
+
+- **新端点：**
+  - 新增 `GET /metrics/{key}/inspect` 和 `GET /event/{key}/inspect`，获取指标和事件的详细信息。
+
+- **仓库和过滤增强：**
+  - 新增通用 `RepositoryCountBy` 接口并改进 SQL 过滤，提高性能和灵活性。
+  - 为所有 SQL 模式添加索引，提高查询性能。
+  - 支持按日期过滤查询。
+
+### 错误修复 [#bug-fixes-1]
+
+- **任务管理：**
+  - 删除任务前先停止进程，确保正确清理。
+  - 修复更新和重启 Cargo 的问题。
+
+### 变更 [#changes-1]
+
+- **资源检查路径：**
+  - 将资源检查路径统一为 `GET /resources/{name}/inspect`。
+
+# Ncproxy 0.12.0
+
+Ncproxy 0.12.0 同样于 **2024 年 5 月 16 日**发布，更新了依赖并加入请求限流以增强安全性。
+
+### 主要更新 [#key-updates]
+
+- **依赖更新：**
+  - 升级到 ntex 2。
+
+- **请求限流：**
+  - 为 HTTP 添加请求限流区域，防止滥用。
+
+### 变更 [#changes-2]
+
+- **HTTPS 处理：**
+  - 移除 HTTPS 重定向，改用 HSTS（HTTP 严格传输安全）增强安全性。
+
+欢迎体验 Nanocl 0.15.0、Nanocld 0.15.0 和 Ncproxy 0.12.0 的新功能和改进。你的反馈对我们很重要，请告诉我们这些更新对工作流程的影响，以及对后续版本的建议。
+
+祝部署顺利！
+Nanocl 团队
+
+
+[manpages]: /zh-Hans/references/nanocl/cli/overview

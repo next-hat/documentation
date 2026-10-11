@@ -1,0 +1,130 @@
+---
+title: Cargo の更新 - Nanocl
+description: Cargo のイメージや環境変数を更新し、すぐに再デプロイします。
+keywords:
+- ドキュメント
+- ガイド、nanocl
+- 入門
+- cargo
+- 更新
+- 更新
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# Cargo の更新
+
+Cargo のイメージや環境変数を更新し、すぐに再デプロイします。
+
+## Cargo のイメージを更新する [#update-cargo-image]
+
+先ほどダウンロードしたイメージを使って、`Cargo` の *my-cargo* を変更しましょう。
+
+```sh
+nanocl cargo patch global.my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
+```
+
+いくつかのオプションを指定しています。それぞれの意味は次のとおりです。
+
+- `global.my-cargo` は更新する Cargo の正規キーです。
+- `--image` は変更する値で、Cargo のイメージを指定します。
+- `ghcr.io/next-hat/nanocl-get-started:latest` は新しいイメージ名です。
+
+`cargo` の詳細を表示して、変更が反映されたか確認できます。
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+*get-started* のデフォルトのポートは **9000** なので、そのポートにアクセスできるか確認します。
+
+<Callout type="info">
+
+Cargo を更新すると、関連するコンテナの IP アドレスが変わります。<br/>
+古いコンテナを削除する前に、新しいコンテナを起動するためです。
+
+</Callout>
+
+```sh
+curl 10.2.0.3:9000
+```
+
+次のような結果が出力されます。
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.3:9000",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "HOME": "/",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "TERM": "xterm",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-a1b2c3.c",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+これで最初の `cargo` を新しいイメージに更新できました。
+
+## Cargo の環境変数を更新する [#update-cargo-environnement]
+
+`cargo` を、`environment variables` を返す新しいイメージに更新しました。<br />
+次は環境変数を更新します。
+
+**PORT** の `environment variable` を更新して、`cargo` が使うポートを変更しましょう。
+
+```sh
+nanocl cargo patch global.my-cargo --env PORT=9001
+```
+
+先ほど説明したように IP アドレスが変わるため、次のコマンドを実行します。
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+これで新しい IP アドレスを取得できます。
+
+新しい環境変数が反映されたか確認するには、次のコマンドを実行します。
+
+```sh
+curl 10.2.0.2:9001
+```
+
+次の内容が出力されます。
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.2:9001",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "NANOCL_CARGO_INSTANCE": "0",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "HOME": "/",
+    "NANOCL_NODE": "behuman",
+    "TERM": "xterm",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "PORT": "9001",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global"
+  }
+}
+```
+
+今回は 9000 ではなく **9001** を使っています。サービスが **PORT** 環境変数の値を使うためです。

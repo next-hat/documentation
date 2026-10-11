@@ -1,0 +1,189 @@
+---
+title: Публикация контейнера
+description: Откройте публичный доступ к контейнеризированным интерфейсу и API на разных доменах с Docker и Nginx.
+keywords:
+- публикация контейнеризированных приложений
+- развёртывание образов контейнеров
+- Docker
+- Nginx
+- создание сети Docker
+- настройка Nginx
+- доступ к контейнеру на разных доменах
+- клиентская часть
+- серверная часть
+timestamp: 1689000770000
+---
+
+# Публикация контейнера
+
+Чтобы `my-frontend:0.0.1` был доступен на `my-domain.com`, а `my-api:0.0.1` — на `api.my-domain.com`, подготовьте VPS или выделенный сервер и направьте на него `my-domain.com` и `api.my-domain.com`.<br/>
+Убедитесь, что на сервере установлен Docker.
+
+## Загрузка образов на сервер [#uploading-our-images-to-the-server]
+
+Сохраните и экспортируйте образы контейнеров командой:
+```sh
+docker save my-frontend:0.0.1 | gzip > /tmp/my-frontend-0.0.1.tar.gz
+docker save my-api:0.0.1 | gzip > /tmp/my-api-0.0.1.tar.gz
+```
+
+Если SSH для VPS настроен, загрузите образы командой scp:
+```sh
+scp /tmp/my-frontend-0.0.1.tar.gz /tmp/my-api-0.0.1.tar.gz my-user@my-domain.com:~
+```
+
+Подключитесь к VPS по SSH:
+```sh
+ssh my-user@my-domain.com
+```
+
+Загрузите образы контейнеров:
+```sh
+cat ~/my-frontend-0.0.1.tar.gz | docker load
+cat ~/api-0.0.1.tar.gz | docker load
+```
+
+## Запуск образов [#start-your-images]
+
+Перед запуском загруженных образов создайте на сервере сеть Docker:
+```sh
+docker network create my-domain
+```
+
+Запустите образы следующими командами:
+```sh
+docker run -d --network my-domain --name my-frontend my-frontend:0.0.1
+docker run -d --network my-domain --name my-api my-api:0.0.1
+```
+
+Используются следующие команды и параметры:
+- `run`: создаёт и запускает новый контейнер из образа.
+- `-d`: запускает в фоне и выводит ID нового контейнера.
+- `--network`: задаёт сетевой режим контейнера.
+- `--name`: задаёт имя контейнера.
+- `my-frontend|my-api`: имя контейнера.
+- `my-frontend:0.0.1|my-api:0.0.1`: образ для создания контейнера.
+
+## Настройка Nginx [#setting-up-nginx]
+
+Способ установки [Nginx](https://www.nginx.com) зависит от ОС сервера.<br />
+В Ubuntu установите Nginx следующей командой:
+```sh
+sudo apt install -y nginx
+```
+Каталог конфигурации Nginx обычно находится в `/etc/nginx`.
+
+Создайте конфигурацию Nginx для `my-domain.com` в `/etc/nginx/sites-enabled/my-domain.com`.
+
+```nginx
+server {
+    listen 80;
+    server_name my-domain.com;
+
+    location / {
+        proxy_pass http://ip_of_frontend_container:80;
+    }
+}
+```
+
+Получите IP-адрес контейнера интерфейса одной из команд:
+```
+docker network inspecy my-domain
+docker container inspect my-frontend
+```
+
+Создайте конфигурацию `api.my-domain.com` в `/etc/nginx/sites-enabled/api.my-domain.com`.
+```nginx
+server {
+    listen 80;
+    server_name api.my-domain.com;
+
+    ## To allow versioning
+    ## We can add a location /v1/ to the next version of our api and keep the old container running
+    ## note that the last / is important
+    location /v0/ {
+        proxy_pass http://ip_of_api_container:80/;
+    }
+}
+```
+
+Получите IP-адрес контейнера API одной из команд:
+```
+docker network inspecy my-domain
+docker container inspect my-api
+```
+
+Перезагрузите конфигурацию Nginx:
+```sh
+sudo nginx -s reload
+```
+
+Теперь интерфейс доступен через `http://my-domain.com`, а серверная часть — через `http://api.my-domain.com/v0`.
+
+## Включение HTTPS с Certbot [#enabling-https-with-certbot]
+
+Как и для Nginx, способ установки [Certbot](https://certbot.eff.org) зависит от ОС.<br />
+В Ubuntu используйте команду:
+```sh
+sudo apt install -y certbot
+```
+
+Плагин Nginx для Certbot преобразует конфигурацию HTTP в HTTPS с созданным SSL-сертификатом.<br />
+Запустите его командой:
+```sh
+certbot --nginx --email email@email.com --agree-tos -d your-domain.com
+certbot --nginx --email email@email.com --agree-tos -d api.your-domain.com
+```
+
+После создания SSL-сертификата обновим конфигурации Nginx.
+
+Обновите `/etc/nginx/sites-enabled/my-domain.com` следующим образом:
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location / {
+        proxy_pass http://ip_of_your_container:80;
+    }
+}
+```
+
+А `/etc/nginx/sites-enabled/api.my-domain.com` — следующим образом:
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/api.my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/api.my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location /v0/ {
+        proxy_pass http://ip_of_your_container:80/;
+    }
+}
+```
+
+Добавлены настройки SSL и перенаправление на HTTPS, если схема ещё не HTTPS.
+
+Перезагрузите конфигурацию Nginx:
+```sh
+sudo nginx -s reload
+```
+
+Теперь интерфейс доступен безопасно по HTTPS через `https://my-domain.com`, а серверная часть — через `https://api.my-domain.com/v0`.

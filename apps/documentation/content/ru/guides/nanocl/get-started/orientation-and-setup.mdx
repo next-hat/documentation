@@ -1,0 +1,165 @@
+---
+title: Знакомство и настройка — Nanocl
+description: Пошаговые инструкции по началу работы с Nanocl.
+keywords:
+- документация
+- руководства
+- nanocl
+- начало работы
+- знакомство и настройка
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# Знакомство и настройка
+
+#### Добро пожаловать! Рады, что вы хотите изучить Nanocl. [#welcome-we-are-excited-that-you-want-to-learn-nanocl]
+
+Эта страница поможет начать работу с Nanocl.<br />
+В руководстве вы научитесь:
+
+- Понимать основы образов контейнеров, пространств имён, Cargo и экземпляров Cargo.
+- Запускать образ контейнера как `cargo`.
+- Изменять `cargo`.
+- Настраивать правило прокси.
+- Использовать файл конфигурации состояния для быстрого развёртывания.
+
+Руководство предполагает, что у вас установлена актуальная версия Nanocl.<br />
+Если её нет, смотрите [инструкции установки](/ru/manuals/nanocl/install/overview).
+
+
+## Начало руководства [#start-the-tutorial]
+
+Создадим и запустим `cargo` командой:
+
+```sh
+nanocl cargo run my-cargo nginx:1.23
+```
+
+Скачивание образа и запуск контейнера могут занять несколько минут.
+
+Используются следующие параметры:
+
+- `my-cargo` — имя Cargo.
+- `nginx:1.23` — имя образа контейнера.
+
+Команда создаст и запустит один экземпляр Cargo *my-cargo*.
+
+> Nanocl выберет IPv4-адрес для экземпляра Cargo.
+> Значения по умолчанию следуют рекомендуемым практикам.
+
+Посмотрите назначенный IP, проверив Cargo:
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+У меня назначен IPv4 `10.2.0.2`; проверим его через curl!
+
+```sh
+curl 10.2.0.2
+```
+
+Теперь экземпляр Cargo Nginx работает по IPv4 `10.2.0.2`.
+
+## Что такое Cargo? [#what-is-a-cargo-]
+
+Вы запустили `cargo`, но что это такое?<br />
+Cargo — сохраняемая конфигурация нагрузки. Он содержит один или несколько именованных приложений, необязательные упорядоченные init-контейнеры и фиксированное число реплик. Каждая реплика содержит процессы, объявленные Cargo.
+
+<Callout type="info">
+
+Если вы знакомы с `Kubernetes`, представляйте Cargo как вариант `pod`.<br />
+
+</Callout>
+
+Получите список Cargo командой:
+
+```sh
+nanocl cargo ls
+```
+
+Примерный вывод:
+
+```console
+KEY                CONTAINERS             STATUS                   INSTANCES  VERSION  CREATED AT           UPDATED AT
+global.my-cargo    my-cargo=nginx:1.23    start/start (unknown)    1/1        v0.1.0   2026-08-28 21:24:27  2026-08-28 21:24:27
+```
+
+В общем случае для управления Cargo используйте:
+
+```sh
+nanocl cargo
+```
+
+Доступные команды можно увидеть так:
+
+```sh
+nanocl cargo help
+```
+
+Вывод:
+
+```console
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+Итак, `Cargo`:
+
+- Описывает один или несколько именованных контейнеров приложения.
+- Может объявлять упорядоченные init-контейнеры и сохраняемое число реплик.
+- Создаёт процессы каждой реплики и управляет ими.
+
+## Что такое экземпляр Cargo? [#what-is-a-cargo-instance-]
+
+Теперь вы знаете `Cargo`; что такое его экземпляр?
+Реплика Cargo — одна реализация его спецификации. Она может содержать несколько процессов приложения и, вне сети хоста, общую внутреннюю сетевую песочницу. Изоляция контейнеров использует пространства имён Linux и cgroups Docker.
+
+Итак, экземпляр Cargo:
+
+- Содержит именованные процессы приложения, объявленные Cargo.
+- Имеет порядковый номер, доступный через `NANOCL_CARGO_INSTANCE`.
+- Изолирован от других реплик и работает на локальном узле Docker.
+
+## Что такое образ контейнера? [#what-is-a-container-image-]
+
+Запуск `Cargo` создаёт экземпляр с изолированной файловой системой. Она называется образом контейнера и должна содержать всё для запуска приложения: зависимости, конфигурацию, скрипты, бинарные файлы и прочее.
+Образ также содержит настройки контейнера, например переменные окружения, команду по умолчанию и метаданные.
+
+Подробное рассмотрение контейнеров и образов заняло бы много времени; обратитесь к [документации Docker](https://www.docker.com/resources/what-container/).
+
+<Callout type="info">
+
+Если вы знакомы с `chroot`, контейнер похож на его расширенную версию.<br />
+Файловая система берётся из образа.<br />
+Но контейнер добавляет изоляцию, которой нет у одного chroot.
+
+</Callout>
+
+## Что такое пространство имён? [#what-is-a-namespace-]
+
+Пространство имён группирует объекты Nanocl, например Cargo и виртуальные машины. Сети Docker локальны для узла и не принадлежат пространствам имён.<br />
+Например, объекты разных доменов *facebook.com* и *instagram.com* можно разделить по пространствам имён.

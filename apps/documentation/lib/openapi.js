@@ -25,3 +25,36 @@ export function resolvePointer(spec, pointer) {
   }
   return value;
 }
+
+/** Keep only the schemas an embedded definition can resolve through references. */
+export function schemaSpec(spec, pointer) {
+  const schemas = new Map();
+
+  function include(reference) {
+    const match = /^#\/components\/schemas\/([^/]+)(?:\/|$)/.exec(reference);
+    if (!match) throw new Error(`Unsupported OpenAPI schema reference: ${reference}`);
+    resolvePointer(spec, reference);
+    const name = match[1].replaceAll('~1', '/').replaceAll('~0', '~');
+    if (schemas.has(name)) return;
+    // Record the schema before visiting it so recursive references terminate.
+    const schema = spec.components.schemas[name];
+    schemas.set(name, schema);
+    visit(schema);
+  }
+
+  function visit(value) {
+    if (!value || typeof value !== 'object') return;
+    if (typeof value.$ref === 'string') include(value.$ref);
+    for (const reference of Object.values(value.discriminator?.mapping || {})) {
+      // OpenAPI discriminator mappings may use either schema names or references.
+      const name = Object.hasOwn(spec.components.schemas, reference)
+        ? `#/components/schemas/${reference.replaceAll('~', '~0').replaceAll('/', '~1')}`
+        : reference;
+      include(name);
+    }
+    for (const child of Object.values(value)) visit(child);
+  }
+
+  include(pointer);
+  return { openapi: spec.openapi, info: spec.info, paths: {}, components: { schemas: Object.fromEntries(schemas) } };
+}

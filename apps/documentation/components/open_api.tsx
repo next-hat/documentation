@@ -1,4 +1,5 @@
 import { daemonVersions, readDaemonSpec } from '../lib/openapi';
+import { nanoclMajorVersion } from '../lib/vars';
 import type { RedocSpec } from '../lib/redoc-options';
 import { prepareRedocSpec } from '../lib/redoc-spec';
 import RedocViewer from './redoc-viewer';
@@ -12,7 +13,7 @@ export default function OpenApi({ version }: { version: string }) {
   const specUrl = `/specs/nanocld/${version}.yaml`;
   return <div className="api-reference">
     <nav className="api-versions" aria-label="Daemon API version">
-      {daemonVersions.map((item) => <a href={`/references/nanocl/daemon/v${item}`} aria-current={item === version ? 'page' : undefined} key={item}>v{item}{item === '0.18' ? ' · latest' : ''}</a>)}
+      {daemonVersions.map((item) => <a href={`/references/nanocl/daemon/v${item}`} aria-current={item === version ? 'page' : undefined} key={item}>v{item}{item === nanoclMajorVersion ? ' · latest' : ''}</a>)}
     </nav>
     <div className="api-reference-toolbar">
       <p className="api-spec-meta">{operationCount} operations · {Object.keys(spec.components?.schemas || {}).length} schemas · specification {spec.info.version}</p>

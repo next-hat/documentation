@@ -4,6 +4,7 @@ import { Button } from '@next-hat/ui/components/ui/button'
 import { Badge } from '@next-hat/ui/components/ui/badge'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@next-hat/ui/components/ui/card'
 import posts from '@/lib/blog-posts.json'
+import { nanoclMajorVersion } from '@/lib/vars'
 import { DeploymentVisual } from './deployment-visual'
 import { LandingBackgroundDecorations } from './landing-background-decorations'
 
@@ -21,7 +22,7 @@ const sections = [
   { icon: FileCode2, title: 'References', description: 'The details, when you need them.', href: '/references/summary', links: [
     ['CLI commands', '/references/nanocl/cli/overview'],
     ['Statefile specification', '/references/nanocl/statefile'],
-    ['Daemon API', '/references/nanocl/daemon/v0.18']
+    ['Daemon API', `/references/nanocl/daemon/v${nanoclMajorVersion}`]
   ] }
 ]
 

@@ -42,9 +42,10 @@ function checkUrl(path, url) {
   const pathname = url.split(/[?#]/, 1)[0]
   if (!pathname) return
   const route = pathname.startsWith('/') ? pathname : '/' + relative(contentDirectory, resolve(dirname(path), pathname))
+  if (routes.has(route.replace(/\/$/, '') || '/')) return
   if (extname(pathname) && !/\.\d+$/.test(pathname)) {
     if (!existsSync(join(app, 'public', route))) failures.push(`${relative(repository, path)}: missing asset ${url}`)
-  } else if (!routes.has(route.replace(/\/$/, '') || '/')) {
+  } else {
     failures.push(`${relative(repository, path)}: missing route ${url}`)
   }
 }

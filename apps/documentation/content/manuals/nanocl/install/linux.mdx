@@ -1,0 +1,49 @@
+---
+title: Install on Linux - Nanocl
+description: Install Nanocl on Linux using script, .deb, or tarball.
+keywords:
+- nanocl
+- install
+- linux
+- deb
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# Install on Linux
+
+<QuickInstall />
+
+## Manual install
+
+### Get the CLI tarball
+
+<UnixTarInstall tarballUrl={vars.nanoclLinuxTarballUrl} tarballName={`${vars.nanoclLinuxTarballName}`} />
+
+### Debian/Ubuntu
+
+A `.deb` package is also available for Debian-based distributions like Debian and Ubuntu.
+
+<Terminal language="sh" filename="sh">
+{`curl -LO ${vars.nanoclDebUrl}
+sudo dpkg -i ${vars.nanoclDebName}
+`}
+</Terminal>
+
+## Compile from source
+
+<CratesIoInstall />
+
+## Verify installation
+
+<Verify />
+
+Now be sure to follow the [post installation steps](/manuals/nanocl/install/post-installation) to install nanocl components.

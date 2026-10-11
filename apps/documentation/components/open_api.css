@@ -1,0 +1,30 @@
+.api-reference { margin-top: 1.5rem; font-size: .875rem; }
+.api-versions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.api-versions a { padding: .375rem .625rem; border: 1px solid hsl(var(--border)); border-radius: .5rem; color: hsl(var(--primary)); text-decoration: none; }
+.api-versions a[aria-current="page"] { color: hsl(var(--primary-foreground)); background: hsl(var(--primary)); border-color: hsl(var(--primary)); }
+.api-reference-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-block: 1rem 1.5rem; }
+.api-reference-toolbar a { color: hsl(var(--primary)); font-size: .75rem; }
+.api-spec-meta { color: hsl(var(--muted-foreground)); font-size: .75rem; }
+.redoc-documentation { min-width: 0; color: hsl(var(--foreground)); }
+.redoc-documentation .redoc-wrap { border-top: 1px solid hsl(var(--border)); border-bottom: 1px solid hsl(var(--border)); }
+.redoc-documentation .menu-content { border-right: 1px solid hsl(var(--border)); }
+.redoc-documentation code { padding: 0; border: 0; background: transparent; }
+.redoc-documentation table { display: table; margin: 0; text-align: left; }
+.redoc-documentation table th { border: 0; }
+.redoc-documentation table td { border-top: 0; border-right: 0; }
+.redoc-documentation table td:first-child { border-bottom: 0; }
+.redoc-documentation table td:nth-child(2) { border-left: 0; }
+.redoc-documentation table tr { background: hsl(var(--background)); }
+.redoc-documentation table tbody tr { color: hsl(var(--foreground)); }
+.redoc-documentation table tbody tr table { background: hsl(var(--muted)); }
+.redoc-documentation .api-content h5 { color: hsl(var(--muted-foreground)); border-color: hsl(var(--border)); }
+.redoc-documentation .api-content h5 > span { color: hsl(var(--foreground)); }
+.redoc-documentation .react-tabs__tab-list > .react-tabs__tab--selected { background: hsl(var(--background)); }
+.redoc-documentation .operation-type { margin-top: 6px; font-size: 8px; }
+.redoc-schema { margin-block: 1.5rem; }
+.redoc-schema > div:last-child { min-height: 0; }
+.redoc-schema-no-example > div > div > div:first-child { width: 100%; }
+@media (max-width: 49.999rem) {
+  /* The fixed Redoc drawer spans the viewport outside the page gutters. */
+  .redoc-documentation .menu-content { left: 0; }
+}

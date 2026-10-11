@@ -4,22 +4,39 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   push:
-    branches: [main]
+    branches: [main, master]
+
+permissions:
+  contents: read
 
 jobs:
   test-deploy:
     name: Build check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v7
         with:
-          node-version: 22.x
-          cache: npm
+          submodules: recursive
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.14.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Check documentation content
+        run: pnpm check
+
+      - name: Typecheck website
+        run: pnpm typecheck
 
       - name: Test build website
-        run: npm run build
+        run: pnpm build
+
+      - name: Verify exported routes, links, and assets
+        run: node scripts/verify-export.mjs

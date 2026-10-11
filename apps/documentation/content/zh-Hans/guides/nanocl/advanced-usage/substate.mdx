@@ -1,0 +1,32 @@
+---
+title: SubState - Nanocl
+description: 在 Statefile 中使用 SubState。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 配置
+- 状态
+- 文件
+- 配置
+- yaml
+- yml
+- statefile
+- substate
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# SubState
+
+在 Statefile 中使用 `SubStates` 键，可以引用其他 Statefile。
+
+同一 Statefile 需要在多个位置复用时很有用。<br/>
+在单一仓库中，也可将状态保存在唯一权威来源中。
+
+使用示例：
+
+<StatefileBlock example="advanced/substate" />

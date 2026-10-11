@@ -19,6 +19,15 @@ server {
     add_header Cache-Control "no-cache" always;
   }
 
+  # Static exports do not preserve the feed route's response headers.
+  location ~ ^/(fr/|ru/|ja/|zh-Hans/)?blog/feed\.json$ {
+    types { application/feed+json json; }
+    charset utf-8;
+    charset_types application/feed+json;
+    try_files $uri =404;
+    add_header Cache-Control "no-cache" always;
+  }
+
   # Next.js fingerprints these assets, so cached copies remain valid.
   location ^~ /_next/static/ {
     try_files $uri =404;

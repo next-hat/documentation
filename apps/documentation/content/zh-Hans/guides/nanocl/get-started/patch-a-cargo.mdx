@@ -1,0 +1,129 @@
+---
+title: 更新 Cargo - Nanocl
+description: 更新 Cargo 的镜像或环境变量，并立即重新部署。
+keywords:
+- 文档
+- Nanocl 指南
+- 开始使用
+- cargo
+- patch
+- 更新
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# 更新 Cargo
+
+更新 Cargo 的镜像或环境变量，并立即重新部署。
+
+## 更新 Cargo 镜像 [#update-cargo-image]
+
+用之前下载的镜像更新 `Cargo` *my-cargo*：
+
+```sh
+nanocl cargo patch global.my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
+```
+
+这里使用以下选项：
+
+- `global.my-cargo`：要更新的 Cargo 的规范键。
+- `--image`：要修改的值，即 Cargo 镜像。
+- `ghcr.io/next-hat/nanocl-get-started:latest`：新镜像名称。
+
+检查 `cargo`，验证变更：
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+*get-started* 的默认端口是 **9000**，可以测试访问。
+
+<Callout type="info">
+
+更新 Cargo 时，相关容器的 IP 会改变。<br/>
+因为系统先启动新容器，再删除旧容器。
+
+</Callout>
+
+```sh
+curl 10.2.0.3:9000
+```
+
+输出应该类似：
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.3:9000",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "HOME": "/",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "TERM": "xterm",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-a1b2c3.c",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+你已将第一个 `cargo` 更新到新镜像！
+
+## 更新 Cargo 环境变量 [#update-cargo-environnement]
+
+新镜像返回 `environment variables`，现在来更新一些环境变量。<br/>
+
+修改 **PORT** 环境变量，更新 Cargo 使用的端口：
+
+```sh
+nanocl cargo patch global.my-cargo --env PORT=9001
+```
+
+如前所述，更新会更改 IP 地址，因此执行：
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+获取新的 IP。
+
+然后用以下命令验证环境变量更新：
+
+```sh
+curl 10.2.0.2:9001
+```
+
+输出：
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.2:9001",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "NANOCL_CARGO_INSTANCE": "0",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "HOME": "/",
+    "NANOCL_NODE": "behuman",
+    "TERM": "xterm",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "PORT": "9001",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global"
+  }
+}
+```
+
+注意，这次使用 **9001** 而不是 9000，因为服务使用 **PORT** 环境变量。

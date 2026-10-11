@@ -9,7 +9,8 @@ const withNextra = nextra({
 })
 
 export default withNextra({
-  output: 'export',
+  // The dev server must also handle paths outside the exported page inventory.
+  output: process.env.NODE_ENV === 'development' ? undefined : 'export',
   trailingSlash: false,
   images: { unoptimized: true },
   compiler: { styledComponents: true },
@@ -20,5 +21,6 @@ export default withNextra({
     return config
   },
   transpilePackages: ['@next-hat/ui'],
-  experimental: { cpus: 4 }
+  // Redoc's labels are global within a worker; render one language at a time.
+  experimental: { cpus: 4, globalNotFound: true, staticGenerationMaxConcurrency: 1 }
 })

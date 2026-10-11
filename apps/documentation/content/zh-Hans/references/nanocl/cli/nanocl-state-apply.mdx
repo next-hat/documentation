@@ -1,0 +1,43 @@
+---
+title: Statefile 应用
+timestamp: 1757712924000
+---
+
+# Statefile 应用
+
+# 名称
+
+apply - 从 Statefile 创建或更新对象
+
+## 语法 [#synopsis]
+
+**apply** \[**-s**\|**--source**\] \[**-f**\|**--follow**\]
+\[**-y**\|**--yes**\] \[**-r**\|**--reload**\] \[**--remove-orphans**\]
+\[**-h**\|**--help**\] \[*ARGS*\]
+
+## 说明 [#description]
+
+从 Statefile 创建或更新对象
+
+## 选项 [#options]
+
+**-s**, **--source** *\<SOURCE\>*  
+Statefile 的路径或 URL
+
+**-f**, **--follow**  
+跟踪已部署 Cargo 的日志
+
+**-y**, **--yes**  
+跳过确认提示
+
+**-r**, **--reload**  
+即使状态未变也执行应用操作
+
+**--remove-orphans**  
+移除孤立对象
+
+**-h**, **--help**  
+显示帮助
+
+\[*ARGS*\]  
+传给文件的额外参数

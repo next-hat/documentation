@@ -1,0 +1,58 @@
+---
+title: 从 localhost 到 VPS
+description: 本指南逐步介绍如何用 Docker 容器和 Nginx，将前端应用和 API 部署到 VPS 或专用物理服务器。你将学会创建和配置容器、设置简单 Docker 网络，并用 Nginx 将域名流量转发到容器，还会学习通过 Certbot 的免费 SSL 证书保护部署。
+image: /img/logo.webp
+keywords:
+- 部署
+- VPS
+- 物理服务器
+- 专用服务器
+- Nginx
+- 指南
+- 前端应用
+- API
+- Docker 容器
+- 配置
+- 创建
+- 基础 Docker 网络
+- 转发流量
+- 域名
+- 保护
+- 免费 SSL 证书
+- Certbot
+- 架构
+- 服务
+- 前端
+- 后端
+- 性能
+- 扩展能力
+- 可靠性
+- 职责分离
+- 开发
+- 维护
+- 响应速度
+timestamp: 1689000770000
+---
+
+# 从 localhost 到 VPS
+
+## 简介 [#introduction]
+
+想将应用部署到 VPS 或专用物理服务器，却不知如何配置 Nginx？很多人也遇到相同问题。如何配置 Nginx 来部署应用，是 Stack Overflow 上的常见问题。只要有合适的指导，这个过程就能变得简单清晰。
+
+本指南逐步介绍如何用 Docker 容器和 Nginx，将前端应用和 API 部署到 VPS。你将学会创建和配置容器、设置简单 Docker 网络，并用 Nginx 将域名流量转发到容器，还会学习通过 Certbot 的免费 SSL 证书保护部署。
+
+无论刚接触 Docker 和 Nginx，还是已经熟悉它们，本指南都能提供构建可靠、安全基础设施需要的知识和工具。开始吧！
+
+
+## 架构 [#architecture]
+
+这里创建 `frontend` 和 `backend` 两个服务，按以下架构部署：
+
+<img src="/img/simple_architecture.jpg" />
+
+继续操作前，请购买域名，并添加指向服务器的 A 记录。
+
+这种架构兼顾性能、扩展能力和可靠性。前端处理用户请求并与后端交互；后端处理数据并返回结果。职责分离使各服务更易开发和维护，提高整体性能和响应速度。
+
+下面为前端和后端服务构建简单、可靠的架构！

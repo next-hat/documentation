@@ -1,0 +1,24 @@
+---
+title: 任务参考 - Nanocl
+keywords:
+- 文档
+- 参考
+- nanocl
+- nanocld
+- 任务
+- 规范
+- 规范
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+# 任务
+
+Nanocl 中，`Job` 是要运行的命令列表。<br/>
+与 [Cargo](/zh-Hans/references/nanocl/objects/cargo) 不同，它预期会停止运行。<br/>
+
+下面是用于创建任务的 `JobPartial` OpenAPI 规范：
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="zh-Hans" example={false} id="nanocld-latest" pointer="#/components/schemas/JobPartial" />

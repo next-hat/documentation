@@ -1,0 +1,81 @@
+---
+title: サーバーのセキュリティーを強化する
+description: Next Hat サーバーのセキュリティーを強化するための詳しいガイド。
+tags:
+- security
+- server
+- infrastructure
+- guide
+timestamp: 1764696944000
+---
+
+# サーバーのセキュリティーを強化する
+
+import { Callout } from "nextra/components";
+
+このガイドでは、Next Hat サーバーのセキュリティーを強化するための基本手順を説明します。
+
+## 専用ユーザーを作成する [#create-a-dedicated-user]
+
+日常的な操作に root アカウントを使うことは避け、sudo と nanocl の権限を持つ専用ユーザーを作成してください。
+
+1. ホームディレクトリを持つ新しいユーザーを作成します。
+
+```bash
+adduser your_username
+```
+
+2. ユーザーを sudo グループに追加します。
+
+```bash
+usermod -aG sudo your_username
+```
+
+3. ユーザーを nanocl グループに追加します。
+
+```bash
+usermod -aG nanocl your_username
+```
+
+`your_username` は希望するユーザー名に置き換えてください。
+
+## SSH 鍵認証を設定する [#set-up-ssh-key-authentication]
+
+セキュリティーを高めるため、パスワード認証を無効にして SSH 鍵を使用します。
+
+1. まだ作成していない場合は、**ローカルのマシン**で SSH 鍵ペアを生成します。
+
+```bash
+ssh-keygen -t ed25519
+```
+
+<Callout type="warning" emoji="⚠️">
+
+SSH 鍵のパスフレーズは空にしないでください。秘密鍵が漏洩すると、攻撃者がサーバーにアクセスできるおそれがあります。
+
+</Callout>
+
+2. 公開鍵をサーバーにコピーします。
+
+```bash
+ssh-copy-id -i ~/.ssh/<your_key>.pub your_username@your_server
+```
+
+3. サーバーの SSH 設定ファイルを編集します。
+
+```bash
+sudo vim /etc/ssh/sshd_config
+```
+
+4. 次の行を探して更新します。
+
+```plaintext
+PasswordAuthentication no
+PermitRootLogin no
+```
+
+5. SSH サービスを再起動して変更を適用します。
+
+```bash
+sudo systemctl restart ssh
+```

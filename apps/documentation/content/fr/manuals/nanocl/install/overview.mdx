@@ -1,0 +1,87 @@
+---
+title: Installer Nanocl
+description: Comment installer Nanocl. Compatible avec Docker Desktop sur Windows, macOS et Linux.
+keywords:
+- documentation
+- nanocl
+- configuration
+- installation
+- ubuntu
+- debian
+- linux
+- macOS
+- windows
+- docker
+- podman
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import License from '@/components/license';
+
+# Installer Nanocl
+
+Cette page présente l’installation de Nanocl.<br/>
+
+## Prérequis [#prerequisites]
+
+Ses composants fonctionnent dans des conteneurs : un moteur de conteneurs est donc nécessaire.<br/>
+Nanocl prend officiellement en charge [Docker][docker] et fonctionne également avec [Podman][podman].
+
+### Docker [#docker]
+
+Suivez le [guide officiel Docker][docker_install] pour votre système.<br/>
+Sur Windows et macOS, utilisez [Docker Desktop][docker_desktop].
+
+### Podman [#podman]
+
+Podman fournissant une API compatible Docker, Nanocl peut aussi fonctionner avec lui.<br/>
+Si vous préférez Podman, installez-le avec la [documentation officielle][podman_install].
+
+## Plateformes prises en charge [#supported-platforms]
+
+Seule la CLI ([nanocl][nanocl]) propose des binaires précompilés pour certaines plateformes :<br/>
+
+- Linux: amd64
+- macOS: aarch64 (Apple Silicon)
+- Windows: amd64
+
+Les autres plateformes et architectures peuvent compiler depuis les sources avec [crates.io][crates.io]. Consultez ses prérequis avant d’exécuter Cargo.
+
+## Guides d’installation [#installation-guides]
+
+- [Installer sur Linux](/fr/manuals/nanocl/install/linux)
+- [Installer sur macOS](/fr/manuals/nanocl/install/macos)
+- [Installer sur Windows](/fr/manuals/nanocl/install/windows)
+
+## Canaux de publication [#release-channels]
+
+Nanocl propose deux canaux de mise à jour : **stable** et **nightly**.
+
+* **Stable** : dernières versions destinées à une utilisation générale.
+* **Nightly** : versions préliminaires pour tester les prochaines fonctionnalités.
+
+<Callout type="warning" emoji="⚠️">
+
+Les versions nightly sont expérimentales et peuvent contenir des changements incompatibles.
+
+</Callout>
+
+## Assistance [#support]
+
+Nanocl est un projet open source soutenu par [Next Hat][next_hat] et la communauté.<br />
+Consultez le [dépôt GitHub][git_nanocl] pour les détails et les contributions.
+
+<License locale="fr" />
+
+[next_hat]: https://next-hat.com
+[nanocl]: /fr/references/nanocl/cli/overview
+[git_nanocl]: https://github.com/next-hat/nanocl
+[docker]: https://www.docker.com/
+[docker_install]: https://docs.docker.com/engine/install/
+[docker_desktop]: https://docs.docker.com/desktop/
+[crates.io]: https://crates.io/crates/nanocl
+[podman]: https://podman.io/
+[podman_install]: https://podman.io/getting-started/installation

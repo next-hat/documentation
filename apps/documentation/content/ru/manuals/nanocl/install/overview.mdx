@@ -1,0 +1,87 @@
+---
+title: Установка Nanocl
+description: Установка Nanocl. Работает с Docker Desktop в Windows, macOS и Linux.
+keywords:
+- документация
+- nanocl
+- настройка
+- установка
+- ubuntu
+- debian
+- linux
+- macOS
+- windows
+- docker
+- podman
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import License from '@/components/license';
+
+# Установка Nanocl
+
+Обзор установки Nanocl.<br/>
+
+## Предварительные требования [#prerequisites]
+
+Компоненты Nanocl работают в контейнерах, поэтому нужен контейнерный движок.<br/>
+Nanocl официально поддерживает [Docker][docker] и также работает с [Podman][podman].
+
+### Docker [#docker]
+
+Следуйте [официальному руководству Docker][docker_install] для своей системы.<br/>
+В Windows и macOS используйте [Docker Desktop][docker_desktop].
+
+### Podman [#podman]
+
+Podman предоставляет Docker-совместимый API, поэтому Nanocl может работать и с ним.<br/>
+Установите Podman по [официальной документации][podman_install], если предпочитаете его.
+
+## Поддерживаемые платформы [#supported-platforms]
+
+Готовые бинарные файлы только CLI ([nanocl][nanocl]) поставляются для следующих платформ:<br/>
+
+- Linux: amd64
+- macOS: aarch64 (Apple Silicon)
+- Windows: amd64
+
+Для других платформ и архитектур доступна установка из исходного кода через [crates.io][crates.io]. Перед запуском Cargo изучите требования на этой странице.
+
+## Руководства по установке [#installation-guides]
+
+- [Установка в Linux](/ru/manuals/nanocl/install/linux)
+- [Установка в macOS](/ru/manuals/nanocl/install/macos)
+- [Установка в Windows](/ru/manuals/nanocl/install/windows)
+
+## Каналы выпуска [#release-channels]
+
+Nanocl предлагает два канала обновлений: **stable** и **nightly**.
+
+* **Stable**: последние общедоступные выпуски.
+* **Nightly**: предварительные сборки для проверки будущих возможностей.
+
+<Callout type="warning" emoji="⚠️">
+
+Nightly-сборки экспериментальны и могут содержать несовместимые изменения.
+
+</Callout>
+
+## Поддержка [#support]
+
+Nanocl — проект с открытым исходным кодом, поддерживаемый [Next Hat][next_hat] и сообществом.<br />
+Подробности и участие — в [репозитории GitHub][git_nanocl].
+
+<License locale="ru" />
+
+[next_hat]: https://next-hat.com
+[nanocl]: /ru/references/nanocl/cli/overview
+[git_nanocl]: https://github.com/next-hat/nanocl
+[docker]: https://www.docker.com/
+[docker_install]: https://docs.docker.com/engine/install/
+[docker_desktop]: https://docs.docker.com/desktop/
+[crates.io]: https://crates.io/crates/nanocl
+[podman]: https://podman.io/
+[podman_install]: https://podman.io/getting-started/installation

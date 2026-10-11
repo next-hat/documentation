@@ -1,0 +1,266 @@
+---
+slug: your-own-private-internet-with-nanocl-and-wireguard
+title: Собственный частный интернет с Nanocl и WireGuard
+description: Разверните собственный VPN WireGuard с Nanocl и Docker за минуты, управляйте клиентами и безопасно обращайтесь к внутренним сервисам через DNS и прокси Nanocl.
+image: /img/vpn_diagram.png
+authors:
+- leone
+tags:
+- wireguard
+- vpn
+- security
+- self-hosted
+- nanocl
+- docker
+- networking
+- privacy
+- devops
+- cloud
+keywords:
+- WireGuard
+- VPN
+- собственный VPN
+- Nanocl
+- Docker
+- внутренний DNS
+- обратный прокси
+- частная сеть
+- безопасность
+- DevOps
+- учебное руководство
+date: '2025-09-08'
+timestamp: 1787952819000
+---
+
+Хотите быстрый и защищённый доступ к частной сети из любой точки мира? Устали полагаться на сторонние VPN? С WireGuard и Nanocl можно запустить собственный VPN-сервер за минуты без глубоких навыков системного администрирования!
+
+{/* truncate */}
+
+В этом руководстве вы узнаете, как:
+- Настроить VPN-сервер WireGuard на любой машине Linux
+- Использовать Docker и Nanocl для простого и надёжного развёртывания
+- Безопасно подключаться к внутренним сервисам откуда угодно
+
+Nanocl + WireGuard позволяет безопасно публиковать и обнаруживать внутренние сервисы с минимальными затратами на эксплуатацию.
+
+Начнём и возьмём конфиденциальность под свой контроль!
+
+## Предварительные требования [#prerequisites]
+
+- **Сервер Linux с публичным IP-адресом**
+  - На нём будет работать VPN WireGuard; он станет защищённым шлюзом.
+- **Установленный [Docker][docker]**
+  - Docker запускает сервисы в изолированных контейнерах.
+- **Установленный [Nanocl][nanocl]**
+  - Nanocl упрощает оркестрацию контейнеров и включает прокси и DNS-сервер.
+
+## Установка Docker [#install-docker]
+
+Следуйте официальному [руководству установки Docker][docker] для своего дистрибутива Linux. Это быстро и просто!
+
+## Установка Nanocl [#install-nanocl]
+
+Скачайте и установите бинарный файл Nanocl CLI этой командой:
+
+```bash
+curl -fsSL https://download.next-hat.com/scripts/get-nanocl.sh | sh
+```
+
+Затем создайте группу Nanocl и установите внутренние сервисы Nanocl:
+
+```bash
+sudo groupadd nanocl
+sudo usermod -aG nanocl $USER
+newgrp nanocl
+nanocl install
+```
+
+## Развёртывание WireGuard (вашего частного VPN) [#deploy-wireguard-your-private-vpn]
+
+Перейдём к главному! Используем популярный образ [linuxserver/wireguard](https://hub.docker.com/r/linuxserver/wireguard).
+
+Готовый Statefile доступен в нашем [реестре Nanocl](https://nr.next-hat.com).
+
+Он получает пользователей для создания из переменных окружения.
+Создайте файл `.env` со следующим содержимым:
+
+```env
+WG_USERS=myuser
+```
+
+Можно добавить несколько пользователей через запятую:
+
+```env
+WG_USERS=user1,user2,user3
+```
+
+Сохраните Statefile 0.18 ниже как `wireguard.yml` и примените его:
+
+```bash
+WG_USERS=myuser nanocl state apply -s ./wireguard.yml
+```
+
+Руководство этого Statefile доступно командой:
+
+```bash
+nanocl state man -s ./wireguard.yml
+```
+
+Содержимое файла:
+
+```yaml
+ApiVersion: v0.18
+
+Args:
+- Name: namespace
+  Kind: String
+  Default: wireguard
+- Name: puid
+  Kind: String
+  Default: 1000
+- Name: pgid
+  Kind: String
+  Default: 1000
+- Name: dns
+  Kind: String
+  Default: "1.1.1.1"
+- Name: config-path
+  Kind: String
+  Default: /opt/containers/wireguard
+
+Namespace: ${{ Args.namespace }}
+
+Cargoes:
+- Name: wgsrv
+  PortBindings:
+    51820/udp:
+    - HostPort: "51820"
+  Dns:
+  # Nanocl replaces $$INTERNAL_GATEWAY with the selected network gateway.
+  - $$INTERNAL_GATEWAY
+  - ${{ Args.dns }}
+  Containers:
+  - Name: wireguard
+    Image: lscr.io/linuxserver/wireguard:latest
+    Cmd:
+    - -c
+    - SERVERURL=$NANOCL_NODE_ADDR sh /init
+    Env:
+    - PUID=${{ Args.puid }}
+    - PGID=${{ Args.pgid }}
+    # Set this to your desired users, they will be created automatically
+    # When the container start
+    # You can add multiple users separated by comma
+    - PEERS=${{ Envs.WG_USERS }}
+    - PERSISTENTKEEPALIVE_PEERS=all
+    HostConfig:
+      CapAdd:
+      - NET_ADMIN
+      Binds:
+      -  ${{ Args.config-path }}/config:/config
+      Sysctls:
+        net.ipv4.ip_forward: "1"
+```
+
+Пространство имён, PUID, PGID, DNS-сервер и путь конфигурации можно настроить аргументами, например:
+
+```bash
+WG_USERS=myuser nanocl state apply -s ./wireguard.yml -- --config-path /my/custom/path --puid 1001 --pgid 1001 --dns 8.8.8.8
+```
+
+Чтобы получить конфигурацию клиента WireGuard, выполните:
+
+```bash
+cat /opt/containers/wireguard/config/myuser/myuser.conf
+```
+
+Пример конфигурации:
+
+```ini
+[Interface]
+Address = 10.13.13.2
+PrivateKey = 4Kgkxcu27g9s69OSYmSbh6jmvu8kCC8h12XxqrI3uH4=
+ListenPort = 51820
+DNS = 10.13.13.1
+
+[Peer]
+PublicKey = O/xFv4cFdrSok+Ujm9r5J6Laf1PcQv0A4u2T8BWQBQ8=
+PresharedKey = ZOKnf2Zp30WVuTYgcFO7M0QH5C0c3/XTYqCevC69vOg=
+Endpoint = 92.161.136.52:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+```
+
+Используйте этот файл для подключения к серверу WireGuard<br/> с любого устройства (Windows, Mac, Linux, мобильного) через официальный клиент WireGuard.
+
+## Развёртывание внутренних сервисов [#deploy-internal-services]
+
+Теперь разверните внутренние сервисы с Nanocl.<br/>
+Они будут доступны через VPN WireGuard.<br/>
+Например, развернём простой сервис, возвращающий HTTP-заголовки.
+
+```yaml
+ApiVersion: v0.18
+
+Namespace: global
+
+Cargoes:
+- Name: deploy-example
+  Containers:
+  - Name: web
+    Image: ghcr.io/next-hat/nanocl-get-started:latest
+    Env:
+    - APP=EXAMPLE
+
+Resources:
+- Name: dns.my-domain.internal
+  Kind: ncdns.io/rule/v0.10
+  Data:
+    Network: Internal
+    Entries:
+    - Name: my-domain.internal
+      IpAddress: Internal
+
+- Name: my-domain.internal
+  Kind: ncproxy.io/rule/v0.15
+  Data:
+    Rules:
+    - Domain: my-domain.internal
+      Network: Internal
+      Locations:
+      - Path: /
+        Target:
+          Key: global.deploy-example.c
+          Port: 9000
+```
+
+После подключения к VPN откройте [http://my-domain.internal](http://my-domain.internal).
+
+![Внутренний сервис](/img/internal_service.png)
+
+---
+
+## Рекомендации по безопасности [#security-best-practices]
+
+- Ограничьте UDP-порт 51820 доверенными IP-адресами через межсетевой экран.
+- Храните закрытые ключи в тайне и никогда не передавайте их другим!
+- Регулярно обновляйте образы Docker, Nanocl и WireGuard.
+- Проверяйте журналы сервера на подозрительные действия.
+
+## Устранение неполадок [#troubleshooting-tips]
+
+- Если контейнер WireGuard не запускается, проверьте ошибки в журналах Nanocl.
+- Убедитесь, что межсетевой экран пропускает UDP-трафик на порт 51820.
+- Проверьте наличие пути конфигурации и возможность записи.
+- Проверьте работающие экземпляры командами `nanocl ps` и `nanocl cargo list --namespace your_namespace`.
+
+## Схема установки [#visualize-your-setup]
+
+![Схема WireGuard](/img/vpn_diagram.png)
+
+## Следующие шаги [#next-steps--call-to-action]
+
+Готово! Теперь у вас есть собственный высокопроизводительный VPN-сервер. Поделитесь руководством с друзьями и расскажите об успехе, помогая другим управлять своей конфиденциальностью!
+
+[docker]: https://docs.docker.com/get-docker/
+[nanocl]: https://docs.next-hat.com/ru/guides/nanocl/overview
+[nanocl-install]: https://docs.next-hat.com/ru/manuals/nanocl/install/overview

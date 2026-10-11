@@ -1,0 +1,78 @@
+---
+title: CLI 参考 - Nanocl
+description: 使用 Nanocl 0.18 命令行管理工作负载和具体运行时进程。
+keywords:
+- 文档
+- 参考
+- nanocl
+- nanocl CLI
+- CLI
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# 使用 Nanocl 命令行
+
+```sh
+nanocl [OPTIONS] <COMMAND>
+```
+
+执行 `nanocl --help` 查看当前命令列表，或在子命令后添加 `--help`。Nanocl 0.18 提供以下顶层命令组和操作：
+
+| 命令 | 用途 |
+| --- | --- |
+| `namespace`、`secret`、`job`、`cargo`、`vm`、`resource` | 管理 Nanocl 对象 |
+| `metric`、`context`、`node`、`event`、`state` | 管理辅助 API 和 Statefile |
+| `ps` | 列出具体运行时进程 |
+| `inspect`、`logs`、`stats` | 按各命令支持的方式检查一个或多个进程 |
+| `exec`、`kill` | 在精确进程名称或完整 Docker ID 对应的进程中执行命令或发送信号 |
+| `info`、`version` | 显示主机和版本信息 |
+| `install`、`uninstall`、`backup` | 管理本地安装并导出目标状态 |
+
+全局 `--host` 选项选择 `nanocld` 端点，默认值为 `unix://run/nanocl/nanocl.sock`。
+
+## 工作负载键与进程名称 [#workload-keys-and-process-names]
+
+Cargo 和 VM 命令使用规范的 `{namespace}.{name}` 键，例如：
+
+```sh
+nanocl cargo inspect global.storefront
+nanocl vm inspect global.build-runner
+```
+
+按进程操作的命令不接受 Cargo 名称和副本选择器。先找到具体进程，再使用返回的精确名称或完整 Docker ID：
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+多容器工作流程见[进程操作](/zh-Hans/guides/nanocl/advanced-usage/process-operations)。
+
+## 帮助 [#help]
+
+```console
+$ nanocl cargo --help
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+```
+
+根据本地 Unix 套接字权限，可能需要以 `nanocl` 组中的用户运行 Nanocl。详见[安装说明](/zh-Hans/manuals/nanocl/install/overview)。

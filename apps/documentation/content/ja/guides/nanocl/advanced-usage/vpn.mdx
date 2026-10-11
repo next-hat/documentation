@@ -1,0 +1,94 @@
+---
+title: VPN - Nanocl
+description: Nanocl 内で VPN を使います。
+keywords:
+- ドキュメント
+- nanocl
+- ガイド
+- 入門
+- 設定
+- 状態
+- ファイル
+- 設定
+- yaml
+- yml
+- statefile
+- vpn
+- プライベートネットワーク
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# 自分専用の VPN
+
+Nanocl では作業を簡単にするため、すぐに使える VPN の Statefile を用意しています。<br />
+[@Lin Song](https://github.com/hwdsl2) の [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) を基にしており、[Nanocl の公式リポジトリ](https://nr.next-hat.com)から利用できます。
+
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+この Statefile のマニュアルは、次のコマンドで表示できます。
+
+<CodeBlock className="language-sh">
+{`nanocl state man -s nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+`Statefile Args` で設定できる範囲を超えて調整したい場合は、ダウンロードして必要に応じてカスタマイズできます。
+
+
+<CodeBlock className="language-sh">
+{`wget nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+VPN の `Statefile` の内容は次のとおりです。
+
+<StatefileBlock example="advanced/vpn" />
+
+次のように利用できます。
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+</CodeBlock>
+
+上のファイルでは、VPN 専用の DNS を作成しています。<br/>
+これにより、ドメインの作成や既存のドメインの上書きを行い、Cargo へ転送できます。<br/>
+
+VPN に接続する前に、次のコマンドで認証情報を取得できます。
+
+```sh
+nanocl cargo -n private logs vpn
+```
+
+次のような結果が表示されます。
+
+```console
+================================================
+
+IPsec VPN server is now ready for use!
+
+Connect to your new VPN with these details:
+
+Server IP: server-public-ip
+IPsec PSK: secret-psk
+Username: vpnuser
+Password: secret-password
+```
+
+VPN への接続方法はシステムによって異なるため、ここでは説明しません。<br/>
+コンテナイメージの詳細は、[公式ドキュメント](https://github.com/hwdsl2/docker-ipsec-vpn-server)で確認できます。<br/>
+
+これで任意の名前空間に Cargo を作成し、VPN からアクセスできるようにできます。例は次のとおりです。
+
+<StatefileBlock example="advanced/vpn-cargo" />
+
+`private` 名前空間のゲートウェイを参照する `private.nsp` を複数の場所で使っています。別の名前空間を使った場合は、変更が必要になることがあります。
+
+この設定を適用すると、[http://my-domain.internal](http://my-domain.internal) にアクセスできるようになります。
+
+![my-domain.internal](/img/my-domain.png)

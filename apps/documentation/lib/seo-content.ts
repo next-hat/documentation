@@ -1,7 +1,9 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { parse } from 'yaml'
-import { posts, tags } from './blog'
+import { localizedPosts, tags } from './blog'
+import { locales, routeLocale, localePath } from './locales'
+import { translate } from './translate'
 import type { SeoPage } from './seo'
 
 const plainText = (text: string) => text
@@ -22,21 +24,23 @@ function readContent(directory: string, prefix = ''): SeoPage[] {
     const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
     const metadata = frontmatter ? parse(frontmatter[1]) : {}
     const path = `${prefix}/${entry.name.replace(/\.mdx?$/, '')}`.replace(/\/index$/, '') || '/'
-    const post = posts.find(post => post.route === path)
+    const { locale, path: originalPath } = routeLocale(path)
+    const t = (text: string) => translate(locale, text)
+    const post = localizedPosts(locale).find(post => post.route === path)
     const body = source.slice(frontmatter?.[0].length || 0)
-    const title = path === '/' ? 'Next Hat Documentation' : path.endsWith('/introduction') ? `${metadata.title}: Introduction` : metadata.title
+    const title = originalPath === '/' ? t('Next Hat Documentation') : originalPath.endsWith('/introduction') ? `${metadata.title}: ${t('Introduction')}` : metadata.title
     if (!title) throw new Error(`Missing SEO title: ${path}`)
-    const isCommand = prefix === '/references/nanocl/cli' && entry.name !== 'readme.mdx'
-    const commandDescription = body.match(/^## DESCRIPTION[ \t]*\r?\n([\s\S]*)/m)?.[1]
+    const isCommand = routeLocale(prefix).path === '/references/nanocl/cli' && entry.name !== 'readme.mdx'
+    const commandDescription = body.match(/^## (?:DESCRIPTION|DESCRIPTION DE LA COMMANDE|ОПИСАНИЕ|説明|描述|说明)(?:[ \t]+\[#[^\]]+\])?[ \t]*\r?\n([\s\S]*)/m)?.[1]
       .split(/\r?\n#{1,6}\s/)[0].trim()
     const paragraph = body.replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*$/gm, '')
-      .split(/\n\s*\n/).find(block => /^[A-Za-z]/.test(block.trim()) && !/^(?:import|export)\s/.test(block.trim()))
+      .split(/\n\s*\n/).find(block => /^[\p{L}]/u.test(block.trim()) && !/^(?:import|export)\s/.test(block.trim()))
     let description = post?.description || metadata.description
     if (!description && isCommand) {
       const command = entry.name.replace(/\.mdx?$/, '').replace(/-/g, ' ')
-      description = `${command}: ${plainText(commandDescription || title).replace(/[.!]$/, '')}. Command syntax, options, and usage reference.`
+      description = `${command}: ${plainText(commandDescription || title).replace(/[.!]$/, '')}. ${t('Command syntax, options, and usage reference.')}`
     }
-    description ||= paragraph || `${title}. Learn how to configure and use Nanocl with the Next Hat documentation.`
+    description ||= paragraph || `${title}. ${t('Learn how to configure and use Nanocl with the Next Hat documentation.')}`
     return [{
       path, title, description: excerpt(description), keywords: metadata.keywords, post,
       ...(metadata.timestamp ? { modified: new Date(Number(metadata.timestamp)).toISOString() } : {})
@@ -44,12 +48,16 @@ function readContent(directory: string, prefix = ''): SeoPage[] {
   })
 }
 
-export const blogListings: SeoPage[] = [
-  { path: '/blog/archive', title: 'Blog archive', description: 'Browse every Next Hat release announcement and infrastructure article, organized by year.' },
-  { path: '/blog/tags', title: 'Blog tags', description: 'Explore Next Hat articles by topic, from Nanocl releases to networking, deployment, and self-hosting.' },
-  { path: '/blog/authors', title: 'Blog authors', description: 'Meet the contributors writing Next Hat release notes and practical infrastructure guides.' },
-  ...tags.map(({ label, slug }) => ({ path: `/blog/tags/${slug}`, title: `Posts tagged ${label}`, description: `Read Next Hat articles tagged ${label}: release notes and practical guides from the team behind Nanocl.` }))
-]
+export const blogListings: SeoPage[] = locales.flatMap(locale => {
+  const t = (text: string) => translate(locale, text)
+  return [
+    { path: localePath('/blog/archive', locale), title: t('Blog archive'), description: t('Browse every Next Hat release announcement and infrastructure article, organized by year.') },
+    { path: localePath('/blog/tags', locale), title: t('Blog tags'), description: t('Explore Next Hat articles by topic, from Nanocl releases to networking, deployment, and self-hosting.') },
+    { path: localePath('/blog/authors', locale), title: t('Blog authors'), description: t('Meet the contributors writing Next Hat release notes and practical infrastructure guides.') },
+    { path: localePath('/search', locale), title: t('Search documentation'), description: t('Search guides, commands, examples, and release notes.') },
+    ...tags.map(({ label, slug }) => ({ path: localePath(`/blog/tags/${slug}`, locale), title: t('Posts tagged {tag}').replace('{tag}', t(label)), description: t('Read Next Hat articles tagged {tag}: release notes and practical guides from the team behind Nanocl.').replace('{tag}', t(label)) }))
+  ]
+})
 export const seoPages = [...readContent(join(process.cwd(), 'content')), ...blogListings]
 export function getSeoPage(path: string): SeoPage {
   const page = seoPages.find(page => page.path === path)

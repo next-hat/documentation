@@ -1,0 +1,81 @@
+---
+title: Nanocld
+timestamp: 1787952819000
+---
+
+# Nanocld
+
+# 名称
+
+Nanocl - Nanocl 守护进程——独立编排工具
+
+## 语法 [#synopsis]
+
+**Nanocl** \[**-H**\|**--hosts**\] \[**--docker-host**\]
+\[**--store-addr**\] \[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--hostname**\] \[**--node**\] \[**--advertise-addr**\] \[**--gid**\]
+\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\] \[**--verify**\]
+\[**--password**\]
+\[**-h**\|**--help**\] \[**-V**\|**--version**\]
+
+## 说明 [#description]
+
+Nanocl 守护进程——独立编排工具
+
+## 选项 [#options]
+
+**-H**, **--hosts**=*HOSTS*  
+监听地址，使用 tcp:// 和 unix:// \[默认值：unix:///run/nanocl.sock\]
+
+**--docker-host**=*DOCKER_HOST*  
+要连接的 Docker 守护进程套接字 \[默认值：unix:///var/run/docker.sock\]
+
+**--store-addr**=*STORE_ADDR*
+存储连接地址
+
+**--state-dir**=*STATE_DIR*  
+状态目录 \[默认值：/var/lib/nanocl\]
+
+**--conf-dir**=*CONF_DIR* \[默认值： /etc/nanocl\]  
+配置目录
+
+**--gateway**=*GATEWAY*  
+网关，未设置时自动检测主机默认源 IP 的网关
+
+**--hostname**=*HOSTNAME*  
+节点主机名，未设置时自动检测
+
+**--node**=*NODES*  
+将当前节点加入集群
+
+**--advertise-addr**=*ADVERTISE_ADDR*  
+向其他节点公布的地址
+
+**--gid**=*GID* \[默认值： 0\]  
+用户组 ID
+
+**--cert**=*CERT*  
+
+**--cert-key**=*CERT_KEY*  
+
+**--cert-ca**=*CERT_CA*  
+
+**--verify**
+验证证书颁发机构
+
+**--password**=*PASSWORD*
+证书密码（如果有）
+
+**-h**, **--help**  
+显示帮助
+
+**-V**, **--version**  
+显示版本
+
+# 版本
+
+v0.18.0
+
+# 作者
+
+Next Hat 团队 \<team@next-hat.com\>

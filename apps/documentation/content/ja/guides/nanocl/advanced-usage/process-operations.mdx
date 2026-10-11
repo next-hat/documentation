@@ -1,0 +1,40 @@
+---
+title: プロセスの操作 - Nanocl
+description: Cargo、Job、仮想マシンの実際のプロセスを特定し、操作します。
+keywords:
+- ドキュメント
+- nanocl
+- プロセス
+- ps
+- exec
+- kill
+- ログ
+- 統計情報
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# プロセスの操作
+
+Cargo 名はワークロードを識別し、プロセス名は実際のランタイムコンテナを識別します。そのため、複数コンテナを持つレプリケーションされた Cargo には、複数のプロセス名があります。対象を選ぶ前に一覧を表示してください。
+
+```sh
+nanocl ps --namespace global --kind cargo
+```
+
+アプリケーションのプロセス名には、名前空間と Cargo キー、レプリカの序数、定義したコンテナ名が含まれます。初期化、サンドボックス、一時的なロールアウトのプロセスも `nanocl ps` で区別できます。スクリプトで名前を組み立てるのではなく、返されたプロセス名または完全な Docker ID を正しい値として使ってください。
+
+プロセス単位のコマンドには、その値をそのまま指定します。
+
+```sh
+nanocl inspect PROCESS
+nanocl logs -f PROCESS
+nanocl stats PROCESS
+nanocl exec PROCESS -- env
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` は稼働中の 1 つのプロセスを対象とします。`--interactive` は標準入力を開いたままにし、`--tty` は疑似 TTY を割り当て、`--detach` はコマンドをバックグラウンドで開始します。複数回指定できる `--env` と `--env-file`、および `--user`、`--workdir`、`--privileged`、`--detach-keys` も利用できます。接続モードでは、TTY を使わない場合に標準出力と標準エラーが分離されたままになり、CLI は実行したコマンドの終了ステータスで終了します。
+
+`nanocl kill` も 1 つのプロセスを対象とします。デフォルトのシグナルは `SIGKILL` です。正常な終了が必要な場合は `--signal` を指定してください。0.18 には Cargo 全体に対する `cargo kill` はなく、以前の `cargo exec` コマンドも削除されました。
+

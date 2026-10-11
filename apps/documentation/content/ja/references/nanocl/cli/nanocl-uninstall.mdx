@@ -1,0 +1,33 @@
+---
+title: アンインストール
+timestamp: 1757712924000
+---
+
+# アンインストール
+
+# 名前
+
+uninstall - コンポーネントをアンインストールします
+
+## 書式 [#synopsis]
+
+**uninstall** \[**--docker-host**\] \[**-t**\|**--template**\]
+\[**--docker-desktop**\] \[**-h**\|**--help**\]
+
+## 説明 [#description]
+
+コンポーネントをアンインストールします
+
+## オプション [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+Nanocl がインストールされている Docker ホスト。デフォルトは unix:///var/run/docker.sock です
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Nanocl のアンインストールテンプレート。デフォルトでは自動検出します
+
+**--docker-desktop**  
+Docker ホストが Docker Desktop かどうかを指定します。Docker コンテキストが desktop-linux の場合は自動検出します
+
+**-h**, **--help**  
+ヘルプを表示します

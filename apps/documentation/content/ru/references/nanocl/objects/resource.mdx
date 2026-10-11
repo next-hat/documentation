@@ -1,0 +1,56 @@
+---
+title: Справочник ресурсов — Nanocl
+description: Определение ресурсов Nanocl и настройка правил прокси ncproxy и DNS ncdns.
+keywords:
+- документация
+- справочники
+- nanocl
+- nanocld
+- ресурс
+- спецификация
+- спецификация
+- прокси
+image: /img/logo.webp
+timestamp: 1730477712000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# Ресурсы
+
+В Nanocl `Resource` обозначает конфигурацию.<br />
+Ресурс может иметь любой определённый пользователем `Kind`; сейчас встроенные виды ресурсов отсутствуют:
+
+Хотя виды ресурсов определяет пользователь, после базовой установки обычно поддерживаются два вида:
+
+| Вид плагина | Назначение |
+| ----------- | ----------- |
+| ncproxy.io/rule | Данные конфигурации прокси, устанавливаемой контроллером прокси |
+| ncdns.io/rule | Данные конфигурации DNS, устанавливаемой контроллером DNS |
+
+## Правило прокси [#proxy-rule]
+
+`ProxyRule` определяет доступ к Cargo через прокси.<br />
+Настройка `ProxyRules` позволяет точно управлять доступностью Cargo.
+
+Спецификация OpenAPI создания `ProxyRule`:
+
+<ApiSchema locale="ru" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceProxyRule" />
+
+### Сеть правила прокси [#proxy-rule-network]
+
+| Сеть | Назначение |
+| ----------- | ----------- |
+| All | Привязка ко всем сетевым адресам |
+| Local | Привязка только к 127.0.0.1 |
+| Public | Привязка только к публичному IP-адресу |
+| Internal | Привязка к внутреннему шлюзу Nanocl |
+
+## Правило DNS [#dns-rule]
+
+`DnsRule` определяет конфигурацию DNS-сервера.<br/>
+Это позволяет настраивать сетевой доступ по доменным именам.
+
+Спецификация OpenAPI создания `ProxyRule`:
+
+<ApiSchema locale="ru" example={false} id="nanocld-latest" pointer="#/components/schemas/ResourceDnsRule" />

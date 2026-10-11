@@ -1,0 +1,61 @@
+---
+title: Аргументы Statefile — Nanocl
+description: Настраивайте конфигурацию Nanocl с аргументами Statefile.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- конфигурация
+- состояние
+- файл
+- настройки
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Аргументы Statefile
+
+Аргументы Statefile позволяют повторно использовать `Statefile` с шаблонами `Liquid`.<br />
+Создайте файл `my-deployment.yml` с таким содержимым:
+
+<StatefileBlock example="advanced/args" />
+
+Если применить его командой:
+
+```sh
+nanocl state apply -s my-deployment.yml
+```
+
+Вы увидите ошибку:
+
+```console
+error: the following required arguments were not provided:
+  --name <name>
+  --domain <domain>
+  --image <image>
+  --port <port>
+
+Usage: nanocl state args -- --name <name> --domain <domain> --image <image> --port <port>
+
+For more information, try '--help'.
+```
+
+Теперь `Statefile` требует аргументы для формирования конфигурации.
+
+Правильная команда:
+
+```sh
+state apply -s my-deployment.yml -- --name deploy-example \
+  --domain deploy-example.com \
+  --image ghcr.io/next-hat/nanocl-get-started:latest \
+  --port 9000
+```
+
+Так можно быстро и легко развернуть любой HTTP-сервис.<br />
+Теперь вы знаете основы создания отличного `Statefile`!

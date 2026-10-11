@@ -1,0 +1,81 @@
+---
+title: 保护服务器
+description: 全面介绍如何保护 Next Hat 服务器的安全。
+tags:
+- security
+- server
+- infrastructure
+- guide
+timestamp: 1764696944000
+---
+
+# 保护服务器
+
+import { Callout } from "nextra/components";
+
+本指南介绍保护 Next Hat 服务器的必要步骤。
+
+## 创建专用用户 [#create-a-dedicated-user]
+
+避免在日常操作中使用 root 账号，应创建具有 sudo 和 nanocl 权限的专用用户。
+
+1. 创建带主目录的新用户：
+
+```bash
+adduser your_username
+```
+
+2. 将用户加入 sudo 组：
+
+```bash
+usermod -aG sudo your_username
+```
+
+3. 将用户加入 nanocl 组：
+
+```bash
+usermod -aG nanocl your_username
+```
+
+将 `your_username` 替换为你选择的用户名。
+
+## 配置 SSH 密钥认证 [#set-up-ssh-key-authentication]
+
+为了提高安全性，禁用密码认证，改用 SSH 密钥。
+
+1. 如果尚未创建，在**本地计算机**生成 SSH 密钥对：
+
+```bash
+ssh-keygen -t ed25519
+```
+
+<Callout type="warning" emoji="⚠️">
+
+SSH 密钥必须设置口令。如果私钥泄露，没有口令保护会让攻击者获得服务器访问权限。
+
+</Callout>
+
+2. 将公钥复制到服务器：
+
+```bash
+ssh-copy-id -i ~/.ssh/<your_key>.pub your_username@your_server
+```
+
+3. 编辑服务器上的 SSH 配置文件：
+
+```bash
+sudo vim /etc/ssh/sshd_config
+```
+
+4. 找到并更新以下行：
+
+```plaintext
+PasswordAuthentication no
+PermitRootLogin no
+```
+
+5. 重启 SSH 服务以应用变更：
+
+```bash
+sudo systemctl restart ssh
+```

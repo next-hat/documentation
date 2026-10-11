@@ -1,0 +1,61 @@
+---
+title: Statefile 参数 - Nanocl
+description: 使用 Statefile 参数自定义 Nanocl 配置。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 配置
+- 状态
+- 文件
+- 配置
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1715170957000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile 参数
+
+Statefile 参数利用 `Liquid` 模板复用 `Statefile`。<br/>
+看下面的例子：新建 `my-deployment.yml` 并写入以下内容：
+
+<StatefileBlock example="advanced/args" />
+
+现在执行以下应用命令：
+
+```sh
+nanocl state apply -s my-deployment.yml
+```
+
+会出现以下错误消息：
+
+```console
+error: the following required arguments were not provided:
+  --name <name>
+  --domain <domain>
+  --image <image>
+  --port <port>
+
+Usage: nanocl state args -- --name <name> --domain <domain> --image <image> --port <port>
+
+For more information, try '--help'.
+```
+
+`Statefile` 现在要求传入渲染所需的参数。
+
+正确命令是：
+
+```sh
+state apply -s my-deployment.yml -- --name deploy-example \
+  --domain deploy-example.com \
+  --image ghcr.io/next-hat/nanocl-get-started:latest \
+  --port 9000
+```
+
+这样就可以轻松快速部署任意 HTTP 服务。<br/>
+现在你已掌握创建实用 `Statefile` 的基础！

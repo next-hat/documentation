@@ -1,0 +1,50 @@
+---
+title: Référence CLI C2ncl
+description: Pour lister les commandes disponibles, exécutez c2ncl sans paramètres ou c2ncl --help.
+keywords:
+- documentation
+- références
+- nanocl
+- nanocl CLI
+- CLI
+- C2ncl
+- convertir Docker Compose vers Nanocl
+- docker compose
+- statefile
+image: /img/logo.webp
+timestamp: 1689000770000
+---
+
+# De Docker Compose au Statefile Nanocl
+
+## C2ncl [#c2ncl]
+
+```sh
+c2ncl [OPTIONS]
+```
+
+Pour lister les commandes disponibles, exécutez `c2ncl` sans paramètres ou `c2ncl --help` :
+
+```console
+$ c2ncl --help
+Converts docker-compose.yml to nanocl Statefile.yml
+
+Usage: c2ncl --in-file <IN_FILE> --out-file <OUT_FILE>
+
+Options:
+  -i, --in-file <IN_FILE>    Path to docker-compose file
+  -o, --out-file <OUT_FILE>  Output filepath
+  -h, --help                 Print help
+  -V, --version              Print version
+```
+
+## Description [#description]
+
+C2ncl convertit `docker-compose.yml` en `Statefile` Nanocl pour commencer rapidement à utiliser Nanocl !
+
+
+## Exemple [#example]
+
+```sh
+c2ncl -i docker-compose.yml -o Statefile.yml
+```

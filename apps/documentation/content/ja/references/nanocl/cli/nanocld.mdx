@@ -1,0 +1,81 @@
+---
+title: Nanocld
+timestamp: 1787952819000
+---
+
+# Nanocld
+
+# 名前
+
+Nanocl - Nanocl デーモン - 自己完結型オーケストレーター
+
+## 書式 [#synopsis]
+
+**Nanocl** \[**-H**\|**--hosts**\] \[**--docker-host**\]
+\[**--store-addr**\] \[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--hostname**\] \[**--node**\] \[**--advertise-addr**\] \[**--gid**\]
+\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\] \[**--verify**\]
+\[**--password**\]
+\[**-h**\|**--help**\] \[**-V**\|**--version**\]
+
+## 説明 [#description]
+
+Nanocl デーモン - 自己完結型オーケストレーター
+
+## オプション [#options]
+
+**-H**, **--hosts**=*HOSTS*  
+待ち受けるホスト。tcp:// と unix:// を使用します \[デフォルト: unix:///run/nanocl.sock\]
+
+**--docker-host**=*DOCKER_HOST*  
+接続先の Docker デーモンソケット \[デフォルト: unix:///var/run/docker.sock\]
+
+**--store-addr**=*STORE_ADDR*
+接続するストアのアドレス
+
+**--state-dir**=*STATE_DIR*  
+状態ディレクトリ \[デフォルト: /var/lib/nanocl\]
+
+**--conf-dir**=*CONF_DIR* \[デフォルト: /etc/nanocl\]  
+設定ディレクトリ
+
+**--gateway**=*GATEWAY*  
+ゲートウェイ。未指定の場合はホストのデフォルトの送信元 IP ゲートウェイを自動検出します
+
+**--hostname**=*HOSTNAME*  
+ノードのホスト名。未指定の場合は自動検出します
+
+**--node**=*NODES*  
+現在のノードをクラスターに参加させます
+
+**--advertise-addr**=*ADVERTISE_ADDR*  
+他のノードに通知するアドレス
+
+**--gid**=*GID* \[デフォルト: 0\]  
+グループ ID
+
+**--cert**=*CERT*  
+
+**--cert-key**=*CERT_KEY*  
+
+**--cert-ca**=*CERT_CA*  
+
+**--verify**
+認証局を検証します
+
+**--password**=*PASSWORD*
+証明書のパスワード（設定されている場合）
+
+**-h**, **--help**  
+ヘルプを表示します
+
+**-V**, **--version**  
+バージョンを表示します
+
+# バージョン
+
+v0.18.0
+
+# 著者
+
+Next Hat チーム \<team@next-hat.com\>

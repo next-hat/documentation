@@ -1,0 +1,189 @@
+---
+title: コンテナを公開する
+description: Docker と Nginx で、コンテナ化したフロントエンドとバックエンドを別々のドメインに公開する方法を学びます。
+keywords:
+- コンテナ化したアプリケーションの公開
+- コンテナイメージのデプロイ
+- Docker
+- Nginx
+- Docker ネットワークの作成
+- Nginx の設定
+- 異なるドメインからコンテナにアクセス
+- フロントエンド
+- バックエンド
+timestamp: 1689000770000
+---
+
+# コンテナを公開する
+
+`my-frontend:0.0.1` を `my-domain.com` で、`my-api:0.0.1` を `api.my-domain.com` で公開するには、VPS または専用・ベアメタルサーバーを用意し、両方のドメインがそのサーバーを指していることを確認します。<br/>
+サーバーに Docker がインストールされていることも確認してください。
+
+## イメージをサーバーにアップロードする [#uploading-our-images-to-the-server]
+
+次のコマンドでコンテナイメージを保存、エクスポートできます。
+```sh
+docker save my-frontend:0.0.1 | gzip > /tmp/my-frontend-0.0.1.tar.gz
+docker save my-api:0.0.1 | gzip > /tmp/my-api-0.0.1.tar.gz
+```
+
+VPS の SSH を設定済みであれば、scp コマンドでイメージをアップロードできます。
+```sh
+scp /tmp/my-frontend-0.0.1.tar.gz /tmp/my-api-0.0.1.tar.gz my-user@my-domain.com:~
+```
+
+続いて SSH で VPS に接続します。
+```sh
+ssh my-user@my-domain.com
+```
+
+最後にコンテナイメージを読み込みます。
+```sh
+cat ~/my-frontend-0.0.1.tar.gz | docker load
+cat ~/api-0.0.1.tar.gz | docker load
+```
+
+## イメージを起動する [#start-your-images]
+
+サーバーにイメージを読み込んだら、起動する前に次のコマンドで Docker ネットワークを作成します。
+```sh
+docker network create my-domain
+```
+
+次のコマンドでイメージを起動します。
+```sh
+docker run -d --network my-domain --name my-frontend my-frontend:0.0.1
+docker run -d --network my-domain --name my-api my-api:0.0.1
+```
+
+指定している引数とフラグの意味は次のとおりです。
+- `run`: イメージから新しいコンテナを作成して実行します。
+- `-d`: 切り離しモードでコンテナをバックグラウンドで実行し、新しいコンテナ ID を表示します。
+- `--network`: コンテナのネットワークモードを設定します。
+- `--name`: コンテナの名前を設定します。
+- `my-frontend|my-api`: コンテナの名前です。
+- `my-frontend:0.0.1|my-api:0.0.1`: コンテナの作成に使うイメージです。
+
+## Nginx を設定する [#setting-up-nginx]
+
+[Nginx](https://www.nginx.com) のインストール方法は、サーバーの OS によって異なります。<br />
+Ubuntu では、次のコマンドで Nginx をインストールできます。
+```sh
+sudo apt install -y nginx
+```
+Nginx の設定フォルダーは通常 `/etc/nginx` にあります。
+
+続いて、`my-domain.com` の Nginx 設定ファイルを `/etc/nginx/sites-enabled/my-domain.com` に作成します。
+
+```nginx
+server {
+    listen 80;
+    server_name my-domain.com;
+
+    location / {
+        proxy_pass http://ip_of_frontend_container:80;
+    }
+}
+```
+
+フロントエンドコンテナの IP アドレスを取得するには、次のいずれかのコマンドを実行します。
+```
+docker network inspecy my-domain
+docker container inspect my-frontend
+```
+
+続いて、`api.my-domain.com` の設定ファイルを `/etc/nginx/sites-enabled/api.my-domain.com` に作成します。
+```nginx
+server {
+    listen 80;
+    server_name api.my-domain.com;
+
+    ## To allow versioning
+    ## We can add a location /v1/ to the next version of our api and keep the old container running
+    ## note that the last / is important
+    location /v0/ {
+        proxy_pass http://ip_of_api_container:80/;
+    }
+}
+```
+
+API コンテナの IP アドレスを取得するには、次のいずれかのコマンドを実行します。
+```
+docker network inspecy my-domain
+docker container inspect my-api
+```
+
+最後に、次のコマンドで Nginx の設定を再読み込みします。
+```sh
+sudo nginx -s reload
+```
+
+これで、フロントエンドには `http://my-domain.com`、バックエンドには `http://api.my-domain.com/v0` からアクセスできます。
+
+## Certbot で HTTPS を有効にする [#enabling-https-with-certbot]
+
+Nginx と同様に、[Certbot](https://certbot.eff.org) のインストール方法も OS によって異なります。<br />
+Ubuntu では、次のコマンドで Certbot をインストールできます。
+```sh
+sudo apt install -y certbot
+```
+
+Certbot の Nginx プラグインは、生成した SSL 証明書を使って HTTP 設定を HTTPS に変換します。<br />
+次のコマンドで利用できます。
+```sh
+certbot --nginx --email email@email.com --agree-tos -d your-domain.com
+certbot --nginx --email email@email.com --agree-tos -d api.your-domain.com
+```
+
+SSL 証明書を生成したら、Nginx の設定を更新しましょう。
+
+`/etc/nginx/sites-enabled/my-domain.com` は次のように更新します。
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location / {
+        proxy_pass http://ip_of_your_container:80;
+    }
+}
+```
+
+`/etc/nginx/sites-enabled/api.my-domain.com` は次のように更新します。
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.my-domain.com;
+
+    ssl_certificate      /etc/letsencrypt/live/api.my-domain.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/api.my-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    }
+
+    location /v0/ {
+        proxy_pass http://ip_of_your_container:80/;
+    }
+}
+```
+
+SSL の設定と、HTTPS 以外のスキームから HTTPS へのリダイレクトを追加しています。
+
+最後に Nginx の設定を再読み込みします。
+```sh
+sudo nginx -s reload
+```
+
+これで HTTPS により安全にコンテナにアクセスできます。フロントエンドは `https://my-domain.com`、バックエンドは `https://api.my-domain.com/v0` です。

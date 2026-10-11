@@ -1,0 +1,63 @@
+---
+title: 安装
+timestamp: 1757712924000
+---
+
+# 安装
+
+# 名称
+
+install - 安装组件
+
+## 语法 [#synopsis]
+
+**install** \[**--docker-host**\] \[**--docker-desktop**\]
+\[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--advertise-addr**\] \[**--daemon-hosts**\] \[**--group**\]
+\[**--hostname**\] \[**-t**\|**--template**\]
+\[**-p**\|**--force-pull**\] \[**-f **\] \[**-h**\|**--help**\]
+
+## 说明 [#description]
+
+安装组件
+
+## 选项 [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+安装 Nanocl 的 Docker 主机，默认为 unix:///var/run/docker.sock
+
+**--docker-desktop**  
+指定 Docker 主机是否为 Docker Desktop；Docker 上下文为 desktop-linux 时自动检测
+
+**--state-dir** *\<STATE_DIR\>*  
+Nanocl 守护进程的状态目录，默认为 /var/lib/nanocl
+
+**--conf-dir** *\<CONF_DIR\>*  
+Nanocl 守护进程的配置目录，默认为 /etc/nanocl
+
+**--gateway** *\<GATEWAY\>*  
+Nanocl 守护进程使用的网关地址，默认自动检测
+
+**--advertise-addr** *\<ADVERTISE_ADDR\>*  
+Nanocl 守护进程使用的主机地址，默认自动检测
+
+**--daemon-hosts** *\<DAEMON_HOSTS\>*  
+Nanocl 守护进程使用的主机地址，默认自动检测
+
+**--group** *\<GROUP\>*  
+Nanocl 守护进程使用的用户组，默认为 nanocl
+
+**--hostname** *\<HOSTNAME\>*  
+Nanocl 守护进程的主机名，默认自动检测
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Nanocl 安装模板，默认自动检测
+
+**-p**, **--force-pull**  
+强制重新拉取 Nanocl 组件
+
+**-f**  
+安装后连接容器日志
+
+**-h**, **--help**  
+显示帮助

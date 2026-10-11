@@ -1,0 +1,63 @@
+---
+title: インストール
+timestamp: 1757712924000
+---
+
+# インストール
+
+# 名前
+
+install - コンポーネントをインストールします
+
+## 書式 [#synopsis]
+
+**install** \[**--docker-host**\] \[**--docker-desktop**\]
+\[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--advertise-addr**\] \[**--daemon-hosts**\] \[**--group**\]
+\[**--hostname**\] \[**-t**\|**--template**\]
+\[**-p**\|**--force-pull**\] \[**-f **\] \[**-h**\|**--help**\]
+
+## 説明 [#description]
+
+コンポーネントをインストールします
+
+## オプション [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+Nanocl をインストールする Docker ホスト。デフォルトは unix:///var/run/docker.sock です
+
+**--docker-desktop**  
+Docker ホストが Docker Desktop かどうかを指定します。Docker コンテキストが desktop-linux の場合は自動検出します
+
+**--state-dir** *\<STATE_DIR\>*  
+Nanocl デーモンの状態を保存するディレクトリ。デフォルトは /var/lib/nanocl です
+
+**--conf-dir** *\<CONF_DIR\>*  
+Nanocl デーモンの設定を保存するディレクトリ。デフォルトは /etc/nanocl です
+
+**--gateway** *\<GATEWAY\>*  
+Nanocl デーモンのゲートウェイアドレス。デフォルトでは自動検出します
+
+**--advertise-addr** *\<ADVERTISE_ADDR\>*  
+Nanocl デーモンのホスト。デフォルトでは自動検出します
+
+**--daemon-hosts** *\<DAEMON_HOSTS\>*  
+Nanocl デーモンのホスト。デフォルトでは自動検出します
+
+**--group** *\<GROUP\>*  
+Nanocl デーモンのグループ。デフォルトは nanocl です
+
+**--hostname** *\<HOSTNAME\>*  
+Nanocl デーモンのホスト名。デフォルトでは自動検出します
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Nanocl のインストールテンプレート。デフォルトでは自動検出します
+
+**-p**, **--force-pull**  
+Nanocl コンポーネントを強制的に再取得します
+
+**-f**  
+インストール後にコンテナのログに接続します
+
+**-h**, **--help**  
+ヘルプを表示します

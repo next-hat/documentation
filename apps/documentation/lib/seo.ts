@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import type { posts } from './blog'
+import { locales, routeLocale, localePath, ogLocales, type Locale } from './locales'
+import { translate } from './translate'
 
 export const SITE_URL = 'https://docs.next-hat.com'
 export const SITE_NAME = 'Next Hat Docs'
@@ -22,18 +24,20 @@ export const socialImage = (page: SeoPage) => ({
 })
 
 export function pageMetadata(page: SeoPage): Metadata {
+  const { locale, path } = routeLocale(page.path)
   const title = `${page.title} — ${SITE_NAME}`
   const image = socialImage(page)
   return {
     title: { absolute: title }, description: page.description, keywords: page.keywords,
     alternates: {
       canonical: absoluteUrl(page.path),
-      types: { 'application/rss+xml': '/blog/rss.xml', 'application/atom+xml': '/blog/atom.xml', 'application/feed+json': '/blog/feed.json' }
+      languages: Object.fromEntries([...locales.map(language => [language, absoluteUrl(localePath(path, language))]), ['x-default', absoluteUrl(path)]]),
+      types: { 'application/rss+xml': localePath('/blog/rss.xml', locale), 'application/atom+xml': localePath('/blog/atom.xml', locale), 'application/feed+json': localePath('/blog/feed.json', locale) }
     },
     authors: page.post?.authors.map(author => ({ name: author.name, url: author.url })),
     openGraph: {
       title, description: page.description, url: absoluteUrl(page.path),
-      siteName: SITE_NAME, locale: 'en_US', images: [image],
+      siteName: SITE_NAME, locale: ogLocales[locale], alternateLocale: locales.filter(language => language !== locale).map(language => ogLocales[language]), images: [image],
       ...(page.post ? {
         type: 'article', publishedTime: new Date(page.post.date).toISOString(),
         modifiedTime: page.modified, authors: page.post.authors.map(author => author.url),
@@ -48,7 +52,7 @@ export function pageMetadata(page: SeoPage): Metadata {
 }
 
 export const serializeJsonLd = (data: unknown) => JSON.stringify(data).replace(/</g, '\\u003c')
-export const siteSchema = {
+export const siteSchema = (locale: Locale = 'en') => ({
   '@context': 'https://schema.org',
   '@graph': [
     {
@@ -57,16 +61,18 @@ export const siteSchema = {
       sameAs: ['https://github.com/next-hat', 'https://twitter.com/next_hat']
     },
     {
-      '@type': 'WebSite', '@id': absoluteUrl('/#website'), name: SITE_NAME,
-      url: absoluteUrl('/'), description: SITE_DESCRIPTION, inLanguage: 'en',
+      '@type': 'WebSite', '@id': absoluteUrl(localePath('/', locale)) + '#website', name: SITE_NAME,
+      url: absoluteUrl(localePath('/', locale)), description: translate(locale, SITE_DESCRIPTION), inLanguage: locale,
       publisher: { '@id': 'https://next-hat.com/#organization' }
     }
   ]
-}
+})
 
 export function pageSchema(page: SeoPage) {
   const url = absoluteUrl(page.path)
-  const section = page.path.split('/')[1]
+  const { locale, path } = routeLocale(page.path)
+  const t = (text: string) => translate(locale, text)
+  const section = path.split('/')[1]
   const sections: Record<string, { name: string, path: string }> = {
     guides: { name: 'Guides', path: '/guides/summary' },
     manuals: { name: 'Manuals', path: '/manuals/summary' },
@@ -75,8 +81,8 @@ export function pageSchema(page: SeoPage) {
   }
   const parent = sections[section]
   const crumbs = [
-    { name: SITE_NAME, item: absoluteUrl('/') },
-    ...(parent && parent.path !== page.path ? [{ name: parent.name, item: absoluteUrl(parent.path) }] : []),
+    { name: SITE_NAME, item: absoluteUrl(localePath('/', locale)) },
+    ...(parent && parent.path !== path ? [{ name: t(parent.name), item: absoluteUrl(localePath(parent.path, locale)) }] : []),
     { name: page.title, item: url }
   ]
   return {
@@ -85,8 +91,8 @@ export function pageSchema(page: SeoPage) {
       {
         '@type': page.post ? 'BlogPosting' : /^(guides|manuals|references)$/.test(section) ? 'TechArticle' : 'WebPage',
         '@id': `${url}#page`, url, name: page.title, headline: page.title,
-        description: page.description, inLanguage: 'en',
-        isPartOf: { '@id': absoluteUrl('/#website') }, mainEntityOfPage: url,
+        description: page.description, inLanguage: locale,
+        isPartOf: { '@id': absoluteUrl(localePath('/', locale)) + '#website' }, mainEntityOfPage: url,
         image: socialImage(page).url, publisher: { '@id': 'https://next-hat.com/#organization' },
         ...(page.modified ? { dateModified: page.modified } : {}),
         ...(page.post ? {
@@ -94,9 +100,9 @@ export function pageSchema(page: SeoPage) {
           author: page.post.authors.map(author => ({ '@type': 'Person', name: author.name, url: author.url })),
           keywords: page.post.tags.join(', ')
         } : {}),
-        ...(page.path !== '/' ? { breadcrumb: { '@id': `${url}#breadcrumb` } } : {})
+        ...(path !== '/' ? { breadcrumb: { '@id': `${url}#breadcrumb` } } : {})
       },
-      ...(page.path !== '/' ? [{
+      ...(path !== '/' ? [{
         '@type': 'BreadcrumbList', '@id': `${url}#breadcrumb`,
         itemListElement: crumbs.map((crumb, index) => ({ '@type': 'ListItem', position: index + 1, ...crumb }))
       }] : [])

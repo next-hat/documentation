@@ -1,0 +1,241 @@
+---
+slug: nanocl-0.18
+title: Présentation de Nanocl 0.18
+description: Nanocl 0.18 introduit les Cargoes à plusieurs conteneurs, les déploiements tenant compte de la santé, les opérations ciblant les processus et des services proxy et DNS simplifiés.
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- version
+- 0.18
+keywords:
+- conteneurisation
+- Nanocl
+- plusieurs conteneurs
+- conteneur d’initialisation
+- réplique
+- contrôle de santé
+- mise à jour progressive
+- réseau
+- version
+- 0.18
+date: '2026-07-12'
+timestamp: 1788620357000
+---
+
+Nanocl 0.18 fait du Cargo une véritable charge de travail à plusieurs conteneurs. Les conteneurs applicatifs nommés,
+les conteneurs d’initialisation ordonnés, les répliques persistantes, le réseau partagé et
+les mises à jour tenant compte de la santé forment un modèle d’exécution cohérent. Cette version
+centre aussi les opérations quotidiennes sur les processus et simplifie les services proxy et DNS
+de la pile.
+
+{/* truncate */}
+
+## Voir la démonstration [#watch-the-walkthrough]
+
+Déployez une charge à plusieurs conteneurs avec Nanocl 0.18, découvrez les nouvelles commandes de processus
+et appliquez une mise à jour tenant compte de la santé.
+
+<iframe
+  src="https://www.youtube.com/embed/Hg19pMC6SSs"
+  title="Nanocl 0.18 : déploiement complet, conteneurs d’initialisation, Exec, Logs et Stats"
+  width="560"
+  height="315"
+  style={{width: '100%', height: 'auto', aspectRatio: '16 / 9', border: 0, display: 'block'}}
+  loading="lazy"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
+
+[Voir sur YouTube](https://www.youtube.com/watch?v=Hg19pMC6SSs).
+
+## Un Cargo est désormais une charge à plusieurs conteneurs [#a-cargo-is-now-a-multi-container-workload]
+
+`Containers` remplace l’ancien champ unique `Container`. Chaque conteneur applicatif
+possède un nom et les `InitContainers` s’exécutent dans l’ordre de déclaration avant
+le démarrage des applications. `Replicas` devient un entier simple, avec les mêmes processus
+déclarés créés pour chaque réplique.
+
+Voici un petit Statefile 0.18 pour une API et un worker nécessitant d’abord une migration
+du schéma :
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+```
+
+Pour chaque réplique, `migrate` doit se terminer correctement avant le démarrage de `api` et `worker`.
+Ce Cargo possédant deux conteneurs applicatifs sans utiliser le réseau de l’hôte,
+Nanocl crée un bac à sable interne pour chaque réplique. Les deux applications
+rejoignent l’espace de noms réseau de ce bac à sable, partagent une adresse IP et
+communiquent via `localhost`.
+
+Les champs réseau, ports, nom d’hôte et DNS du Cargo configurent cette frontière
+réseau partagée. Image, commande, environnement, contrôles de santé, montages,
+capacités et secrets réservés aux conteneurs restent sur chaque conteneur nommé. Un Cargo
+à un seul conteneur reste direct, sans bac à sable supplémentaire.
+
+Consultez le [guide complet des Cargoes à plusieurs conteneurs](/fr/guides/nanocl/advanced-usage/multi-container-cargoes).
+
+## La disponibilité fait partie du déploiement [#readiness-is-part-of-the-rollout]
+
+Le démarrage d’un conteneur Docker ne suffit plus à décider de sa disponibilité. Une application
+essentielle dotée d’un contrôle de santé doit devenir `healthy` ; sans contrôle,
+son exécution suffit. Un bac à sable partagé doit aussi être actif, tandis qu’un
+conteneur marqué `Essential: false` ne bloque pas le Cargo.
+
+Pendant une mise à jour, Nanocl prépare les répliques de remplacement successivement et attend
+jusqu’à cinq minutes que les processus requis soient prêts. Lorsque le réseau et les ports
+hôtes le permettent, la génération conservée continue de servir jusqu’à ce que
+la candidate soit prête. Une candidate qui échoue avant sa promotion est supprimée et
+la génération conservée est restaurée.
+
+Ce comportement ne garantit volontairement pas l’absence d’interruption. Un port hôte fixe
+peut imposer de supprimer l’ancien processus avant que la candidate puisse s’y lier, et
+le réseau hôte impose d’abord l’arrêt de l’ancienne génération. Définissez un contrôle
+de santé Docker si la disponibilité de l’application doit être vérifiée.
+
+Consultez [Contrôles de santé et mises à jour progressives](/fr/guides/nanocl/advanced-usage/health-checks)
+pour connaître toutes les limites de disponibilité et de restauration.
+
+## Cibler le processus voulu [#operate-the-process-you-mean]
+
+Un Cargo répliqué à plusieurs conteneurs possède plusieurs processus d’exécution : `exec`
+et `kill` ciblent donc un processus concret plutôt que de passer par un
+Cargo. Utilisez `nanocl ps` pour obtenir son nom faisant autorité ou son identifiant Docker
+complet, puis ciblez-le directement :
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` prend en charge l’entrée interactive, le TTY, le mode détaché,
+les fichiers et valeurs d’environnement, l’utilisateur, le répertoire de travail et le mode privilégié.
+Sans TTY en mode attaché, stdout et stderr restent séparés, et le code de sortie de
+la commande exécutée devient celui de la CLI. `inspect`, `logs` et
+`stats` acceptent également les identités de processus lorsque cela s’applique.
+
+Les anciennes opérations exec par Cargo et kill de groupe ont été supprimées. Consultez le
+[guide des opérations sur les processus](/fr/guides/nanocl/advanced-usage/process-operations).
+
+## Un réseau volontairement simple [#deliberately-small-networking]
+
+Les réseaux Docker locaux nommés sont maintenant sélectionnables au niveau du Cargo. Nanocl
+utilise un réseau existant tel quel ou crée un réseau bridge attachable manquant,
+puis conserve les informations inspectées pour les sélecteurs proxy et DNS. Il n’introduit
+aucune API de pilote réseau, de sous-réseau, de maillage ou de nettoyage automatique, et les réseaux
+Docker n’appartiennent pas aux espaces de noms Nanocl.
+
+Les réseaux Docker intégrés `default`, `bridge`, `host` et `none` restent disponibles ;
+les modes `container:...` définis par l’utilisateur sont réservés. La variable
+`$$INTERNAL_GATEWAY` correspond à la passerelle du réseau personnalisé sélectionné,
+ou à celle de `nanoclbr0` pour les modes intégrés.
+
+Plus de détails dans [Réseau des Cargoes](/fr/guides/nanocl/advanced-usage/cargo-networking).
+
+## Moins de composants d’exécution [#fewer-moving-parts-in-the-runtime]
+
+`ncproxy` intègre maintenant son plan de données Nginx et `ncdns` intègre dnsmasq. Aucun
+service `nproxy` ou `ndns` séparé n’est à coordonner via
+`docker exec`. Les deux contrôleurs réconcilient les règles validées après le démarrage et
+la reconnexion au flux d’événements. Les changements du proxy sont validés et rechargés
+de façon transactionnelle, tandis que les règles DNS restent des fragments indépendants pour qu’un
+changement de ressource n’efface pas une autre règle.
+
+Le reste de l’architecture par défaut à un seul nœud demeure familier :
+`nanocld` gère les charges et l’API, `nstore` conserve l’état du plan de contrôle,
+`nmetrics` collecte les métriques de l’hôte et `ncvpnkit` intègre le réseau
+Docker Desktop. Nanocl 0.18 ne revendique ni ordonnancement automatique sur plusieurs nœuds,
+ni mise à l’échelle automatique, ni haute disponibilité de cluster, ni maillage de services.
+
+## Fiabilité de l’exécution [#runtime-reliability]
+
+Les améliorations incluent la surveillance de santé du démon Docker, des enregistrements
+persistants des répliques de Cargo, la réconciliation au démarrage, les mises à jour transactionnelles
+du proxy et du DNS et la suppression des routes proxy sans adresse ou en mauvaise santé.
+
+## Versions des composants [#component-releases]
+
+- **nanocl 0.18.0** — nouveau modèle Statefile et CLI, `exec` et `kill` ciblant les processus,
+  clés canoniques de ressources, images VM à chemin complet et sauvegardes réapplicables
+  sans liaisons de secrets injectées par le démon.
+- **nanocld 0.18.0** — compilation et cycle de vie à plusieurs conteneurs, répliques
+  persistantes, mises à jour tenant compte de la disponibilité, découverte des réseaux nommés,
+  conteneurs d’initialisation VM et valeurs TLS de base de données au format PEM.
+- **ncproxy 0.15.0** — Nginx intégré, résolution des cibles des réseaux nommés,
+  transfert des routes tenant compte de la disponibilité, réconciliation au démarrage et rechargements
+  transactionnels.
+- **ncdns 0.10.0** — dnsmasq intégré, sélecteurs de réseaux nommés, fragments de règles
+  indépendants, validation, restauration et réconciliation au redémarrage.
+- **ncvpnkit 0.8.0** — compatibilité avec les API du client et des contrôleurs de Nanocl 0.18
+  .
+
+Les anciennes versions indépendantes de `nproxy` (`1.28.0-n0.15.0`) et `ndns`
+(`2.91.0-n0.10.0`) sont remplacées par les plans de données intégrés dans
+`ncproxy` et `ncdns`.
+
+Les VM disposent aussi d’un `InitContainer` facultatif pour préparer un chemin complet d’image locale
+avant le démarrage de QEMU, en remplacement du workflow supprimé `nanocl vm image`. Les données des secrets TLS
+sont conservées en contenu PEM plutôt qu’en chemins locaux au nœud ; les anciens chemins lisibles
+dans le secret de certificat de base de données sont convertis lors du premier
+démarrage du démon mis à niveau.
+
+## Changements incompatibles et migration [#breaking-changes-and-migration]
+
+Nanocl n’a pas encore atteint la version 1 et la mise à niveau 0.17 vers 0.18 est incompatible : une interruption
+peut être nécessaire. Avant de remplacer une installation, exécutez :
+
+```sh
+nanocl backup -o ./nanocl-0.17-backup
+```
+
+L’export contient des Statefiles par espace de noms ainsi que les tâches, secrets et ressources.
+Ces fichiers décrivent encore le schéma 0.17. Vérifiez-les et réécrivez-les avant
+de les réappliquer :
+
+- `Container` devient `Containers` avec des noms ; ajoutez des `InitContainers` ordonnés si
+  nécessaire.
+- L’ancien objet de réplication devient un entier `Replicas`.
+- Réseau, ports hôtes, nom d’hôte et DNS sont déplacés vers le Cargo.
+- Les clés canoniques et les cibles proxy suivent l’ordre `{namespace}.{name}`.
+- `Disk.Image` des VM et les images gérées par le démon deviennent un chemin local complet `Image`,
+  éventuellement préparé par `InitContainer`.
+- Les commandes `cargo exec`, kill de tout un Cargo et `vm image` sont supprimées.
+
+Laissez les anciens fichiers de certificat de base de données lisibles au premier démarrage du démon 0.18
+pour permettre leur migration. Ne considérez pas une sauvegarde 0.17 comme une restauration
+automatiquement compatible ou sans interruption.
+
+Suivez le [guide de migration 0.17 vers 0.18](/fr/manuals/nanocl/upgrade) avant
+la mise à niveau.
+
+## La suite [#what-comes-next]
+
+La version 0.18 pose les bases des charges, de la disponibilité et de l’identité des processus
+pour les évolutions futures. Aujourd’hui, les opérations prises en charge restent
+centrées sur un seul nœud Nanocl prévisible, observable et plus facile
+à restaurer. Nous présenterons les prochaines capacités lorsqu’elles seront mises en œuvre et prêtes
+à documenter.

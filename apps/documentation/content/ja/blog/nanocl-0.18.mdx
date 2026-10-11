@@ -1,0 +1,162 @@
+---
+slug: nanocl-0.18
+title: Nanocl 0.18 の紹介
+description: Nanocl 0.18 では、複数コンテナの Cargo、ヘルス状態を考慮した更新、プロセス単位の操作、よりシンプルなプロキシと DNS サービスを導入しました。
+image: /img/cloud.webp
+authors:
+- leone
+tags:
+- nanocl
+- release
+- 0.18
+keywords:
+- コンテナ化
+- Nanocl
+- 複数コンテナ
+- 初期化コンテナ
+- レプリカ
+- ヘルスチェック
+- ローリングアップデート
+- ネットワーク
+- リリース
+- 0.18
+date: '2026-07-12'
+timestamp: 1788620357000
+---
+
+Nanocl 0.18 では、Cargo が本格的な複数コンテナのワークロードになりました。名前付きアプリケーションコンテナ、順序付きの初期化コンテナ、永続的なレプリカ、共有ネットワーク、ヘルス状態を考慮した更新を、一貫したランタイムモデルにまとめています。日常的な操作もプロセス単位になり、プロキシと DNS の構成を簡素化しました。
+
+{/* truncate */}
+
+## 操作の流れを動画で見る [#watch-the-walkthrough]
+
+Nanocl 0.18 で複数コンテナのワークロードをデプロイし、新しいプロセスコマンドを試し、ヘルス状態を考慮した更新を適用します。
+
+<iframe
+  src="https://www.youtube.com/embed/Hg19pMC6SSs"
+  title="Nanocl 0.18：デプロイ、初期化コンテナ、Exec、ログ、統計情報"
+  width="560"
+  height="315"
+  style={{width: '100%', height: 'auto', aspectRatio: '16 / 9', border: 0, display: 'block'}}
+  loading="lazy"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
+
+[YouTube で見る](https://www.youtube.com/watch?v=Hg19pMC6SSs)。
+
+## Cargo が複数コンテナのワークロードに [#a-cargo-is-now-a-multi-container-workload]
+
+従来の単数形の `Container` フィールドを、`Containers` に置き換えました。各アプリケーションコンテナには名前があり、`InitContainers` はアプリケーションの起動前に宣言順で実行されます。`Replicas` は単純な整数になり、各レプリカに同じ宣言済みプロセスを作成します。
+
+次は、API とワーカーの起動前にスキーマの移行が必要な場合の、0.18 の小さな Statefile です。
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+```
+
+各レプリカで `migrate` が正常終了してから、`api` と `worker` を起動します。この Cargo はアプリケーションコンテナを 2 つ持ち、ホストネットワークを使わないため、Nanocl はレプリカごとに内部サンドボックスを 1 つ作成します。両方のアプリケーションはそのサンドボックスのネットワーク名前空間に参加し、IP アドレスを共有して、`localhost` で通信できます。
+
+ネットワーク、ポート、ホスト名、DNS のフィールドは Cargo に属し、この共有ネットワークの境界を設定します。イメージ、コマンド、環境変数、ヘルスチェック、マウント、ケーパビリティ、コンテナ専用のシークレットは、各名前付きコンテナに保持します。コンテナが 1 つだけの Cargo は従来どおり直接実行され、追加のサンドボックスは不要です。
+
+詳しくは[複数コンテナの Cargo ガイド](/ja/guides/nanocl/advanced-usage/multi-container-cargoes)を参照してください。
+
+## 更新時の準備完了判定 [#readiness-is-part-of-the-rollout]
+
+Docker コンテナが起動しただけでは、必ずしも準備完了とは判定しません。ヘルスチェックのある必須アプリケーションは `healthy` になる必要があり、ヘルスチェックがなければ実行中の状態を準備完了と見なします。共有サンドボックスも実行中である必要があります。一方、`Essential: false` のコンテナは Cargo の準備完了判定を妨げません。
+
+更新時には、Nanocl が置き換え用のレプリカを 1 つずつ用意し、必要なプロセスの準備が整うまで最大 5 分待ちます。ネットワークとホストポートの設定が許す場合、候補の準備が整うまで既存の世代がサービスを継続します。昇格前に候補が失敗した場合は、その候補を削除して既存の世代を復元します。
+
+この動作はゼロダウンタイムを保証するものではありません。ホストポートが固定されている場合、候補がバインドする前に旧プロセスの削除が必要になることがあります。ホストネットワークでは、先に旧世代を停止する必要があります。アプリケーションの準備状態が重要な場合は、Docker のヘルスチェックを定義してください。
+
+準備完了判定とロールバックの範囲は、[ヘルスチェックとローリングアップデート](/ja/guides/nanocl/advanced-usage/health-checks)で説明しています。
+
+## 対象のプロセスを直接操作する [#operate-the-process-you-mean]
+
+レプリカを持つ複数コンテナの Cargo には、複数のランタイムプロセスが存在します。そのため、`exec` と `kill` は Cargo から対象を解決せず、具体的なプロセスを 1 つ選びます。`nanocl ps` で正式なプロセス名または完全な Docker ID を確認し、直接指定してください。
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+`nanocl exec` は対話入力、TTY の割り当て、デタッチモード、環境変数ファイルと値、ユーザー、作業ディレクトリ、特権モードに対応します。TTY を使わずに接続するモードでは、stdout と stderr を別々に扱い、実行したコマンドの終了ステータスが CLI の終了ステータスになります。`inspect`、`logs`、`stats` も、対応する操作でプロセスの識別子を受け取れます。
+
+従来の Cargo 単位の exec とグループ単位の kill 操作は削除しました。[プロセス操作のガイド](/ja/guides/nanocl/advanced-usage/process-operations)を参照してください。
+
+## 意図的に小さく保ったネットワーク機能 [#deliberately-small-networking]
+
+Cargo レベルで、名前付きのローカル Docker ネットワークを選べるようになりました。Nanocl は既存のネットワークをそのまま使い、存在しない場合は接続可能なブリッジネットワークを作成します。その後、取得した詳細をプロキシと DNS のセレクター用に永続化します。ネットワークドライバー、サブネット、メッシュ、自動削除の API は追加せず、Docker ネットワークを Nanocl の名前空間が所有することもありません。
+
+Docker 組み込みの `default`、`bridge`、`host`、`none` は引き続き利用できます。ユーザーが記述する `container:...` のネットワークモードは予約済みです。`$$INTERNAL_GATEWAY` プレースホルダーは、選択したカスタムネットワークのゲートウェイに解決され、組み込みモードでは `nanoclbr0` のゲートウェイに解決されます。
+
+詳しくは[Cargo のネットワーク](/ja/guides/nanocl/advanced-usage/cargo-networking)を参照してください。
+
+## ランタイム構成の簡素化 [#fewer-moving-parts-in-the-runtime]
+
+`ncproxy` が Nginx のデータプレーンを、`ncdns` が dnsmasq を内蔵するようになりました。別途運用する `nproxy` や `ndns` サービスと `docker exec` で連携する必要はありません。両方のコントローラーは、起動後とイベントストリームへの再接続後に、確定済みのルールとの整合性を確認します。プロキシの変更は検証後にトランザクションとしてリロードされ、DNS ルールは個別の断片として保持されるため、あるリソースの変更によって別のルールが消えることはありません。
+
+デフォルトの単一ノード構成のほかの部分は、従来どおりです。`nanocld` がワークロードと API を管理し、`nstore` が制御プレーンの状態を永続化し、`nmetrics` がホストのメトリクスを収集し、`ncvpnkit` が Docker Desktop のネットワークと連携します。Nanocl 0.18 は、自動的な複数ノードのスケジューリング、自動スケーリング、クラスター全体の高可用性、サービスメッシュを提供すると主張するものではありません。
+
+## ランタイムの信頼性 [#runtime-reliability]
+
+信頼性の改善には、Docker デーモンの健全性監視、Cargo レプリカの記録の永続化、起動時の整合性確認、トランザクションによるプロキシと DNS の更新、正常でないプロキシルートやアドレスのないルートの削除を含みます。
+
+## コンポーネントのリリース [#component-releases]
+
+- **nanocl 0.18.0**：新しい Statefile と CLI のモデル、プロセス単位の `exec` と `kill`、正規リソースキー、完全なパスで指定する VM イメージ、デーモンが注入したシークレットのバインドを含まず再適用できるバックアップ。
+- **nanocld 0.18.0**：複数コンテナのコンパイルとライフサイクル、永続的なレプリカ、準備状態を考慮した更新、名前付きネットワークの検出、VM の初期化コンテナ、PEM によるデータベース TLS の値。
+- **ncproxy 0.15.0**：Nginx の内蔵、名前付きネットワークのターゲット解決、準備状態を考慮したルートの切り替え、起動時の整合性確認、トランザクションによるリロード。
+- **ncdns 0.10.0**：dnsmasq の内蔵、名前付きネットワークのセレクター、独立したルール断片、検証、ロールバック、再起動時の整合性確認。
+- **ncvpnkit 0.8.0**：Nanocl 0.18 のクライアントとコントローラー API との互換性。
+
+従来の独立した `nproxy`（`1.28.0-n0.15.0`）と `ndns`（`2.91.0-n0.10.0`）のリリース系統は、`ncproxy` と `ncdns` に内蔵されたデータプレーンに置き換わります。
+
+VM には任意の `InitContainer` も加わりました。QEMU の起動前に完全なローカルイメージパスを準備でき、削除された `nanocl vm image` の手順を置き換えます。TLS シークレットの入力は、ノードのローカルパスではなく PEM の内容として永続化します。データベース証明書のシークレットに残っている、読み取り可能な旧パスは、アップグレード後のデーモンの初回起動時に変換します。
+
+## 破壊的な変更と移行 [#breaking-changes-and-migration]
+
+Nanocl は v1 より前の段階であり、0.17 から 0.18 への更新には互換性を失う変更があり、停止時間が必要になる場合があります。インストール済みの環境を置き換える前に、次を実行してください。
+
+```sh
+nanocl backup -o ./nanocl-0.17-backup
+```
+
+エクスポートには、名前空間ごとの Statefile と、ジョブ、シークレット、リソースが含まれます。これらのファイルはまだ 0.17 のスキーマを記述しています。再適用の前に、内容を確認して書き直してください。
+
+- `Container` を名前付きの `Containers` に変更し、必要に応じて順序付きの `InitContainers` を追加します。
+- 従来のレプリケーションオブジェクトを、整数の `Replicas` に変更します。
+- ネットワーク、ホストポート、ホスト名、DNS を Cargo に移します。
+- 正規キーとプロキシターゲットには、`{namespace}.{name}` の順序を使います。
+- VM の `Disk.Image` とデーモンが管理する VM イメージを、完全なローカル `Image` パスに変更します。必要に応じて `InitContainer` で準備できます。
+- `cargo exec`、Cargo 全体の kill、`vm image` コマンドは削除しました。
+
+内容を移行できるよう、0.18 デーモンの初回起動時には旧データベース証明書ファイルを読み取り可能にしておいてください。0.17 のバックアップを、自動的に互換性がある、または停止時間なしで復元できるものとして扱わないでください。
+
+アップグレード前に [0.17 から 0.18 への移行ガイド](/ja/manuals/nanocl/upgrade)に従ってください。
+
+## 今後の開発 [#what-comes-next]
+
+0.18 は、今後の開発に必要なワークロード、準備状態、プロセス識別の基盤を整えます。現在サポートする運用は、単一の Nanocl ノードを予測可能で観測しやすく、復旧しやすくすることに重点を置いています。今後の機能は、実装が完了してドキュメントにできる段階になった時点でお知らせします。

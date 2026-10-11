@@ -1,0 +1,24 @@
+---
+title: ジョブリファレンス - Nanocl
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocld
+- ジョブ
+- 仕様
+- 仕様
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+# ジョブ
+
+Nanocl の `Job` は、実行するコマンドの一覧です。<br />
+[Cargo](/ja/references/nanocl/objects/cargo) と異なり、実行を終了することを目的とします。<br />
+
+`job` を作成するときに使う `JobPartial` の OpenAPI 仕様は次のとおりです。
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="ja" example={false} id="nanocld-latest" pointer="#/components/schemas/JobPartial" />

@@ -1,0 +1,43 @@
+---
+title: 状態の適用
+timestamp: 1757712924000
+---
+
+# 状態の適用
+
+# 名前
+
+apply - Statefile の要素を作成または更新します
+
+## 書式 [#synopsis]
+
+**apply** \[**-s**\|**--source**\] \[**-f**\|**--follow**\]
+\[**-y**\|**--yes**\] \[**-r**\|**--reload**\] \[**--remove-orphans**\]
+\[**-h**\|**--help**\] \[*ARGS*\]
+
+## 説明 [#description]
+
+Statefile の要素を作成または更新します
+
+## オプション [#options]
+
+**-s**, **--source** *\<SOURCE\>*  
+Statefile のパスまたは URL
+
+**-f**, **--follow**  
+デプロイした Cargo のログを追跡します
+
+**-y**, **--yes**  
+確認プロンプトを省略します
+
+**-r**, **--reload**  
+状態に変更がなくても適用します
+
+**--remove-orphans**  
+孤立した要素を削除します
+
+**-h**, **--help**  
+ヘルプを表示します
+
+\[*ARGS*\]  
+ファイルに渡す追加の引数

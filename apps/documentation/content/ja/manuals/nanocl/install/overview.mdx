@@ -1,0 +1,87 @@
+---
+title: Nanocl のインストール
+description: Nanocl のインストール方法。Windows、macOS、Linux の Docker Desktop で動作します。
+keywords:
+- ドキュメント
+- nanocl
+- 設定
+- インストール
+- ubuntu
+- debian
+- linux
+- macOS
+- windows
+- docker
+- podman
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import License from '@/components/license';
+
+# Nanocl のインストール
+
+このページでは、Nanocl のインストール方法の概要を説明します。<br/>
+
+## 前提条件 [#prerequisites]
+
+Nanocl のコンポーネントはコンテナ内で実行されるため、コンテナエンジンが必要です。<br/>
+Nanocl は [Docker][docker] を公式にサポートし、[Podman][podman] でも動作します。
+
+### Docker [#docker]
+
+お使いのシステムに対応する [Docker の公式インストールガイド][docker_install]に従ってください。<br/>
+Windows と macOS では [Docker Desktop][docker_desktop] を使います。
+
+### Podman [#podman]
+
+Podman は Docker 互換の API を提供するため、Nanocl は Podman でも動作します。<br/>
+Podman を使いたい場合は、[公式ドキュメント][podman_install]に従ってインストールしてください。
+
+## 対応プラットフォーム [#supported-platforms]
+
+CLI（[nanocl][nanocl]）のみ、次の一部のプラットフォーム向けにビルド済みのバイナリーを提供しています。<br/>
+
+- Linux: amd64
+- macOS: aarch64 (Apple Silicon)
+- Windows: amd64
+
+その他のプラットフォームやアーキテクチャでは、[crates.io][crates.io] 経由でソースからインストールできます。Cargo を実行する前に、そのページの前提条件を確認してください。
+
+## インストールガイド [#installation-guides]
+
+- [Linux へのインストール](/ja/manuals/nanocl/install/linux)
+- [macOS へのインストール](/ja/manuals/nanocl/install/macos)
+- [Windows へのインストール](/ja/manuals/nanocl/install/windows)
+
+## リリースチャンネル [#release-channels]
+
+Nanocl には **stable** と **nightly** の 2 つの更新チャンネルがあります。
+
+* **Stable**: 一般利用向けの最新リリース。
+* **Nightly**: 今後の機能を試すためのプレリリースビルド。
+
+<Callout type="warning" emoji="⚠️">
+
+Nightly ビルドは実験的なもので、互換性のない変更が含まれる場合があります。
+
+</Callout>
+
+## サポート [#support]
+
+Nanocl は、[Next Hat][next_hat] とコミュニティーが支えるオープンソースのプロジェクトです。<br />
+詳細や貢献方法は、[GitHub リポジトリ][git_nanocl]を参照してください。
+
+<License locale="ja" />
+
+[next_hat]: https://next-hat.com
+[nanocl]: /ja/references/nanocl/cli/overview
+[git_nanocl]: https://github.com/next-hat/nanocl
+[docker]: https://www.docker.com/
+[docker_install]: https://docs.docker.com/engine/install/
+[docker_desktop]: https://docs.docker.com/desktop/
+[crates.io]: https://crates.io/crates/nanocl
+[podman]: https://podman.io/
+[podman_install]: https://podman.io/getting-started/installation

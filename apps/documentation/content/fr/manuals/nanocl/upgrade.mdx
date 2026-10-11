@@ -1,0 +1,112 @@
+---
+title: Mise à niveau - Nanocl
+description: Sauvegardez et migrez une installation Nanocl entre versions antérieures à la version 1.
+keywords:
+- documentation
+- nanocl
+- mise à niveau
+- migration
+- sauvegarde
+- 0.18
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import Terminal from '@/components/terminal';
+
+# Mettre à niveau Nanocl
+
+Nanocl n’a pas encore atteint la version 1 : ses formats Statefile et de stockage peuvent changer entre
+versions mineures. Lisez les notes de migration de la version avant de remplacer une
+installation. La migration 0.17 vers 0.18 est incompatible et peut nécessiter une interruption.
+
+## Exporter l’état courant [#export-the-current-state]
+
+Avant de désinstaller 0.17, exportez l’état souhaité dans un répertoire vide :
+
+<Terminal language="sh">
+{`nanocl backup -o ./nanocl-0.17-backup`}
+</Terminal>
+
+La commande écrit un Statefile par espace de noms et des fichiers distincts
+`jobs.yml`, `secrets.yml` et `resources.yml`. Gardez une copie hors de
+`/var/lib/nanocl`.
+
+Les sauvegardes conservent le schéma du démon 0.17 connecté. Elles ne sont
+pas automatiquement converties vers 0.18. Vérifiez et réécrivez chaque fichier exporté
+avant de le réappliquer.
+
+## Migrer les Statefiles 0.17 vers 0.18 [#migrating-017-statefiles-to-018]
+
+La structure du Cargo passe d’un conteneur anonyme avec modes de réplication
+à des listes de conteneurs nommés et un nombre entier de répliques :
+
+```yaml filename="0.17"
+ApiVersion: v0.17
+Cargoes:
+- Name: api
+  Container:
+    Image: ghcr.io/example/api:1.0.0
+  Replication:
+    Mode: Static
+    Replicas: 2
+```
+
+```yaml filename="0.18"
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  Replicas: 2
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+Pour chaque Cargo :
+
+- Remplacez `Container` par un ou plusieurs `Containers` nommés.
+- Déplacez les étapes ordonnées de démarrage vers des `InitContainers` nommés.
+- Remplacez l’ancien objet/mode de réplication par un entier `Replicas` (minimum 1).
+- Déplacez le mode réseau, les ports hôtes, le nom d’hôte et la configuration DNS vers
+  le Cargo. La publication de ports par conteneur est refusée.
+- Changez les clés des objets et les cibles proxy de `{name}.{namespace}` vers
+  l’ordre canonique `{namespace}.{name}`.
+
+Les Statefiles VM utilisent maintenant un chemin local complet `Image` et éventuellement `InitContainer`
+pour le préparer. Le workflow géré par le démon `nanocl vm image` est supprimé.
+
+Les opérations `cargo exec` et kill de groupe sont également supprimées. Utilisez
+`nanocl ps` pour choisir un processus concret, puis `nanocl exec PROCESS --
+COMMAND...` ou `nanocl kill PROCESS`.
+
+## Séquence de mise à niveau [#upgrade-sequence]
+
+1. Sauvegardez les Statefiles et les données applicatives.
+2. Réécrivez et vérifiez les Statefiles exportés pour le schéma 0.18.
+3. Arrêtez le trafic et les charges selon les besoins de votre application.
+4. Désinstallez les anciens composants, conservez la sauvegarde externe et installez
+   Nanocl 0.18 avec le [guide d’installation](/fr/manuals/nanocl/install/overview).
+5. Validez les fichiers réécrits avec `nanocl state render` avant de les appliquer,
+   puis appliquez-les dans l’ordre des dépendances (secrets, tâches/ressources et charges
+   des espaces de noms selon votre déploiement).
+6. Vérifiez la santé des Cargoes, les règles proxy/DNS et le comportement applicatif avant
+   de rétablir le trafic.
+
+L’installateur n’automatise pas cette migration incompatible et
+ne garantit pas une mise à niveau sans interruption.
+
+<Callout type="info">
+
+**Secret TLS de base de données**
+
+Au premier démarrage de `nanocld` mis à niveau, les anciens chemins de certificats lisibles
+dans le secret TLS interne sont remplacés par leur contenu PEM. Gardez
+ces fichiers disponibles pour ce démarrage.
+
+</Callout>
+
+Pour en savoir plus, consultez [Cargoes à plusieurs conteneurs](/fr/guides/nanocl/advanced-usage/multi-container-cargoes),
+[Réseau des Cargoes](/fr/guides/nanocl/advanced-usage/cargo-networking) et
+[Opérations sur les processus](/fr/guides/nanocl/advanced-usage/process-operations).

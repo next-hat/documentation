@@ -1,0 +1,69 @@
+---
+title: Windows へのインストール - Nanocl
+description: スクリプトまたは tarball で Windows に Nanocl をインストールします。
+keywords:
+- nanocl
+- インストール
+- windows
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import vars from '@/lib/vars';
+import Terminal from '@/components/terminal';
+import DirTree from '@/components/dir_tree';
+import InstallBlock from '@/components/install_block';
+
+# Windows にインストールする
+
+PowerShell で tarball をダウンロードして展開し、そのフォルダーを PATH に追加します。
+
+<Callout type="warning">
+
+Windows のサポートは実験的です。ご自身の判断で利用してください。<br/>
+より安定した環境には Windows Subsystem for Linux（WSL）を推奨します。
+
+</Callout>
+
+## 手動インストール [#manual-install]
+
+### CLI の tarball を取得する [#get-the-cli-tarball]
+
+Nanocl の tarball は、<a href={vars.nanoclReleaseTagUrl}>GitHub のリリースページ</a>から直接取得できます。<br/>
+次のコマンドでダウンロードして展開することもできます。
+
+<Terminal language="powershell">{`$dst = "$env:USERPROFILE\\nanocl"
+New-Item -ItemType Directory -Force -Path $dst | Out-Null
+Invoke-WebRequest -Uri "${vars.nanoclWindowsTarballUrl}" -OutFile "$dst\\nanocl.tar.gz"`}</Terminal>
+
+展開後のディレクトリ構成:
+
+<DirTree variant="windows" />
+
+<Terminal language="powershell">{`# Windows 10+ includes tar
+& tar -xzf "$dst\\nanocl.tar.gz" -C $dst
+# The binary is under bin\\nanocl.exe
+$bin = Join-Path $dst 'bin'
+# Add to PATH (current session):
+$env:Path = "$env:Path;$bin"
+# Or copy to a directory already in PATH (requires admin):
+# Copy-Item (Join-Path $bin 'nanocl.exe') "$env:ProgramFiles\\nanocl\\nanocl.exe" -Force`}</Terminal>
+
+
+## ソースからビルドする [#compile-from-source]
+
+別のアーキテクチャを使っている場合や、ソースからビルドしたい場合の手順です。
+
+前提条件:
+
+- Rust ツールチェーンをインストール: https://www.rust-lang.org/tools/install
+- Visual Studio Build Tools（C++ ビルドツール）または動作する MSVC ツールチェーン
+- 同梱されていない場合は OpenSSL と libpq の開発用ライブラリー。Windows では、利用可能であれば通常ビルド時に静的リンクされます
+
+<Terminal language="powershell">
+{`cargo install nanocl`}
+</Terminal>
+

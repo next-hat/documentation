@@ -1,0 +1,49 @@
+---
+title: 在 Linux 上安装 - Nanocl
+description: 使用脚本、.deb 或 tar 压缩包在 Linux 上安装 Nanocl。
+keywords:
+- nanocl
+- 安装
+- linux
+- deb
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# 在 Linux 上安装
+
+<QuickInstall locale="zh-Hans" />
+
+## 手动安装 [#manual-install]
+
+### 下载 CLI 压缩包 [#get-the-cli-tarball]
+
+<UnixTarInstall locale="zh-Hans" tarballUrl={vars.nanoclLinuxTarballUrl} tarballName={`${vars.nanoclLinuxTarballName}`} />
+
+### Debian/Ubuntu [#debianubuntu]
+
+Debian、Ubuntu 等基于 Debian 的发行版也可使用 `.deb` 软件包。
+
+<Terminal language="sh" filename="sh">
+{`curl -LO ${vars.nanoclDebUrl}
+sudo dpkg -i ${vars.nanoclDebName}
+`}
+</Terminal>
+
+## 从源码编译 [#compile-from-source]
+
+<CratesIoInstall locale="zh-Hans" />
+
+## 验证安装 [#verify-installation]
+
+<Verify locale="zh-Hans" />
+
+接下来务必完成[安装后步骤](/zh-Hans/manuals/nanocl/install/post-installation)，安装 Nanocl 组件。

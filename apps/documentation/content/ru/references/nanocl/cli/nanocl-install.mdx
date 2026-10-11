@@ -1,0 +1,63 @@
+---
+title: Установка
+timestamp: 1757712924000
+---
+
+# Установка
+
+# НАЗВАНИЕ
+
+install - Установить компоненты
+
+## СИНТАКСИС [#synopsis]
+
+**install** \[**--docker-host**\] \[**--docker-desktop**\]
+\[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--advertise-addr**\] \[**--daemon-hosts**\] \[**--group**\]
+\[**--hostname**\] \[**-t**\|**--template**\]
+\[**-p**\|**--force-pull**\] \[**-f **\] \[**-h**\|**--help**\]
+
+## ОПИСАНИЕ [#description]
+
+Установить компоненты
+
+## ПАРАМЕТРЫ [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+Хост Docker для установки Nanocl; по умолчанию unix:///var/run/docker.sock
+
+**--docker-desktop**  
+Указать Docker Desktop; определяется автоматически, если контекст Docker — desktop-linux
+
+**--state-dir** *\<STATE_DIR\>*  
+Каталог состояния демона Nanocl; по умолчанию /var/lib/nanocl
+
+**--conf-dir** *\<CONF_DIR\>*  
+Каталог конфигурации демона Nanocl; по умолчанию /etc/nanocl
+
+**--gateway** *\<GATEWAY\>*  
+Адрес шлюза демона Nanocl; определяется автоматически
+
+**--advertise-addr** *\<ADVERTISE_ADDR\>*  
+Хосты демона Nanocl; определяются автоматически
+
+**--daemon-hosts** *\<DAEMON_HOSTS\>*  
+Хосты демона Nanocl; определяются автоматически
+
+**--group** *\<GROUP\>*  
+Группа демона Nanocl; по умолчанию nanocl
+
+**--hostname** *\<HOSTNAME\>*  
+Имя хоста демона Nanocl; определяется автоматически
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Шаблон установки Nanocl; определяется автоматически
+
+**-p**, **--force-pull**  
+Принудительно скачать компоненты Nanocl заново
+
+**-f**  
+Подключиться к журналам контейнера после установки
+
+**-h**, **--help**  
+Показать справку

@@ -1,9 +1,11 @@
 import type { AppStore, RedocRawOptions, SideNavStyleEnum } from 'redoc'
+import type { Locale } from './locales'
+import { redocLabels, schemaLabels } from './redoc-labels'
 
 export type RedocSpec = ConstructorParameters<typeof AppStore>[0]
 
 /** The documentation's Next Hat tokens, expressed as colors Redoc can calculate. */
-export function redocOptions(dark: boolean, embedded = false): RedocRawOptions {
+export function redocOptions(dark: boolean, embedded = false, locale: Locale = 'en'): RedocRawOptions {
   const primary = dark ? 'hsl(24.6, 95%, 53.1%)' : 'hsl(17.5, 88.3%, 40.4%)'
   const background = dark ? '#000000' : 'hsl(220, 20%, 98%)'
   const foreground = dark ? 'hsl(0, 0%, 96%)' : 'hsl(222.2, 47.4%, 11.2%)'
@@ -11,10 +13,11 @@ export function redocOptions(dark: boolean, embedded = false): RedocRawOptions {
   const secondary = dark ? 'hsl(0, 0%, 60%)' : 'hsl(215, 16%, 46%)'
   const border = dark ? 'hsl(0, 0%, 16%)' : 'hsl(220, 13%, 90%)'
   return {
+    labels: redocLabels(locale),
     nativeScrollbars: true, scrollYOffset: 64, expandDefaultServerVariables: true, hideHostname: true,
     schemasExpansionLevel: 1, sortPropsAlphabetically: true, sortTagsAlphabetically: true,
     sideNavStyle: 'id-only' as SideNavStyleEnum, disableSearch: embedded, hideDownloadButtons: true,
-    schemaDefinitionsTagName: embedded ? undefined : 'Schemas',
+    schemaDefinitionsTagName: embedded ? undefined : schemaLabels[locale],
     theme: {
       colors: { primary: { main: primary }, text: { primary: foreground, secondary }, border: { light: border, dark: border } },
       spacing: { sectionHorizontal: embedded ? 0 : 24, sectionVertical: 32 },

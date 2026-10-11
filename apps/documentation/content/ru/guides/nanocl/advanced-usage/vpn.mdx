@@ -1,0 +1,94 @@
+---
+title: VPN — Nanocl
+description: Использование VPN внутри Nanocl.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- конфигурация
+- состояние
+- файл
+- настройки
+- yaml
+- yml
+- statefile
+- vpn
+- частная сеть
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# Собственный VPN
+
+Nanocl упрощает работу: у нас есть готовый VPN Statefile.<br />
+Он основан на [hwdsl2/docker-ipsec-vpn-server](https://github.com/hwdsl2/docker-ipsec-vpn-server) от [@Lin Song](https://github.com/hwdsl2) и доступен в [официальном реестре Nanocl](https://nr.next-hat.com).
+
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+Просмотрите руководство этого Statefile:
+
+<CodeBlock className="language-sh">
+{`nanocl state man -s nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+Если возможностей `Statefile Args` недостаточно, скачайте файл и настройте под свои задачи:
+
+
+<CodeBlock className="language-sh">
+{`wget nr.next-hat.com/v${nanoclMajorVersion}/ipsec`}
+</CodeBlock>
+
+Содержимое VPN `Statefile`:
+
+<StatefileBlock example="advanced/vpn" />
+
+Пример использования:
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/ipsec -- --namespace private --public-ip $(curl -s http://ipinfo.io/ip)`}
+</CodeBlock>
+
+В этом файле создаётся собственный DNS для VPN.<br/>
+Он позволяет создавать и переопределять домены, направляя их к Cargo.<br/>
+
+Перед подключением к VPN получите учётные данные командой:
+
+```sh
+nanocl cargo -n private logs vpn
+```
+
+Вы увидите примерно следующее:
+
+```console
+================================================
+
+IPsec VPN server is now ready for use!
+
+Connect to your new VPN with these details:
+
+Server IP: server-public-ip
+IPsec PSK: secret-psk
+Username: vpnuser
+Password: secret-password
+```
+
+Подключение к VPN зависит от вашей системы, поэтому здесь не рассматривается.<br/>
+Подробнее об образе контейнера — в [официальной документации](https://github.com/hwdsl2/docker-ipsec-vpn-server).<br/>
+
+Теперь можно создавать Cargo в любом пространстве имён и открывать к ним доступ через VPN, например:
+
+<StatefileBlock example="advanced/vpn-cargo" />
+
+Здесь часто используется `private.nsp`, ссылающееся на шлюз пространства имён `private`; при другом пространстве имён замените его.
+
+После применения настроек откройте [http://my-domain.internal](http://my-domain.internal).
+
+![my-domain.internal](/img/my-domain.png)

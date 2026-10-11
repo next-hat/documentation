@@ -1,0 +1,146 @@
+---
+title: 上下文 - Nanocl
+description: 使用上下文在不同 Nanocl 守护进程之间切换。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 配置
+- 状态
+- 文件
+- 配置
+- yaml
+- yml
+- statefile
+- ssl
+- tls
+- 证书
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import CodeBlock from '@/components/code_block';
+import StatefileBlock from '@/components/statefile_block';
+import { nanoclMajorVersion } from '@/lib/vars';
+
+# 上下文
+
+上下文用于与不同的 [Nanocl 守护进程](/zh-Hans/references/nanocl/daemon/overview)通信。
+
+例如，本地计算机和远程服务器各有一个 Nanocl 守护进程，你可以通过上下文在它们之间切换。
+
+需要让守护进程能够从互联网访问。方法有多种，最简单的是使用 [ProxyRule](/zh-Hans/references/nanocl/objects/resource)。
+
+首先生成自己的 SSL/TLS 证书。<br/>
+证书确保只有持有由 CA 签发的特定证书的客户端才能访问守护进程。<br/>
+这是必要的安全措施。
+
+我们提供了一个 `Statefile`，自动生成所需证书并配置 `ProxyRule`。
+
+
+## 自动配置 [#automatic-setup]
+
+应用以下 `Statefile`，生成证书并应用 `ProxyRule`：
+
+<CodeBlock className="language-sh">
+{`nanocl state apply -fs nr.next-hat.com/v${nanoclMajorVersion}/remote-nanocld`}
+</CodeBlock>
+
+应用 `Statefile` 后，可以创建上下文，在不同守护进程之间切换。先获取 Statefile 生成的客户端证书。
+
+运行以下命令获取客户端证书：
+
+```sh
+nanocl secret inspect cert.client.nanocl.io
+```
+
+命令会输出客户端证书和密钥。
+
+## 手动配置 [#manual-setup]
+
+### 生成证书 [#generate-the-certificates]
+
+使用以下命令生成证书：
+
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=NanoclCA"
+openssl req -newkey rsa:4096 -keyout server.key -out server.csr -nodes -subj "/CN=*"
+openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+openssl req -newkey rsa:4096 -keyout client.key -out client.csr -nodes -subj "/CN=NanoclClient"
+openssl x509 -req -in client.csr -out client.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+```
+
+将证书移到运行 Nanocl 的远程服务器的正确位置：
+
+```sh
+sudo mkdir -p /var/lib/nanocl/proxy/certs
+sudo mv ca.crt /var/lib/nanocl/proxy/certs/nanocl_ca.crt
+sudo mv server.crt /var/lib/nanocl/proxy/certs/nanocl_server.crt
+sudo mv server.key /var/lib/nanocl/proxy/certs/nanocl_server.key
+```
+
+### 应用 ProxyRule [#apply-the-proxyrule]
+
+接着应用 ProxyRule，将守护进程开放到互联网。
+
+创建 `nanocld-proxy.yml` 文件：
+
+<StatefileBlock example="advanced/context-resource" />
+
+执行以下命令应用 ProxyRule：
+
+```sh
+nanocl apply -s nanocld-proxy.yml
+```
+
+## 创建上下文 [#create-the-context]
+
+将客户端证书移到本地计算机的正确位置：
+
+```sh
+mkdir -p ~/.nanocl/certs
+mv client.crt ~/.nanocl/certs/nanocl_client.crt
+mv client.key ~/.nanocl/certs/nanocl_client.key
+```
+
+最后，创建上下文以切换不同守护进程。
+
+创建 `my-secure-context.yml` 文件：
+
+<StatefileBlock example="advanced/context" />
+
+<Callout type="info" emoji="📝">
+
+将 `my-remote-server` 替换为远程服务器真实的 IP 地址或域名。<br/>
+将 `my-user` 替换为实际用户名。
+
+</Callout>
+
+通过以下命令导入上下文：
+
+```sh
+nanocl context from my-secure-context.yml
+```
+
+使用以下命令切换上下文：
+
+```sh
+nanocl context use my-secure-context
+```
+
+也可以列出现有上下文：
+
+```sh
+nanocl context list
+```
+
+更通用的操作命令是：
+
+```sh
+nanocl context --help
+```
+
+查看上下文命令的更多信息。

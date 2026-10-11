@@ -1,0 +1,43 @@
+---
+title: Statefile - Nanocl
+description: Utilisez un Statefile pour décrire l’état souhaité d’un espace de noms.
+keywords:
+- documentation
+- nanocl
+- guides
+- démarrage
+- proxy
+- configuration
+- état
+- fichier
+- config
+- yaml
+- yml
+- statefile
+image: /img/logo.webp
+timestamp: 1714833023000
+---
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Statefile
+
+Un Statefile décrit l’état souhaité d’un espace de noms.
+
+Au format YAML, le déploiement du Cargo se résume ainsi :
+
+<StatefileBlock example="get-started/deployment" />
+
+Enregistrez ce fichier sous `my-cargo.yml` et appliquez-le avec :
+
+```sh
+nanocl state apply -s ./my-cargo.yml
+```
+
+Puis testez avec curl :
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+Et voilà.

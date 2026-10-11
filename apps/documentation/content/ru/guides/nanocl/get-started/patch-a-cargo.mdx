@@ -1,0 +1,130 @@
+---
+title: Изменение Cargo — Nanocl
+description: Обновите образ или переменные окружения Cargo и сразу разверните изменения.
+keywords:
+- документация
+- руководства Nanocl
+- начало работы
+- cargo
+- patch
+- обновление
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# Изменение Cargo
+
+Обновите образ или переменные окружения Cargo и сразу разверните изменения.
+
+## Обновление образа Cargo [#update-cargo-image]
+
+Изменим `Cargo` *my-cargo*, используя ранее скачанный образ:
+
+```sh
+nanocl cargo patch global.my-cargo --image ghcr.io/next-hat/nanocl-get-started:latest
+```
+
+Используются следующие параметры:
+
+- `global.my-cargo` — канонический ключ изменяемого Cargo.
+- `--image` — изменяемое значение, образ Cargo.
+- `ghcr.io/next-hat/nanocl-get-started:latest` — имя нового образа.
+
+Проверьте изменения просмотром Cargo:
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+Порт *get-started* по умолчанию — **9000**; проверим доступ.
+
+<Callout type="info">
+
+При изменении Cargo IP связанного контейнера меняется.<br/>
+Новый контейнер запускается до удаления старого.
+
+</Callout>
+
+```sh
+curl 10.2.0.3:9000
+```
+
+Примерный вывод:
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.3:9000",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "HOME": "/",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "TERM": "xterm",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-a1b2c3.c",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+Поздравляем, вы впервые обновили образ Cargo!
+
+## Обновление окружения Cargo [#update-cargo-environnement]
+
+Теперь Cargo использует новый образ, возвращающий переменные окружения.<br />
+Обновим некоторые из них.
+
+Измените порт Cargo через переменную окружения **PORT**:
+
+```sh
+nanocl cargo patch global.my-cargo --env PORT=9001
+```
+
+IP-адрес снова изменится, поэтому выполните:
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+Чтобы получить новый IP.
+
+Проверьте обновление переменной окружения командой:
+
+```sh
+curl 10.2.0.2:9001
+```
+
+Вывод:
+
+```json
+{
+  "headers": {
+    "accept": "*/*",
+    "host": "10.2.0.2:9001",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "NANOCL_CARGO_INSTANCE": "0",
+    "   ": "/bin/nanocl-get-started",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "HOME": "/",
+    "NANOCL_NODE": "behuman",
+    "TERM": "xterm",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "PORT": "9001",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global"
+  }
+}
+```
+
+В этот раз используется **9001** вместо 9000, поскольку сервис использует переменную окружения **PORT**.

@@ -1,0 +1,175 @@
+---
+title: Découverte et configuration - Nanocl
+description: Instructions pas à pas pour bien démarrer avec Nanocl.
+keywords:
+- documentation
+- guides
+- nanocl
+- démarrage
+- découverte et configuration
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+# Découverte et configuration
+
+#### Bienvenue ! Nous sommes heureux de vous accompagner dans l’apprentissage de Nanocl. [#welcome-we-are-excited-that-you-want-to-learn-nanocl]
+
+Cette page explique comment démarrer avec Nanocl.<br />
+Dans ce tutoriel, vous apprendrez à :
+
+- Comprendre les notions de `container image`, `namespace`, `cargo` et `cargo instance`.
+- Exécuter une `container image` comme `cargo`.
+- Modifier un `cargo`.
+- Configurer une `proxy rule`.
+- Utiliser un fichier de `state configuration` pour un déploiement rapide.
+
+Ce tutoriel suppose une version actuelle de Nanocl installée sur votre machine.<br />
+Si ce n’est pas le cas, consultez [l’installation](/fr/manuals/nanocl/install/overview).
+
+
+## Commencer le tutoriel [#start-the-tutorial]
+
+Commençons par créer et exécuter un `cargo` avec :
+
+```sh
+nanocl cargo run my-cargo nginx:1.23
+```
+
+Le téléchargement de l’image et le démarrage du conteneur peuvent prendre quelques minutes.
+
+Voici les options employées :
+
+- `my-cargo` : nom de votre Cargo.
+- `nginx:1.23` : nom de l’image de conteneur à utiliser.
+
+Cette commande crée et démarre une seule `cargo instance` de *my-cargo*.
+
+> Nanocl choisit une adresse IPv4 pour votre `cargo instance`.
+> Les paramètres par défaut suivent les bonnes pratiques.
+
+Pour afficher l’IP choisie, inspectez le Cargo avec :
+
+```sh
+nanocl cargo inspect global.my-cargo
+```
+
+Ici, l’adresse IPv4 attribuée est `10.2.0.2` ; interrogeons-la avec curl !
+
+```sh
+curl 10.2.0.2
+```
+
+Notre `cargo instance` Nginx fonctionne maintenant sur l’adresse IPv4 `10.2.0.2`.
+
+## Qu’est-ce qu’un Cargo ? [#what-is-a-cargo-]
+
+Vous avez exécuté un `cargo` : que représente-t-il ?<br />
+Les Cargoes sont des configurations de charges persistantes. Un Cargo contient un ou plusieurs
+conteneurs applicatifs nommés, des conteneurs d’initialisation ordonnés facultatifs et un nombre
+fixe de répliques. Chaque réplique contient les processus déclarés par le Cargo.
+
+<Callout type="info">
+
+Si vous connaissez `Kubernetes`, considérez un
+Cargo comme une variante du `pod`.<br />
+
+</Callout>
+
+Listez vos Cargoes avec :
+
+```sh
+nanocl cargo ls
+```
+
+La sortie devrait ressembler à ceci :
+
+```console
+KEY                CONTAINERS             STATUS                   INSTANCES  VERSION  CREATED AT           UPDATED AT
+global.my-cargo    my-cargo=nginx:1.23    start/start (unknown)    1/1        v0.1.0   2026-08-28 21:24:27  2026-08-28 21:24:27
+```
+
+Plus généralement, pour gérer les `cargoes`, nous utiliserons :
+
+```sh
+nanocl cargo
+```
+
+Affichez les commandes disponibles avec :
+
+```sh
+nanocl cargo help
+```
+
+Ce qui affiche :
+
+```console
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+Un `Cargo` :
+
+- Décrit un ou plusieurs conteneurs applicatifs nommés.
+- Peut déclarer des conteneurs d’initialisation ordonnés et un nombre persistant de répliques.
+- Lance et gère les processus appartenant à chaque réplique.
+
+## Qu’est-ce qu’une instance de Cargo ? [#what-is-a-cargo-instance-]
+
+Vous connaissez le `Cargo` : qu’est-ce qu’une `Cargo instance` ?
+Une réplique est une réalisation de la spécification du Cargo. Elle peut contenir
+plusieurs processus applicatifs et, hors réseau hôte, un bac à sable réseau
+interne partagé. L’isolation utilise les espaces de noms Linux et les
+cgroups de Docker.
+
+Une `Cargo instance` :
+
+- Contient les processus applicatifs nommés déclarés par son Cargo.
+- Possède un ordinal exposé via `NANOCL_CARGO_INSTANCE`.
+- Est isolée des autres répliques et fonctionne sur le nœud Docker local.
+
+## Qu’est-ce qu’une image de conteneur ? [#what-is-a-container-image-]
+
+Exécuter un `Cargo` lance une `Cargo Instance` utilisant un système de fichiers isolé.
+Ce système de fichiers, appelé `Container image`, doit contenir tout ce qu’il faut pour exécuter l’application : dépendances, configuration, scripts, binaires, etc.
+L’image contient aussi d’autres configurations, comme les variables d’environnement, la commande par défaut et les métadonnées.
+
+Nous ne détaillerons pas tous les sujets relatifs aux conteneurs et aux images ; consultez la [documentation Docker](https://www.docker.com/resources/what-container/).
+
+<Callout type="info">
+
+Si vous connaissez `chroot`, considérez le
+conteneur comme une version étendue de `chroot`.<br />
+Le système de fichiers provient simplement de l’image.<br />
+Le conteneur ajoute toutefois une isolation absente de chroot seul.
+
+</Callout>
+
+## Qu’est-ce qu’un espace de noms ? [#what-is-a-namespace-]
+
+Un `namespace` regroupe les objets Nanocl associés, comme les Cargoes et les machines
+virtuelles. Les réseaux Docker sont locaux au nœud et n’appartiennent pas aux espaces de noms.<br />
+Par exemple, avec différents domaines comme *facebook.com* et *instagram.com*,
+vous pouvez les séparer dans des espaces de noms différents.

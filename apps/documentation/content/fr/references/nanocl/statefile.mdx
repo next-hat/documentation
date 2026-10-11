@@ -1,0 +1,22 @@
+---
+title: Référence Statefile - Nanocl
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- Statefile
+- spécification
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import ApiSchema from '@/components/api_schema'
+
+# Statefile
+
+Un Statefile décrit les Cargoes, machines virtuelles, Resources, Jobs
+et Secrets souhaités. Nanocl 0.18 attend `ApiVersion: v0.18` ; les Cargoes utilisent des
+`Containers` nommés et des `InitContainers` facultatifs.
+
+<ApiSchema locale="fr" example={false} id="nanocld-latest" pointer="#/components/schemas/Statefile" />

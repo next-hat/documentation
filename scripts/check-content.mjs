@@ -21,7 +21,9 @@ const routes = new Set(pages.map(path => {
 }))
 if (routes.size !== pages.length) failures.push('Content files must resolve to unique public routes')
 // These pages are implemented as Next.js routes rather than content files.
-for (const route of ['/blog/archive', '/blog/tags', '/blog/rss.xml', '/blog/atom.xml', '/blog/feed.json']) routes.add(route)
+for (const locale of ['', '/fr', '/ru', '/ja', '/zh-Hans']) {
+  for (const route of ['/blog/archive', '/blog/tags', '/blog/authors', '/blog/rss.xml', '/blog/atom.xml', '/blog/feed.json', '/search']) routes.add(locale + route)
+}
 const posts = JSON.parse(readFileSync(join(app, 'lib/blog-posts.json'), 'utf8'))
 for (const post of posts) {
   assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(post.date), `Invalid blog date: ${post.slug}`)

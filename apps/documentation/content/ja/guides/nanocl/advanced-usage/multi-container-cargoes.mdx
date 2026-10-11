@@ -1,0 +1,70 @@
+---
+title: 複数コンテナの Cargo - Nanocl
+description: 名前付きアプリケーションコンテナと初期化コンテナを、レプリケーションされる 1 つの Cargo ワークロードとして実行します。
+keywords:
+- ドキュメント
+- nanocl
+- cargo
+- コンテナ
+- 初期化コンテナ
+- レプリカ
+- サンドボックス
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# 複数コンテナの Cargo
+
+Cargo は 1 つのワークロードを定義します。Nanocl 0.18 の各 Cargo は、1 つ以上の名前付きアプリケーション `Containers`、任意の順序付き `InitContainers`、永続的な `Replicas` 数を定義します。
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  Secrets:
+  - shared-env
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+    Secrets:
+    - worker-env
+```
+
+コンテナ名は両方の一覧を通じて一意である必要があります。`_sandbox` は Nanocl の予約名です。Cargo には少なくとも 1 つのアプリケーションコンテナと、少なくとも 1 つの必須アプリケーションコンテナが必要です。アプリケーションコンテナは `Essential: false` を設定しない限り必須で、初期化コンテナは常に必須です。
+
+## レプリカとサンドボックス [#replicas-and-the-sandbox]
+
+各レプリカには独自のアプリケーションプロセスと初期化コンテナの実行があります。ホスト以外のネットワークでアプリケーションコンテナが 2 つ以上ある場合、Nanocl はそのレプリカ用の内部サンドボックスプロセスも 1 つ作成します。アプリケーションコンテナはサンドボックスのネットワーク名前空間に参加するため、IP アドレスを共有し、`localhost` 経由で相互に接続できます。
+
+アプリケーションが 1 つの Cargo は、初期化コンテナがあっても、そのアプリケーションを直接実行します。`NetworkMode: host` を使う Cargo もアプリケーションを直接実行します。サンドボックスはランタイムの実装上の仕組みです。Statefile に定義したり、アプリケーションコンテナとして操作対象にしたりしないでください。
+
+初期化コンテナは、各レプリカで定義順に実行されます。Nanocl はすべての初期化コンテナがステータス `0` で終了してから、アプリケーションコンテナを起動します。0 以外で終了すると、そのレプリカはアプリケーションの起動に進みません。
+
+## 共有設定とコンテナごとの設定 [#shared-and-per-container-settings]
+
+Cargo レベルの `NetworkMode`、`PortBindings`、`Hostname`、`Dns` は、レプリカのネットワーク所有者を設定します。Cargo レベルの `Secrets` は、すべての初期化コンテナとアプリケーションコンテナに継承されます。`Placement` と `ResourceRequirement` も Cargo に属します。
+
+各名前付きコンテナは、イメージ、コマンド、環境変数、ヘルスチェック、ケーパビリティー、デバイス、バインド、マウント、コンテナ専用シークレットなど、独自の Docker 設定を持ちます。ファイルシステム、IPC、PID、UTS、ユーザー、cgroup の名前空間は、コンテナ間で暗黙に共有されません。永続データを共有するには、必要なコンテナに同じ Docker ボリュームまたはバインドマウントを設定してください。
+
+Nanocl はネットワークの所有権とライフサイクルのフィールドを予約しています。コンテナごとの `HostConfig.PortBindings`、`PublishAllPorts`、`AutoRemove`、`NetworkingConfig`、`NetworkDisabled` は受け付けられません。コンテナの `HostConfig.NetworkMode` は、省略するか `host` または `none` に設定できます。ネットワーク、IPC、PID、UTS、ユーザー、cgroup の設定にある直接の `container:...` 参照は受け付けられません。
+
+## ランタイムの識別と障害 [#runtime-identity-and-failures]
+
+Cargo キーは `namespace.name` のままですが、各ランタイムプロセスは、レプリカの序数と論理コンテナ名を含む実際の名前を持ちます。プロセス単位のコマンドを使う前に、`nanocl ps` で実際の名前または完全な Docker ID を取得してください。[プロセスの操作](/ja/guides/nanocl/advanced-usage/process-operations)を参照してください。
+
+アプリケーションプロセスは、デフォルトで Docker の `always` 再起動ポリシーを使用します。必須アプリケーションまたは必要なサンドボックスが準備できていない場合、Nanocl は Cargo を unhealthy と報告します。必須ではないアプリケーションも管理されますが、そのヘルス状態は Cargo の準備完了の判定に影響しません。

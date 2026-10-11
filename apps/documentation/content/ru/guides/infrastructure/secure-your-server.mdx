@@ -1,0 +1,81 @@
+---
+title: Защита сервера
+description: Подробное руководство по защите сервера Next Hat.
+tags:
+- security
+- server
+- infrastructure
+- guide
+timestamp: 1764696944000
+---
+
+# Защита сервера
+
+import { Callout } from "nextra/components";
+
+Руководство описывает основные шаги для защиты сервера Next Hat.
+
+## Создание отдельного пользователя [#create-a-dedicated-user]
+
+Не используйте root для повседневных операций. Создайте отдельного пользователя с правами sudo и nanocl.
+
+1. Создайте пользователя с домашним каталогом:
+
+```bash
+adduser your_username
+```
+
+2. Добавьте пользователя в группу sudo:
+
+```bash
+usermod -aG sudo your_username
+```
+
+3. Добавьте пользователя в группу nanocl:
+
+```bash
+usermod -aG nanocl your_username
+```
+
+Замените `your_username` выбранным именем пользователя.
+
+## Аутентификация SSH по ключу [#set-up-ssh-key-authentication]
+
+Для повышения безопасности отключите аутентификацию паролем и используйте ключи SSH.
+
+1. Создайте пару ключей SSH на **локальном компьютере**, если ещё не сделали этого:
+
+```bash
+ssh-keygen -t ed25519
+```
+
+<Callout type="warning" emoji="⚠️">
+
+Никогда не используйте пустую парольную фразу для ключа SSH. Если закрытый ключ попадёт к злоумышленнику, он сможет получить доступ к серверу.
+
+</Callout>
+
+2. Скопируйте открытый ключ на сервер:
+
+```bash
+ssh-copy-id -i ~/.ssh/<your_key>.pub your_username@your_server
+```
+
+3. Отредактируйте конфигурацию SSH на сервере:
+
+```bash
+sudo vim /etc/ssh/sshd_config
+```
+
+4. Найдите и обновите следующие строки:
+
+```plaintext
+PasswordAuthentication no
+PermitRootLogin no
+```
+
+5. Перезапустите сервис SSH, чтобы применить изменения:
+
+```bash
+sudo systemctl restart ssh
+```

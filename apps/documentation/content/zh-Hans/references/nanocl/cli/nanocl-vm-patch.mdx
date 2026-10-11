@@ -1,0 +1,52 @@
+---
+title: VM 更新
+timestamp: 1787952819000
+---
+
+# VM 更新
+
+# 名称
+
+patch - 更新 VM
+
+## 语法 [#synopsis]
+
+**patch** \[**--user**\] \[**--password**\] \[**--ssh-key**\]
+\[**--hostname**\] \[**--cpu**\] \[**--mem**\] \[**--kvm**\]
+\[**--net-iface**\] \[**-h**\|**--help**\] \<*KEY*\>
+
+## 说明 [#description]
+
+更新 VM
+
+## 选项 [#options]
+
+**--user** *\<USER\>*  
+VM 默认用户
+
+**--password** *\<PASSWORD\>*  
+VM 默认密码
+
+**--ssh-key** *\<SSH_KEY\>*  
+用户 SSH 密钥
+
+**--hostname** *\<HOSTNAME\>*  
+VM 主机名
+
+**--cpu** *\<CPU\>*  
+VM 的 CPU 数量，默认为 1
+
+**--mem** *\<MEMORY\>*  
+VM 内存，单位 MB，默认为 512
+
+**--kvm**  
+启用 KVM
+
+**--net-iface** *\<NET_IFACE\>*  
+VM 网络接口
+
+**-h**, **--help**  
+显示帮助
+
+\<*KEY*\>
+VM 规范键

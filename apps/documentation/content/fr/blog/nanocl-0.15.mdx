@@ -1,0 +1,127 @@
+---
+slug: nanocl-0.15
+title: Présentation de Nanocl 0.15
+description: Nanocl 0.15.0 apporte de nouvelles fonctionnalités, des améliorations majeures et des corrections pour simplifier l’orchestration de vos conteneurs et la gestion de la virtualisation. Découvrez-les en détail !
+image: /img/logo3.png
+authors:
+- leone
+tags:
+- nanocl
+- version
+- 0.15
+keywords:
+- conteneurisation
+- Docker
+- Kubernetes
+- Nanocl
+- NGINX
+- développement logiciel
+- déploiement
+- version
+- 0.15
+date: '2024-06-11'
+timestamp: 1731914078000
+---
+
+Nous annonçons la sortie de **Nanocl 0.15.0**, avec de nouvelles fonctionnalités, des améliorations majeures et des corrections pour simplifier l’orchestration des conteneurs et la gestion de la virtualisation. Disponible depuis le **June 11, 2024**, cette version apporte les outils et les améliorations que vous attendiez. Découvrons-les !
+
+{/* truncate */}
+
+## Points forts [#key-highlights]
+
+### Nouvelles fonctionnalités [#new-features]
+
+1. **Affichage amélioré des commandes :**
+   - Les tableaux des commandes `cargo ls`, `vm ls` et `job ls` affichent maintenant l’état des ressources pour vous informer immédiatement.
+
+2. **Inspections détaillées :**
+   - Les nouvelles commandes `nanocl metric inspect` et `nanocl event inspect` fournissent des informations détaillées sur des métriques et événements précis.
+
+3. **Sauvegarde de l’état :**
+   - La nouvelle commande `nanocl backup` sauvegarde l’état actuel dans plusieurs Statefiles pour préserver et restaurer vos configurations.
+
+4. **Remplacement des variables d’environnement :**
+   - Utilisez la variable d’environnement `HOST` pour remplacer l’hôte par défaut.
+   - Transmettez les certificats et les clés via les variables d’environnement `CERT` et `CERT_KEY` pour les opérations du client.
+
+5. **Suppression des objets orphelins :**
+   - L’option `nanocl state apply --remove-orphans` nettoie les objets orphelins pour maintenir un environnement ordonné.
+
+6. **Création de secrets TLS :**
+   - `nanocl secret create tls` accepte désormais les chemins du certificat et de la clé, ce qui simplifie la création des secrets TLS.
+
+7. **Pages de manuel générées :**
+   - Chaque commande possède maintenant une page de manuel. Consultez-les au format Markdown [ici][manpages] ou utilisez, par exemple, `man nanocl-cargo-create`.
+
+
+### Corrections de bugs [#bug-fixes]
+
+- **Fiabilité améliorée des commandes :**
+  - Les commandes `nanocl cargo run`, `nanocl vm run`, `nanocl cargo start`, `nanocl cargo stop`, `nanocl cargo patch`, `nanocl job start`, `nanocl vm start` et `nanocl vm stop` attendent désormais correctement la fin des opérations avant de rendre la main.
+
+- **Comparaison précise des états :**
+  - Lors de l’application d’un Statefile, le déclenchement des différences compare correctement l’état actuel au nouvel état pour garantir leur cohérence.
+
+### Changements [#changes]
+
+- **Interface unifiée :**
+  - Les commandes comme `inspect`, `rm`, `stop` et `start` utilisent désormais une interface unique pour une expérience cohérente entre tous les objets.
+
+- **Affichage simplifié :**
+  - L’espace de noms a été retiré des tableaux de `cargo ls` et `vm ls` pour un affichage plus clair.
+
+- **Indicateur de chargement amélioré :**
+  - L’application et la suppression des Statefiles disposent d’un indicateur plus clair pour rendre ces opérations plus intuitives.
+
+# Nanocld 0.15.0
+
+Sorti le **May 16, 2024**, Nanocld 0.15.0 met à jour les dépendances, ajoute des points d’accès et des options, et corrige plusieurs problèmes critiques.
+
+### Principales améliorations [#key-enhancements]
+
+- **Améliorations de la ligne de commande :**
+  - Ajout de l’option `--store-addr` pour préciser directement l’adresse du stockage en ligne de commande.
+
+- **Nouveaux points d’accès :**
+  - `GET /metrics/{key}/inspect` et `GET /event/{key}/inspect` fournissent des informations détaillées sur les métriques et les événements.
+
+- **Amélioration des dépôts et des filtres :**
+  - Une nouvelle interface générique `RepositoryCountBy` et des mécanismes de filtrage SQL améliorés offrent davantage de performances et de souplesse.
+  - Ajout d’index à tous les schémas SQL pour améliorer les performances des requêtes.
+  - Possibilité de filtrer les requêtes par date.
+
+### Corrections de bugs [#bug-fixes-1]
+
+- **Gestion des tâches :**
+  - Arrêt des processus avant la suppression des tâches pour assurer un nettoyage correct.
+  - Correction des problèmes de modification et de redémarrage des Cargoes.
+
+### Changements [#changes-1]
+
+- **Chemin d’inspection des ressources :**
+  - Mise à jour du chemin d’inspection des ressources vers `GET /resources/{name}/inspect` pour assurer la cohérence.
+
+# Ncproxy 0.12.0
+
+Sorti avec Nanocld le **May 16, 2024**, Ncproxy 0.12.0 met à jour les dépendances et introduit la limitation des requêtes pour renforcer la sécurité.
+
+### Principales nouveautés [#key-updates]
+
+- **Mise à jour des dépendances :**
+  - Mise à niveau vers ntex version 2.
+
+- **Limitation des requêtes :**
+  - Ajout d’une zone de limitation des requêtes HTTP pour prévenir les abus.
+
+### Changements [#changes-2]
+
+- **Gestion HTTPS :**
+  - Remplacement de la redirection HTTPS par HSTS (HTTP Strict Transport Security) pour renforcer la sécurité.
+
+Nous avons hâte que vous découvriez les améliorations et les nouveautés de Nanocl 0.15.0, Nanocld 0.15.0 et Ncproxy 0.12.0. Vos retours sont précieux : indiquez-nous leur effet sur votre travail et vos suggestions pour les prochaines versions.
+
+Bons déploiements !
+L’équipe Nanocl
+
+
+[manpages]: /fr/references/nanocl/cli/overview

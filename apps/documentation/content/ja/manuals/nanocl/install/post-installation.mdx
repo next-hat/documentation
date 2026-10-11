@@ -1,0 +1,67 @@
+---
+title: インストール後の設定 - Nanocl
+description: このセクションでは、インストール後に必要な Nanocl の設定手順を説明します。
+keywords:
+- ドキュメント
+- nanocl
+- 設定
+- インストール
+- インストール後の設定
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import Terminal from '@/components/terminal';
+
+# Nanocl のインストール後の手順
+
+このセクションでは、インストール後に必要な Nanocl の設定手順を説明します。
+
+## Nanocl 用の Unix グループを作成する [#create-a-unix-group-for-nanocl]
+
+Nanocl デーモンは TCP ポートではなく Unix ソケットにバインドします。<br />
+デフォルトでは、この Unix ソケットはユーザー `root` とグループ `nanocl` が所有します。他のユーザーは sudo を使うか、`nanocl` グループに所属する場合にのみアクセスできます。<br />
+
+nanocl コマンドの前に sudo を付けたくない場合は、nanocl という Unix グループを作成し、ユーザーを追加します。Nanocl デーモンは起動時に、`nanocl` グループのメンバーがアクセスできる Unix ソケットを作成します。
+
+<Terminal language="sh">
+{`sudo groupadd nanocl
+sudo usermod -aG nanocl $USER
+newgrp nanocl`}
+</Terminal>
+
+## Nanocl のコンポーネントをインストールする [#install-nanocl-components]
+
+CLI のインストールが完了したら、Nanocl のコンポーネントを起動します。
+[こちら][nanocl_installer]にあるデフォルトのインストールテンプレートを使います。
+Nanocl は Docker を十分にサポートしており、Docker と Docker Desktop のどちらを実行しているかと、使用する Unix ソケットを自動検出します。
+独自の Unix ソケットを使いたい場合は、次のようにインストールコマンドに `--docker-host` を渡せます。
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/docker.sock`}
+</Terminal>
+
+Podman を使用する場合は、次のように `--docker-host` を指定する必要があります。
+
+<Terminal language="sh">
+{`nanocl install --docker-host unix:///var/run/podman/podman.sock`}
+</Terminal>
+
+次のようにインストールコマンドに `--group` を渡すと、Unix ソケットに関連付けるグループも選べます。
+
+<Terminal language="sh">
+{`nanocl install --group my-custom-group`}
+</Terminal>
+
+## 動作を確認する [#test-if-everything-is-good]
+
+インストールが完了したら、次のコマンドで正常に動作しているかを確認できます。
+
+<Terminal language="sh">
+{`nanocl version
+nanocl cargo run my-cargo nginx:latest`}
+</Terminal>
+
+これで Nanocl を使う準備が整いました。<br />
+
+[nanocl_installer]: https://github.com/next-hat/nanocl/blob/nightly/installer.yml

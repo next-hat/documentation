@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { locales, localePath, routeLocale, ogLocales } from '../apps/documentation/lib/locales.ts'
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const output = join(repository, 'apps/documentation/out')
@@ -12,6 +13,15 @@ if (!existsSync(output)) {
 const inventory = JSON.parse(readFileSync(join(repository, 'scripts/migrate-content.inventory.json'), 'utf8'))
 const { parse: parseYaml } = createRequire(join(repository, 'apps/documentation/package.json'))('yaml')
 const posts = JSON.parse(readFileSync(join(repository, 'apps/documentation/lib/blog-posts.json'), 'utf8'))
+const translatedLabels = new Map(locales.filter(locale => locale !== 'en').map(locale => [locale, JSON.parse(readFileSync(join(repository, 'apps/documentation/lib/translations', `${locale}.json`), 'utf8'))]))
+const translate = (locale, text) => locale === 'en' ? text : translatedLabels.get(locale)[text] || text
+const postsByLocale = new Map(locales.map(locale => [locale, posts.map(post => {
+  if (locale === 'en') return post
+  const source = readFileSync(join(repository, 'apps/documentation/content', locale, 'blog', `${post.slug}.mdx`), 'utf8')
+  const metadata = parseYaml(source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)[1])
+  return { ...post, title: metadata.title, route: localePath(post.route, locale) }
+})]))
+const postByRoute = new Map([...postsByLocale.values()].flat().map(post => [post.route, post]))
 const walk = directory => readdirSync(directory).flatMap(name => {
   const path = join(directory, name)
   return statSync(path).isDirectory() ? walk(path) : [path]
@@ -35,7 +45,7 @@ const records = new Map(htmlFiles.map(path => {
   return [path, { html, ids, route: routeForFile(path) }]
 }))
 const failures = []
-const nonIndexableRoutes = new Set(['/404', '/_not-found', '/search'])
+const nonIndexableRoutes = new Set(['/404', '/_not-found', ...locales.map(locale => localePath('/search', locale))])
 const indexableRecords = [...records.values()].filter(record => !nonIndexableRoutes.has(record.route))
 const sourceModified = new Map(walk(join(repository, 'apps/documentation/content')).filter(path => /\.mdx?$/.test(path)).flatMap(path => {
   const source = readFileSync(path, 'utf8').match(/^---\r?\n(.*?)\r?\n---\r?\n/s)?.[1] || ''
@@ -52,11 +62,12 @@ const resolveExport = pathname => {
   return [base + '.html', join(base, 'index.html'), base].find(path => existsSync(path) && statSync(path).isFile()) || null
 }
 const tagSlug = value => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const requiredRoutes = [
+const englishRequiredRoutes = [
   ...inventory.pages.map(page => page.route), '/', '/blog', '/blog/archive', '/blog/tags', '/blog/authors', '/search',
   ...new Set(posts.flatMap(post => post.tags.map(tag => '/blog/tags/' + tagSlug(tag)))),
   ...Array.from({ length: 7 }, (_, index) => `/references/nanocl/daemon/v0.${12 + index}`)
 ]
+const requiredRoutes = [...new Set(locales.flatMap(locale => englishRequiredRoutes.map(route => localePath(route, locale))))]
 for (const route of requiredRoutes) if (!resolveExport(route)) failures.push(`Missing exported route: ${route}`)
 
 let checkedLinks = 0
@@ -105,8 +116,8 @@ const renderedReference = record => record.html.replace(/<(script|style)\b[^>]*>
 const hasRedocStyles = html => /<style\b[^>]*\bdata-styled=/.test(html)
 let checkedRedocOperations = 0
 let checkedRedocSchemas = 0
-for (const [version, spec] of daemonSpecs) {
-  const route = `/references/nanocl/daemon/v${version}`
+for (const locale of locales) for (const [version, spec] of daemonSpecs) {
+  const route = localePath(`/references/nanocl/daemon/v${version}`, locale)
   const record = records.get(resolveExport(route))
   if (!record) continue
   const expected = new Set(Object.values(spec.paths).flatMap(path => Object.entries(path)
@@ -131,7 +142,8 @@ const inlineSchemas = [
   ['/references/nanocl/objects/secret', 'ProxySslConfig'],
   ['/references/nanocl/objects/virtual-machine', 'VmSpecPartial']
 ]
-for (const [route, name] of inlineSchemas) {
+for (const locale of locales) for (const [originalRoute, name] of inlineSchemas) {
+  const route = localePath(originalRoute, locale)
   const record = records.get(resolveExport(route))
   if (!record) continue
   const visible = renderedReference(record)
@@ -162,7 +174,10 @@ const checkMetadataAsset = (route, reference) => {
   if (url?.origin === origin && !resolveExport(url.pathname)) failures.push(`${route}: missing metadata asset ${reference}`)
 }
 for (const { html, route } of records.values()) {
+  const { locale, path: originalRoute } = routeLocale(route)
   const visible = html.replace(/<script\b[^>]*>.*?<\/script>/gs, '')
+  const language = attributes(visible.match(/<html\b[^>]*>/)?.[0] || '').lang
+  if (language !== locale) failures.push(`${route}: html language must be ${locale}, found ${language || '(missing)'}`)
   const metas = [...visible.matchAll(/<meta\b[^>]*>/g)].map(match => attributes(match[0]))
   const metaValues = key => metas.filter(attrs => (attrs.name || attrs.property)?.toLowerCase() === key).map(attrs => attrs.content || '')
   const oneMeta = key => {
@@ -173,6 +188,8 @@ for (const { html, route } of records.values()) {
   for (const attrs of metas) {
     if (/^(?:og:(?:image|video|audio)(?::(?:url|secure_url))?|twitter:image(?::src)?)$/.test(attrs.property || attrs.name || '') && attrs.content) checkMetadataAsset(route, attrs.content)
   }
+  // Global 404 HTML has its own root layout without documentation structured data.
+  if (route === '/404' || route === '/_not-found') continue
   const structured = []
   for (const match of html.matchAll(/<script\b([^>]*)>(.*?)<\/script>/gs)) {
     if (attributes(match[1]).type !== 'application/ld+json') continue
@@ -185,12 +202,14 @@ for (const { html, route } of records.values()) {
   const site = structured.find(node => schemaTypes(node).includes('WebSite'))
   const organization = structured.find(node => schemaTypes(node).includes('Organization'))
   if (!site || !site.name || !absoluteUrl(site.url) || new URL(site.url).origin !== origin) failures.push(`${route}: missing documentation WebSite structured data`)
+  const localeRoot = origin + localePath('/', locale).replace(/^\/$/, '')
+  if (site && (site.inLanguage !== locale || site.url !== localeRoot || site['@id'] !== `${localeRoot}#website`)) failures.push(`${route}: WebSite schema must use the ${locale} language and localized root`)
   if (!organization || organization.name !== 'Next Hat' || !absoluteUrl(organization.url)) failures.push(`${route}: missing Next Hat Organization structured data`)
   for (const node of structured) {
     const assets = [node.logo, ...(Array.isArray(node.image) ? node.image : [node.image])].filter(Boolean)
     for (const asset of assets) checkMetadataAsset(route, typeof asset === 'string' ? asset : asset.url || asset.contentUrl)
   }
-  if (route === '/search') {
+  if (originalRoute === '/search') {
     const robots = oneMeta('robots').toLowerCase().split(/\s*,\s*/)
     if (!robots.includes('noindex') || !robots.includes('follow') || robots.includes('nofollow')) failures.push(`${route}: search must have noindex, follow metadata`)
     continue
@@ -201,20 +220,39 @@ for (const { html, route } of records.values()) {
   const titles = [...visible.matchAll(/<title\b[^>]*>(.*?)<\/title>/gs)].map(match => stripTags(match[1]))
   const title = titles[0] || ''
   if (titles.length !== 1 || !title.endsWith(' — Next Hat Docs') || !title.slice(0, -' — Next Hat Docs'.length).trim()) failures.push(`${route}: expected one page-specific title ending in — Next Hat Docs`)
-  if (title && pageTitles.has(title)) failures.push(`${route}: title duplicates ${pageTitles.get(title)}`)
-  else if (title) pageTitles.set(title, route)
+  const titleKey = `${locale}:${title}`
+  if (title && pageTitles.has(titleKey)) failures.push(`${route}: title duplicates ${pageTitles.get(titleKey)} within ${locale}`)
+  else if (title) pageTitles.set(titleKey, route)
   const description = oneMeta('description')
-  if (description && descriptions.has(description)) failures.push(`${route}: description duplicates ${descriptions.get(description)}`)
-  else if (description) descriptions.set(description, route)
-  const canonicalLinks = [...visible.matchAll(/<link\b[^>]*>/g)].map(match => attributes(match[0])).filter(attrs => attrs.rel?.split(/\s+/).includes('canonical'))
+  const descriptionKey = `${locale}:${description}`
+  if (description && descriptions.has(descriptionKey)) failures.push(`${route}: description duplicates ${descriptions.get(descriptionKey)} within ${locale}`)
+  else if (description) descriptions.set(descriptionKey, route)
+  const links = [...visible.matchAll(/<link\b[^>]*>/g)].map(match => attributes(match[0]))
+  const canonicalLinks = links.filter(attrs => attrs.rel?.split(/\s+/).includes('canonical'))
   const canonical = origin + (route === '/' ? '' : route)
-  const post = posts.find(post => post.route === route)
+  const post = postByRoute.get(route)
   if (canonicalLinks.length !== 1 || canonicalLinks[0]?.href !== canonical) failures.push(`${route}: expected one canonical URL ${canonical}`)
+  const alternates = links.filter(attrs => attrs.rel?.split(/\s+/).includes('alternate') && (attrs.hrefLang || attrs.hreflang))
+  const expectedAlternates = new Map([...locales.map(language => [language, origin + localePath(originalRoute, language).replace(/^\/$/, '')]), ['x-default', origin + originalRoute.replace(/^\/$/, '')]])
+  if (alternates.length !== expectedAlternates.size) failures.push(`${route}: expected all five language alternates and x-default`)
+  for (const [language, expected] of expectedAlternates) {
+    const found = alternates.filter(attrs => (attrs.hrefLang || attrs.hreflang) === language)
+    if (found.length !== 1 || found[0]?.href !== expected) failures.push(`${route}: ${language} alternate must link to the same page at ${expected}`)
+  }
+  for (const [type, feed] of [['application/rss+xml', 'rss.xml'], ['application/atom+xml', 'atom.xml'], ['application/feed+json', 'feed.json']]) {
+    const found = links.filter(attrs => attrs.rel?.split(/\s+/).includes('alternate') && attrs.type === type)
+    const expected = origin + localePath(`/blog/${feed}`, locale)
+    let reference
+    try { reference = new URL(found[0]?.href || '', canonical).href } catch {}
+    if (found.length !== 1 || reference !== expected) failures.push(`${route}: ${type} alternate must use the localized feed ${expected}`)
+  }
   for (const [key, expected] of [
-    ['og:url', canonical], ['og:title', title], ['og:description', description], ['og:site_name', 'Next Hat Docs'], ['og:locale', 'en_US'], ['og:type', post ? 'article' : 'website'],
+    ['og:url', canonical], ['og:title', title], ['og:description', description], ['og:site_name', 'Next Hat Docs'], ['og:locale', ogLocales[locale]], ['og:type', post ? 'article' : 'website'],
     ['twitter:card', 'summary_large_image'], ['twitter:site', '@next_hat'], ['twitter:creator', '@next_hat'], ['twitter:title', title], ['twitter:description', description],
     ['og:image:width', '1200'], ['og:image:height', '630'], ['og:image:type', 'image/png']
   ]) if (oneMeta(key) !== expected) failures.push(`${route}: ${key} must match ${expected}`)
+  const alternateLocales = metaValues('og:locale:alternate').sort()
+  if (JSON.stringify(alternateLocales) !== JSON.stringify(locales.filter(language => language !== locale).map(language => ogLocales[language]).sort())) failures.push(`${route}: Open Graph must list the four other locales`)
 
   const image = `${origin}/social${route === '/' ? '/index' : route}.png`
   const ogImage = oneMeta('og:image')
@@ -239,14 +277,15 @@ for (const { html, route } of records.values()) {
   if (page) {
     checkedStructuredPages++
     if ((page.headline || page.name) !== title.replace(/ — Next Hat Docs$/, '') || page.description !== description) failures.push(`${route}: page schema title/description must match HTML metadata`)
+    if (page.inLanguage !== locale || schemaUrl(page.isPartOf) !== `${localeRoot}#website`) failures.push(`${route}: page schema language and parent WebSite must match ${locale}`)
   }
-  if (route !== '/') {
+  if (originalRoute !== '/') {
     const breadcrumb = structured.find(node => schemaTypes(node).includes('BreadcrumbList')) || (schemaTypes(page?.breadcrumb).includes('BreadcrumbList') ? page.breadcrumb : null)
     const items = breadcrumb?.itemListElement
     if (!Array.isArray(items) || items.length < 2 || schemaUrl(items.at(-1)?.item) !== canonical) failures.push(`${route}: missing breadcrumb ending at the canonical page`)
     else for (const [index, item] of items.entries()) {
       const url = absoluteUrl(schemaUrl(item.item))
-      if (item.position !== index + 1 || !item.name || !url || url.origin !== origin || !resolveExport(url.pathname)) failures.push(`${route}: invalid breadcrumb item ${index + 1}`)
+      if (item.position !== index + 1 || !item.name || !url || url.origin !== origin || routeLocale(url.pathname).locale !== locale || !resolveExport(url.pathname)) failures.push(`${route}: invalid localized breadcrumb item ${index + 1}`)
     }
   }
 
@@ -271,7 +310,8 @@ else {
   const sitemap = readFileSync(sitemapPath, 'utf8')
   const urls = [...sitemap.matchAll(/<url\b[^>]*>(.*?)<\/url>/gs)].map(match => ({
     url: decodeEntities(match[1].match(/<loc>(.*?)<\/loc>/s)?.[1] || ''),
-    modified: match[1].match(/<lastmod>(.*?)<\/lastmod>/s)?.[1]
+    modified: match[1].match(/<lastmod>(.*?)<\/lastmod>/s)?.[1],
+    alternates: [...match[1].matchAll(/<xhtml:link\b[^>]*>/g)].map(link => attributes(link[0]))
   }))
   const expected = new Set(indexableRecords.map(({ route }) => origin + (route === '/' ? '' : route)))
   const found = new Set()
@@ -280,6 +320,13 @@ else {
     if (!expected.has(entry.url)) failures.push(`Sitemap includes a non-canonical or non-indexable URL: ${entry.url}`)
     if (found.has(entry.url)) failures.push(`Sitemap contains a duplicate URL: ${entry.url}`)
     found.add(entry.url)
+    const originalRoute = routeLocale(absoluteUrl(entry.url)?.pathname || '').path
+    if (entry.alternates.length !== locales.length) failures.push(`Sitemap must list five language alternates: ${entry.url}`)
+    for (const locale of locales) {
+      const alternate = entry.alternates.filter(link => link.hreflang === locale)
+      const expected = origin + localePath(originalRoute, locale).replace(/^\/$/, '')
+      if (alternate.length !== 1 || alternate[0]?.rel !== 'alternate' || alternate[0]?.href !== expected) failures.push(`Sitemap ${locale} alternate must use ${expected}: ${entry.url}`)
+    }
     if (entry.modified !== undefined) {
       const route = absoluteUrl(entry.url)?.pathname
       if (!validDate(entry.modified) || !sourceModified.has(route) || new Date(entry.modified).toISOString() !== sourceModified.get(route)) failures.push(`Sitemap lastmod must match a real source timestamp: ${entry.url}`)
@@ -298,32 +345,36 @@ else {
     const pattern = line.match(/^Disallow:\s*(.+)$/i)?.[1]
     if (!pattern) continue
     const regex = new RegExp('^' + pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\\\$$/, '$'))
-    if (regex.test('/search') || regex.test('/')) failures.push('robots.txt must keep search crawlable so its noindex metadata can be read')
+    if (locales.some(locale => regex.test(localePath('/search', locale))) || regex.test('/')) failures.push('robots.txt must keep localized search crawlable so its noindex metadata can be read')
   }
 }
 
-for (const original of inventory.pages) {
-  const path = resolveExport(original.route)
+for (const locale of locales) for (const original of inventory.pages) {
+  const route = localePath(original.route, locale)
+  const path = resolveExport(route)
   if (!path || !records.has(path)) continue
   const { html } = records.get(path)
   const headings = [...html.matchAll(/<h1\b[^>]*>(.*?)<\/h1>/gs)]
   // Generated man pages already contain several H1 sections; keep those during migration.
   // Blog posts gain an article title in addition to any headings in their original body.
-  const rawArticleSource = readFileSync(join(repository, original.target), 'utf8')
+  const originalPath = join(repository, original.target)
+  const sourcePath = locale === 'en' ? originalPath : join(repository, 'apps/documentation/content', locale, relative(join(repository, 'apps/documentation/content'), originalPath))
+  const rawArticleSource = readFileSync(sourcePath, 'utf8')
   const articleSource = rawArticleSource.replace(/^---\n.*?\n---\n/s, '').replace(/^```[^\n]*\n.*?^```[^\n]*$/gms, '')
   const bodyH1s = [...articleSource.matchAll(/^#\s+.+$/gm)].length
   const allowedH1s = Math.max(1, bodyH1s + (original.source.startsWith('blog/') ? 1 : 0))
-  if (!headings.length || headings.length > allowedH1s) failures.push(`${original.route}: expected 1–${allowedH1s} original/article H1 headings, found ${headings.length}`)
+  if (!headings.length || headings.length > allowedH1s) failures.push(`${route}: expected 1–${allowedH1s} original/article H1 headings, found ${headings.length}`)
   const title = stripTags(html.match(/<title>(.*?)<\/title>/s)?.[1] || '')
-  if (!title || /^(?:undefined|null|Next Hat Documentation)(?: —|$)/.test(title)) failures.push(`${original.route}: missing page-specific title`)
+  if (!title || /^(?:undefined|null|Next Hat Documentation)(?: —|$)/.test(title)) failures.push(`${route}: missing page-specific title`)
   const canonical = [...html.matchAll(/<link\b[^>]*>/g)].map(match => attributes(match[0])).find(attrs => attrs.rel === 'canonical')?.href
-  if (canonical !== origin + original.route) failures.push(`${original.route}: incorrect canonical URL ${canonical || '(missing)'}`)
+  if (canonical !== origin + route) failures.push(`${route}: incorrect canonical URL ${canonical || '(missing)'}`)
   const timestamp = rawArticleSource.match(/^timestamp:\s*(\d+)$/m)?.[1]
-  if (!timestamp) failures.push(`${original.route}: missing original modification timestamp`)
-  else if (!html.includes(new Date(Number(timestamp)).toISOString())) failures.push(`${original.route}: original last-modified time missing from export`)
+  const originalTimestamp = readFileSync(originalPath, 'utf8').match(/^timestamp:\s*(\d+)$/m)?.[1]
+  if (!timestamp || timestamp !== originalTimestamp) failures.push(`${route}: missing original modification timestamp`)
+  else if (!html.includes(new Date(Number(timestamp)).toISOString())) failures.push(`${route}: original last-modified time missing from export`)
 }
 
-for (const post of posts) {
+for (const locale of locales) for (const post of postsByLocale.get(locale)) {
   const record = records.get(resolveExport(post.route))
   if (!record) continue
   const visible = stripTags(record.html.replace(/<script\b[^>]*>.*?<\/script>/gs, ''))
@@ -331,27 +382,71 @@ for (const post of posts) {
   if (!record.html.includes(`dateTime="${post.date}"`) && !record.html.includes(`datetime="${post.date}"`)) failures.push(`${post.route}: blog publication date missing from HTML`)
   for (const author of post.authors) if (!visible.includes(author.name)) failures.push(`${post.route}: blog author ${author.name} missing from HTML`)
   for (const tag of post.tags) {
-    const href = `/blog/tags/${tagSlug(tag)}`
+    const href = localePath(`/blog/tags/${tagSlug(tag)}`, locale)
     if (!record.html.includes(`href="${href}"`)) failures.push(`${post.route}: blog tag link missing ${href}`)
   }
 }
 
-for (const listing of ['/blog', '/blog/archive']) {
+for (const locale of locales) for (const originalListing of ['/blog', '/blog/archive']) {
+  const listing = localePath(originalListing, locale)
   const record = records.get(resolveExport(listing))
   if (!record) continue
-  for (const post of posts) if (!record.html.includes(`href="${post.route}"`)) failures.push(`${listing}: missing blog navigation link ${post.route}`)
+  for (const post of postsByLocale.get(locale)) if (!record.html.includes(`href="${post.route}"`)) failures.push(`${listing}: missing blog navigation link ${post.route}`)
 }
 
-for (const feed of ['/blog/rss.xml', '/blog/atom.xml', '/blog/feed.json']) {
+let checkedFeeds = 0
+const xmlText = (xml, name) => decodeEntities(xml.match(new RegExp(`<${name}\\b[^>]*>([\\s\\S]*?)<\\/${name}>`))?.[1] || '')
+const sameAuthors = (actual, expected) => Array.isArray(actual) && actual.length === expected.length && expected.every(author => actual.some(value => value?.name === author.name && (!author.url || value.url === author.url)))
+for (const locale of locales) for (const originalFeed of ['/blog/rss.xml', '/blog/atom.xml', '/blog/feed.json']) {
+  const feed = localePath(originalFeed, locale)
   const path = resolveExport(feed)
   if (!path) {
     failures.push(`Missing exported feed: ${feed}`)
     continue
   }
+  checkedFeeds++
   const contents = readFileSync(path, 'utf8')
-  for (const post of posts) if (!contents.includes(origin + post.route)) failures.push(`${feed}: missing blog post ${post.slug}`)
+  const localizedPosts = postsByLocale.get(locale)
+  const blogUrl = origin + localePath('/blog', locale)
+  for (const post of localizedPosts) if (!contents.includes(origin + post.route)) failures.push(`${feed}: missing blog post ${post.slug}`)
   if (feed.endsWith('.json')) {
-    try { const parsed = JSON.parse(contents); if (parsed.items.length < posts.length) failures.push(`${feed}: incomplete entries`) } catch { failures.push(`${feed}: invalid JSON`) }
+    try {
+      const parsed = JSON.parse(contents)
+      if (parsed.title !== translate(locale, 'Next Hat blog') || parsed.language !== locale || parsed.home_page_url !== blogUrl || parsed.feed_url !== origin + feed) failures.push(`${feed}: feed title, language, and URLs must match ${locale}`)
+      if (!Array.isArray(parsed.items) || parsed.items.length !== posts.length || new Set(parsed.items.map(item => item.id)).size !== posts.length) failures.push(`${feed}: incomplete or duplicate entries`)
+      for (const post of localizedPosts) {
+        const entry = parsed.items?.find(item => item.id === origin + post.route)
+        if (!entry || entry.url !== origin + post.route || entry.title !== post.title) failures.push(`${feed}: ${post.slug} must use the translated title and localized stable URL`)
+        if (!validDate(entry?.date_published) || entry.date_published !== new Date(post.date).toISOString()) failures.push(`${feed}: ${post.slug} publication date must match the original date`)
+        if (!sameAuthors(entry?.authors || [], post.authors)) failures.push(`${feed}: ${post.slug} authors must match original authors`)
+        if (JSON.stringify(entry?.tags) !== JSON.stringify(post.tags.map(tag => translate(locale, tag)))) failures.push(`${feed}: ${post.slug} tags must use localized labels with original tag identities`)
+      }
+    } catch { failures.push(`${feed}: invalid JSON`) }
+  } else {
+    const isAtom = feed.endsWith('atom.xml')
+    const entries = [...contents.matchAll(isAtom ? /<entry\b[^>]*>(.*?)<\/entry>/gs : /<item\b[^>]*>(.*?)<\/item>/gs)].map(match => match[1])
+    const language = isAtom ? attributes(contents.match(/<feed\b[^>]*>/)?.[0] || '')['xml:lang'] : xmlText(contents, 'language')
+    if (xmlText(contents, 'title') !== translate(locale, 'Next Hat blog') || language !== locale) failures.push(`${feed}: feed title and language must match ${locale}`)
+    const feedLinks = [...contents.matchAll(/<(?:atom:)?link\b[^>]*>/g)].map(match => attributes(match[0]))
+    const selfLinks = feedLinks.filter(link => link.rel === 'self')
+    const home = isAtom ? feedLinks.find(link => !link.rel || link.rel === 'alternate')?.href : xmlText(contents, 'link')
+    if (home !== blogUrl || selfLinks.length !== 1 || selfLinks[0]?.href !== origin + feed || (isAtom && xmlText(contents, 'id') !== blogUrl)) failures.push(`${feed}: feed identity and navigation must use the localized blog URLs`)
+    if (entries.length !== posts.length) failures.push(`${feed}: incomplete or extra entries`)
+    const urls = entries.map(entry => xmlText(entry, isAtom ? 'id' : 'guid'))
+    if (new Set(urls).size !== entries.length) failures.push(`${feed}: duplicate entry identities`)
+    for (const post of localizedPosts) {
+      const entry = entries.find(entry => xmlText(entry, isAtom ? 'id' : 'guid') === origin + post.route)
+      if (!entry) {
+        failures.push(`${feed}: missing entry ${post.slug}`)
+        continue
+      }
+      const link = isAtom ? attributes(entry.match(/<link\b[^>]*>/)?.[0] || '').href : xmlText(entry, 'link')
+      if (xmlText(entry, 'title') !== post.title || link !== origin + post.route) failures.push(`${feed}: ${post.slug} must use the translated title and localized stable URL`)
+      const date = xmlText(entry, isAtom ? 'updated' : 'pubDate')
+      if (!Number.isFinite(Date.parse(date)) || new Date(date).toISOString() !== new Date(post.date).toISOString()) failures.push(`${feed}: ${post.slug} publication date must match the original date`)
+      const authors = isAtom ? [...entry.matchAll(/<author\b[^>]*>(.*?)<\/author>/gs)].map(match => ({ name: xmlText(match[1], 'name'), url: xmlText(match[1], 'uri') })) : [...entry.matchAll(/<dc:creator\b[^>]*>(.*?)<\/dc:creator>/gs)].map(match => decodeEntities(match[1]))
+      if (isAtom ? !sameAuthors(authors, post.authors) : authors.length !== post.authors.length || post.authors.some(author => !authors.includes(author.name))) failures.push(`${feed}: ${post.slug} authors must match original authors`)
+    }
   }
 }
 
@@ -370,5 +465,5 @@ if (failures.length) {
   }
   process.exitCode = 1
 } else {
-  console.log(`Verified ${htmlFiles.length} exported HTML pages, ${inventory.pages.length} preserved document routes, ${checkedRedocOperations} Redoc operations, ${checkedRedocSchemas} embedded schema references, ${indexableRecords.length} SEO metadata sets, ${checkedCards.size} PNG social cards, ${checkedStructuredPages} page schemas, ${checkedSitemapUrls} canonical sitemap URLs, crawl/noindex rules, ${checkedLinks} local links/assets, ${checkedFragments} fragment targets, blog metadata/tags, and three feeds.`)
+  console.log(`Verified ${htmlFiles.length} exported HTML pages across ${locales.length} languages, ${inventory.pages.length * locales.length} preserved document routes, ${checkedRedocOperations} Redoc operations, ${checkedRedocSchemas} embedded schema references, ${indexableRecords.length} SEO metadata sets with language alternates, ${checkedCards.size} PNG social cards, ${checkedStructuredPages} localized page schemas, ${checkedSitemapUrls} canonical sitemap URLs with language alternates, localized crawl/noindex rules, ${checkedLinks} local links/assets, ${checkedFragments} fragment targets, translated blog metadata/tags, and ${checkedFeeds} feeds.`)
 }

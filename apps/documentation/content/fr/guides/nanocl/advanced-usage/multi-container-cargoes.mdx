@@ -1,0 +1,103 @@
+---
+title: Cargoes à plusieurs conteneurs - Nanocl
+description: Exécutez des conteneurs applicatifs et d’initialisation nommés comme une charge Cargo répliquée.
+keywords:
+- documentation
+- nanocl
+- cargo
+- conteneurs
+- conteneurs d’initialisation
+- répliques
+- bac à sable
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargoes à plusieurs conteneurs
+
+Un Cargo décrit une charge de travail. Dans Nanocl 0.18, chacun déclare un ou
+plusieurs `Containers` applicatifs nommés, des `InitContainers` ordonnés facultatifs et
+un nombre persistant de `Replicas`.
+
+```yaml
+ApiVersion: v0.18
+Namespace: global
+
+Cargoes:
+- Name: storefront
+  Replicas: 2
+  NetworkMode: storefront-net
+  Secrets:
+  - shared-env
+  InitContainers:
+  - Name: migrate
+    Image: ghcr.io/example/storefront-migrate:1.0.0
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/storefront-api:1.0.0
+    Healthcheck:
+      Test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health || exit 1"]
+      Interval: 5000000000
+      Timeout: 3000000000
+      Retries: 3
+  - Name: worker
+    Image: ghcr.io/example/storefront-worker:1.0.0
+    Essential: false
+    Secrets:
+    - worker-env
+```
+
+Les noms de conteneurs doivent être uniques dans les deux listes. `_sandbox` est réservé par
+Nanocl. Un Cargo doit avoir au moins un conteneur applicatif, dont au moins un
+essentiel. Les conteneurs applicatifs sont essentiels sauf si
+`Essential: false` est défini ; ceux d’initialisation le sont toujours.
+
+## Répliques et bac à sable [#replicas-and-the-sandbox]
+
+Chaque réplique possède ses propres processus applicatifs et exécutions de conteneurs
+d’initialisation. Avec au moins deux conteneurs applicatifs sur un réseau autre que celui de l’hôte,
+Nanocl crée également un processus interne de bac à sable pour la réplique. Les
+conteneurs applicatifs rejoignent son espace de noms réseau, partagent une
+adresse IP et peuvent communiquer via `localhost`.
+
+Un Cargo à une seule application l’exécute directement, même avec des conteneurs
+d’initialisation. Un Cargo utilisant `NetworkMode: host` exécute aussi ses applications
+directement. Le bac à sable est un détail d’implémentation : ne le déclarez pas dans
+le Statefile et ne le ciblez pas comme conteneur applicatif.
+
+Les conteneurs d’initialisation s’exécutent successivement dans l’ordre déclaré pour chaque réplique. Nanocl
+démarre les applications uniquement après la fin de tous les conteneurs d’initialisation avec
+le code `0`. Un autre code empêche la réplique de passer à ses
+applications.
+
+## Paramètres partagés et par conteneur [#shared-and-per-container-settings]
+
+`NetworkMode`, `PortBindings`, `Hostname` et `Dns` au niveau du Cargo configurent le
+propriétaire réseau de la réplique. Les `Secrets` du Cargo sont hérités par tous les conteneurs
+d’initialisation et applicatifs. `Placement` et `ResourceRequirement` appartiennent aussi
+au Cargo.
+
+Chaque conteneur nommé conserve sa propre configuration Docker : image,
+commande, environnement, contrôle de santé, capacités, périphériques, liaisons, montages et
+secrets spécifiques. Systèmes de fichiers et espaces de noms IPC, PID, UTS, utilisateur et cgroup
+ne sont pas implicitement partagés. Pour partager des données persistantes,
+configurez le même volume Docker ou montage lié sur les conteneurs concernés.
+
+Nanocl réserve les champs de propriété réseau et de cycle de vie. Les champs par conteneur
+`HostConfig.PortBindings`, `PublishAllPorts`, `AutoRemove`,
+`NetworkingConfig` et `NetworkDisabled` sont refusés. Le champ
+`HostConfig.NetworkMode` peut être omis ou valoir `host` ou `none` ; les références brutes
+`container:...` dans les paramètres réseau, IPC, PID, UTS, utilisateur ou cgroup
+sont refusées.
+
+## Identité d’exécution et échecs [#runtime-identity-and-failures]
+
+La clé du Cargo reste `namespace.name`, tandis que chaque processus possède un
+nom concret incluant l’ordinal de la réplique et le nom logique du conteneur.
+Utilisez `nanocl ps` pour obtenir le nom réel ou l’identifiant Docker complet avant les
+commandes ciblant les processus. Consultez [Opérations sur les processus](/fr/guides/nanocl/advanced-usage/process-operations).
+
+Les applications utilisent la politique de redémarrage Docker `always` par défaut. Si une
+application essentielle ou un bac à sable requis n’est pas prêt, Nanocl signale le
+Cargo en mauvaise santé. Une application non essentielle reste gérée, mais sa
+santé ne conditionne pas la disponibilité du Cargo.

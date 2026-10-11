@@ -1,0 +1,92 @@
+---
+title: アップグレード - Nanocl
+description: v1 より前のリリース間で Nanocl のバックアップと移行を行います。
+keywords:
+- ドキュメント
+- nanocl
+- アップグレード
+- 移行
+- バックアップ
+- 0.18
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import Terminal from '@/components/terminal';
+
+# Nanocl のアップグレード
+
+Nanocl はまだ v1 より前の段階にあり、マイナーリリース間で Statefile やストレージの形式が変わる場合があります。インストール済みの環境を置き換える前に、各リリースの移行ガイドを読んでください。0.17 から 0.18 への移行には互換性のない変更があり、停止時間が必要になる場合があります。
+
+## 現在の状態をエクスポートする [#export-the-current-state]
+
+0.17 をアンインストールする前に、望ましい状態を空のディレクトリにエクスポートしてください。
+
+<Terminal language="sh">
+{`nanocl backup -o ./nanocl-0.17-backup`}
+</Terminal>
+
+バックアップコマンドは名前空間ごとに 1 つの Statefile を作成し、さらに `jobs.yml`、`secrets.yml`、`resources.yml` を個別に書き出します。`/var/lib/nanocl` の外にもコピーを保存してください。
+
+バックアップは、接続した 0.17 デーモンが報告するスキーマを保持します。0.18 には自動変換されません。再適用する前に、エクスポートしたすべてのファイルを確認して書き換えてください。
+
+## 0.17 の Statefile を 0.18 に移行する [#migrating-017-statefiles-to-018]
+
+Cargo の主要な構造は、単一の名前なしコンテナとレプリケーションモードから、名前付きコンテナの一覧と整数のレプリカ数に変わりました。
+
+```yaml filename="0.17"
+ApiVersion: v0.17
+Cargoes:
+- Name: api
+  Container:
+    Image: ghcr.io/example/api:1.0.0
+  Replication:
+    Mode: Static
+    Replicas: 2
+```
+
+```yaml filename="0.18"
+ApiVersion: v0.18
+Cargoes:
+- Name: api
+  Replicas: 2
+  Containers:
+  - Name: api
+    Image: ghcr.io/example/api:1.0.0
+```
+
+各 Cargo について、次の変更を行います。
+
+- `Container` を、1 つ以上の名前付き `Containers` に置き換えます。
+- 順序のある起動処理を、名前付きの `InitContainers` に移します。
+- 以前のレプリケーションオブジェクトやモードを、整数の `Replicas`（最小値 1）に置き換えます。
+- ネットワークモード、ホストポートのバインド、ホスト名、DNS 設定を Cargo に移します。コンテナごとのポート公開は受け付けられません。
+- 名前空間付きのオブジェクトキーとプロキシの対象を、`{name}.{namespace}` から正規の `{namespace}.{name}` 順に変更します。
+
+仮想マシンの Statefile は、ローカルの `Image` の絶対パスを使用します。イメージを準備するために `InitContainer` を使うこともできます。デーモンが管理していた `nanocl vm image` のワークフローは削除されました。
+
+Cargo 単位の `cargo exec` とグループへの kill 操作も削除されました。`nanocl ps` で実際のプロセスを 1 つ選び、`nanocl exec PROCESS --
+COMMAND...` または `nanocl kill PROCESS` を実行してください。
+
+## アップグレードの手順 [#upgrade-sequence]
+
+1. Statefile とアプリケーションデータをバックアップします。
+2. エクスポートした Statefile を 0.18 のスキーマに書き換え、確認します。
+3. アプリケーションに応じてトラフィックとワークロードを停止します。
+4. 古いコンポーネントをアンインストールし、外部のバックアップを保持したまま、[インストールガイド](/ja/manuals/nanocl/install/overview)に従って Nanocl 0.18 をインストールします。
+5. 書き換えたファイルを適用する前に `nanocl state render` で検証し、依存関係の順序で適用します（デプロイに応じて、シークレット、ジョブやリソース、名前空間のワークロードの順）。
+6. トラフィックを戻す前に、Cargo の健全性、プロキシと DNS のルール、アプリケーションの動作を確認します。
+
+インストーラーは、この互換性のない Statefile の移行を自動では行いません。また、停止時間なしのアップグレードも保証しません。
+
+<Callout type="info">
+
+**データベース TLS のシークレット**
+
+アップグレード後の `nanocld` の初回起動時に、内部データベース TLS シークレットにある読み取り可能な旧形式の証明書パスは、PEM の内容に置き換えられます。この起動時に証明書ファイルを読み取れる状態にしておいてください。
+
+</Callout>
+
+詳細は、[複数コンテナの Cargo](/ja/guides/nanocl/advanced-usage/multi-container-cargoes)、[Cargo のネットワーク](/ja/guides/nanocl/advanced-usage/cargo-networking)、[プロセスの操作](/ja/guides/nanocl/advanced-usage/process-operations)を参照してください。

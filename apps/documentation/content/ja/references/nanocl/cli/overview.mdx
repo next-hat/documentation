@@ -1,0 +1,78 @@
+---
+title: CLI リファレンス - Nanocl
+description: Nanocl 0.18 のコマンドラインで、ワークロードと実際のランタイムプロセスを管理します。
+keywords:
+- ドキュメント
+- リファレンス
+- nanocl
+- nanocl CLI
+- CLI
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Nanocl のコマンドラインを使う
+
+```sh
+nanocl [OPTIONS] <COMMAND>
+```
+
+現在のコマンド一覧を確認するには `nanocl --help` を実行してください。サブコマンドに `--help` を付けることもできます。Nanocl 0.18 には、次のトップレベルのコマンドグループと操作があります。
+
+| コマンド | 用途 |
+| --- | --- |
+| `namespace`, `secret`, `job`, `cargo`, `vm`, `resource` | Nanocl のオブジェクトを管理する |
+| `metric`, `context`, `node`, `event`, `state` | 関連する API と Statefile を管理する |
+| `ps` | 実際のランタイムプロセスを一覧表示する |
+| `inspect`, `logs`, `stats` | 各コマンドが対応する範囲で、1 つ以上のプロセスの情報を確認する |
+| `exec`, `kill` | 正確なプロセス名または完全な Docker ID で 1 つのプロセスを選び、内部で実行するかシグナルを送る |
+| `info`, `version` | ホストとバージョンの情報を表示する |
+| `install`, `uninstall`, `backup` | ローカルのインストールを管理し、望ましい状態をエクスポートする |
+
+グローバルの `--host` オプションは、接続する `nanocld` エンドポイントを選びます。デフォルトは `unix://run/nanocl/nanocl.sock` です。
+
+## ワークロードのキーとプロセス名 [#workload-keys-and-process-names]
+
+Cargo と VM のコマンドは、正規の `{namespace}.{name}` キーを使います。例：
+
+```sh
+nanocl cargo inspect global.storefront
+nanocl vm inspect global.build-runner
+```
+
+プロセス単位のコマンドは、Cargo の名前とレプリカのセレクターを受け取りません。まず実際のプロセスを探し、返された正確な名前または完全な Docker ID を使ってください。
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+複数コンテナの操作手順は、[プロセス操作](/ja/guides/nanocl/advanced-usage/process-operations)を参照してください。
+
+## ヘルプ [#help]
+
+```console
+$ nanocl cargo --help
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+```
+
+ローカルの Unix ソケットの権限によっては、`nanocl` グループに属するユーザーとして Nanocl を実行する必要があります。[インストール手順](/ja/manuals/nanocl/install/overview)を参照してください。

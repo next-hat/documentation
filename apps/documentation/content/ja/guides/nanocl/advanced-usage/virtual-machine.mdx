@@ -1,0 +1,188 @@
+---
+title: 仮想マシン - Nanocl
+description: Nanocl で仮想マシンを作成します。
+keywords:
+- ドキュメント
+- nanocl
+- ガイド
+- 入門
+- 設定
+- 仮想マシン
+- 仮想マシン
+- 仮想化
+- マシン
+- statefile
+- 状態
+- ファイル
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# 仮想マシンを作成する
+
+`Nanocl` で、[cloud-init][cloud-init] に対応する仮想マシンを素早く起動できます。<br/>
+多くの Linux クラウドイメージには標準で含まれており、仮想マシン内のネットワーク、ユーザー、SSH キーを設定できます。
+
+## デフォルトの仮想マシンランタイムをインストールする [#install-the-default-vm-runtime]
+
+ネットワークの扱いを簡単にするため、Nanocl はデフォルトのランタイムイメージ [nanocl-qemu][nanocl-qemu] を使い、コンテナ内で仮想マシンを起動します。<br/>
+
+
+## 初期化コンテナで Ubuntu をダウンロードして仮想マシンのディスクを作成する [#download-ubuntu-and-create-a-vm-disk-with-an-init-container]
+
+Nanocl は仮想マシンのイメージパスを直接使います。Nanocl 0.18 では、仮想マシンの `InitContainer` で Ubuntu のクラウドイメージをダウンロードし、QEMU ランタイムコンテナが起動する前に `qemu-img` で独立した qcow2 ディスクを作成します。これにより、ホスト側で手動の準備をせずに、ダウンロードとディスクの準備を仮想マシンのライフサイクルに含められます。
+
+次の Statefile は、`/var/lib/nanocl/vm` に `web-01` のディスクを作成します。初期化コンテナは Ubuntu Server 24.04 をダウンロードし、`qemu-img convert` で書き込み可能な `web-01.qcow2` のコピーを作成します。仮想マシンのランタイムは、このコマンドがステータス `0` で終了してから起動します。
+
+```yaml
+ApiVersion: v0.18
+VirtualMachines:
+- Name: web-01
+  Image: /var/lib/nanocl/vm/web-01.qcow2
+  InitContainer:
+    # Omit Image to use Nanocl's default nanocl-qemu runtime image.
+    Entrypoint: ["sh", "-ec"]
+    Cmd:
+    - |
+      mkdir -p /images
+      test ! -e /images/web-01.qcow2 || {
+        echo "VM disk already exists: /images/web-01.qcow2" >&2
+        exit 1
+      }
+      curl -fL \
+        -o /images/ubuntu-24.04-base.img \
+        https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      qemu-img convert -p -O qcow2 \
+        /images/ubuntu-24.04-base.img \
+        /images/web-01.qcow2
+    HostConfig:
+      Binds:
+      - /var/lib/nanocl/vm:/images
+```
+
+`qemu-img convert` は完全に独立した qcow2 のコピーを作成します。仮想マシンを増やすときは、それぞれ異なる出力ファイル名を使ってください。存在確認により、初期化コンテナの再実行で仮想マシンのディスクが上書きされるのを防ぎます。Nanocl デーモンと仮想マシンのランタイムには、`/var/lib/nanocl/vm` への書き込み権限が必要です。
+
+## 仮想マシンを実行する [#run-a-vm]
+
+簡単なコマンドで仮想マシンを実行できます。
+
+```sh
+nanocl vm run web-01 /var/lib/nanocl/vm/web-01.qcow2
+```
+
+指定している引数の意味は次のとおりです。
+
+* `web-01` - 仮想マシンの名前。
+* `/var/lib/nanocl/vm/web-01.qcow2` - 仮想マシンの書き込み可能なディスクコピーの絶対パス。
+
+オプションを指定しない場合は、次のデフォルト設定で仮想マシンが起動します。
+
+* 1 CPU
+* 500 MB の RAM
+
+デフォルト設定での初回起動時間は約 90 秒です。KVM を有効にし、仮想マシンにより多くのリソースを割り当てると短縮できます。
+
+<Callout type="info">
+
+Nanocl はディスクのスナップショットを自動作成しません。仮想マシンにはコピーしたディスクのパスを使い、ダウンロードしたベースイメージは、今後仮想マシンのコピーを作るための元データとしてのみ保持してください。
+
+</Callout>
+
+次のコマンドで仮想マシンに接続し、状態を確認できます。
+
+```sh
+nanocl vm attach web-01
+```
+
+このコマンドで稼働中の仮想マシンに接続し、コマンドの実行などの操作を行えます。
+
+次のような出力が表示されます。
+
+```console
+[  OK  ] Finished Permit User Sessions.
+[  OK  ] Started Serial Getty on ttyS0.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Finished Record successful boot for GRUB.
+         Starting GRUB failed boot detection...
+[  OK  ] Started LSB: automatic crash report generation.
+[  OK  ] Finished GRUB failed boot detection.
+[  OK  ] Finished Pollinate to seed…seudo random number generator.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started User Login Management.
+[  OK  ] Started Unattended Upgrades Shutdown.
+[  OK  ] Started OpenBSD Secure Shell server.
+[  OK  ] Started Dispatcher daemon for systemd-networkd.
+cloud-init[494]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:config' at Tue, 04 Jul 2023 12:36:13 +0000. Up 78.27 seconds.
+cloud-init[517]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:final' at Tue, 04 Jul 2023 12:36:18 +0000. Up 83.19 seconds.
+cloud-init[515]: The system is finally up, after 93.54 seconds
+[  OK  ] Finished Execute cloud user/final scripts.
+[  OK  ] Reached target Cloud-init target.
+Ubuntu 22.04.2 LTS 91daefd21c1b ttyS0
+
+91daefd21c1b login: 
+```
+
+デフォルトのユーザー名とパスワードは `cloud:cloud` です。
+仮想マシンを最初に起動するときに、これらの認証情報を設定できます。
+セキュリティーを高めるために SSH キーも設定できます。
+ログインできるようになるまで、[cloud-init][cloud-init] の完了を待つ必要があります。
+
+## 仮想マシンを更新する [#patch-a-vm]
+
+メモリーや CPU などのリソースを変更して、仮想マシンの性能を調整できます。
+
+次のコマンドを使います。
+
+```sh
+nanocl vm patch myvm --kvm --cpu 4 --mem 2048
+```
+
+上のコマンドで指定しているオプションは次のとおりです。
+
+* `myvm` - 更新する仮想マシンの名前。
+* `--kvm` - KVM アクセラレーションを有効にします。
+* `--cpu` - 使用する CPU 数を設定します。
+* `--mem` - 割り当てるメモリー容量を設定します。
+
+システムで KVM が有効でない場合は、--kvm オプションを省略できます。更新後は、仮想マシンに再接続できます。
+
+<Callout type="warning">
+
+仮想マシンを更新すると、停止して再起動します。
+
+</Callout>
+
+## SSH 接続 [#ssh-connection]
+
+Docker Desktop を使っていない場合は、IP アドレスで仮想マシンに接続できます。仮想マシンの IP アドレスは次のコマンドで取得できます。
+
+```sh
+nanocl vm inspect myvm
+```
+
+`IPAddress` を取得します。この例では `10.2.0.2` です。
+続いて、デフォルトの認証情報 `cloud:cloud` を使って SSH で接続できます。
+
+```sh
+ssh cloud@10.2.0.2
+```
+
+## Statefile [#statefile]
+
+``Statefile`` で仮想マシンを定義できます。例は次のとおりです。
+
+<StatefileBlock example="advanced/vm" />
+
+## 仮想マシンを公開する [#expose-your-vm]
+
+`ProxyRule` で仮想マシンの特定のポートを公開できます。
+以下は、仮想マシンの SSH 用ポート 22 を公開ポート 5555 に公開する完全な例です。
+
+<StatefileBlock example="advanced/vm-proxy" />
+
+[cloud-init]: https://cloud-init.io
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

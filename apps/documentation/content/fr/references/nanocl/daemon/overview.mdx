@@ -1,0 +1,42 @@
+---
+title: Référence du démon - Nanocl
+description: Options et périmètre opérationnel du démon Nanocl.
+keywords:
+- documentation
+- références
+- nanocl
+- nanocld
+- démon
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Démon Nanocl
+
+`nanocld` gère le nœud Docker local, conserve les états souhaités et observés,
+et expose l’API Nanocl. Les options de jonction restent expérimentales dans 0.18 ;
+ne les considérez pas comme une configuration automatique d’ordonnancement multi-nœud ou de haute
+disponibilité.
+
+```sh
+nanocld [OPTIONS]
+```
+
+| Option | Rôle |
+| --- | --- |
+| `-H, --hosts HOSTS` | Points d’écoute API ; installation par défaut sur `unix:///run/nanocl.sock` |
+| `--docker-host DOCKER_HOST` | Point d’accès Docker ; installation par défaut sur `unix:///var/run/docker.sock` |
+| `--store-addr STORE_ADDR` | Adresse de connexion CockroachDB |
+| `--state-dir STATE_DIR` | Répertoire d’état d’exécution ; installation par défaut `/var/lib/nanocl` |
+| `--conf-dir CONF_DIR` | Répertoire de configuration ; `/etc/nanocl` par défaut |
+| `--gateway GATEWAY` | Passerelle hôte ; détectée si omise |
+| `--hostname HOSTNAME` | Nom du nœud ; détecté si omis |
+| `--node NODES` | Points d’accès expérimentaux des nœuds à rejoindre |
+| `--advertise-addr ADDRESS` | Adresse annoncée aux autres nœuds |
+| `--gid GID` | Identifiant de groupe du socket Unix ; `0` par défaut |
+| `--cert`, `--cert-key`, `--cert-ca` | Éléments TLS facultatifs de l’API |
+| `--verify`, `--password` | Vérification TLS et mot de passe facultatifs de l’API |
+
+Exécutez `nanocld --help` pour la syntaxe exacte de votre version. La dernière API
+0.18 est disponible dans la barre latérale ou sur la
+[page OpenAPI versionnée](/fr/references/nanocl/daemon/v0.18).

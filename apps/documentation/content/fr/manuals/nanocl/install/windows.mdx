@@ -1,0 +1,69 @@
+---
+title: Installer sur Windows - Nanocl
+description: Installez Nanocl sur Windows avec un script ou une archive tar.
+keywords:
+- nanocl
+- installation
+- windows
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import { Callout } from "nextra/components";
+
+import vars from '@/lib/vars';
+import Terminal from '@/components/terminal';
+import DirTree from '@/components/dir_tree';
+import InstallBlock from '@/components/install_block';
+
+# Installer sur Windows
+
+Téléchargez et extrayez l’archive avec PowerShell, puis ajoutez le dossier à votre PATH.
+
+<Callout type="warning">
+
+La prise en charge Windows est expérimentale. Utilisez-la à vos risques.<br/>
+Nous recommandons Windows Subsystem for Linux (WSL) pour une expérience plus stable.
+
+</Callout>
+
+## Installation manuelle [#manual-install]
+
+### Obtenir l’archive de la CLI [#get-the-cli-tarball]
+
+Téléchargez l’archive nanocl sur la <a href={vars.nanoclReleaseTagUrl}>page des versions GitHub</a>.<br/>
+Vous pouvez aussi la télécharger et l’extraire avec :
+
+<Terminal language="powershell">{`$dst = "$env:USERPROFILE\\nanocl"
+New-Item -ItemType Directory -Force -Path $dst | Out-Null
+Invoke-WebRequest -Uri "${vars.nanoclWindowsTarballUrl}" -OutFile "$dst\\nanocl.tar.gz"`}</Terminal>
+
+Structure du répertoire extrait :
+
+<DirTree variant="windows" />
+
+<Terminal language="powershell">{`# Windows 10+ includes tar
+& tar -xzf "$dst\\nanocl.tar.gz" -C $dst
+# The binary is under bin\\nanocl.exe
+$bin = Join-Path $dst 'bin'
+# Add to PATH (current session):
+$env:Path = "$env:Path;$bin"
+# Or copy to a directory already in PATH (requires admin):
+# Copy-Item (Join-Path $bin 'nanocl.exe') "$env:ProgramFiles\\nanocl\\nanocl.exe" -Force`}</Terminal>
+
+
+## Compiler depuis les sources [#compile-from-source]
+
+Si vous utilisez une autre architecture ou préférez compiler depuis les sources :
+
+Prérequis :
+
+- Installez la chaîne Rust : https://www.rust-lang.org/tools/install
+- Visual Studio Build Tools (outils C++) ou une chaîne MSVC fonctionnelle
+- Bibliothèques de développement OpenSSL et libpq si elles ne sont pas intégrées ; sur Windows, elles sont généralement liées statiquement lors de la compilation si disponibles.
+
+<Terminal language="powershell">
+{`cargo install nanocl`}
+</Terminal>
+

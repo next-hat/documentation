@@ -1,0 +1,105 @@
+---
+title: Nanocl
+timestamp: 1787952819000
+---
+
+# Nanocl
+
+# 名前
+
+nanocl - コンテナと仮想マシンのオーケストレーター
+
+## 書式 [#synopsis]
+
+**nanocl** \[**-H**\|**--host**\] \[**-h**\|**--help**\]
+\[**-V**\|**--version**\] \<*subcommands*\>
+
+## 説明 [#description]
+
+Nanocl は、コンテナと仮想マシン向けのモダンで自己完結型のオーケストレーターです。宣言的な Statefile（YAML/TOML/JSON）と一貫した予測可能なデフォルト設定により、開発から本番までの流れを整えます。性能と安全性のために Rust で実装されており、運用負荷を抑えながら高い機能性と拡張性を提供します。動的ルーティング、DNS、エンドツーエンド TLS を使って Cargo、リソース、ジョブ、仮想マシンを管理できます。まずローカルの単一ノードで始め、準備が整ったら拡張できます。習得しやすく、本番運用を前提に設計されています。
+
+## オプション [#options]
+
+**-H**, **--host** *\<HOST\>*  
+Nanocld ホストのデフォルト: unix://run/nanocl/nanocl.sock
+
+**-h**, **--help**  
+ヘルプを表示します（-h で概要を確認できます）
+
+**-V**, **--version**  
+バージョンを表示します
+
+# サブコマンド
+
+nanocl-namespace(1)  
+名前空間を管理します
+
+nanocl-secret(1)  
+シークレットを管理します
+
+nanocl-job(1)  
+ジョブを管理します
+
+nanocl-cargo(1)  
+Cargo を管理します
+
+nanocl-vm(1)  
+仮想マシンを管理します
+
+nanocl-resource(1)  
+リソースを管理します
+
+nanocl-metric(1)  
+メトリクスを管理します
+
+nanocl-context(1)  
+コンテキストを管理します
+
+nanocl-node(1)  
+ノードを管理します（実験的機能）
+
+nanocl-state(1)  
+Statefile を適用または削除します
+
+nanocl-event(1)  
+イベントを表示または監視します
+
+nanocl-ps(1)  
+プロセスを表示します
+
+nanocl-logs(1)  
+プロセスのログを取得します
+
+nanocl-inspect(1)  
+プロセスの詳細を表示します
+
+nanocl-exec(1)
+プロセス内でコマンドを実行します
+
+nanocl-kill(1)
+プロセスにシグナルを送信します
+
+nanocl-info(1)  
+Nanocl ホストの情報を表示します
+
+nanocl-version(1)  
+Nanocl のバージョン情報を表示します
+
+nanocl-install(1)  
+コンポーネントをインストールします
+
+nanocl-uninstall(1)  
+コンポーネントをアンインストールします
+
+nanocl-backup(1)  
+現在の状態をバックアップします
+
+nanocl-stats(1)  
+プロセスの統計情報
+
+nanocl-help(1)  
+このメッセージ、または指定したサブコマンドのヘルプを表示します
+
+# バージョン
+
+v0.18.0

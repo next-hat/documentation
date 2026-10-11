@@ -1,0 +1,46 @@
+---
+title: Installer sur macOS - Nanocl
+description: Installez Nanocl sur macOS avec un script ou une archive tar.
+keywords:
+- nanocl
+- installation
+- macos
+- tar
+image: /img/logo.webp
+timestamp: 1757712924000
+---
+
+import vars from '@/lib/vars';
+import QuickInstall from '@/components/nanocl_quick_install';
+import UnixTarInstall from '@/components/nanocl_unix_tar_install';
+import CratesIoInstall from '@/components/nanocl_crates_io_install';
+import Verify from '@/components/nanocl_verify_install';
+import Terminal from '@/components/terminal';
+
+# Installer Nanocl sur macOS
+
+<QuickInstall locale="fr" />
+
+## Installation manuelle [#manual-install]
+
+### Obtenir l’archive de la CLI [#get-the-cli-tarball]
+
+<UnixTarInstall locale="fr" tarballUrl={vars.nanoclMacOsTarballUrl} tarballName={`${vars.nanoclMacOsTarballName}`} />
+
+## Compiler depuis les sources [#compile-from-source]
+
+Installez d’abord PostgreSQL avec Homebrew :
+
+<Terminal language="sh" filename="sh">
+{`brew install libpq
+brew link --force libpq
+`}
+</Terminal>
+
+<CratesIoInstall locale="fr" />
+
+## Vérifier l’installation [#verify-installation]
+
+<Verify locale="fr" />
+
+Suivez ensuite les [étapes après installation](/fr/manuals/nanocl/install/post-installation) pour installer les composants Nanocl.

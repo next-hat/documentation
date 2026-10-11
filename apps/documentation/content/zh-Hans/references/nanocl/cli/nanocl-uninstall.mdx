@@ -1,0 +1,33 @@
+---
+title: 卸载
+timestamp: 1757712924000
+---
+
+# 卸载
+
+# 名称
+
+uninstall - 卸载组件
+
+## 语法 [#synopsis]
+
+**uninstall** \[**--docker-host**\] \[**-t**\|**--template**\]
+\[**--docker-desktop**\] \[**-h**\|**--help**\]
+
+## 说明 [#description]
+
+卸载组件
+
+## 选项 [#options]
+
+**--docker-host** *\<DOCKER_HOST\>*  
+安装 Nanocl 的 Docker 主机，默认为 unix:///var/run/docker.sock
+
+**-t**, **--template** *\<TEMPLATE\>*  
+Nanocl 卸载模板，默认自动检测
+
+**--docker-desktop**  
+指定 Docker 主机是否为 Docker Desktop；Docker 上下文为 desktop-linux 时自动检测
+
+**-h**, **--help**  
+显示帮助

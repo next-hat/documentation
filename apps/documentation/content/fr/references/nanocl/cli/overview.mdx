@@ -1,0 +1,83 @@
+---
+title: Référence CLI - Nanocl
+description: Utilisez la ligne de commande Nanocl 0.18 pour gérer les charges et leurs processus d’exécution concrets.
+keywords:
+- documentation
+- références
+- nanocl
+- nanocl CLI
+- CLI
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Utiliser la ligne de commande Nanocl
+
+```sh
+nanocl [OPTIONS] <COMMAND>
+```
+
+Exécutez `nanocl --help` pour la liste actuelle des commandes, ou ajoutez `--help` à une
+sous-commande. Nanocl 0.18 expose les groupes et opérations suivants :
+
+| Commande | Rôle |
+| --- | --- |
+| `namespace`, `secret`, `job`, `cargo`, `vm`, `resource` | Gérer les objets Nanocl |
+| `metric`, `context`, `node`, `event`, `state` | Gérer les API associées et les Statefiles |
+| `ps` | Lister les processus concrets d’exécution |
+| `inspect`, `logs`, `stats` | Inspecter un ou plusieurs processus selon la commande |
+| `exec`, `kill` | Exécuter dans un processus ou lui envoyer un signal par nom exact/identifiant Docker complet |
+| `info`, `version` | Afficher les informations de l’hôte et des versions |
+| `install`, `uninstall`, `backup` | Gérer l’installation locale et exporter l’état souhaité |
+
+L’option globale `--host` sélectionne le point d’accès `nanocld` et utilise par défaut
+`unix://run/nanocl/nanocl.sock`.
+
+## Clés des charges et noms des processus [#workload-keys-and-process-names]
+
+Les commandes Cargo et VM utilisent les clés canoniques `{namespace}.{name}`, par exemple :
+
+```sh
+nanocl cargo inspect global.storefront
+nanocl vm inspect global.build-runner
+```
+
+Les commandes de processus n’acceptent pas un nom de Cargo avec un sélecteur de réplique. Trouvez
+d’abord le processus concret, puis utilisez le nom exact retourné ou l’identifiant Docker complet :
+
+```sh
+nanocl ps --namespace global --kind cargo
+nanocl exec PROCESS -- sh
+nanocl kill --signal SIGTERM PROCESS
+```
+
+Consultez [Opérations sur les processus](/fr/guides/nanocl/advanced-usage/process-operations) pour
+le fonctionnement à plusieurs conteneurs.
+
+## Aide [#help]
+
+```console
+$ nanocl cargo --help
+Manage cargoes
+
+Usage: nanocl cargo [OPTIONS] <COMMAND>
+
+Commands:
+  list     List existing cargo
+  create   Create a new cargo
+  start    Start cargoes by canonical keys
+  stop     Stop cargoes by canonical keys
+  restart  Restart cargoes by canonical keys
+  remove   Remove cargoes by canonical keys
+  inspect  Inspect a cargo by its canonical key
+  patch    Update a cargo by its canonical key
+  history  List cargo history
+  revert   Revert cargo to a specific history
+  logs     Show logs
+  run      Run a cargo
+  stats    Show stats of cargo
+  help     Print this message or the help of the given subcommand(s)
+```
+
+Selon les permissions du socket Unix local, vous devrez éventuellement exécuter Nanocl comme
+utilisateur du groupe `nanocl`. Consultez les [instructions d’installation](/fr/manuals/nanocl/install/overview).

@@ -1,0 +1,81 @@
+---
+title: Nanocld
+timestamp: 1787952819000
+---
+
+# Nanocld
+
+# НАЗВАНИЕ
+
+Nanocl - Демон Nanocl — самостоятельный оркестратор
+
+## СИНТАКСИС [#synopsis]
+
+**Nanocl** \[**-H**\|**--hosts**\] \[**--docker-host**\]
+\[**--store-addr**\] \[**--state-dir**\] \[**--conf-dir**\] \[**--gateway**\]
+\[**--hostname**\] \[**--node**\] \[**--advertise-addr**\] \[**--gid**\]
+\[**--cert**\] \[**--cert-key**\] \[**--cert-ca**\] \[**--verify**\]
+\[**--password**\]
+\[**-h**\|**--help**\] \[**-V**\|**--version**\]
+
+## ОПИСАНИЕ [#description]
+
+Демон Nanocl — самостоятельный оркестратор
+
+## ПАРАМЕТРЫ [#options]
+
+**-H**, **--hosts**=*HOSTS*  
+Адреса прослушивания tcp:// и unix:// \[по умолчанию: unix:///run/nanocl.sock\]
+
+**--docker-host**=*DOCKER_HOST*  
+Сокет подключения Docker daemon \[по умолчанию: unix:///var/run/docker.sock\]
+
+**--store-addr**=*STORE_ADDR*
+Адрес подключения к хранилищу
+
+**--state-dir**=*STATE_DIR*  
+Каталог состояния \[по умолчанию: /var/lib/nanocl\]
+
+**--conf-dir**=*CONF_DIR* \[по умолчанию: /etc/nanocl\]  
+Каталог конфигурации
+
+**--gateway**=*GATEWAY*  
+Шлюз определяется автоматически по шлюзу исходного IP хоста, если не задан
+
+**--hostname**=*HOSTNAME*  
+Имя хоста узла; определяется автоматически, если не задано
+
+**--node**=*NODES*  
+Присоединить текущий узел к кластеру
+
+**--advertise-addr**=*ADVERTISE_ADDR*  
+Адрес, объявляемый другим узлам
+
+**--gid**=*GID* \[по умолчанию: 0\]  
+ID группы
+
+**--cert**=*CERT*  
+
+**--cert-key**=*CERT_KEY*  
+
+**--cert-ca**=*CERT_CA*  
+
+**--verify**
+Проверять центр сертификации
+
+**--password**=*PASSWORD*
+Пароль сертификата, если есть
+
+**-h**, **--help**  
+Показать справку
+
+**-V**, **--version**  
+Показать версию
+
+# ВЕРСИЯ
+
+v0.18.0
+
+# АВТОРЫ
+
+Команда Next Hat \<team@next-hat.com\>

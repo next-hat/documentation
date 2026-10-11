@@ -1,0 +1,85 @@
+---
+title: 配置代理 - Nanocl
+description: 配置代理，对外开放 Cargo。
+keywords:
+- 文档
+- nanocl
+- 指南
+- 开始使用
+- 代理
+- 配置
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# 配置代理
+
+通过 `proxy controller` 创建 `proxy rules`，可以对外开放 Cargo。<br/>
+代理规则将指定 IP 地址、端口或域名转发到 Cargo 上游。
+
+
+## 添加代理规则 [#add-proxy-rules]
+
+<Callout type="info">
+
+继续之前，需要有名为 my-cargo 的 Cargo 在运行，并在 **9001** 端口提供 HTTP 服务。
+
+</Callout>
+
+创建 `proxy.deploy-example.yml` 文件，复制以下内容：
+
+<StatefileBlock example="get-started/proxy" />
+
+运行以下命令创建代理规则：
+
+```sh
+nanocl state apply -s proxy.deploy-example.yml
+```
+
+查看已有资源：
+
+```sh
+nanocl resource ls
+```
+
+测试代理规则是否生效：
+
+```sh
+curl --header "Host: deploy-example.com" 127.0.0.1
+```
+
+预期输出：
+
+```json
+{
+  "headers": {
+    "x-forwarded-proto": "http",
+    "x-forwarded-for": "127.0.0.1",
+    "accept": "*/*",
+    "x-real-ip": "127.0.0.1",
+    "connection": "close",
+    "x-forwarded-scheme": "http",
+    "host": "deploy-example.com",
+    "user-agent": "curl/8.2.1"
+  },
+  "envs": {
+    "   ": "/bin/nanocl-get-started",
+    "NANOCL_CARGO_INSTANCE": "0",
+    "NANOCL_NODE_ADDR": "192.168.8.102",
+    "HOME": "/",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TERM": "xterm",
+    "PORT": "9001",
+    "HOSTNAME": "global.my-cargo-r0-my-cargo-d4e5f6.c",
+    "NANOCL_CARGO_KEY": "global.my-cargo",
+    "NANOCL_CARGO_NAMESPACE": "global",
+    "NANOCL_NODE": "behuman"
+  }
+}
+```
+
+现在你已掌握配置 Cargo 代理规则的方法，开始用 Nanocl 部署吧！

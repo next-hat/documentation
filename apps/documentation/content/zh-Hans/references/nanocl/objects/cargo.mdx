@@ -1,0 +1,23 @@
+---
+title: Cargo 参考 - Nanocl
+keywords:
+- 文档
+- 参考
+- nanocl
+- nanocld
+- cargo
+- 规范
+- 规范
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+# Cargo
+
+Nanocl 0.18 的 `Cargo` 是持久化工作负载，包含命名应用 `Containers`、可选的有序 `InitContainers` 和整数 `Replicas`。Cargo 层的网络和端口设置描述副本共享的网络边界，Docker 配置和容器专属 Secret 保留在各命名容器上。
+
+下面的 OpenAPI 模式是 `CargoSpec` 的权威参考。运行时拓扑和示例见[多容器 Cargo](/zh-Hans/guides/nanocl/advanced-usage/multi-container-cargoes)。
+
+import ApiSchema from '@/components/api_schema'
+
+<ApiSchema locale="zh-Hans" example={false} id="nanocld-latest" pointer="#/components/schemas/CargoSpec" />

@@ -1,0 +1,188 @@
+---
+title: Виртуальные машины — Nanocl
+description: Создание виртуальных машин с Nanocl.
+keywords:
+- документация
+- nanocl
+- руководства
+- начало работы
+- конфигурация
+- виртуальные машины
+- vm
+- виртуальный
+- машина
+- statefile
+- состояние
+- файл
+image: /img/logo.webp
+timestamp: 1787952819000
+---
+
+import { Callout } from "nextra/components";
+
+import StatefileBlock from '@/components/statefile_block';
+
+# Создание VM
+
+С `Nanocl` можно быстро запускать виртуальные машины, совместимые с [cloud-init][cloud-init].<br/>
+Большинство облачных образов Linux включает cloud-init, позволяющий настроить сеть, пользователей и ключи SSH внутри VM.
+
+## Установка среды выполнения VM по умолчанию [#install-the-default-vm-runtime]
+
+Для удобной работы сети Nanocl запускает виртуальную машину в контейнере, используя стандартный образ [nanocl-qemu][nanocl-qemu].<br/>
+
+
+## Загрузка Ubuntu и создание диска VM init-контейнером [#download-ubuntu-and-create-a-vm-disk-with-an-init-container]
+
+Nanocl использует путь образа VM напрямую. В Nanocl 0.18 `InitContainer` VM скачивает облачный образ Ubuntu и создаёт независимый диск qcow2 с `qemu-img` перед запуском контейнера QEMU. Загрузка и подготовка диска становятся частью жизненного цикла VM вместо ручной подготовки на хосте.
+
+Следующий Statefile создаёт диск `web-01` в `/var/lib/nanocl/vm`. Init-контейнер скачивает Ubuntu Server 24.04 и создаёт записываемую копию `web-01.qcow2` через `qemu-img convert`. VM запускается только после завершения команды с кодом `0`.
+
+```yaml
+ApiVersion: v0.18
+VirtualMachines:
+- Name: web-01
+  Image: /var/lib/nanocl/vm/web-01.qcow2
+  InitContainer:
+    # Omit Image to use Nanocl's default nanocl-qemu runtime image.
+    Entrypoint: ["sh", "-ec"]
+    Cmd:
+    - |
+      mkdir -p /images
+      test ! -e /images/web-01.qcow2 || {
+        echo "VM disk already exists: /images/web-01.qcow2" >&2
+        exit 1
+      }
+      curl -fL \
+        -o /images/ubuntu-24.04-base.img \
+        https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      qemu-img convert -p -O qcow2 \
+        /images/ubuntu-24.04-base.img \
+        /images/web-01.qcow2
+    HostConfig:
+      Binds:
+      - /var/lib/nanocl/vm:/images
+```
+
+`qemu-img convert` создаёт полную независимую копию qcow2; для каждой VM задавайте отдельное имя выходного файла. Проверка наличия предотвращает перезапись диска повторным запуском init-контейнера. Демону Nanocl и среде выполнения VM нужны права записи в `/var/lib/nanocl/vm`.
+
+## Запуск VM [#run-a-vm]
+
+Для запуска виртуальной машины используйте простую команду:
+
+```sh
+nanocl vm run web-01 /var/lib/nanocl/vm/web-01.qcow2
+```
+
+Используются следующие параметры:
+
+* `web-01` — имя виртуальной машины.
+* `/var/lib/nanocl/vm/web-01.qcow2` — полный путь к записываемой копии диска VM.
+
+Без дополнительных параметров VM запускается со стандартными настройками:
+
+* 1 CPU
+* 500 МБ ОЗУ
+
+Первый запуск со стандартными настройками занимает около 90 секунд. Его можно ускорить, включив KVM и выделив больше ресурсов.
+
+<Callout type="info">
+
+Nanocl не создаёт снимок диска автоматически. Используйте для VM путь скопированного диска, а скачанный базовый образ сохраните как источник будущих копий.
+
+</Callout>
+
+Для наблюдения подключитесь к виртуальной машине командой:
+
+```sh
+nanocl vm attach web-01
+```
+
+Команда подключает вас к работающей VM для выполнения команд и других действий.
+
+Вы увидите примерно такой вывод:
+
+```console
+[  OK  ] Finished Permit User Sessions.
+[  OK  ] Started Serial Getty on ttyS0.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Finished Record successful boot for GRUB.
+         Starting GRUB failed boot detection...
+[  OK  ] Started LSB: automatic crash report generation.
+[  OK  ] Finished GRUB failed boot detection.
+[  OK  ] Finished Pollinate to seed…seudo random number generator.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started User Login Management.
+[  OK  ] Started Unattended Upgrades Shutdown.
+[  OK  ] Started OpenBSD Secure Shell server.
+[  OK  ] Started Dispatcher daemon for systemd-networkd.
+cloud-init[494]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:config' at Tue, 04 Jul 2023 12:36:13 +0000. Up 78.27 seconds.
+cloud-init[517]: Cloud-init v. 23.1.2-0ubuntu0~22.04.1 running 'modules:final' at Tue, 04 Jul 2023 12:36:18 +0000. Up 83.19 seconds.
+cloud-init[515]: The system is finally up, after 93.54 seconds
+[  OK  ] Finished Execute cloud user/final scripts.
+[  OK  ] Reached target Cloud-init target.
+Ubuntu 22.04.2 LTS 91daefd21c1b ttyS0
+
+91daefd21c1b login: 
+```
+
+По умолчанию имя пользователя и пароль — `cloud:cloud`.
+Задать учётные данные можно при первом запуске VM.
+Для большей безопасности настройте ключи SSH.
+Перед входом дождитесь завершения [cloud-init][cloud-init].
+
+## Изменение VM [#patch-a-vm]
+
+Меняйте производительность VM, изменяя ресурсы, например память и CPU.
+
+Для этого выполните:
+
+```sh
+nanocl vm patch myvm --kvm --cpu 4 --mem 2048
+```
+
+В команде используются параметры:
+
+* `myvm` — имя изменяемой VM.
+* `--kvm` — включает ускорение KVM.
+* `--cpu` — задаёт число CPU.
+* `--mem` — задаёт объём памяти.
+
+Если KVM не включён в системе, уберите параметр --kvm. После изменения снова подключитесь к VM.
+
+<Callout type="warning">
+
+Изменение VM остановит и перезапустит её.
+
+</Callout>
+
+## Подключение SSH [#ssh-connection]
+
+Если вы не используете Docker Desktop, подключайтесь к VM по IP-адресу. Получите его командой:
+
+```sh
+nanocl vm inspect myvm
+```
+
+Возьмите `IPAddress`, здесь это `10.2.0.2`.
+Затем подключитесь по SSH со стандартными данными: `cloud:cloud`.
+
+```sh
+ssh cloud@10.2.0.2
+```
+
+## Statefile [#statefile]
+
+Определите виртуальную машину в ``Statefile``. Пример:
+
+<StatefileBlock example="advanced/vm" />
+
+## Публикация VM [#expose-your-vm]
+
+С помощью `ProxyRule` можно опубликовать порт виртуальной машины.
+Полный пример публикации порта SSH 22 на публичном порту 5555:
+
+<StatefileBlock example="advanced/vm-proxy" />
+
+[cloud-init]: https://cloud-init.io
+[nanocl-qemu]: https://github.com/next-hat/nanocl-qemu

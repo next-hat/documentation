@@ -2,7 +2,7 @@
   "name": "next-hat-documentation",
   "version": "0.18.8",
   "private": true,
-  "packageManager": "pnpm@12.9.1",
+  "packageManager": "pnpm@12.11.2",
   "scripts": {
     "dev": "pnpm --filter @next-hat/documentation dev",
     "start": "pnpm dev",
@@ -11,5 +11,7 @@
     "typecheck": "pnpm --filter @next-hat/documentation typecheck",
     "check": "node --test --test-isolation=none apps/documentation/lib/openapi.test.mjs apps/documentation/lib/locales.test.mjs && node scripts/check-content.mjs && node scripts/check-translations.mjs"
   },
-  "engines": { "node": ">=24" }
+  "engines": {
+    "node": ">=24"
+  }
 }

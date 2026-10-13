@@ -18,7 +18,7 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
     return () => window.removeEventListener('hashchange', update)
   }, [pathname])
   return <DropdownMenu>
-    <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" aria-label={label}><Languages data-icon="inline-start" /><span className="language-name">{languageNames[locale]}</span></Button></DropdownMenuTrigger>
+    <DropdownMenuTrigger asChild><Button variant="ghost" aria-label={label}><Languages data-icon="inline-start" /><span className="hidden md:inline">{languageNames[locale]}</span></Button></DropdownMenuTrigger>
     <DropdownMenuContent align="end"><DropdownMenuGroup>
       {locales.map(language => <DropdownMenuItem asChild key={language}>
         <a href={localePath(pathname, language) + suffix} lang={language} hrefLang={language} aria-current={language === locale ? 'page' : undefined}>
@@ -32,7 +32,7 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
 export function ThemeSwitcher({ labels }: { labels: { toggle: string; light: string; dark: string; system: string } }) {
   const { theme, setTheme } = useTheme()
   return <DropdownMenu>
-    <DropdownMenuTrigger asChild><Button variant="ghost" size="icon-sm" aria-label={labels.toggle}><Sun aria-hidden="true" className="dark:hidden" /><Moon aria-hidden="true" className="hidden dark:block" /></Button></DropdownMenuTrigger>
+    <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label={labels.toggle}><Sun aria-hidden="true" className="dark:hidden" /><Moon aria-hidden="true" className="hidden dark:block" /></Button></DropdownMenuTrigger>
     <DropdownMenuContent align="end"><DropdownMenuGroup><DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
       <DropdownMenuRadioItem value="light">{labels.light}</DropdownMenuRadioItem>
       <DropdownMenuRadioItem value="dark">{labels.dark}</DropdownMenuRadioItem>

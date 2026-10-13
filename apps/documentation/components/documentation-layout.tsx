@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Layout, Navbar, Footer, LastUpdated } from 'nextra-theme-docs'
+import { Layout, Footer, LastUpdated } from 'nextra-theme-docs'
 import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
-import Image from 'next/image'
-import logo from '@next-hat/ui/images/logo3.png'
-import { ThemeSwitcher, LanguageSwitcher } from './documentation-controls'
+import { DocumentationHeader } from './documentation-header'
 import { translate } from '@/lib/translate'
 import { localePath, dateLocales, type Locale } from '@/lib/locales'
 import RedocStyleRegistry from '@/components/redoc-style-registry'
@@ -39,17 +37,7 @@ export async function DocumentationLayout({ children, locale }: { children: Reac
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(siteSchema(locale)) }} />
       <RedocStyleRegistry>
       <Layout pageMap={await getPageMap(localePath('/', locale))}
-        navbar={<Navbar className="docs-container" logoLink={localePath('/', locale)} logo={<span className="brand"><Image src={logo} width={32} height={32} alt="" className="rounded-full" priority /><span>Next Hat <span className="brand-divider">/</span> <span className="brand-docs">{t('Docs')}</span></span></span>}
-          projectLink="https://github.com/next-hat/documentation">
-          <nav className="header-links" aria-label={t('Sections')}>
-            <Link href={localePath('/guides/summary', locale)}>{t('Guides')}</Link>
-            <Link href={localePath('/manuals/summary', locale)}>{t('Manuals')}</Link>
-            <Link href={localePath('/references/summary', locale)}>{t('References')}</Link>
-            <Link href={localePath('/blog', locale)}>{t('Blog')}</Link>
-          </nav>
-          <LanguageSwitcher locale={locale} label={t('Change language')} />
-          <ThemeSwitcher labels={{ toggle: t('Toggle theme'), light: t('Light'), dark: t('Dark'), system: t('System') }} />
-        </Navbar>}
+        navbar={<DocumentationHeader locale={locale} labels={{ docs: t('Docs'), sections: t('Sections'), guides: t('Guides'), manuals: t('Manuals'), references: t('References'), blog: t('Blog'), language: t('Change language'), theme: { toggle: t('Toggle theme'), light: t('Light'), dark: t('Dark'), system: t('System') } }} />}
         footer={<Footer className="docs-container"><div className="site-footer"><div><a href="https://next-hat.com" className="footer-brand">Next Hat</a><p>{t('Open tools. Your infrastructure.')}</p></div><nav aria-label={t('Footer')}><a href="https://next-hat.com">{t('Website ↗')}</a><a href="https://discord.gg/WV4Aac8uZg">{t('Community ↗')}</a><Link href={localePath('/blog', locale)}>{t('Blog')}</Link></nav><span>© {new Date().getFullYear()} {t('Next Hat & contributors')}</span></div></Footer>}
         docsRepositoryBase="https://github.com/next-hat/documentation/tree/master/apps/documentation"
         editLink={t('Edit this page on GitHub')}

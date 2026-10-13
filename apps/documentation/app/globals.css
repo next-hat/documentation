@@ -33,11 +33,6 @@ body { overflow-x: clip; font-family: var(--font-sans); -webkit-font-smoothing: 
 code, pre, .eyebrow, .path-number { font-family: var(--font-mono); }
 a, button { -webkit-tap-highlight-color: transparent; }
 a:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 4px; border-radius: 3px; }
-.brand { display: flex; align-items: center; gap: .6rem; font-weight: 600; font-size: .9rem; white-space: nowrap; }
-.brand-divider { color: hsl(var(--muted-foreground) / .45); margin-inline: .5rem; font-weight: 400; }
-.brand-docs { color: hsl(var(--muted-foreground)); font-weight: 400; }
-.header-links { display: flex; align-items: center; gap: 1.5rem; font-size: .85rem; color: hsl(var(--muted-foreground)); }
-.header-links a:hover { color: hsl(var(--foreground)); }
 .docs-container {
   width: 100%;
   max-width: var(--nextra-content-width);
@@ -108,24 +103,16 @@ main#nextra-skip-nav.blog-index, main#nextra-skip-nav > .blog-index { padding-in
 .nextra-content h1 { letter-spacing: -.035em; }
 .nextra-content img { max-width: 100%; height: auto; border-radius: .5rem; }
 .nextra-content pre { font-size: .8rem; }
-@media (max-width: 1279px) {
-  .nextra-navbar .header-links { display: none; }
-}
 @media (max-width: 1000px) {
-  .nextra-navbar .brand-docs, .nextra-navbar .brand-divider { display: none; }
   .section-grid { gap: .8rem; }
   .site-footer { flex-wrap: wrap; }
 }
 @media (max-width: 767px) {
-  .nextra-navbar .language-name { display: none; }
-  .nextra-navbar nav.docs-container { gap: .5rem; }
   .home-sections { padding-block: 2.5rem 1rem; }
   .section-grid { grid-template-columns: 1fr; gap: 1rem; }
   .start-path { grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem; padding: 2rem 0; }
   .latest-post { flex-direction: column; align-items: start; gap: 0; }
   .site-footer { flex-direction: column; align-items: start; gap: 1.5rem; }
-  .brand-divider { margin-inline: .2rem; }
-  .brand { font-size: .8rem; gap: .3rem; }
   .post-list article { grid-template-columns: 1fr; gap: .7rem; }
   .post-meta { flex-direction: row; gap: 1rem; }
   .blog-index h1 { font-size: 2rem; }

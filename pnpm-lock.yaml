@@ -187,8 +187,8 @@ importers:
         specifier: ^1.45.0
         version: 1.55.0(@types/react@19.3.0)(react@19.3.0)
       mobx:
-        specifier: ^6.16.1
-        version: 6.16.1
+        specifier: ^7.0.6
+        version: 7.0.6
       next:
         specifier: 16.4.0
         version: 16.4.0(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -209,7 +209,7 @@ importers:
         version: 19.3.0(react@19.3.0)
       redoc:
         specifier: 2.5.1
-        version: 2.5.1(core-js@3.50.0)(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.6.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(supports-color@7.2.0)
+        version: 2.5.1(core-js@3.50.0)(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.6.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(supports-color@7.2.0)
       shiki:
         specifier: ^4.5.0
         version: 4.5.0
@@ -4893,8 +4893,8 @@ packages:
       react-native:
         optional: true
 
-  mobx@6.16.1:
-    resolution: {integrity: sha512-syNcDdX3KT+Jq3je6eGjBhuc24Z68td2VG0zNFqRswaE433D9SNH5VRy/xrGbJsUixfppLLccXhAW9JSf6n+SQ==}
+  mobx@7.0.6:
+    resolution: {integrity: sha512-VJwjVS5K/rojqPSOoDYlXaYl38Lj+gDfLOFeJ/3Pbdh5ITbAO4ks9RgL0TeRI0bydRZ7b/7WrtPPb9Onuj/pcA==}
 
   monaco-editor@0.57.0:
     resolution: {integrity: sha512-5BkI9KGoqrNvBGUe15/QlZq3OooZ8WLg1AxTpaqHRCP3HNpzPPZKE2EDz8M7c+VRmCeUw1Brp4cx/PWm3kI/5A==}
@@ -8036,7 +8036,7 @@ snapshots:
       fuzzysort: 3.1.0
       kleur: 4.1.5
       ora: 8.2.0
-      postcss: 8.5.29
+      postcss: 8.5.30
       prompts: 2.4.2
       recast: 0.23.21
       socks: 2.8.10
@@ -11350,23 +11350,23 @@ snapshots:
 
   mj-context-menu@0.6.1: {}
 
-  mobx-react-lite@4.1.1(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  mobx-react-lite@4.1.1(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      mobx: 6.16.1
+      mobx: 7.0.6
       react: 19.3.0
       use-sync-external-store: 1.7.0(react@19.3.0)
     optionalDependencies:
       react-dom: 19.3.0(react@19.3.0)
 
-  mobx-react@9.2.0(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  mobx-react@9.2.0(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      mobx: 6.16.1
-      mobx-react-lite: 4.1.1(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      mobx: 7.0.6
+      mobx-react-lite: 4.1.1(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react: 19.3.0
     optionalDependencies:
       react-dom: 19.3.0(react@19.3.0)
 
-  mobx@6.16.1: {}
+  mobx@7.0.6: {}
 
   monaco-editor@0.57.0:
     dependencies:
@@ -12144,7 +12144,7 @@ snapshots:
       unified: 11.0.5
       vfile: 6.0.3
 
-  redoc@2.5.1(core-js@3.50.0)(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.6.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(supports-color@7.2.0):
+  redoc@2.5.1(core-js@3.50.0)(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.6.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(supports-color@7.2.0):
     dependencies:
       '@redocly/openapi-core': 1.34.20(supports-color@7.2.0)
       classnames: 2.5.1
@@ -12156,8 +12156,8 @@ snapshots:
       lunr: 2.3.9
       mark.js: 8.11.1
       marked: 4.3.0
-      mobx: 6.16.1
-      mobx-react: 9.2.0(mobx@6.16.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      mobx: 7.0.6
+      mobx-react: 9.2.0(mobx@7.0.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       openapi-sampler: 1.7.6
       path-browserify: 1.0.1
       perfect-scrollbar: 1.5.6
@@ -12527,7 +12527,7 @@ snapshots:
       kleur: 4.1.5
       open: 11.0.4
       ora: 8.2.0
-      postcss: 8.5.29
+      postcss: 8.5.30
       postcss-selector-parser: 7.1.6
       prompts: 2.4.2
       recast: 0.23.21

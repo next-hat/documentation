@@ -33,6 +33,6 @@
     "pagefind": "^1.4.0",
     "serve-handler": "6.1.7",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }

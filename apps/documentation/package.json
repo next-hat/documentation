@@ -20,7 +20,7 @@
     "nextra-theme-docs": "4.6.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "redoc": "2.5.1",
+    "redoc": "3.0.1",
     "shiki": "^4.5.0",
     "styled-components": "^6.5.3",
     "yaml": "^2.8.1"
